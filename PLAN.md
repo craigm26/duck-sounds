@@ -147,7 +147,7 @@ operator has no local Mac.
    Apache-2.0. If yes, vendoring them replaces most of `DuckVoice`'s reason to
    exist as the *default* voice (keep it as the offline fallback). If no, open the
    issue asking, and carry on.
-2. Register `com.duckkit.ducksounds` on the WYGG3JXWMG team; reserve the App Store
+2. Register `com.ducksounds.ios` on the WYGG3JXWMG team; reserve the App Store
    name.
 3. Stand up `duck.craigm26.com` as a Cloudflare Pages project with Web Analytics
    on — one page, what a Microduck is, a link to Pollen, a link to DuckKit. It is
@@ -225,7 +225,7 @@ second launch. M2 is the set of answers that cost nothing to run.
 
 ```
 M0-1  check Pollen sound-asset licence; issue if unclear                   [blocker for scope]
-M0-2  register com.duckkit.ducksounds, reserve App Store name
+M0-2  register com.ducksounds.ios, reserve App Store name
 M0-3  duck.craigm26.com Pages project + Web Analytics
 M0-4  golinks: add app=ducksounds
 
