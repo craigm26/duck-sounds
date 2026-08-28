@@ -187,6 +187,7 @@ export async function createRenderer(canvas, url) {
   gl.bindBuffer(gl.ARRAY_BUFFER, pNrmBuf); gl.bufferData(gl.ARRAY_BUFFER, primNrm, gl.STATIC_DRAW);
 
   const proj = mat4(), view = mat4(), modelM = mat4(), localM = mat4(), bodyM = mat4(), scaleM = mat4();
+  const placeM = mat4(), tmpM = mat4();
 
   // Resolve every draw's body by NAME against the live model. The pack is
   // exported from the robot-only scene; the scene the page runs has stairs and
@@ -205,6 +206,7 @@ export async function createRenderer(canvas, url) {
   }
 
   return {
+    gl,
     triangles: meta.nface,
     draws: meta.draws.length,
     render(data, opts) {
@@ -221,13 +223,35 @@ export async function createRenderer(canvas, url) {
       // NOT qpos[0]: the stair bodies sit ahead of the duck in the model, so
       // the trunk's free joint starts wherever opts.root says it does.
       const cx = data.qpos[opts.root], cy = data.qpos[opts.root + 1];
+      // Zoom moves the camera in and out along its own offset rather than
+      // changing the field of view: a wider lens on a 25 cm robot distorts it.
+      const zoom = Math.min(Math.max(opts.zoom || 1, 0.45), 3.2);
       // Close enough that a 25 cm robot reads as the subject: the duck is
       // about 0.25 m tall, so a 0.42 m standoff at 40 degrees fills the frame.
-      const eye = [cx - 0.34, cy - 0.55, 0.30];
-      perspective(proj, 0.70, w / h, 0.01, 8);
-      lookAt(view, eye, [cx, cy, 0.13], [0, 0, 1]);
+      const eye = [cx - 0.34 / zoom, cy - 0.55 / zoom, 0.30 / zoom];
 
-      // floor
+      // In an immersive session the headset supplies both matrices and the duck
+      // stands wherever the hit test landed. `placeM` moves the whole scene
+      // there, and turns MuJoCo's z-up into WebXR's y-up on the way.
+      const xr = opts.xr || null;
+      if (xr) {
+        const [ox, oy, oz] = xr.origin;
+        placeM[0]=1; placeM[1]=0; placeM[2]=0;  placeM[3]=0;
+        placeM[4]=0; placeM[5]=0; placeM[6]=-1; placeM[7]=0;
+        placeM[8]=0; placeM[9]=1; placeM[10]=0; placeM[11]=0;
+        placeM[12]=ox; placeM[13]=oy; placeM[14]=oz; placeM[15]=1;
+      }
+      if (xr) {
+        proj.set(xr.proj);
+        view.set(xr.view);
+      } else {
+        perspective(proj, 0.70, w / h, 0.01, 8);
+        lookAt(view, eye, [cx, cy, 0.13], [0, 0, 1]);
+      }
+
+      // The grid stands in for a floor. In AR the room already has one, so
+      // drawing ours would put a glowing lattice over the carpet.
+      if (!xr) {
       gl.useProgram(lineProg);
       gl.uniformMatrix4fv(lLoc.view, false, view);
       gl.uniformMatrix4fv(lLoc.proj, false, proj);
@@ -246,6 +270,7 @@ export async function createRenderer(canvas, url) {
       gl.enableVertexAttribArray(lAPos);
       gl.vertexAttribPointer(lAPos, 3, gl.FLOAT, false, 0, 0);
       gl.drawArrays(gl.LINES, 0, gridMoved.length / 3);
+      }
 
       // the duck
       gl.useProgram(prog);
@@ -265,6 +290,7 @@ export async function createRenderer(canvas, url) {
           [data.xpos[b*3], data.xpos[b*3+1], data.xpos[b*3+2]]);
         fromQuatPos(localM, d.quat, d.pos);
         multiply(modelM, bodyM, localM);
+        if (xr) { multiply(tmpM, placeM, modelM); modelM.set(tmpM); }
         gl.uniformMatrix4fv(loc.model, false, modelM);
         gl.uniform3f(loc.color, d.rgba[0], d.rgba[1], d.rgba[2]);
         const m = meta.meshes[d.mesh];
@@ -299,6 +325,7 @@ export async function createRenderer(canvas, url) {
           bodyM[4]=M[o+1]*hy; bodyM[5]=M[o+4]*hy; bodyM[6]=M[o+7]*hy; bodyM[7]=0;
           bodyM[8]=M[o+2]*hz; bodyM[9]=M[o+5]*hz; bodyM[10]=M[o+8]*hz; bodyM[11]=0;
           bodyM[12]=data.geom_xpos[g*3]; bodyM[13]=data.geom_xpos[g*3+1]; bodyM[14]=z; bodyM[15]=1;
+          if (xr) { multiply(tmpM, placeM, bodyM); bodyM.set(tmpM); }
           gl.uniformMatrix4fv(loc.model, false, bodyM);
           gl.uniform3f(loc.color, m.geom_rgba[g*4], m.geom_rgba[g*4+1], m.geom_rgba[g*4+2]);
           if (isBox) gl.drawArrays(gl.TRIANGLES, BOX_AT, BOX_N);

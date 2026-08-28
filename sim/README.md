@@ -224,3 +224,52 @@ whole real path — poll, deadzone, EMA smoothing, edge detection, dispatch,
 remap, persistence — everything except the hardware. It asserts a held button
 fires **once**: a pad polled at 60 Hz reports a held button every frame, and
 without edge detection one press would fire an intent sixty times a second.
+
+## AR, zoom, and on-screen remapping
+
+**AR.** The renderer is plain WebGL with an explicit view and projection matrix
+per frame, so an immersive session just lets the headset supply them instead of
+the chase camera — which is the whole reason it was not written with three.js.
+`immersive-ar` with hit-testing stands the duck on a real surface;
+`immersive-vr` is the fallback for headsets without passthrough. The floor grid
+is skipped in AR, because the room already has a floor.
+
+The button only appears when a session is actually available. **Safari supports
+neither**, so on iPhone it stays hidden — which is why this project's iOS AR
+path is native, through `DuckTrajectory`, rather than WebXR.
+
+**Zoom** moves the camera along its own offset rather than widening the lens: a
+wide angle on a 25 cm robot distorts it. Slider, mouse wheel, or pinch.
+
+**On-screen buttons** A and B can be assigned to any intent, saved per browser.
+The phone layout has room for two and which two should not be decided here for
+everyone.
+
+```bash
+node zoomcheck.mjs     # zoom, remapping, and that the AR button is honest
+```
+
+Note the AR assertion: the button must be **hidden** when no immersive session
+is available. Headless Chromium exposes `navigator.xr` but supports no device,
+so hidden is the correct answer there — offering AR that cannot start is worse
+than not offering it. An earlier version of this check asserted the opposite and
+reported a mismatch that was not one.
+
+`page.mouse.wheel` does not reach the canvas in this headless build, so the
+wheel test dispatches the event directly. That is a harness limitation, not a
+page one; the listener, `preventDefault` and all, is the real one.
+
+## Every check, in one place
+
+```bash
+node dev.mjs --watch     # serve locally and re-check on edit
+node browsercheck.mjs    # loads, ticks at 50 Hz, walks, no console errors
+node intentcheck.mjs     # presses every intent key and watches the body
+node mobilecheck.mjs     # phone vs desktop layout, thumbstick drives
+node variantcheck.mjs    # legs <-> skates, and the speed changes
+node padcheck.mjs        # gamepad via a stubbed API, incl. edge-triggering
+node zoomcheck.mjs       # zoom, on-screen remap, AR button honesty
+```
+
+Each takes a URL, so the same checks run against localhost and against
+production.

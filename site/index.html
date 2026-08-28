@@ -95,6 +95,8 @@
   /* ...but a Bluetooth pad is exactly what a phone might have, so keep its panel. */
   body.is-touch .controls{margin-top:1rem}
 
+  #xr[hidden]{display:none}
+  #xr{border-color:var(--duck);color:var(--duck)}
   .keys{display:flex;flex-wrap:wrap;gap:.4rem;justify-content:center;margin:.8rem auto 0;max-width:30rem}
   .keys button{
     font-family:var(--mono);font-size:.7rem;padding:.45rem .6rem;
@@ -169,8 +171,8 @@
     <div class="touch-layer" id="touch" aria-hidden="true">
       <div class="stick" id="stick"><div class="knob"></div></div>
       <div class="pads">
-        <button class="pad-btn" id="padA" data-intent="kick_left"><span>A</span><em>kick</em></button>
-        <button class="pad-btn" id="padB" data-intent="step_up"><span>B</span><em>step up</em></button>
+        <button class="pad-btn" id="padA" data-slot="A"><span>A</span><em>kick</em></button>
+        <button class="pad-btn" id="padB" data-slot="B"><span>B</span><em>step up</em></button>
       </div>
     </div>
   </div>
@@ -180,11 +182,27 @@
     <button data-key="ArrowDown" aria-label="walk backward">&darr;</button>
     <button data-key="ArrowRight" aria-label="turn right">&rarr;</button>
     <button id="reset" aria-label="stand it back up">reset</button>
+    <button id="xr" hidden>view in AR</button>
   </div>
   <p class="hint">arrow keys or WASD to drive &middot; R resets</p>
   <div class="keys" id="keys"></div>
 
   <div class="controls">
+    <div class="ctl">
+      <label for="zoom">Zoom</label>
+      <input type="range" id="zoom" min="45" max="320" step="5" value="100">
+      <output id="zoomOut">1.0&times;</output>
+    </div>
+    <div class="ctl">
+      <label for="slotA">Button A</label>
+      <select id="slotA"></select>
+      <span class="ctl-note" style="text-align:right;margin:0">on screen</span>
+    </div>
+    <div class="ctl">
+      <label for="slotB">Button B</label>
+      <select id="slotB"></select>
+      <span class="ctl-note" style="text-align:right;margin:0">on screen</span>
+    </div>
     <div class="ctl">
       <label for="variant">Feet</label>
       <select id="variant">

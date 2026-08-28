@@ -13,6 +13,7 @@ import { buildTrack, poseAt } from './intent.mjs';
 import { INTENTS, STEP_UP_KEY } from './intents.js';
 import { isTouch, makeStick } from './touch.js';
 import { makePad, ACTIONS } from './gamepad.js';
+import { xrSupport, startXR } from './xr.js';
 
 // The two robots. Skates are a DIFFERENT MODEL, not a different policy: four
 // extra bodies on passive wheel joints, so the physics, the geometry and the
@@ -130,6 +131,7 @@ function draw() {
     bg: themeColour('--panel', [0.91, 0.92, 0.90]),
     grid: themeColour('--rule', [0.79, 0.82, 0.78]),
     root: DUCK.freeQpos,
+    zoom,
     model,
     geomTypes: GEOM_TYPES,
   });
@@ -154,6 +156,9 @@ addEventListener('keyup', e => keys.delete(e.key));
 // Set by the thumbstick on touch devices; the keyboard path leaves it null.
 let stickCmd = null;
 let pad = null, padCmd = null;
+let xrSession = null;
+let zoom = 1;
+const SLOT_STORE = 'microduck.slots.v1';
 
 function readControls() {
   // A connected pad wins over the thumbstick, which wins over the keyboard —
@@ -202,6 +207,68 @@ function readStairs() {
   if (data) applyStairs();
 }
 for (const el of [riseEl, countEl, runEl]) el.addEventListener('input', readStairs);
+
+// ── zoom ──────────────────────────────────────────────────────────────────
+const zoomEl = document.getElementById('zoom'), zoomOut = document.getElementById('zoomOut');
+function setZoom(z) {
+  zoom = Math.min(Math.max(z, 0.45), 3.2);
+  zoomEl.value = Math.round(zoom * 100);
+  zoomOut.textContent = zoom.toFixed(1) + '\u00d7';
+}
+zoomEl.addEventListener('input', () => setZoom(+zoomEl.value / 100));
+// Wheel on desktop.
+cv.addEventListener('wheel', e => {
+  e.preventDefault();
+  setZoom(zoom * (e.deltaY < 0 ? 1.12 : 1 / 1.12));
+}, { passive: false });
+// Pinch on touch. Two pointers on the canvas, distance ratio drives the zoom.
+const pinch = new Map();
+let pinchBase = null;
+cv.addEventListener('pointerdown', e => { pinch.set(e.pointerId, e); });
+cv.addEventListener('pointermove', e => {
+  if (!pinch.has(e.pointerId)) return;
+  pinch.set(e.pointerId, e);
+  if (pinch.size !== 2) return;
+  const [a, b] = [...pinch.values()];
+  const d = Math.hypot(a.clientX - b.clientX, a.clientY - b.clientY);
+  if (pinchBase === null) { pinchBase = { d, zoom }; return; }
+  setZoom(pinchBase.zoom * (d / Math.max(pinchBase.d, 1)));
+});
+for (const ev of ['pointerup', 'pointercancel', 'pointerleave']) {
+  cv.addEventListener(ev, e => { pinch.delete(e.pointerId); if (pinch.size < 2) pinchBase = null; });
+}
+
+// ── which intent each on-screen button fires ─────────────────────────────
+// The phone layout has room for two action buttons, and which two should not
+// be a decision made here for everyone. Saved per browser.
+const SLOT_DEFAULT = { A: 'kick_left', B: 'step_up' };
+function loadSlots() {
+  try { return { ...SLOT_DEFAULT, ...JSON.parse(localStorage.getItem(SLOT_STORE) || '{}') }; }
+  catch { return { ...SLOT_DEFAULT }; }
+}
+function buildSlots() {
+  const all = [...INTENTS, { id: 'step_up', label: 'Step up' }];
+  const slots = loadSlots();
+  for (const name of ['A', 'B']) {
+    const sel = document.getElementById('slot' + name);
+    for (const item of all) {
+      const o = document.createElement('option');
+      o.value = item.id; o.textContent = item.label;
+      sel.appendChild(o);
+    }
+    sel.value = slots[name];
+    const apply = () => {
+      const btn = document.querySelector(`.pad-btn[data-slot="${name}"]`);
+      const item = all.find(i => i.id === sel.value);
+      btn.dataset.intent = sel.value;
+      btn.querySelector('em').textContent = item ? item.label.toLowerCase() : sel.value;
+      const saved = loadSlots(); saved[name] = sel.value;
+      try { localStorage.setItem(SLOT_STORE, JSON.stringify(saved)); } catch {}
+    };
+    sel.addEventListener('change', apply);
+    apply();
+  }
+}
 
 const variantEl = document.getElementById('variant');
 const variantOut = document.getElementById('variantOut');
@@ -381,8 +448,13 @@ function buildTouch() {
   });
   const all = [...INTENTS, { key: STEP_UP_KEY, id: 'step_up', label: 'Step up' }];
   for (const el of document.querySelectorAll('.pad-btn')) {
-    const item = all.find(i => i.id === el.dataset.intent);
-    if (item) el.addEventListener('pointerdown', e => { e.preventDefault(); fire(item); });
+    // Read the intent at PRESS time, not at wiring time, so re-assigning a
+    // button takes effect without rebuilding the handler.
+    el.addEventListener('pointerdown', e => {
+      e.preventDefault();
+      const item = all.find(i => i.id === el.dataset.intent);
+      if (item) fire(item);
+    });
   }
 }
 
@@ -466,6 +538,39 @@ async function loadVariant(name) {
     try {
       stepupParams = (await (await fetch('./intent-stepup.json')).json()).params;
     } catch { /* the button simply does nothing without it */ }
+    // AR, where the browser has it. The button stays hidden otherwise rather
+    // than offering something that will fail — Safari has no WebXR at all,
+    // which is why this project's iOS path is native.
+    const support = await xrSupport();
+    const xrBtn = document.getElementById('xr');
+    const mode = support.ar ? 'immersive-ar' : support.vr ? 'immersive-vr' : null;
+    if (mode) {
+      xrBtn.hidden = false;
+      xrBtn.textContent = support.ar ? 'view in AR' : 'view in VR';
+      xrBtn.addEventListener('click', async () => {
+        if (xrSession) { await xrSession.end(); return; }
+        try {
+          xrSession = await startXR({
+            gl: renderer.gl, mode,
+            step: () => { /* the 50 Hz loop keeps running below */ },
+            onFrame: ({ view, proj, origin }) => {
+              renderer.render(data, {
+                bg: [0, 0, 0], grid: [0, 0, 0], root: DUCK.freeQpos,
+                model, geomTypes: GEOM_TYPES, xr: { view, proj, origin },
+              });
+            },
+            onEnd: () => { xrSession = null; xrBtn.textContent = support.ar ? 'view in AR' : 'view in VR'; },
+          });
+          xrBtn.textContent = 'leave AR';
+        } catch (err) {
+          statusEl.textContent = 'AR could not start: ' + (err.message || err);
+          setTimeout(() => { statusEl.textContent = ''; }, 4000);
+        }
+      });
+    }
+
+    buildSlots();
+    setZoom(1);
     buildPad();
     buildTouch();
     buildKeys();
@@ -487,7 +592,7 @@ async function loadVariant(name) {
         while (acc >= stepMs && n < 4) { acc -= stepMs; await tick(); n++; }
         busy = false;
       }
-      if (!switching) draw();
+      if (!switching && !xrSession) draw();
       requestAnimationFrame(loop);
     }
     requestAnimationFrame(loop);
