@@ -12,3 +12,7 @@ Package.resolved
 
 # screenshot artefacts from sim/layoutshots.mjs
 sim/shots-*/
+
+# local wrangler cache — holds the Cloudflare account id, not a secret,
+# but it is a cache and does not belong in the repo
+.wrangler/

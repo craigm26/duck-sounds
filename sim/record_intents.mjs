@@ -26,6 +26,7 @@ import * as ort from 'onnxruntime-node';
 import fs from 'node:fs';
 import { makeLoop } from '../site/duckloop.mjs';
 import { clearStairs, findStairJoints, layoutStairs, STAIR_Y } from '../site/stairs.js';
+import { NEEDS, STAGE_STAIRS, stagingFor, targetFor } from '../site/intent-specs.js';
 // step_up ships its SEARCHED PARAMETERS rather than an exported track, and the
 // browser builds the track from them at load. Importing the same builder means
 // the recording is the motion a visitor actually sees, not a re-derivation of
@@ -188,17 +189,13 @@ const STAND = 'BEST_alpha_stand.onnx';
  * `{vx: approach}` for the whole move. Threading it here is what makes the
  * recording the motion the move actually is.
  */
-const AUTHORED_WORLD = {
-  // Heights each move was last MEASURED to clear, strictly. Recording against a
-  // step it cannot climb produces a faceplant, which is honest but useless as a
-  // clip; recording against the height it does clear shows the move working.
-  step_up:   { rise: 0.010 },
-  lever_up:  { rise: 0.010 },
-  riser_up:  { rise: 0.010 },
-  climb:     { rise: 0.010 },
-  back_roll: null,            // flat floor, no prop — it is a roll
-  wall_flip: { wall: true },  // needs the arena wall, not a stair
-};
+// This table used to live here — which meant the BROWSER had no idea any of it
+// existed, and pressing a move with nothing in front of the duck played a track
+// authored against a step that was not there. It now lives in
+// site/intent-specs.js and both sides import it. Heights: each move is staged
+// against the tallest step it has been MEASURED to clear, because recording
+// against one it cannot climb produces a faceplant — honest, and useless as a
+// clip.
 
 const authored = (name, id) => {
   const j = JSON.parse(fs.readFileSync(`../site/intent-${name}.json`, 'utf8'));
@@ -207,7 +204,6 @@ const authored = (name, id) => {
   const blend = j.blend ?? params.blend;
   const approach = j.approach ?? params.approach ?? 0;
   const gap = j.gap ?? params.gap ?? 0.06;
-  const world = AUTHORED_WORLD[id];
   const spec = {
     track, blend, approach,
     // step_up declares NO policy, so the browser's `intent.session || session`
@@ -219,12 +215,12 @@ const authored = (name, id) => {
     // whole duration, exactly as sim.js:139 does.
     command: () => ({ vx: approach }),
   };
-  if (world && world.rise !== undefined) {
-    spec.stairs = { count: 4, rise: world.rise, run: 0.28, start: 0.12 };
-    spec.start = { x: 0.12 - 0.07 - gap, y: STAIR_Y + (j.side ?? 0) };
-  } else if (world && world.wall) {
-    // Facing the arena wall at y = 1.5 with half-thickness 0.025.
-    spec.start = { x: 0, y: 1.5 - 0.025 - 0.05 - gap };
+  const staging = stagingFor(id, j);
+  if (staging && staging.kind === 'stair') {
+    spec.stairs = { ...STAGE_STAIRS };
+    spec.start = targetFor(staging, spec.stairs);
+  } else if (staging && staging.kind === 'wall') {
+    spec.start = targetFor(staging, spec.stairs);
   }
   return spec;
 };

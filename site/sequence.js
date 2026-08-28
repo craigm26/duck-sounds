@@ -98,7 +98,7 @@ export function makeRunner(host) {
       case 'place':  host.place(step.x, step.y); return true;
       case 'wait':   until = host.ticks() + step.ticks; return true;
       case 'drive':  until = host.ticks() + step.ticks; host.drive({ vx: step.vx, vyaw: step.vyaw }); return true;
-      case 'settle': host.startSettle(step.ticks ?? SETTLE_TICKS, step.approach ?? 0); return true;
+      case 'settle': await host.startSettle(step.ticks ?? SETTLE_TICKS, step.approach ?? 0); return true;
       case 'goto': {
         const t = { x: step.x, y: step.y, yaw: step.yaw ?? 0 };
         plan = planApproach(t, host.tol(), host.speed());

@@ -97,7 +97,7 @@ async function tick() {
 
   if (manual) {
     for (let k = 0; k < 14; k++) data.ctrl[k] = manual[k];
-  } else if (settleState) {
+  } else if (settleState && settleState.session) {
     // Exactly what the search did before playing a track: the stand policy,
     // holding the move's own approach command, for a fixed number of control
     // ticks. Not decoration — a duck settled any other way has joint velocities
@@ -602,7 +602,10 @@ async function policyFor(file) {
   let s = skillSessions.get(file);
   if (s) return s;
   arming = true; paintKeys();
-  statusEl.textContent = 'loading the move\u2026';
+  // A sequence has already said what it is doing and why; overwriting that with
+  // a loading notice loses the one line that explains why the staircase just
+  // changed height.
+  if (runner.state !== 'running') statusEl.textContent = 'loading the move\u2026';
   try {
     s = await ort.InferenceSession.create('./' + file);
     skillSessions.set(file, s);
@@ -666,19 +669,20 @@ function repaintIfIdle() {
   if (now !== wasBusy) { wasBusy = now; paintKeys(); }
 }
 
+/** @returns true if the move actually started. */
 async function fire(item) {
   // One-shot and exclusive, as robotd treats them: a skill arriving while
   // another holds the robot is refused, not blended into it.
-  if (arming) return;
-  if (busy() && item.kind !== 'mode') return;
+  if (arming) return false;
+  if (busy() && item.kind !== 'mode') return false;
   manual = null; modeEl.value = 'policy';
   if (item.kind === 'mode') {
     // Modes replace each other freely and do not take the exclusive hold.
     const s = await policyFor(item.policy);
-    if (!s) return;
+    if (!s) return false;
     mode = { intent: item, session: s, t0: ticks };
     paintKeys();
-    return;
+    return true;
   }
   // Any shipped keyframe move: back roll, lever, wall flip. They are all the
   // same machinery — an offset track played over a policy — and differ only in
@@ -686,22 +690,23 @@ async function fire(item) {
   if (tracks[item.id]) {
     const t = tracks[item.id];
     const s = await policyFor(t.policy);
-    if (!s) return;
+    if (!s) return false;
     mode = null;
     intent = { id: item.id, track: t.keyframes, blend: t.blend, session: s, t0: ticks,
                params: { approach: t.approach || 0 }, tail: 1.2 };
     paintKeys();
-    return;
+    return true;
   }
   if (item.id === 'step_up') {
-    if (!stepupParams) return;
+    if (!stepupParams) return false;
     intent = { id: 'step_up', params: stepupParams, track: buildTrack(stepupParams, HOME), t0: ticks };
   } else {
     const s = await policyFor(item.policy);
-    if (!s) return;
+    if (!s) return false;
     skill = { intent: item, session: s, t0: ticks };
   }
   paintKeys();
+  return true;
 }
 
 // ── sequences ─────────────────────────────────────────────────────────────
@@ -749,8 +754,12 @@ function placeDuck(x, y) {
 }
 
 async function startSettle(n, approach) {
+  // Claim the settle SYNCHRONOUSLY. The policy behind it is a 794 KB fetch, and
+  // until it lands `settling()` has to already be true or the runner walks past
+  // the one step that makes the move reproduce.
+  settleState = { until: Infinity, approach, session: null };
   const sess = await policyFor(SETTLE_POLICY);
-  if (!sess) return;
+  if (!sess) { settleState = null; return; }
   skill = null; intent = null; mode = null; manual = null;
   settleState = { until: ticks + n, approach, session: sess };
 }
@@ -774,9 +783,7 @@ const runner = makeRunner({
   startSettle,
   fire: async id => {
     const item = ALL_MOVES.find(i => i.id === id);
-    if (!item) return false;
-    await fire(item);
-    return true;
+    return item ? await fire(item) : false;
   },
   onChange: () => paintSequence(),
 });
@@ -1184,7 +1191,8 @@ async function loadVariant(name) {
         seq: {
           pose, readyFor, runner,
           program: () => program,
-          setProgram(p) { program = p.slice(); paintSequence(); },
+          setProgram(p) { program = p.slice(); runner.load(program); paintSequence(); },
+          play: () => runner.play(program),
           stairs: () => ({ ...stairCfg }),
           settling: () => settleState !== null,
         },

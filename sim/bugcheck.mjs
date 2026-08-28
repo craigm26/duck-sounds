@@ -50,8 +50,8 @@ await touch.setViewport({width:1180,height:820,hasTouch:true});
 await touch.goto(URL_+'?v='+Date.now(),{waitUntil:'domcontentloaded'});
 await touch.waitForFunction(()=>document.body.classList.contains('ready'),{timeout:180000});
 console.log('  is-touch:', await touch.evaluate(()=>document.body.classList.contains('is-touch')),
-            ' .dock-drive display:', await touch.$eval('.dock-drive', e=>getComputedStyle(e).display),
-            ' <-- #xr lives inside it');
+            ' #xr parent:', await touch.$eval('#xr', e=>e.parentElement.className),
+            ' visible:', await touch.$eval('#xr', e=>getComputedStyle(e.parentElement).display !== 'none'));
 console.log('\nCLAIM 6  focusable buttons inside aria-hidden');
 console.log('  .touch-layer aria-hidden:', await touch.$eval('#touch', e=>e.getAttribute('aria-hidden')),
             ' focusable inside:', await touch.$$eval('#touch button', b=>b.length));

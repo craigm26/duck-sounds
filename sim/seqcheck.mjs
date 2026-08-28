@@ -38,20 +38,21 @@ check('a stair move says what it needs', tips.some(t=>/10 mm step/.test(t)),
 // ── 3. one move lights one button ─────────────────────────────────────────
 await page.evaluate(()=>{const e=document.getElementById('rise');e.value=10;e.dispatchEvent(new Event('input',{bubbles:true}));});
 await new Promise(r=>setTimeout(r,300));
-await page.evaluate(()=>window.__demo.seq.runner.play([{kind:'place',x:0.12-0.07-0.1266,y:1.305},{kind:'settle',ticks:25,approach:0.078},{kind:'move',id:'riser_up'}]));
+await page.evaluate(()=>{const t=window.__demo.seq.readyFor('riser_up').target;
+  return window.__demo.seq.runner.play([{kind:'place',x:t.x,y:t.y},{kind:'settle',ticks:25,approach:0.078},{kind:'move',id:'riser_up'}]);});
 await page.waitForFunction(()=>document.querySelectorAll('.keys button.on').length>0,{timeout:30000}).catch(()=>{});
 const lit = await page.$$eval('.keys button.on', b=>b.map(x=>x.textContent.trim()));
 check('one running move lights exactly one button', lit.length===1, JSON.stringify(lit));
 await page.waitForFunction(()=>window.__demo.seq.runner.state!=='running',{timeout:60000}).catch(()=>{});
 
 // ── 4. does walking actually get there? ───────────────────────────────────
-console.log('\n  approach convergence, walking from four starts:');
+console.log('\n  approach convergence, walking from six starts:');
 const runs=[];
-for (const [sx,sy] of [[-0.6,1.30],[-0.4,0.9],[0.3,1.7],[-0.8,1.6]]) {
+for (const [sx,sy] of [[-0.6,1.30],[-0.4,0.9],[0.3,1.10],[-0.8,1.40],[-1.0,0.4],[0.6,0.75]]) {
   const r = await page.evaluate(async ([sx,sy])=>{
     const S=window.__demo.seq;
     window.__demo.place(sx,sy);
-    const t={x:0.12-0.07-0.1266, y:1.305, yaw:0};
+    const t=S.readyFor('riser_up').target;
     await S.runner.play([{kind:'goto',...t}]);
     const t0=performance.now();
     while (S.runner.state==='running' && performance.now()-t0<70000) await new Promise(r=>setTimeout(r,120));
@@ -68,16 +69,21 @@ check(`walking reaches the mark`, arrived===runs.length, `${arrived}/${runs.leng
 // ── 5. record and replay ──────────────────────────────────────────────────
 const rt = await page.evaluate(async ()=>{
   const S=window.__demo.seq;
+  const t=S.readyFor('riser_up').target;
   S.setProgram([{kind:'stairs',rise:0.010,count:4,run:0.28},
-                {kind:'place',x:-0.0766,y:1.305},
+                {kind:'place',x:t.x,y:t.y},
                 {kind:'settle',ticks:25,approach:0.078},
                 {kind:'move',id:'riser_up'}]);
-  await S.runner.play();
+  await S.play();
   const t0=performance.now(); const seen=new Set();
   while (S.runner.state==='running' && performance.now()-t0<60000) { seen.add(S.runner.pc); await new Promise(r=>setTimeout(r,60)); }
-  return { steps:[...seen].sort(), stairs:S.stairs(), state:S.runner.state };
+  await new Promise(r=>setTimeout(r,1500));
+  return { seen:[...seen].sort(), stairs:S.stairs(), state:S.runner.state, pose:S.pose(), mark:t };
 });
-check('a recorded sequence runs every step', rt.steps.length===4, JSON.stringify(rt.steps));
+check('a stored sequence runs to completion', rt.state==='idle', `ended ${rt.state}, saw pc ${JSON.stringify(rt.seen)}`);
+check('the move actually played from the mark',
+      Math.hypot(rt.pose.x-rt.mark.x, rt.pose.y-rt.mark.y) > 0.02,
+      `mark ${rt.mark.x.toFixed(3)},${rt.mark.y.toFixed(3)} -> ended ${rt.pose.x.toFixed(3)},${rt.pose.y.toFixed(3)}`);
 check('the sequence set the staircase', Math.abs(rt.stairs.rise-0.010)<1e-6, JSON.stringify(rt.stairs));
 check('no page errors', errs.length===0, errs.slice(0,2).join(' | '));
 console.log(`\n${ok.length}/${ok.length+bad.length} passed`);

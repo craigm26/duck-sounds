@@ -115,20 +115,25 @@ export function readiness(id, json, world) {
   if (!staging) return { ok: true, staging: null, target: null, fix: null, reason: '' };
 
   const { stairCfg, pose } = world;
+  // The mark is computed FIRST and returned whatever else is wrong. Where the
+  // duck has to stand depends on where the flight starts, not on how tall its
+  // steps are — so a wrong step height does not stop us knowing the mark, and
+  // returning null here meant a move that fixed the staircase then fired from
+  // wherever the duck happened to be. Measured: 1393 mm away.
+  const target = targetFor(staging, stairCfg);
   if (staging.kind === 'stair') {
     const mm = Math.round(stairCfg.rise * 1000);
     const wantMm = Math.round(staging.rise * 1000);
     if (stairCfg.count < 1 || stairCfg.rise <= 0) {
-      return { ok: false, staging, target: null, fix: 'stairs',
+      return { ok: false, staging, target, fix: 'stairs',
                reason: `nothing to climb — set Step height to ${wantMm} mm` };
     }
     if (Math.abs(mm - wantMm) > TOL.riseMm) {
-      return { ok: false, staging, target: null, fix: 'stairs',
+      return { ok: false, staging, target, fix: 'stairs',
                reason: `these steps are ${mm} mm; this move was only ever measured at ${wantMm} mm` };
     }
   }
 
-  const target = targetFor(staging, stairCfg);
   const d = Math.hypot(target.x - pose.x, target.y - pose.y);
   const dyaw = Math.abs(wrap(target.yaw - pose.yaw));
   if (d <= TOL.pos && dyaw <= TOL.yaw) {
