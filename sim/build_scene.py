@@ -31,6 +31,18 @@ for side, site in (("left", "left_foot"), ("right", "right_foot")):
             'rgba="0.75 0.62 0.20 1" />' % (side, pos))
     src = src.replace(m.group(1), geom, 1)
 
+# 3b — a real gyro on the model's own IMU site.
+# Reading qvel[3:6] instead was a frame error: MuJoCo reports free-joint
+# angular velocity in its own convention, while the policy was trained on a
+# gyro mounted at this site. Using the sensor is both faithful and what
+# Pollen's simulator does.
+sensor = """  <sensor>
+    <gyro name="imu_gyro" site="imu" />
+    <framequat name="trunk_quat" objtype="site" objname="imu" />
+  </sensor>
+"""
+src = src.replace("</mujoco>", sensor + "</mujoco>", 1)
+
 # 4 — position actuators, one per policy joint, in DuckKit's order.
 acts = ['  <actuator>']
 for j in policy_joints:

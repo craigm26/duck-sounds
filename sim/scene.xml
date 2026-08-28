@@ -117,7 +117,11 @@
       </body>
     </body>
   </worldbody>
-    <actuator>
+    <sensor>
+    <gyro name="imu_gyro" site="imu" />
+    <framequat name="trunk_quat" objtype="site" objname="imu" />
+  </sensor>
+  <actuator>
     <position name="left_hip_yaw_act" joint="left_hip_yaw" kp="9.0" kv="0.25" forcerange="-2.5 2.5" />
     <position name="left_hip_roll_act" joint="left_hip_roll" kp="9.0" kv="0.25" forcerange="-2.5 2.5" />
     <position name="left_hip_pitch_act" joint="left_hip_pitch" kp="9.0" kv="0.25" forcerange="-2.5 2.5" />
