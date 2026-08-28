@@ -92,6 +92,7 @@
   body.is-touch .stage{position:relative}
   body.is-touch #view{height:min(62vh,520px)}
   body.is-touch .pad,body.is-touch .keys,body.is-touch .hint,body.is-touch .servos{display:none}
+  /* ...but a Bluetooth pad is exactly what a phone might have, so keep its panel. */
   body.is-touch .controls{margin-top:1rem}
 
   .keys{display:flex;flex-wrap:wrap;gap:.4rem;justify-content:center;margin:.8rem auto 0;max-width:30rem}
@@ -118,6 +119,13 @@
   .servos select,.mini{font-family:var(--mono);font-size:.7rem;padding:.35rem .5rem;border:1px solid var(--rule);border-radius:3px;background:var(--paper);color:var(--ink)}
   .mini{cursor:pointer}
   .mini:hover{border-color:var(--duck);color:var(--duck)}
+  #padList{margin-top:.5rem;display:grid;gap:.28rem}
+  #padList .ctl{grid-template-columns:7.4rem 1fr 3.6rem;gap:.5rem;margin:0}
+  #padList label{font-size:.64rem}
+  #padList .btnid{font-family:var(--mono);font-size:.64rem;color:var(--muted);text-align:right}
+  #padState{color:var(--muted)}
+  #padState.on{color:var(--duck)}
+  body.is-touch #padPanel{display:block}
   #servoList{margin-top:.5rem;display:grid;gap:.28rem}
   #servoList .ctl{grid-template-columns:6.6rem 1fr 3.4rem;gap:.5rem;margin:0}
   #servoList label{font-size:.62rem}
@@ -202,6 +210,16 @@
     </div>
     <p class="ctl-note" id="ctlNote">Walking alone: 2 mm. With the step-up intent: 26 mm.</p>
   </div>
+
+  <details class="servos" id="padPanel">
+    <summary>Controller <span id="padState">not connected</span></summary>
+    <p class="ctl-note" style="text-align:left">Defaults match the mapping the robot's own runtime uses, so a pad paired to this page behaves like a pad paired to the duck. Press <em>set</em> and then a button to remap.</p>
+    <div id="padList"></div>
+    <div class="ctl" style="grid-template-columns:1fr auto;margin-top:.5rem">
+      <span class="ctl-note" style="text-align:left" id="padHint">Left stick drives. Everything below is remappable.</span>
+      <button id="padReset" class="mini">defaults</button>
+    </div>
+  </details>
 
   <details class="servos">
     <summary>Servos</summary>

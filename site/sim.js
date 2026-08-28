@@ -12,6 +12,7 @@ import { findStairJoints, layoutStairs, clearStairs, STAIR_COUNT } from './stair
 import { buildTrack, poseAt } from './intent.mjs';
 import { INTENTS, STEP_UP_KEY } from './intents.js';
 import { isTouch, makeStick } from './touch.js';
+import { makePad, ACTIONS } from './gamepad.js';
 
 // The two robots. Skates are a DIFFERENT MODEL, not a different policy: four
 // extra bodies on passive wheel joints, so the physics, the geometry and the
@@ -152,8 +153,16 @@ addEventListener('keyup', e => keys.delete(e.key));
 
 // Set by the thumbstick on touch devices; the keyboard path leaves it null.
 let stickCmd = null;
+let pad = null, padCmd = null;
 
 function readControls() {
+  // A connected pad wins over the thumbstick, which wins over the keyboard —
+  // whichever the person actually touched last is the one they meant.
+  if (padCmd && (Math.abs(padCmd.vx) > 0.001 || Math.abs(padCmd.vyaw) > 0.001)) {
+    cmdState.vx = padCmd.vx * driveSpeed;
+    cmdState.vyaw = padCmd.vyaw * 1.0;
+    return;
+  }
   if (stickCmd) { cmdState.vx = stickCmd.vx; cmdState.vyaw = stickCmd.vyaw; return; }
   const fwd = (keys.has('ArrowUp') || keys.has('w') ? 1 : 0) - (keys.has('ArrowDown') || keys.has('s') ? 1 : 0);
   const turn = (keys.has('ArrowLeft') || keys.has('a') ? 1 : 0) - (keys.has('ArrowRight') || keys.has('d') ? 1 : 0);
@@ -293,6 +302,70 @@ async function fire(item) {
   paintKeys();
 }
 
+function buildPad() {
+  const stateEl = document.getElementById('padState');
+  const listEl = document.getElementById('padList');
+  const all = [...INTENTS, { id: 'step_up', label: 'Step up' }];
+
+  pad = makePad({
+    onConnect: id => {
+      stateEl.textContent = 'connected';
+      stateEl.classList.add('on');
+      document.getElementById('padHint').textContent = id.slice(0, 48);
+    },
+    onAction: id => {
+      // Pad actions are named the same as intents where they overlap; the two
+      // that are not intents are handled here.
+      if (id === 'reset') return reset();
+      if (id === 'variant') {
+        const el = document.getElementById('variant');
+        el.value = el.value === 'legs' ? 'rollers' : 'legs';
+        el.dispatchEvent(new Event('change'));
+        return;
+      }
+      if (id === 'sit_toggle') {
+        // One button for both directions, as the runtime has it: which one you
+        // get depends on whether the duck is already down.
+        const down = data.qpos[DUCK.freeQpos + 2] < 0.09;
+        return fire(all.find(i => i.id === (down ? 'stand' : 'sit')));
+      }
+      const item = all.find(i => i.id === id);
+      if (item) fire(item);
+    },
+  });
+
+  for (const a of ACTIONS) {
+    const row = document.createElement('div');
+    row.className = 'ctl';
+    const label = document.createElement('label');
+    label.textContent = a.label + (a.hold ? ' (hold)' : '');
+    const btn = document.createElement('button');
+    btn.className = 'mini';
+    btn.textContent = 'set';
+    const shown = document.createElement('span');
+    shown.className = 'btnid';
+    const paint = () => { shown.textContent = 'btn ' + pad.map[a.id]; };
+    paint();
+    btn.addEventListener('click', async () => {
+      btn.textContent = 'press…';
+      const b = await pad.listen(a.id);
+      btn.textContent = 'set';
+      paint();
+      if (b === undefined) return;
+    });
+    row.append(label, btn, shown);
+    listEl.appendChild(row);
+  }
+  document.getElementById('padReset').addEventListener('click', () => {
+    pad.reset();
+    for (const [i, a] of ACTIONS.entries()) {
+      listEl.children[i].querySelector('.btnid').textContent = 'btn ' + pad.map[a.id];
+    }
+  });
+  addEventListener('gamepadconnected', () => { stateEl.textContent = 'connected'; stateEl.classList.add('on'); });
+  addEventListener('gamepaddisconnected', () => { stateEl.textContent = 'not connected'; stateEl.classList.remove('on'); });
+}
+
 function buildTouch() {
   if (!isTouch()) return;
   document.body.classList.add('is-touch');
@@ -393,6 +466,7 @@ async function loadVariant(name) {
     try {
       stepupParams = (await (await fetch('./intent-stepup.json')).json()).params;
     } catch { /* the button simply does nothing without it */ }
+    buildPad();
     buildTouch();
     buildKeys();
     buildServos();
@@ -405,6 +479,7 @@ async function loadVariant(name) {
     const stepMs = 1000 / C.tickHz;
     async function loop(now) {
       acc += Math.min(now - last, 100); last = now;
+      padCmd = pad ? pad.poll(now) : null;
       readControls();
       if (!busy && !switching) {
         busy = true;

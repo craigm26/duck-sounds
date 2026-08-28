@@ -190,3 +190,37 @@ WALKING policy on wheels   0.213 m/s   upright   <- works, just badly
 
 Nothing falls over in any of them. `node variantcheck.mjs` does the same switch
 in a real browser and checks the speed changes and changes back.
+
+## Bluetooth controller
+
+The duck ships with a pad, so the sim answers to the same buttons the robot
+does. Defaults are Pollen's documented mapping from `microduck_runtime`:
+
+| Control | Action |
+|---|---|
+| Left stick | drive — vertical is forward, horizontal turns |
+| A | pick up |
+| X | sit / stand (one button, direction depends on posture) |
+| LB / RB | kick left / right |
+| LT / RT | forward roll / step up |
+| B | hold still |
+| Start | reset |
+| DpadUp, **held ~1 s** | legs &harr; skates |
+
+Every one is remappable — press *set*, then the button — and the map is saved
+per browser. "Standard mapping" is a hopeful name: the same physical button
+lands on a different index depending on pad, browser and OS, and a Bluetooth
+pad paired to a phone is the case most likely to disagree.
+
+The panel stays visible in phone layout, because a Bluetooth pad paired to a
+phone is exactly the case this is for.
+
+```bash
+node padcheck.mjs      # stubs the Gamepad API and drives the page through it
+```
+
+There is no pad on this machine, so the check injects one. It exercises the
+whole real path — poll, deadzone, EMA smoothing, edge detection, dispatch,
+remap, persistence — everything except the hardware. It asserts a held button
+fires **once**: a pad polled at 60 Hz reports a held button every frame, and
+without edge detection one press would fire an intent sixty times a second.

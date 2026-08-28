@@ -22,6 +22,7 @@ for (const mode of ['phone', 'desktop']) {
     touchClass: document.body.classList.contains('is-touch'),
     stickVisible: document.getElementById('stick').offsetParent !== null,
     keysVisible: document.getElementById('keys').offsetParent !== null,
+    padPanel: document.getElementById('padPanel').offsetParent !== null,
   }));
   let drove = null;
   if (mode === 'phone') {
@@ -38,7 +39,7 @@ for (const mode of ['phone', 'desktop']) {
     drove = parseFloat(hud.match(/speed ([\d.]+)/)[1]);
   }
   await page.screenshot({ path: `layout-${mode}.png` });
-  console.log(`${mode.toUpperCase().padEnd(8)} touch=${layout.touchClass} stick=${layout.stickVisible} keys=${layout.keysVisible}` +
+  console.log(`${mode.toUpperCase().padEnd(8)} touch=${layout.touchClass} stick=${layout.stickVisible} keys=${layout.keysVisible} pad=${layout.padPanel}` +
               (drove !== null ? `  stick drove at ${drove.toFixed(2)} m/s` : '') +
               `  errors=${errs.length || 'none'}`);
   await page.close();
