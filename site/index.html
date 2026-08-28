@@ -54,6 +54,46 @@
   }
   .pad button.on,.pad button:active{border-color:var(--duck);color:var(--duck)}
   .hint{font-family:var(--mono);font-size:.68rem;color:var(--muted);text-align:center;margin:.7rem 0 0}
+  /* Touch layer. Hidden entirely unless the pointer is coarse — a narrow
+     desktop window is still a keyboard, so this is not a width breakpoint.
+     NOTE the two class names differ on purpose: the state class lives on
+     <body> and the component class on the container. Using `touch` for both
+     meant `.touch{display:none}` matched the body and hid the entire page. */
+  .touch-layer{display:none}
+  body.is-touch .touch-layer{
+    display:flex;justify-content:space-between;align-items:flex-end;
+    /* Sit above the HUD strip rather than on top of it: the readout is the
+       thing you check while driving, so the thumb must not cover it. */
+    position:absolute;inset:auto 0 2.2rem 0;padding:1rem 1.1rem 0.6rem;
+    pointer-events:none;
+  }
+  body.is-touch .stick,body.is-touch .pads{pointer-events:auto}
+  .stick{
+    width:8.5rem;height:8.5rem;border-radius:50%;
+    border:1px solid var(--rule);background:color-mix(in srgb, var(--panel) 70%, transparent);
+    display:grid;place-items:center;touch-action:none;
+  }
+  .knob{
+    width:3.4rem;height:3.4rem;border-radius:50%;
+    background:color-mix(in srgb, var(--duck) 55%, transparent);
+    border:1px solid var(--duck);transition:transform .06s linear;
+  }
+  .pads{display:flex;gap:.7rem;align-items:flex-end}
+  .pad-btn{
+    width:4.6rem;height:4.6rem;border-radius:50%;
+    border:1px solid var(--rule);background:color-mix(in srgb, var(--panel) 70%, transparent);
+    color:var(--ink);display:grid;place-items:center;gap:0;touch-action:none;cursor:pointer;
+  }
+  .pad-btn span{font-family:var(--mono);font-size:1.1rem;line-height:1}
+  .pad-btn em{font-family:var(--mono);font-size:.55rem;font-style:normal;color:var(--muted)}
+  .pad-btn:active,.pad-btn.on{border-color:var(--duck);color:var(--duck)}
+  /* On a phone the simulator is the page: give it the height and put the
+     keyboard-shaped controls away. */
+  body.is-touch .stage{position:relative}
+  body.is-touch #view{height:min(62vh,520px)}
+  body.is-touch .pad,body.is-touch .keys,body.is-touch .hint,body.is-touch .servos{display:none}
+  body.is-touch .controls{margin-top:1rem}
+
   .keys{display:flex;flex-wrap:wrap;gap:.4rem;justify-content:center;margin:.8rem auto 0;max-width:30rem}
   .keys button{
     font-family:var(--mono);font-size:.7rem;padding:.45rem .6rem;
@@ -117,6 +157,13 @@
     <canvas id="view" aria-label="A Microduck walking in a physics simulation"></canvas>
     <div id="status">starting…</div>
     <div id="hud"></div>
+    <div class="touch-layer" id="touch" aria-hidden="true">
+      <div class="stick" id="stick"><div class="knob"></div></div>
+      <div class="pads">
+        <button class="pad-btn" id="padA" data-intent="kick_left"><span>A</span><em>kick</em></button>
+        <button class="pad-btn" id="padB" data-intent="step_up"><span>B</span><em>step up</em></button>
+      </div>
+    </div>
   </div>
   <div class="pad">
     <button data-key="ArrowLeft" aria-label="turn left">&larr;</button>

@@ -11,6 +11,7 @@ import { createRenderer } from './render.js';
 import { findStairJoints, layoutStairs, clearStairs, STAIR_COUNT } from './stairs.js';
 import { buildTrack, poseAt } from './intent.mjs';
 import { INTENTS, STEP_UP_KEY } from './intents.js';
+import { isTouch, makeStick } from './touch.js';
 
 // Absolute, not relative: onnxruntime resolves wasmPaths against its OWN module
 // URL, so './vendor/ort/' became /vendor/ort/vendor/ort/... and every backend
@@ -135,7 +136,11 @@ addEventListener('keydown', e => {
 });
 addEventListener('keyup', e => keys.delete(e.key));
 
+// Set by the thumbstick on touch devices; the keyboard path leaves it null.
+let stickCmd = null;
+
 function readControls() {
+  if (stickCmd) { cmdState.vx = stickCmd.vx; cmdState.vyaw = stickCmd.vyaw; return; }
   const fwd = (keys.has('ArrowUp') || keys.has('w') ? 1 : 0) - (keys.has('ArrowDown') || keys.has('s') ? 1 : 0);
   const turn = (keys.has('ArrowLeft') || keys.has('a') ? 1 : 0) - (keys.has('ArrowRight') || keys.has('d') ? 1 : 0);
   cmdState.vx = fwd * 0.45;
@@ -257,6 +262,26 @@ async function fire(item) {
   paintKeys();
 }
 
+function buildTouch() {
+  if (!isTouch()) return;
+  document.body.classList.add('is-touch');
+  // Forward is up. The policy needs about 0.3 before it walks at all, so the
+  // stick starts there rather than at zero — a thumb barely off centre should
+  // move the duck, not sit in a dead band.
+  makeStick(document.getElementById('stick'), (x, y) => {
+    const push = Math.hypot(x, y);
+    stickCmd = push < 0.12
+      ? { vx: 0, vyaw: 0 }
+      : { vx: -y * 0.45, vyaw: -x * 1.0 };
+    window.__stick = stickCmd;
+  });
+  const all = [...INTENTS, { key: STEP_UP_KEY, id: 'step_up', label: 'Step up' }];
+  for (const el of document.querySelectorAll('.pad-btn')) {
+    const item = all.find(i => i.id === el.dataset.intent);
+    if (item) el.addEventListener('pointerdown', e => { e.preventDefault(); fire(item); });
+  }
+}
+
 function buildKeys() {
   const all = [...INTENTS, { key: STEP_UP_KEY, id: 'step_up', label: 'Step up' }];
   for (const item of all) {
@@ -327,6 +352,7 @@ document.getElementById('copyPose').addEventListener('click', async () => {
     try {
       stepupParams = (await (await fetch('./intent-stepup.json')).json()).params;
     } catch { /* the button simply does nothing without it */ }
+    buildTouch();
     buildKeys();
     buildServos();
     readStairs();
