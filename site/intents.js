@@ -1,47 +1,89 @@
-// The duck's intents, and the keys that fire them.
+// The duck's intents, faithful to the Microduck simulator's own defaults.
 //
-// Each is a separate trained network sharing the same 61-in / 14-out contract
-// as the walker, so switching intent is switching which session runs — not a
-// different pipeline. Durations are measured, not guessed: see sim/skills.mjs,
-// which runs each one and reports what it does to the body.
+// Every number here is Pollen's, taken from their constants.js and game.js
+// rather than chosen. Where this project ADDS something — the step-up, the
+// stairs — it is marked as ours. That line matters: the point of the sim is to
+// be a true baseline that new intents can be built on and trusted against.
 //
-// One-shot and EXCLUSIVE, which is how robotd treats them: while a skill holds
-// the robot a second one is refused rather than blended. DuckKit's DuckSkill
-// models the same rule; a UI that let you stack them would be lying about the
-// robot.
+// Sources: microduck-simulator/app/src/game/{constants,game}.js
+export const DEFAULTS = {
+  // Locomotion command magnitudes, per variant.
+  VEL_FWD: 0.25, VEL_BACK: -0.2, VEL_ANG: 1.0,
+  RVEL_FWD: 0.6, RVEL_BACK: -0.5, RVEL_ANG: 0.3,
+  // One-shots.
+  KICK_STEPS: 25,               // 0.5 s at 50 Hz
+  POST_KICK_LOCK_STEPS: 20,     // 0.4 s before another input is taken
+  GROUND_PICK_PERIOD_S: 4.0, GROUND_PICK_END_PHASE: 0.7,
+  CROUCH_PERIOD_S: 5.0, CROUCH_END_PHASE: 0.7,
+  ROLL_MIN_STEPS: 40,           // a roll is over when it has tipped AND recovered
+  ROLL_EXPIRE_STEPS: 150,       // ...and never runs longer than 3 s
+  BALL_RADIUS: 0.05,
+};
+
+const TICK = 50;
+
+/**
+ * Intents, in the shape the runtime actually plays them.
+ *
+ * `kind` matters more than it looks:
+ *   'oneshot' runs for a fixed number of control steps.
+ *   'phase'   drives a clock into the command slots; the policy reads its own
+ *             progress rather than a velocity.
+ *   'mode'    is not a one-shot at all — it swaps the driving policy until
+ *             something swaps it back. Sit is a mode, which is why an earlier
+ *             version of this file could sit the duck down and never stand it
+ *             up: it timed out and handed a SITTING duck back to the walking
+ *             policy, which has no idea what to do with one.
+ */
 export const INTENTS = [
   {
     key: 'q', id: 'kick_left', label: 'Kick left', policy: 'ball_kick_left.onnx',
-    seconds: 1.6, cmd: () => ({}),
+    kind: 'oneshot', steps: DEFAULTS.KICK_STEPS, lock: DEFAULTS.POST_KICK_LOCK_STEPS,
+    cmd: () => ({}),
   },
   {
     key: 'e', id: 'kick_right', label: 'Kick right', policy: 'ball_kick_right.onnx',
-    seconds: 1.6, cmd: () => ({}),
+    kind: 'oneshot', steps: DEFAULTS.KICK_STEPS, lock: DEFAULTS.POST_KICK_LOCK_STEPS,
+    cmd: () => ({}),
   },
   {
     key: 'f', id: 'ground_pick', label: 'Pick up', policy: 'alpha_ground_pick.onnx',
-    seconds: 3.0,
-    // This one is phase-driven: the command slots carry a clock, not a
-    // velocity — [cos, sin] of the progress through the move.
+    kind: 'phase',
+    steps: Math.round(DEFAULTS.GROUND_PICK_PERIOD_S * DEFAULTS.GROUND_PICK_END_PHASE * TICK),
+    period: DEFAULTS.GROUND_PICK_PERIOD_S,
+    // The command slots carry a clock, not a velocity: [cos, sin] of progress.
     cmd: u => ({ vx: Math.cos(2 * Math.PI * u), vy: Math.sin(2 * Math.PI * u) }),
   },
   {
     key: 'x', id: 'roulade', label: 'Forward roll', policy: 'roulade.onnx',
-    seconds: 2.6, cmd: () => ({}),
+    // Ends on a CONDITION, not a clock: it is done once it has tipped over and
+    // come back upright, and it is abandoned at 3 s if it never does.
+    kind: 'until', minSteps: DEFAULTS.ROLL_MIN_STEPS, steps: DEFAULTS.ROLL_EXPIRE_STEPS,
+    cmd: () => ({}),
   },
   {
     key: 'c', id: 'sit', label: 'Sit', policy: 'BEST_alpha_sitstand.onnx',
-    seconds: 2.4, cmd: () => ({ vx: 1 }), toggles: 'stand',
+    kind: 'mode', flag: 1, cmd: () => ({ vx: 1 }),
   },
   {
     key: 'v', id: 'stand', label: 'Stand up', policy: 'BEST_alpha_sitstand.onnx',
-    seconds: 2.4, cmd: () => ({ vx: 0 }),
+    // Also a mode: it holds the sitstand policy with the flag down until the
+    // duck is actually up, then hands back to walking. Handing back early is
+    // what left it in a heap.
+    kind: 'mode', flag: 0, handBack: true, cmd: () => ({ vx: 0 }),
   },
   {
     key: 'z', id: 'hold', label: 'Hold still', policy: 'BEST_alpha_stand.onnx',
-    seconds: 1.5, cmd: () => ({}),
+    kind: 'mode', flag: 0, cmd: () => ({}),
   },
 ];
 
-/** The authored one — an offset on the policy rather than a policy of its own. */
+/** Ours, not Pollen's: the searched head-plant step-up. */
 export const STEP_UP_KEY = 'g';
+
+/** Command magnitudes for a variant, so driving matches the runtime. */
+export function speeds(variant) {
+  return variant === 'rollers'
+    ? { fwd: DEFAULTS.RVEL_FWD, back: DEFAULTS.RVEL_BACK, ang: DEFAULTS.RVEL_ANG }
+    : { fwd: DEFAULTS.VEL_FWD,  back: DEFAULTS.VEL_BACK,  ang: DEFAULTS.VEL_ANG };
+}

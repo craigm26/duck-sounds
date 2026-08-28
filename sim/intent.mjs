@@ -107,13 +107,13 @@ export const DEFAULTS = {
 /** Search bounds. Angles in radians, times in seconds. */
 export const BOUNDS = {
   blend: [0.2, 1.4], approach: [0.0, 0.55],
-  tPlant: [0.2, 0.9], tPush: [0.2, 0.9], tSwing: [0.15, 0.7],
+  tPlant: [0.2, 1.4], tPush: [0.2, 1.4], tSwing: [0.15, 1.0],
   tTransfer: [0.2, 0.9], tRecover: [0.3, 1.0],
-  neckPlant: [0.2, 1.5], headPlant: [-0.2, 1.5],
-  neckPush: [0.2, 1.5], headPush: [-0.2, 1.5],
-  neckLift: [-0.4, 0.8], headLift: [-0.4, 0.8],
+  neckPlant: [-0.4, 1.5], headPlant: [-1.0, 1.5],
+  neckPush: [-0.4, 1.5], headPush: [-1.0, 1.5],
+  neckLift: [-1.2, 0.8], headLift: [-1.2, 0.8],
   leadHipPush: [-0.2, 0.9], leadKneePush: [-0.2, 1.0],
   trailHipPush: [-0.2, 0.9], trailKneePush: [-0.2, 1.0],
-  leadHipSwing: [0.0, 1.3], leadKneeSwing: [0.0, 1.3], leadAnkleSwing: [-0.9, 0.5],
+  leadHipSwing: [0.0, 1.6], leadKneeSwing: [0.0, 1.6], leadAnkleSwing: [-1.2, 0.8],
   leadHipPlant: [-0.2, 1.1], leadKneePlant: [-0.2, 1.1],
 };

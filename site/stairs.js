@@ -10,17 +10,17 @@
 // qpos is live.
 export const STAIR_COUNT = 14;
 /** Half-depth of a step block, metres. Runs longer than 2x this leave gaps. */
-export const STEP_HALF_DEPTH = 0.06;
+export const STEP_HALF_DEPTH = 0.07;
 /**
- * Half-height of a step block.
+ * Half-height of a step block: a thin tread, not a slab.
  *
- * Small on purpose. They were 0.30 — tall enough to be solid all the way to the
- * floor — which is invisible in physics but not on screen: rendered, fourteen
- * 60 cm slabs swallowed the room and buried the duck. They can be thin because
- * steps and the floor sit on different collision bits and never meet, so a
- * block hanging below floor level costs nothing.
+ * They were 0.30 — tall enough to be solid to the floor — which is invisible in
+ * physics but not on screen: rendered, fourteen 60 cm slabs swallowed the room.
+ * They can be thin because steps and the floor sit on different collision bits
+ * and never meet, so a tread floating above the floor costs nothing and reads
+ * as a step marker rather than a wall.
  */
-export const STEP_HALF_HEIGHT = 0.025;
+export const STEP_HALF_HEIGHT = 0.006;
 
 /**
  * qpos AND dof addresses for each step's [x, z] joints, looked up once.

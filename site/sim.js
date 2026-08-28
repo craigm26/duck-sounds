@@ -10,7 +10,7 @@ import { makeLoop } from './duckloop.mjs';
 import { createRenderer } from './render.js';
 import { findStairJoints, layoutStairs, clearStairs, STAIR_COUNT } from './stairs.js';
 import { buildTrack, poseAt } from './intent.mjs';
-import { INTENTS, STEP_UP_KEY } from './intents.js';
+import { INTENTS, STEP_UP_KEY, DEFAULTS, speeds } from './intents.js';
 import { isTouch, makeStick } from './touch.js';
 import { makePad, ACTIONS } from './gamepad.js';
 import { xrSupport, startXR } from './xr.js';
@@ -21,9 +21,9 @@ import { xrSupport, startXR } from './xr.js';
 // never up front — most visitors never touch it.
 const VARIANTS = {
   legs:    { mjb: 'scene.mjb',         visual: 'duck-visual.bin',
-             drive: 'alpha_walking.onnx', speed: 0.45, note: 'walking' },
+             drive: 'alpha_walking.onnx', note: 'walking' },
   rollers: { mjb: 'scene-rollers.mjb', visual: 'duck-visual-rollers.bin',
-             drive: 'BEST_roller.onnx',   speed: 0.45, note: 'skating, ~0.59 m/s' },
+             drive: 'BEST_roller.onnx',   note: 'skating' },
 };
 
 // Absolute, not relative: onnxruntime resolves wasmPaths against its OWN module
@@ -47,9 +47,15 @@ let manual = null;   // 14 hand-set targets, or null while the policy drives
 let intent = null;   // { params, track, t0 } while the step-up move is playing
 let stepupParams = null;
 let variant = 'legs';
-let driveSpeed = 0.45;
+let driveSpeed = speeds('legs');
 let switching = false;
 let skill = null;           // { intent, session, t0 } while a skill holds the robot
+let lockUntil = 0;          // post-kick input lock, as the runtime has it
+// A MODE is the policy currently driving — sit, stand, hold. It is not an
+// exclusive hold: you can always ask for something else, and that is the whole
+// difference between it and a one-shot. Conflating the two meant a sit (which
+// by design never ends) held the robot forever and refused to stand up again.
+let mode = null;
 const skillSessions = new Map();   // policies are fetched on first use, not up front
 
 function reset() {
@@ -59,7 +65,7 @@ function reset() {
   applyStairs();
   mj.mj_forward(model, data);
   lastAction = new Array(14).fill(0); previous = null; ticks = 0;
-  skill = null; intent = null;
+  skill = null; intent = null; mode = null; lockUntil = 0;
 }
 
 function applyStairs() {
@@ -84,13 +90,45 @@ async function tick() {
   } else if (skill) {
     // A skill IS the policy while it runs — a different trained network on the
     // same 61-in/14-out contract, not a modifier on the walker.
-    const u = (ticks - skill.t0) / (skill.intent.seconds * C.tickHz);
+    const it = skill.intent;
+    const elapsed = ticks - skill.t0;
+    // A phase intent feeds a clock into the command slots, over the policy's
+    // own period rather than over however long we happen to run it.
+    const u = it.kind === 'phase'
+      ? (elapsed / C.tickHz) / it.period
+      : (it.steps ? elapsed / it.steps : 0);
     const obs = buildObs(gyro, projectedGravity(q), jpos, jvel, lastAction,
-                         command(skill.intent.cmd(Math.min(u, 1))));
+                         command(it.cmd(u)));
     const out = await skill.session.run({ [inputName]: new ort.Tensor('float32', obs, [1, 61]) });
     lastAction = Array.from(out[session.outputNames[0]].data);
     for (let k = 0; k < 14; k++) data.ctrl[k] = HOME[k] + lastAction[k];
-    if (u >= 1) { skill = null; paintKeys(); }
+
+    const up = projectedGravity(q)[2] < -0.85;
+    let done = false;
+    if (it.kind === 'until') {
+      if (!up) skill.tipped = true;
+      done = (skill.tipped && up && elapsed >= it.minSteps) || elapsed >= it.steps;
+    } else {
+      done = elapsed >= it.steps;
+    }
+    if (done) {
+      lockUntil = ticks + (it.lock || 0);
+      skill = null;
+      paintKeys();
+    }
+  } else if (mode) {
+    const it = mode.intent;
+    const elapsed = ticks - mode.t0;
+    const obs = buildObs(gyro, projectedGravity(q), jpos, jvel, lastAction, command(it.cmd(0)));
+    const out = await mode.session.run({ [inputName]: new ort.Tensor('float32', obs, [1, 61]) });
+    lastAction = Array.from(out[session.outputNames[0]].data);
+    for (let k = 0; k < 14; k++) data.ctrl[k] = HOME[k] + lastAction[k];
+    // "Stand up" hands back to walking once the duck is actually up. A sit
+    // holds until something else is asked for.
+    if (it.handBack) {
+      const up = projectedGravity(q)[2] < -0.85;
+      if (up && data.qpos[DUCK.freeQpos + 2] > 0.10 && elapsed > 40) { mode = null; paintKeys(); }
+    }
   } else if (intent) {
     // The intent is an OFFSET on the policy, never a replacement. Replacing it
     // collapses the duck: with kp 0.55 the servos cannot hold a pose, so
@@ -164,15 +202,17 @@ function readControls() {
   // A connected pad wins over the thumbstick, which wins over the keyboard —
   // whichever the person actually touched last is the one they meant.
   if (padCmd && (Math.abs(padCmd.vx) > 0.001 || Math.abs(padCmd.vyaw) > 0.001)) {
-    cmdState.vx = padCmd.vx * driveSpeed;
-    cmdState.vyaw = padCmd.vyaw * 1.0;
+    cmdState.vx = padCmd.vx > 0 ? padCmd.vx * driveSpeed.fwd : padCmd.vx * -driveSpeed.back;
+    cmdState.vyaw = padCmd.vyaw * driveSpeed.ang;
     return;
   }
   if (stickCmd) { cmdState.vx = stickCmd.vx; cmdState.vyaw = stickCmd.vyaw; return; }
   const fwd = (keys.has('ArrowUp') || keys.has('w') ? 1 : 0) - (keys.has('ArrowDown') || keys.has('s') ? 1 : 0);
   const turn = (keys.has('ArrowLeft') || keys.has('a') ? 1 : 0) - (keys.has('ArrowRight') || keys.has('d') ? 1 : 0);
-  cmdState.vx = fwd * driveSpeed;
-  cmdState.vyaw = turn * 1.0;
+  // Forward and back are NOT symmetric in the runtime: 0.25 forward against
+  // 0.2 back on legs, 0.6 against 0.5 on skates.
+  cmdState.vx = fwd > 0 ? driveSpeed.fwd : fwd < 0 ? driveSpeed.back : 0;
+  cmdState.vyaw = turn * driveSpeed.ang;
 }
 for (const el of document.querySelectorAll('[data-key]')) {
   const k = el.dataset.key;
@@ -338,11 +378,12 @@ modeEl.addEventListener('change', () => {
 const keyRow = document.getElementById('keys');
 const keyButtons = new Map();
 
-function busy() { return skill !== null || intent !== null; }
+// Only ONE-SHOTS are exclusive. A mode can always be replaced.
+function busy() { return skill !== null || intent !== null || ticks < lockUntil; }
 
 function paintKeys() {
   for (const [id, el] of keyButtons) {
-    const active = (skill && skill.intent.id === id) || (intent && id === 'step_up');
+    const active = (skill && skill.intent.id === id) || (mode && mode.intent.id === id) || (intent && id === 'step_up');
     el.classList.toggle('on', !!active);
     el.disabled = busy() && !active;
   }
@@ -351,8 +392,16 @@ function paintKeys() {
 async function fire(item) {
   // One-shot and exclusive, as robotd treats them: a skill arriving while
   // another holds the robot is refused, not blended into it.
-  if (busy()) return;
+  if (busy() && item.kind !== 'mode') return;
   manual = null; modeEl.value = 'policy';
+  if (item.kind === 'mode') {
+    // Modes replace each other freely and do not take the exclusive hold.
+    let s = skillSessions.get(item.policy);
+    if (!s) { s = await ort.InferenceSession.create('./' + item.policy); skillSessions.set(item.policy, s); }
+    mode = { intent: item, session: s, t0: ticks };
+    paintKeys();
+    return;
+  }
   if (item.id === 'step_up') {
     if (!stepupParams) return;
     intent = { params: stepupParams, track: buildTrack(stepupParams, HOME), t0: ticks };
@@ -443,7 +492,8 @@ function buildTouch() {
     const push = Math.hypot(x, y);
     stickCmd = push < 0.12
       ? { vx: 0, vyaw: 0 }
-      : { vx: -y * driveSpeed, vyaw: -x * 1.0 };
+      : { vx: -y > 0 ? -y * driveSpeed.fwd : -y * -driveSpeed.back,
+          vyaw: -x * driveSpeed.ang };
     window.__stick = stickCmd;
   });
   const all = [...INTENTS, { key: STEP_UP_KEY, id: 'step_up', label: 'Step up' }];
@@ -519,10 +569,10 @@ async function loadVariant(name) {
   renderer = await createRenderer(cv, './' + v.visual);
   session = await ort.InferenceSession.create('./' + v.drive);
   inputName = session.inputNames[0];
-  driveSpeed = v.speed;
+  driveSpeed = speeds(name);
   variant = name;
   skillSessions.clear();
-  skill = null; intent = null; manual = null;
+  skill = null; intent = null; mode = null; lockUntil = 0; manual = null;
   reset();
   statusEl.textContent = '';
   switching = false;

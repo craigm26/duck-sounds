@@ -86,106 +86,108 @@
     <body name="step0" pos="0 0 0">
       <joint name="step0_x" type="slide" axis="1 0 0" limited="false" damping="0" armature="0" frictionloss="0"/>
       <joint name="step0_z" type="slide" axis="0 0 1" limited="false" damping="0" armature="0" frictionloss="0"/>
-      <geom name="step0_geom" type="box" size="0.06 0.16 0.025" pos="0 0 0"
+      <geom name="step0_geom" type="box" size="0.07 0.17 0.006" pos="0 0 0"
             contype="4" conaffinity="4" condim="3" friction="1.0 0.02 0.001"
             rgba="0.62 0.65 0.61 1" mass="200"/>
     </body>
     <body name="step1" pos="0 0 0">
       <joint name="step1_x" type="slide" axis="1 0 0" limited="false" damping="0" armature="0" frictionloss="0"/>
       <joint name="step1_z" type="slide" axis="0 0 1" limited="false" damping="0" armature="0" frictionloss="0"/>
-      <geom name="step1_geom" type="box" size="0.06 0.16 0.025" pos="0 0 0"
+      <geom name="step1_geom" type="box" size="0.07 0.17 0.006" pos="0 0 0"
             contype="4" conaffinity="4" condim="3" friction="1.0 0.02 0.001"
             rgba="0.62 0.65 0.61 1" mass="200"/>
     </body>
     <body name="step2" pos="0 0 0">
       <joint name="step2_x" type="slide" axis="1 0 0" limited="false" damping="0" armature="0" frictionloss="0"/>
       <joint name="step2_z" type="slide" axis="0 0 1" limited="false" damping="0" armature="0" frictionloss="0"/>
-      <geom name="step2_geom" type="box" size="0.06 0.16 0.025" pos="0 0 0"
+      <geom name="step2_geom" type="box" size="0.07 0.17 0.006" pos="0 0 0"
             contype="4" conaffinity="4" condim="3" friction="1.0 0.02 0.001"
             rgba="0.62 0.65 0.61 1" mass="200"/>
     </body>
     <body name="step3" pos="0 0 0">
       <joint name="step3_x" type="slide" axis="1 0 0" limited="false" damping="0" armature="0" frictionloss="0"/>
       <joint name="step3_z" type="slide" axis="0 0 1" limited="false" damping="0" armature="0" frictionloss="0"/>
-      <geom name="step3_geom" type="box" size="0.06 0.16 0.025" pos="0 0 0"
+      <geom name="step3_geom" type="box" size="0.07 0.17 0.006" pos="0 0 0"
             contype="4" conaffinity="4" condim="3" friction="1.0 0.02 0.001"
             rgba="0.62 0.65 0.61 1" mass="200"/>
     </body>
     <body name="step4" pos="0 0 0">
       <joint name="step4_x" type="slide" axis="1 0 0" limited="false" damping="0" armature="0" frictionloss="0"/>
       <joint name="step4_z" type="slide" axis="0 0 1" limited="false" damping="0" armature="0" frictionloss="0"/>
-      <geom name="step4_geom" type="box" size="0.06 0.16 0.025" pos="0 0 0"
+      <geom name="step4_geom" type="box" size="0.07 0.17 0.006" pos="0 0 0"
             contype="4" conaffinity="4" condim="3" friction="1.0 0.02 0.001"
             rgba="0.62 0.65 0.61 1" mass="200"/>
     </body>
     <body name="step5" pos="0 0 0">
       <joint name="step5_x" type="slide" axis="1 0 0" limited="false" damping="0" armature="0" frictionloss="0"/>
       <joint name="step5_z" type="slide" axis="0 0 1" limited="false" damping="0" armature="0" frictionloss="0"/>
-      <geom name="step5_geom" type="box" size="0.06 0.16 0.025" pos="0 0 0"
+      <geom name="step5_geom" type="box" size="0.07 0.17 0.006" pos="0 0 0"
             contype="4" conaffinity="4" condim="3" friction="1.0 0.02 0.001"
             rgba="0.62 0.65 0.61 1" mass="200"/>
     </body>
     <body name="step6" pos="0 0 0">
       <joint name="step6_x" type="slide" axis="1 0 0" limited="false" damping="0" armature="0" frictionloss="0"/>
       <joint name="step6_z" type="slide" axis="0 0 1" limited="false" damping="0" armature="0" frictionloss="0"/>
-      <geom name="step6_geom" type="box" size="0.06 0.16 0.025" pos="0 0 0"
+      <geom name="step6_geom" type="box" size="0.07 0.17 0.006" pos="0 0 0"
             contype="4" conaffinity="4" condim="3" friction="1.0 0.02 0.001"
             rgba="0.62 0.65 0.61 1" mass="200"/>
     </body>
     <body name="step7" pos="0 0 0">
       <joint name="step7_x" type="slide" axis="1 0 0" limited="false" damping="0" armature="0" frictionloss="0"/>
       <joint name="step7_z" type="slide" axis="0 0 1" limited="false" damping="0" armature="0" frictionloss="0"/>
-      <geom name="step7_geom" type="box" size="0.06 0.16 0.025" pos="0 0 0"
+      <geom name="step7_geom" type="box" size="0.07 0.17 0.006" pos="0 0 0"
             contype="4" conaffinity="4" condim="3" friction="1.0 0.02 0.001"
             rgba="0.62 0.65 0.61 1" mass="200"/>
     </body>
     <body name="step8" pos="0 0 0">
       <joint name="step8_x" type="slide" axis="1 0 0" limited="false" damping="0" armature="0" frictionloss="0"/>
       <joint name="step8_z" type="slide" axis="0 0 1" limited="false" damping="0" armature="0" frictionloss="0"/>
-      <geom name="step8_geom" type="box" size="0.06 0.16 0.025" pos="0 0 0"
+      <geom name="step8_geom" type="box" size="0.07 0.17 0.006" pos="0 0 0"
             contype="4" conaffinity="4" condim="3" friction="1.0 0.02 0.001"
             rgba="0.62 0.65 0.61 1" mass="200"/>
     </body>
     <body name="step9" pos="0 0 0">
       <joint name="step9_x" type="slide" axis="1 0 0" limited="false" damping="0" armature="0" frictionloss="0"/>
       <joint name="step9_z" type="slide" axis="0 0 1" limited="false" damping="0" armature="0" frictionloss="0"/>
-      <geom name="step9_geom" type="box" size="0.06 0.16 0.025" pos="0 0 0"
+      <geom name="step9_geom" type="box" size="0.07 0.17 0.006" pos="0 0 0"
             contype="4" conaffinity="4" condim="3" friction="1.0 0.02 0.001"
             rgba="0.62 0.65 0.61 1" mass="200"/>
     </body>
     <body name="step10" pos="0 0 0">
       <joint name="step10_x" type="slide" axis="1 0 0" limited="false" damping="0" armature="0" frictionloss="0"/>
       <joint name="step10_z" type="slide" axis="0 0 1" limited="false" damping="0" armature="0" frictionloss="0"/>
-      <geom name="step10_geom" type="box" size="0.06 0.16 0.025" pos="0 0 0"
+      <geom name="step10_geom" type="box" size="0.07 0.17 0.006" pos="0 0 0"
             contype="4" conaffinity="4" condim="3" friction="1.0 0.02 0.001"
             rgba="0.62 0.65 0.61 1" mass="200"/>
     </body>
     <body name="step11" pos="0 0 0">
       <joint name="step11_x" type="slide" axis="1 0 0" limited="false" damping="0" armature="0" frictionloss="0"/>
       <joint name="step11_z" type="slide" axis="0 0 1" limited="false" damping="0" armature="0" frictionloss="0"/>
-      <geom name="step11_geom" type="box" size="0.06 0.16 0.025" pos="0 0 0"
+      <geom name="step11_geom" type="box" size="0.07 0.17 0.006" pos="0 0 0"
             contype="4" conaffinity="4" condim="3" friction="1.0 0.02 0.001"
             rgba="0.62 0.65 0.61 1" mass="200"/>
     </body>
     <body name="step12" pos="0 0 0">
       <joint name="step12_x" type="slide" axis="1 0 0" limited="false" damping="0" armature="0" frictionloss="0"/>
       <joint name="step12_z" type="slide" axis="0 0 1" limited="false" damping="0" armature="0" frictionloss="0"/>
-      <geom name="step12_geom" type="box" size="0.06 0.16 0.025" pos="0 0 0"
+      <geom name="step12_geom" type="box" size="0.07 0.17 0.006" pos="0 0 0"
             contype="4" conaffinity="4" condim="3" friction="1.0 0.02 0.001"
             rgba="0.62 0.65 0.61 1" mass="200"/>
     </body>
     <body name="step13" pos="0 0 0">
       <joint name="step13_x" type="slide" axis="1 0 0" limited="false" damping="0" armature="0" frictionloss="0"/>
       <joint name="step13_z" type="slide" axis="0 0 1" limited="false" damping="0" armature="0" frictionloss="0"/>
-      <geom name="step13_geom" type="box" size="0.06 0.16 0.025" pos="0 0 0"
+      <geom name="step13_geom" type="box" size="0.07 0.17 0.006" pos="0 0 0"
             contype="4" conaffinity="4" condim="3" friction="1.0 0.02 0.001"
             rgba="0.62 0.65 0.61 1" mass="200"/>
     </body>
-    <body name="ball" pos="0.55 0.10 0.036">
+    <body name="ball" pos="0.55 0.10 0.05">
       <freejoint name="ball_free"/>
-      <geom name="ball_geom" type="sphere" size="0.035" mass="0.045"
-            contype="1" conaffinity="5" condim="4" friction="0.7 0.02 0.002"
-            rgba="0.96 0.96 0.94 1"/>
+      <!-- Pollen's own ball: BALL_RADIUS 0.05, mass 0.03, and condim 6 because
+           with the default condim 3 a rolling ball never decelerates. -->
+      <geom name="ball_geom" type="sphere" size="0.05" mass="0.03"
+            contype="1" conaffinity="5" condim="6" friction="0.4 0.01 0.003"
+            solref="0.03 0.4" rgba="0.96 0.96 0.94 1"/>
     </body>
     <body name="block_a" pos="0.30 0.40 0.021">
       <freejoint name="block_a_free"/>

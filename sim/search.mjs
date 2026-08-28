@@ -119,7 +119,13 @@ function jitter(p, scale) {
  * costs about 215 policy inferences, so the number of evaluations per candidate
  * is what decides whether a search finishes at all.
  */
-const LADDER = [0.006, 0.010, 0.014, 0.018, 0.022, 0.026, 0.030, 0.035];
+// Up to a real stair riser. 7 inches is 178 mm; the duck can lift a sole
+// 188 mm, so the target is inside its kinematic reach and the question is
+// whether it can do it dynamically.
+// Start low enough that a promising candidate is not scored zero for missing
+// the first rung — the previous ladder began at 20 mm and threw away everything
+// that could only manage 15.
+const LADDER = [0.010, 0.018, 0.026, 0.035, 0.045, 0.060, 0.080, 0.105, 0.135, 0.178];
 async function maxHeight(p) {
   let best = 0;
   for (const h of LADDER) {
@@ -154,9 +160,9 @@ while (evals < BUDGET) {
   if (h > bestH) {
     bestH = h; best = cand;
     console.log(`  new best ${mm(h)} mm  (${evals} evaluations, ${((Date.now()-t0)/1000).toFixed(0)}s)`);
-    fs.writeFileSync('intent-stepup.json', JSON.stringify({ maxHeightMm: +mm(bestH), params: best }, null, 2));
+    fs.writeFileSync('intent-stepup-tall.json', JSON.stringify({ maxHeightMm: +mm(bestH), params: best }, null, 2));
   }
 }
 console.log(`SEARCH best ${mm(bestH)} mm after ${evals} evaluations in ${((Date.now()-t0)/1000).toFixed(0)}s`);
-fs.writeFileSync('intent-stepup.json', JSON.stringify({ maxHeightMm: +mm(bestH), params: best }, null, 2));
+fs.writeFileSync('intent-stepup-tall.json', JSON.stringify({ maxHeightMm: +mm(bestH), params: best }, null, 2));
 console.log('WROTE intent-stepup.json');

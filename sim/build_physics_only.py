@@ -55,7 +55,7 @@ steps = "".join(
     <body name="step{i}" pos="0 0 0">
       <joint name="step{i}_x" type="slide" axis="1 0 0" limited="false" damping="0" armature="0" frictionloss="0"/>
       <joint name="step{i}_z" type="slide" axis="0 0 1" limited="false" damping="0" armature="0" frictionloss="0"/>
-      <geom name="step{i}_geom" type="box" size="0.06 0.16 0.025" pos="0 0 0"
+      <geom name="step{i}_geom" type="box" size="0.07 0.17 0.006" pos="0 0 0"
             contype="4" conaffinity="4" condim="3" friction="1.0 0.02 0.001"
             rgba="0.62 0.65 0.61 1" mass="200"/>
     </body>'''
@@ -66,11 +66,13 @@ steps = "".join(
 # primitive, so a cone is a short capsule — close enough at this scale and it
 # rolls the way a skittle does.
 PROPS = """
-    <body name="ball" pos="0.55 0.10 0.036">
+    <body name="ball" pos="0.55 0.10 0.05">
       <freejoint name="ball_free"/>
-      <geom name="ball_geom" type="sphere" size="0.035" mass="0.045"
-            contype="1" conaffinity="5" condim="4" friction="0.7 0.02 0.002"
-            rgba="0.96 0.96 0.94 1"/>
+      <!-- Pollen's own ball: BALL_RADIUS 0.05, mass 0.03, and condim 6 because
+           with the default condim 3 a rolling ball never decelerates. -->
+      <geom name="ball_geom" type="sphere" size="0.05" mass="0.03"
+            contype="1" conaffinity="5" condim="6" friction="0.4 0.01 0.003"
+            solref="0.03 0.4" rgba="0.96 0.96 0.94 1"/>
     </body>
     <body name="block_a" pos="0.30 0.40 0.021">
       <freejoint name="block_a_free"/>
