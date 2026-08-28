@@ -64,7 +64,12 @@ for (let g = 0; g < m.ngeom; g++) {
   if (m.geom_type[g] !== mj.mjtGeom.mjGEOM_MESH.value) continue;
   if (m.geom_contype[g] !== 0) continue;              // visual geoms only
   draws.push({
+    // Store the body's NAME, not its index. Indices are a property of the
+    // scene, and the scene grew stairs and props whose bodies sit ahead of the
+    // duck's — three separate bugs in this project have come from an index
+    // that was correct when it was written down.
     mesh: m.geom_dataid[g], body: m.geom_bodyid[g],
+    bodyName: m.body(m.geom_bodyid[g]).name,
     pos: [m.geom_pos[g*3], m.geom_pos[g*3+1], m.geom_pos[g*3+2]],
     quat: [m.geom_quat[g*4], m.geom_quat[g*4+1], m.geom_quat[g*4+2], m.geom_quat[g*4+3]],
     rgba: matRgba.get((meshNames[m.geom_dataid[g]] || '') + '_material')

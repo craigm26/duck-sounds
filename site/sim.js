@@ -27,6 +27,7 @@ const hud = document.getElementById('hud');
 const cmdState = { vx: 0, vy: 0, vyaw: 0 };
 let model, data, mj, session, inputName, C, HOME, buildObs, gaitTargets, projectedGravity, command, findDuckJoints;
 let lastAction = new Array(14).fill(0), previous = null, ticks = 0, GYRO = 0;
+let GEOM_TYPES = null;
 let STAIRS = null, DUCK = null, stairCfg = { count: 8, rise: 0, run: 0.09, start: 0.45 };
 let manual = null;   // 14 hand-set targets, or null while the policy drives
 let intent = null;   // { params, track, t0 } while the step-up move is playing
@@ -113,6 +114,8 @@ function draw() {
     bg: themeColour('--panel', [0.91, 0.92, 0.90]),
     grid: themeColour('--rule', [0.79, 0.82, 0.78]),
     root: DUCK.freeQpos,
+    model,
+    geomTypes: GEOM_TYPES,
   });
   const f = DUCK.freeQpos, fd = DUCK.freeDof;
   const speed = Math.hypot(data.qvel[fd], data.qvel[fd+1]);
@@ -304,6 +307,12 @@ document.getElementById('copyPose').addEventListener('click', async () => {
     for (let i = 0; i < model.nsensor; i++) {
       if (model.sensor(i).name === 'imu_ang_vel') GYRO = model.sensor(i).adr;
     }
+    // MuJoCo's geom type enum, read from the module rather than hardcoded.
+    GEOM_TYPES = {
+      plane: mj.mjtGeom.mjGEOM_PLANE.value, sphere: mj.mjtGeom.mjGEOM_SPHERE.value,
+      capsule: mj.mjtGeom.mjGEOM_CAPSULE.value, box: mj.mjtGeom.mjGEOM_BOX.value,
+      mesh: mj.mjtGeom.mjGEOM_MESH.value,
+    };
     DUCK = findDuckJoints(model);
     STAIRS = findStairJoints(model);
 

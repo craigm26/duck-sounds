@@ -99,6 +99,37 @@ function compile(gl, vs, fs) {
   return p;
 }
 
+/** A unit cube: 12 triangles, positions and flat normals. */
+function unitBox() {
+  const f = [
+    [[ 1,0,0],[1,-1,-1],[1,1,-1],[1,1,1],[1,-1,1]],
+    [[-1,0,0],[-1,-1,-1],[-1,-1,1],[-1,1,1],[-1,1,-1]],
+    [[0, 1,0],[-1,1,-1],[-1,1,1],[1,1,1],[1,1,-1]],
+    [[0,-1,0],[-1,-1,-1],[1,-1,-1],[1,-1,1],[-1,-1,1]],
+    [[0,0, 1],[-1,-1,1],[1,-1,1],[1,1,1],[-1,1,1]],
+    [[0,0,-1],[-1,-1,-1],[-1,1,-1],[1,1,-1],[1,-1,-1]],
+  ];
+  const pos = [], nrm = [];
+  for (const [n, a, b, c, d] of f) {
+    for (const v of [a, b, c, a, c, d]) { pos.push(...v); nrm.push(...n); }
+  }
+  return { pos, nrm };
+}
+
+/** A unit sphere by latitude/longitude. Coarse on purpose — it is a prop. */
+function unitSphere(seg = 16, rings = 12) {
+  const pos = [], nrm = [];
+  const at = (i, j) => {
+    const t = Math.PI * j / rings, p = 2 * Math.PI * i / seg;
+    return [Math.sin(t) * Math.cos(p), Math.sin(t) * Math.sin(p), Math.cos(t)];
+  };
+  for (let j = 0; j < rings; j++) for (let i = 0; i < seg; i++) {
+    const a = at(i, j), b = at(i + 1, j), c = at(i + 1, j + 1), d = at(i, j + 1);
+    for (const v of [a, b, c, a, c, d]) { pos.push(...v); nrm.push(...v); }
+  }
+  return { pos, nrm };
+}
+
 export async function createRenderer(canvas, url) {
   const gl = canvas.getContext('webgl', { antialias: true, alpha: true });
   if (!gl) throw new Error('this browser has no WebGL');
@@ -141,12 +172,43 @@ export async function createRenderer(canvas, url) {
   gl.bindBuffer(gl.ARRAY_BUFFER, gridBuf);
   gl.bufferData(gl.ARRAY_BUFFER, gridMoved, gl.DYNAMIC_DRAW);
 
-  const proj = mat4(), view = mat4(), modelM = mat4(), localM = mat4(), bodyM = mat4();
+  // Primitive geometry, so anything in the model that is not a mesh — the
+  // stairs, the ball, the blocks, the cones — gets drawn too. Before this the
+  // renderer only knew about the duck's 70 meshes, so the stairs were solid to
+  // walk on and completely invisible.
+  const box = unitBox(), sph = unitSphere();
+  const primPos = new Float32Array([...box.pos, ...sph.pos]);
+  const primNrm = new Float32Array([...box.nrm, ...sph.nrm]);
+  const BOX_AT = 0, BOX_N = box.pos.length / 3;
+  const SPH_AT = BOX_N, SPH_N = sph.pos.length / 3;
+  const pPosBuf = gl.createBuffer();
+  gl.bindBuffer(gl.ARRAY_BUFFER, pPosBuf); gl.bufferData(gl.ARRAY_BUFFER, primPos, gl.STATIC_DRAW);
+  const pNrmBuf = gl.createBuffer();
+  gl.bindBuffer(gl.ARRAY_BUFFER, pNrmBuf); gl.bufferData(gl.ARRAY_BUFFER, primNrm, gl.STATIC_DRAW);
+
+  const proj = mat4(), view = mat4(), modelM = mat4(), localM = mat4(), bodyM = mat4(), scaleM = mat4();
+
+  // Resolve every draw's body by NAME against the live model. The pack is
+  // exported from the robot-only scene; the scene the page runs has stairs and
+  // props whose bodies come first, so the indices in the pack are not the
+  // indices here.
+  let resolved = false;
+  function resolve(model) {
+    if (resolved || !model) return;
+    const byName = new Map();
+    for (let b = 0; b < model.nbody; b++) byName.set(model.body(b).name, b);
+    for (const d of meta.draws) {
+      const b = byName.get(d.bodyName);
+      if (b !== undefined) d.body = b;
+    }
+    resolved = true;
+  }
 
   return {
     triangles: meta.nface,
     draws: meta.draws.length,
     render(data, opts) {
+      resolve(opts.model);
       const w = canvas.clientWidth, h = canvas.clientHeight;
       const dpr = Math.min(devicePixelRatio || 1, 2);
       if (canvas.width !== Math.round(w * dpr)) { canvas.width = Math.round(w*dpr); canvas.height = Math.round(h*dpr); }
@@ -207,6 +269,41 @@ export async function createRenderer(canvas, url) {
         gl.uniform3f(loc.color, d.rgba[0], d.rgba[1], d.rgba[2]);
         const m = meta.meshes[d.mesh];
         gl.drawElements(gl.TRIANGLES, m.fn * 3, gl.UNSIGNED_INT, (m.f * 3) * 4);
+      }
+
+      // Everything in the model that is NOT a mesh: the stairs, the ball, the
+      // blocks, the cones. Before this pass the renderer only knew about the
+      // duck's own 70 meshes, so a staircase was solid to walk on and entirely
+      // invisible — which is exactly how it was reported.
+      if (opts.model && opts.geomTypes) {
+        const m = opts.model, T = opts.geomTypes;
+        gl.bindBuffer(gl.ARRAY_BUFFER, pPosBuf);
+        gl.vertexAttribPointer(aPos, 3, gl.FLOAT, false, 0, 0);
+        gl.bindBuffer(gl.ARRAY_BUFFER, pNrmBuf);
+        gl.vertexAttribPointer(aNrm, 3, gl.FLOAT, false, 0, 0);
+        for (let g = 0; g < m.ngeom; g++) {
+          const t = m.geom_type[g];
+          const isBox = t === T.box, isSphere = t === T.sphere, isCap = t === T.capsule;
+          if (!isBox && !isSphere && !isCap) continue;
+          const z = data.geom_xpos[g * 3 + 2];
+          if (z < -1) continue;                       // parked below the floor
+          const sx = m.geom_size[g*3], sy = m.geom_size[g*3+1], sz = m.geom_size[g*3+2];
+          // MuJoCo sizes: box is half-extents, sphere uses size[0], a capsule is
+          // radius plus half-length. A capsule is drawn as a stretched sphere —
+          // at prop scale the difference is not visible.
+          const hx = isBox ? sx : sx, hy = isBox ? sy : sx, hz = isBox ? sz : (isCap ? sx + sy : sx);
+          // Orientation from MuJoCo's own world matrix. geom_xmat is row-major
+          // 3x3; the shader wants column-major 4x4.
+          const M = data.geom_xmat, o = g * 9;
+          bodyM[0]=M[o]*hx;   bodyM[1]=M[o+3]*hx; bodyM[2]=M[o+6]*hx; bodyM[3]=0;
+          bodyM[4]=M[o+1]*hy; bodyM[5]=M[o+4]*hy; bodyM[6]=M[o+7]*hy; bodyM[7]=0;
+          bodyM[8]=M[o+2]*hz; bodyM[9]=M[o+5]*hz; bodyM[10]=M[o+8]*hz; bodyM[11]=0;
+          bodyM[12]=data.geom_xpos[g*3]; bodyM[13]=data.geom_xpos[g*3+1]; bodyM[14]=z; bodyM[15]=1;
+          gl.uniformMatrix4fv(loc.model, false, bodyM);
+          gl.uniform3f(loc.color, m.geom_rgba[g*4], m.geom_rgba[g*4+1], m.geom_rgba[g*4+2]);
+          if (isBox) gl.drawArrays(gl.TRIANGLES, BOX_AT, BOX_N);
+          else gl.drawArrays(gl.TRIANGLES, SPH_AT, SPH_N);
+        }
       }
     },
   };

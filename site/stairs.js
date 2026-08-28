@@ -11,8 +11,16 @@
 export const STAIR_COUNT = 14;
 /** Half-depth of a step block, metres. Runs longer than 2x this leave gaps. */
 export const STEP_HALF_DEPTH = 0.06;
-/** Half-height. The blocks are deep so a step is solid to the ground. */
-export const STEP_HALF_HEIGHT = 0.30;
+/**
+ * Half-height of a step block.
+ *
+ * Small on purpose. They were 0.30 — tall enough to be solid all the way to the
+ * floor — which is invisible in physics but not on screen: rendered, fourteen
+ * 60 cm slabs swallowed the room and buried the duck. They can be thin because
+ * steps and the floor sit on different collision bits and never meet, so a
+ * block hanging below floor level costs nothing.
+ */
+export const STEP_HALF_HEIGHT = 0.025;
 
 /**
  * qpos AND dof addresses for each step's [x, z] joints, looked up once.
@@ -40,9 +48,15 @@ export function findStairJoints(model) {
 /** Hold every step still. Call after any qpos write, and every tick. */
 function pin(data, a) { data.qvel[a.dx] = 0; data.qvel[a.dz] = 0; }
 
-/** Park every step far below the floor: a flat room. */
+/**
+ * Park every step far below the floor: a flat room.
+ *
+ * Spread along x as well as dropped, because parking them all at the same point
+ * stacks fourteen boxes inside each other — they are on a shared collision bit,
+ * so that alone produced 366 contacts a tick and cost real frame time.
+ */
 export function clearStairs(data, addr) {
-  for (const a of addr) { data.qpos[a.x] = 0; data.qpos[a.z] = -5; pin(data, a); }
+  addr.forEach((a, i) => { data.qpos[a.x] = i * 1.5; data.qpos[a.z] = -5; pin(data, a); });
 }
 
 /**
@@ -55,7 +69,7 @@ export function layoutStairs(data, addr, { count, rise, run, start }) {
   const n = Math.max(0, Math.min(count, STAIR_COUNT));
   for (let i = 0; i < STAIR_COUNT; i++) {
     const a = addr[i];
-    if (i >= n) { data.qpos[a.x] = 0; data.qpos[a.z] = -5; pin(data, a); continue; }
+    if (i >= n) { data.qpos[a.x] = i * 1.5; data.qpos[a.z] = -5; pin(data, a); continue; }
     const top = (i + 1) * rise;
     data.qpos[a.x] = start + i * run + STEP_HALF_DEPTH;
     data.qpos[a.z] = top - STEP_HALF_HEIGHT;   // block top lands on `top`

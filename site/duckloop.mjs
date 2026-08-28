@@ -67,11 +67,19 @@ export function makeLoop(C) {
       }
       if (!found) throw new Error('joint missing from the model: ' + name);
     }
-    // the trunk's free joint: 7 qpos (pos + quat), 6 dof
+    // The TRUNK's free joint — found by the body it belongs to, not by being
+    // the first free joint in the model. Adding a ball and some blocks put
+    // their free joints ahead of the duck's, so "first free joint" started
+    // returning the ball: the camera followed the ball, reset teleported the
+    // ball, and the duck was driven by a policy reading the ball's pose.
     let freeQpos = -1, freeDof = -1;
     for (let j = 0; j < model.njnt; j++) {
-      if (model.jnt_type[j] === 0) { freeQpos = model.jnt_qposadr[j]; freeDof = model.jnt_dofadr[j]; break; }
+      if (model.jnt_type[j] !== 0) continue;
+      if (model.body(model.jnt_bodyid[j]).name !== 'trunk_base') continue;
+      freeQpos = model.jnt_qposadr[j]; freeDof = model.jnt_dofadr[j];
+      break;
     }
+    if (freeQpos < 0) throw new Error('the trunk has no free joint');
     return { qpos, dof, freeQpos, freeDof };
   }
 
