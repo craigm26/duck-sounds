@@ -110,6 +110,7 @@
   .ctl label{font-family:var(--mono);font-size:.7rem;color:var(--muted)}
   .ctl output{font-family:var(--mono);font-size:.7rem;color:var(--ink);text-align:right}
   .ctl input[type=range]{width:100%;accent-color:var(--duck)}
+  .ctl select{font-family:var(--mono);font-size:.7rem;padding:.3rem .4rem;border:1px solid var(--rule);border-radius:3px;background:var(--panel);color:var(--ink)}
   .ctl-note{font-family:var(--mono);font-size:.66rem;color:var(--muted);margin:.2rem 0 0;text-align:center}
   .servos{max-width:26rem;margin:1rem auto 0;border:1px solid var(--rule);border-radius:3px;padding:.6rem .8rem;background:var(--panel)}
   .servos summary{font-family:var(--mono);font-size:.72rem;color:var(--muted);cursor:pointer}
@@ -176,6 +177,14 @@
   <div class="keys" id="keys"></div>
 
   <div class="controls">
+    <div class="ctl">
+      <label for="variant">Feet</label>
+      <select id="variant">
+        <option value="legs">legs</option>
+        <option value="rollers">skates</option>
+      </select>
+      <output id="variantOut">walking</output>
+    </div>
     <div class="ctl">
       <label for="rise">Step height</label>
       <input type="range" id="rise" min="0" max="20" step="1" value="0">

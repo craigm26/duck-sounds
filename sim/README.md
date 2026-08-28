@@ -158,3 +158,35 @@ node intentcheck.mjs   # press every key in a real browser, watch the HUD
 speed for a kick, and it sits the duck down before testing "stand up". The two
 kicks report no change through the HUD because they move the legs and not the
 trunk — `skills.mjs` measures them properly.
+
+## Two robots: legs and skates
+
+Pollen ship a roller variant — the same duck with four passive wheels bolted
+under its ankles — as a **different model**, not a different policy. Four extra
+bodies, four extra joints, five extra meshes, its own trained network.
+
+| | legs | skates |
+|---|---|---|
+| model | `scene.mjb` | `scene-rollers.mjb` |
+| geometry | `duck-visual.bin` (70 parts) | `duck-visual-rollers.bin` (76) |
+| drive policy | `alpha_walking.onnx` | `BEST_roller.onnx` |
+| measured speed | 0.23 m/s | **0.73 m/s** |
+
+Switching swaps all three together, because the mesh pack and the network are
+as specific to the model as the physics is. Everything for the skates is
+fetched on switch, never at load — most visitors never touch it, and it is
+8 MB.
+
+Measured on the roller model (`node rollertest.mjs`):
+
+```
+roller, stopped            0.075 m/s   upright
+roller, forward            0.593 m/s   upright
+roller, fast (cmd 0.8)     0.448 m/s   upright   <- slower than 0.45; that is the peak
+roller, turning            0.013 m/s   upright
+roller crouch              0.001 m/s   upright   <- a pose, not locomotion
+WALKING policy on wheels   0.213 m/s   upright   <- works, just badly
+```
+
+Nothing falls over in any of them. `node variantcheck.mjs` does the same switch
+in a real browser and checks the speed changes and changes back.

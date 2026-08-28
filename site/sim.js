@@ -13,6 +13,17 @@ import { buildTrack, poseAt } from './intent.mjs';
 import { INTENTS, STEP_UP_KEY } from './intents.js';
 import { isTouch, makeStick } from './touch.js';
 
+// The two robots. Skates are a DIFFERENT MODEL, not a different policy: four
+// extra bodies on passive wheel joints, so the physics, the geometry and the
+// drive network all have to change together. Everything is fetched on switch,
+// never up front — most visitors never touch it.
+const VARIANTS = {
+  legs:    { mjb: 'scene.mjb',         visual: 'duck-visual.bin',
+             drive: 'alpha_walking.onnx', speed: 0.45, note: 'walking' },
+  rollers: { mjb: 'scene-rollers.mjb', visual: 'duck-visual-rollers.bin',
+             drive: 'BEST_roller.onnx',   speed: 0.45, note: 'skating, ~0.59 m/s' },
+};
+
 // Absolute, not relative: onnxruntime resolves wasmPaths against its OWN module
 // URL, so './vendor/ort/' became /vendor/ort/vendor/ort/... and every backend
 // failed to load. Caught by the headless browser check, not by eye.
@@ -33,6 +44,9 @@ let STAIRS = null, DUCK = null, stairCfg = { count: 8, rise: 0, run: 0.09, start
 let manual = null;   // 14 hand-set targets, or null while the policy drives
 let intent = null;   // { params, track, t0 } while the step-up move is playing
 let stepupParams = null;
+let variant = 'legs';
+let driveSpeed = 0.45;
+let switching = false;
 let skill = null;           // { intent, session, t0 } while a skill holds the robot
 const skillSessions = new Map();   // policies are fetched on first use, not up front
 
@@ -143,7 +157,7 @@ function readControls() {
   if (stickCmd) { cmdState.vx = stickCmd.vx; cmdState.vyaw = stickCmd.vyaw; return; }
   const fwd = (keys.has('ArrowUp') || keys.has('w') ? 1 : 0) - (keys.has('ArrowDown') || keys.has('s') ? 1 : 0);
   const turn = (keys.has('ArrowLeft') || keys.has('a') ? 1 : 0) - (keys.has('ArrowRight') || keys.has('d') ? 1 : 0);
-  cmdState.vx = fwd * 0.45;
+  cmdState.vx = fwd * driveSpeed;
   cmdState.vyaw = turn * 1.0;
 }
 for (const el of document.querySelectorAll('[data-key]')) {
@@ -179,6 +193,23 @@ function readStairs() {
   if (data) applyStairs();
 }
 for (const el of [riseEl, countEl, runEl]) el.addEventListener('input', readStairs);
+
+const variantEl = document.getElementById('variant');
+const variantOut = document.getElementById('variantOut');
+variantEl.addEventListener('change', async () => {
+  if (switching) { variantEl.value = variant; return; }
+  variantEl.disabled = true;
+  try {
+    await loadVariant(variantEl.value);
+    variantOut.textContent = VARIANTS[variant].note;
+    readStairs();
+  } catch (err) {
+    statusEl.textContent = 'Could not load that variant: ' + (err.message || err);
+    variantEl.value = variant;
+  } finally {
+    variantEl.disabled = false;
+  }
+});
 
 // ── servos ────────────────────────────────────────────────────────────────
 const modeEl = document.getElementById('mode');
@@ -272,7 +303,7 @@ function buildTouch() {
     const push = Math.hypot(x, y);
     stickCmd = push < 0.12
       ? { vx: 0, vyaw: 0 }
-      : { vx: -y * 0.45, vyaw: -x * 1.0 };
+      : { vx: -y * driveSpeed, vyaw: -x * 1.0 };
     window.__stick = stickCmd;
   });
   const all = [...INTENTS, { key: STEP_UP_KEY, id: 'step_up', label: 'Step up' }];
@@ -310,45 +341,55 @@ document.getElementById('copyPose').addEventListener('click', async () => {
 });
 
 // ── boot ───────────────────────────────────────────────────────────────────
+/**
+ * Load a variant: its physics model, its geometry and its drive policy.
+ *
+ * All three move together — skates are four extra bodies on passive wheel
+ * joints, so the mesh pack and the network are as specific to the model as the
+ * .mjb is. Joints and bodies are re-resolved by name afterwards, because the
+ * two models do not agree on a single index.
+ */
+async function loadVariant(name) {
+  const v = VARIANTS[name];
+  switching = true;
+  statusEl.textContent = `loading the ${name === 'legs' ? 'robot' : 'skates'}\u2026`;
+
+  const mjbBuf = await (await fetch('./' + v.mjb)).arrayBuffer();
+  mj.FS.writeFile('/' + v.mjb, new Uint8Array(mjbBuf));
+  model = mj.MjModel.mj_loadBinary('/' + v.mjb, new mj.MjVFS());
+  data = new mj.MjData(model);
+
+  GEOM_TYPES = {
+    plane: mj.mjtGeom.mjGEOM_PLANE.value, sphere: mj.mjtGeom.mjGEOM_SPHERE.value,
+    capsule: mj.mjtGeom.mjGEOM_CAPSULE.value, box: mj.mjtGeom.mjGEOM_BOX.value,
+    mesh: mj.mjtGeom.mjGEOM_MESH.value,
+  };
+  GYRO = 0;
+  for (let i = 0; i < model.nsensor; i++) {
+    if (model.sensor(i).name === 'imu_ang_vel') GYRO = model.sensor(i).adr;
+  }
+  DUCK = findDuckJoints(model);
+  STAIRS = findStairJoints(model);
+
+  renderer = await createRenderer(cv, './' + v.visual);
+  session = await ort.InferenceSession.create('./' + v.drive);
+  inputName = session.inputNames[0];
+  driveSpeed = v.speed;
+  variant = name;
+  skillSessions.clear();
+  skill = null; intent = null; manual = null;
+  reset();
+  statusEl.textContent = '';
+  switching = false;
+}
+
 (async function start() {
   try {
     statusEl.textContent = 'loading physics…';
     C = await (await fetch('./duckkit-constants.json')).json();
     ({ HOME, buildObs, gaitTargets, projectedGravity, command, findDuckJoints } = makeLoop(C));
     mj = await loadMuJoCo();
-    statusEl.textContent = 'loading the robot…';
-    // A PRECOMPILED model, not XML. Compiling Pollen's meshed MJCF in the
-    // browser fails with "thread constructor failed": MuJoCo parallelises the
-    // convex-hull computation for mesh collision geoms, and the WASM build
-    // cannot spawn those workers here. Compiling once in Node and shipping the
-    // .mjb skips hull generation entirely — it also means no STLs to fetch.
-    const mjb = await (await fetch('./scene.mjb')).arrayBuffer();
-    mj.FS.writeFile('/scene.mjb', new Uint8Array(mjb));
-    model = mj.MjModel.mj_loadBinary('/scene.mjb', new mj.MjVFS());
-    data = new mj.MjData(model);
-    // NOT sensordata[0]: their sensor block opens with a 4-value framequat, so
-    // the angular-velocity sensor the runtime reads sits further along. Reading
-    // the first three floats was feeding the policy part of a quaternion.
-    for (let i = 0; i < model.nsensor; i++) {
-      if (model.sensor(i).name === 'imu_ang_vel') GYRO = model.sensor(i).adr;
-    }
-    // MuJoCo's geom type enum, read from the module rather than hardcoded.
-    GEOM_TYPES = {
-      plane: mj.mjtGeom.mjGEOM_PLANE.value, sphere: mj.mjtGeom.mjGEOM_SPHERE.value,
-      capsule: mj.mjtGeom.mjGEOM_CAPSULE.value, box: mj.mjtGeom.mjGEOM_BOX.value,
-      mesh: mj.mjtGeom.mjGEOM_MESH.value,
-    };
-    DUCK = findDuckJoints(model);
-    STAIRS = findStairJoints(model);
-
-    statusEl.textContent = 'loading the policy…';
-    session = await ort.InferenceSession.create('./alpha_walking.onnx');
-    inputName = session.inputNames[0];
-
-    statusEl.textContent = 'loading the robot\u2019s geometry\u2026';
-    renderer = await createRenderer(cv, './duck-visual.bin');
-    console.log('renderer:', renderer.draws, 'parts,', renderer.triangles, 'triangles');
-
+    await loadVariant('legs');
     try {
       stepupParams = (await (await fetch('./intent-stepup.json')).json()).params;
     } catch { /* the button simply does nothing without it */ }
@@ -365,13 +406,13 @@ document.getElementById('copyPose').addEventListener('click', async () => {
     async function loop(now) {
       acc += Math.min(now - last, 100); last = now;
       readControls();
-      if (!busy) {
+      if (!busy && !switching) {
         busy = true;
         let n = 0;
         while (acc >= stepMs && n < 4) { acc -= stepMs; await tick(); n++; }
         busy = false;
       }
-      draw();
+      if (!switching) draw();
       requestAnimationFrame(loop);
     }
     requestAnimationFrame(loop);
