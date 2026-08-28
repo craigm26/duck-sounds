@@ -65,6 +65,22 @@ steps = "".join(
 # shove them: a ball, some blocks, a couple of cones. MuJoCo has no cone
 # primitive, so a cone is a short capsule — close enough at this scale and it
 # rolls the way a skittle does.
+# Pollen's arena: ARENA_HALF 1.5 m, walls 0.25 m tall and 0.05 m thick. Faithful
+# to their scene, and it gives a vertical surface to push off — which is the
+# only way a flip has a chance on +-0.96 N.m servos.
+ARENA_HALF, WALL_H, WALL_T = 1.5, 0.25, 0.05
+WALLS = "".join(
+    f'''
+    <geom name="wall_{n}" type="box" size="{sx} {sy} {WALL_H/2}" pos="{px} {py} {WALL_H/2}"
+          contype="1" conaffinity="5" condim="3" friction="1.0 0.02 0.001"
+          rgba="0.30 0.33 0.30 1"/>'''
+    for n, sx, sy, px, py in [
+        ("n", ARENA_HALF + WALL_T, WALL_T,  0.0,  ARENA_HALF),
+        ("s", ARENA_HALF + WALL_T, WALL_T,  0.0, -ARENA_HALF),
+        ("e", WALL_T, ARENA_HALF + WALL_T,  ARENA_HALF, 0.0),
+        ("w", WALL_T, ARENA_HALF + WALL_T, -ARENA_HALF, 0.0),
+    ])
+
 PROPS = """
     <body name="ball" pos="0.55 0.10 0.05">
       <freejoint name="ball_free"/>
@@ -111,7 +127,7 @@ add = '''  <option timestep="0.005" gravity="0 0 -9.81" integrator="implicitfast
     <geom name="floor" type="plane" size="6 6 0.05" pos="0 0 0" rgba="0.16 0.18 0.16 1"
           contype="1" conaffinity="1" condim="3" friction="1.0 0.02 0.001" />%s%s
   </worldbody>
-''' % (steps, PROPS if __import__('os').environ.get('PROPS','1')=='1' else '')
+''' % (steps, WALLS + (PROPS if __import__('os').environ.get('PROPS','1')=='1' else ''))
 phys = phys.replace("<worldbody>", add + "  <worldbody>", 1)
 # The step blocks are tall and sit buried in the floor plane, which as a
 # collision pair generates enormous forces and destabilises the whole solve —

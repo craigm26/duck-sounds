@@ -10,7 +10,7 @@ import { makeLoop } from './duckloop.mjs';
 import { createRenderer } from './render.js';
 import { findStairJoints, layoutStairs, clearStairs, STAIR_COUNT } from './stairs.js';
 import { buildTrack, poseAt } from './intent.mjs';
-import { INTENTS, STEP_UP_KEY, BACK_ROLL_KEY, DEFAULTS, speeds } from './intents.js';
+import { INTENTS, STEP_UP_KEY, BACK_ROLL_KEY, LEVER_KEY, WALL_FLIP_KEY, DEFAULTS, speeds } from './intents.js';
 import { isTouch, makeStick } from './touch.js';
 import { makePad, ACTIONS } from './gamepad.js';
 import { xrSupport, startXR } from './xr.js';
@@ -47,6 +47,7 @@ let manual = null;   // 14 hand-set targets, or null while the policy drives
 let intent = null;   // { params, track, t0 } while the step-up move is playing
 let stepupParams = null;
 let backRoll = null;
+const tracks = {};   // shipped keyframe moves, by intent id
 let variant = 'legs';
 let driveSpeed = speeds('legs');
 let switching = false;
@@ -291,7 +292,8 @@ function loadSlots() {
   catch { return { ...SLOT_DEFAULT }; }
 }
 function buildSlots() {
-  const all = [...INTENTS, { id: 'step_up', label: 'Step up' }, { id: 'back_roll', label: 'Back roll' }];
+  const all = [...INTENTS, { id: 'step_up', label: 'Step up' }, { id: 'back_roll', label: 'Back roll' },
+    { id: 'lever_up', label: 'Lever up' }, { id: 'wall_flip', label: 'Wall flip' }];
   const slots = loadSlots();
   for (const name of ['A', 'B']) {
     const sel = document.getElementById('slot' + name);
@@ -388,7 +390,7 @@ function busy() { return skill !== null || intent !== null || ticks < lockUntil;
 function paintKeys() {
   for (const [id, el] of keyButtons) {
     const active = (skill && skill.intent.id === id) || (mode && mode.intent.id === id)
-      || (intent && (id === 'step_up' || id === 'back_roll'));
+      || (intent && (id === 'step_up' || tracks[id]));
     el.classList.toggle('on', !!active);
     el.disabled = busy() && !active;
   }
@@ -407,13 +409,16 @@ async function fire(item) {
     paintKeys();
     return;
   }
-  if (item.id === 'back_roll') {
-    if (!backRoll) return;
-    let s = skillSessions.get(backRoll.policy);
-    if (!s) { s = await ort.InferenceSession.create('./' + backRoll.policy); skillSessions.set(backRoll.policy, s); }
+  // Any shipped keyframe move: back roll, lever, wall flip. They are all the
+  // same machinery — an offset track played over a policy — and differ only in
+  // which policy, how hard, and what command to hold while it plays.
+  if (tracks[item.id]) {
+    const t = tracks[item.id];
+    let s = skillSessions.get(t.policy);
+    if (!s) { s = await ort.InferenceSession.create('./' + t.policy); skillSessions.set(t.policy, s); }
     mode = null;
-    intent = { track: backRoll.keyframes, blend: backRoll.blend, session: s, t0: ticks,
-               params: { approach: 0 }, tail: 1.2 };
+    intent = { track: t.keyframes, blend: t.blend, session: s, t0: ticks,
+               params: { approach: t.approach || 0 }, tail: 1.2 };
     paintKeys();
     return;
   }
@@ -511,7 +516,8 @@ function buildTouch() {
           vyaw: -x * driveSpeed.ang };
     window.__stick = stickCmd;
   });
-  const all = [...INTENTS, { key: STEP_UP_KEY, id: 'step_up', label: 'Step up' }, { key: BACK_ROLL_KEY, id: 'back_roll', label: 'Back roll' }];
+  const all = [...INTENTS, { key: STEP_UP_KEY, id: 'step_up', label: 'Step up' }, { key: BACK_ROLL_KEY, id: 'back_roll', label: 'Back roll' },
+    { key: LEVER_KEY, id: 'lever_up', label: 'Lever up' }, { key: WALL_FLIP_KEY, id: 'wall_flip', label: 'Wall flip' }];
   for (const el of document.querySelectorAll('.pad-btn')) {
     // Read the intent at PRESS time, not at wiring time, so re-assigning a
     // button takes effect without rebuilding the handler.
@@ -526,7 +532,9 @@ function buildTouch() {
 function buildKeys() {
   const all = [...INTENTS,
     { key: STEP_UP_KEY, id: 'step_up', label: 'Step up' },
-    { key: BACK_ROLL_KEY, id: 'back_roll', label: 'Back roll' }];
+    { key: BACK_ROLL_KEY, id: 'back_roll', label: 'Back roll' },
+    { key: LEVER_KEY, id: 'lever_up', label: 'Lever up' },
+    { key: WALL_FLIP_KEY, id: 'wall_flip', label: 'Wall flip' }];
   for (const item of all) {
     const b = document.createElement('button');
     b.innerHTML = `<kbd>${item.key.toUpperCase()}</kbd><span>${item.label}</span>`;
@@ -607,7 +615,11 @@ async function loadVariant(name) {
     } catch { /* the button simply does nothing without it */ }
     try {
       backRoll = await (await fetch('./intent-backroll.json')).json();
+      tracks.back_roll = backRoll;
     } catch { /* likewise */ }
+    for (const [id, file] of [['lever_up', 'intent-lever.json'], ['wall_flip', 'intent-wallflip.json']]) {
+      try { tracks[id] = await (await fetch('./' + file)).json(); } catch { /* optional */ }
+    }
     // AR, where the browser has it. The button stays hidden otherwise rather
     // than offering something that will fail — Safari has no WebXR at all,
     // which is why this project's iOS path is native.

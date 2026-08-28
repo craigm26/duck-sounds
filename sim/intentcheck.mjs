@@ -28,6 +28,8 @@ const CASES = [
   { key: 'x', label: 'Forward roll', probe: 'height', want: 'dips' },
   { key: 'g', label: 'Step up',      probe: 'height', want: 'dips' },
   { key: 'b', label: 'Back roll',    probe: 'height', want: 'dips' },
+  { key: 'h', label: 'Lever up',     probe: 'height', want: 'dips' },
+  { key: 't', label: 'Wall flip',    probe: 'height', want: 'dips' },
 ];
 for (const c of CASES) {
   await page.keyboard.press('r'); await wait(500);

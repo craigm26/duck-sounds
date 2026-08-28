@@ -181,6 +181,18 @@
             contype="4" conaffinity="4" condim="3" friction="1.0 0.02 0.001"
             rgba="0.62 0.65 0.61 1" mass="200"/>
     </body>
+    <geom name="wall_n" type="box" size="1.55 0.05 0.125" pos="0.0 1.5 0.125"
+          contype="1" conaffinity="5" condim="3" friction="1.0 0.02 0.001"
+          rgba="0.30 0.33 0.30 1"/>
+    <geom name="wall_s" type="box" size="1.55 0.05 0.125" pos="0.0 -1.5 0.125"
+          contype="1" conaffinity="5" condim="3" friction="1.0 0.02 0.001"
+          rgba="0.30 0.33 0.30 1"/>
+    <geom name="wall_e" type="box" size="0.05 1.55 0.125" pos="1.5 0.0 0.125"
+          contype="1" conaffinity="5" condim="3" friction="1.0 0.02 0.001"
+          rgba="0.30 0.33 0.30 1"/>
+    <geom name="wall_w" type="box" size="0.05 1.55 0.125" pos="-1.5 0.0 0.125"
+          contype="1" conaffinity="5" condim="3" friction="1.0 0.02 0.001"
+          rgba="0.30 0.33 0.30 1"/>
     <body name="ball" pos="0.55 0.10 0.05">
       <freejoint name="ball_free"/>
       <!-- Pollen's own ball: BALL_RADIUS 0.05, mass 0.03, and condim 6 because

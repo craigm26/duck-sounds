@@ -317,3 +317,49 @@ move exists, and hand-guessing did not find it.
 
 A flip is a different question and is not claimed. A roll can borrow the floor;
 a flip cannot.
+
+## Two ideas that worked
+
+### The head as a single finger
+
+The step-up unweights a leg so a foot can reach the tread, which caps it at the
+leg's own reach. **Levering does not care about leg reach**: the head plants on
+the tread as a pivot and the body rotates over it.
+
+```
+stepping onto the tread   26 mm   3/3
+levering over the head    40 mm   3/3   (fails 3/3 at 50 mm)
+```
+
+A 54% gain, and from a different mechanism rather than a better-tuned version of
+the same one. Ships on `H`.
+
+### A flip off a wall
+
+A roll can borrow the floor. A flip has to get its rotation from somewhere, and
+0.96 N&middot;m on a 737 g body is not much to spin with. A wall gives the feet
+something to push against that is **not underneath them**, which turns a weak leg
+extension into angular momentum rather than a hop.
+
+```
+179 deg peak tilt, passes through inverted exactly once, lands upright   5/5
+```
+
+Checked as a flip rather than a lean: peak tilt alone cannot tell a somersault
+from a deep wobble, so `flipverify.mjs` counts how many times the trunk actually
+passes through inverted. One, every time. Stand about 0.1 m off a wall and press
+`T`. The arena walls are Pollen's own — `ARENA_HALF` 1.5 m, 0.25 m tall.
+
+### The pattern
+
+Every one of these was found by search and missed by hand:
+
+| move | hand-authored | searched |
+|---|---|---|
+| back roll | ~60&deg;, rocks back | **179&deg;, lands upright** |
+| step up | &mdash; | **26 mm** |
+| lever up | &mdash; | **40 mm** |
+| wall flip | &mdash; | **179&deg;, one inversion** |
+
+Three hand-guesses at the back roll reached 60 degrees and I would have reported
+it impossible. The move was there.

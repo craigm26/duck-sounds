@@ -93,6 +93,28 @@ export const STEP_UP_KEY = 'g';
  */
 export const BACK_ROLL_KEY = 'b';
 
+/**
+ * Ours: the head used as a single finger.
+ *
+ * The step-up unweights a leg so a foot can reach the tread, which caps it at
+ * the leg's own reach. Levering does not care about leg reach — the head is a
+ * pivot and the body rotates over it. Measured 40 mm against 26 mm, 3/3, and it
+ * fails at 50 mm.
+ */
+export const LEVER_KEY = 'h';
+
+/**
+ * Ours: a flip off a wall.
+ *
+ * A roll can borrow the floor; a flip has to get its rotation from somewhere,
+ * and 0.96 N.m on a 737 g body is not much to spin with. A wall gives the feet
+ * something to push against that is not underneath them, which turns a weak leg
+ * extension into angular momentum rather than a hop. 179 degrees, passes
+ * through inverted once, lands upright five times out of five. Stand about
+ * 0.1 m off a wall for it.
+ */
+export const WALL_FLIP_KEY = 't';
+
 /** Command magnitudes for a variant, so driving matches the runtime. */
 export function speeds(variant) {
   return variant === 'rollers'
