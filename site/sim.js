@@ -8,7 +8,10 @@ import loadMuJoCo from './vendor/mujoco.js';
 import * as ort from './vendor/ort/ort.wasm.min.mjs';
 import { makeLoop } from './duckloop.mjs';
 
-ort.env.wasm.wasmPaths = './vendor/ort/';
+// Absolute, not relative: onnxruntime resolves wasmPaths against its OWN module
+// URL, so './vendor/ort/' became /vendor/ort/vendor/ort/... and every backend
+// failed to load. Caught by the headless browser check, not by eye.
+ort.env.wasm.wasmPaths = new URL('./vendor/ort/', document.baseURI).href;
 ort.env.wasm.numThreads = 1;
 
 const DECIMATION = 4;
@@ -54,12 +57,15 @@ async function tick() {
 // A fixed three-quarter camera that follows the duck on the ground plane.
 function project(p, cam) {
   const dx = p[0] - cam.x, dy = p[1] - cam.y, dz = p[2];
-  const yaw = 0.9, pitch = 0.28;
+  const yaw = 0.9, pitch = 0.30;
   const rx = dx * Math.cos(yaw) - dy * Math.sin(yaw);
   const ry = dx * Math.sin(yaw) + dy * Math.cos(yaw);
-  const depth = ry + 1.05;
-  const s = cam.scale / Math.max(depth, 0.25);
-  return [cam.w / 2 + rx * s, cam.h * 0.62 - (dz - pitch * ry) * s, depth];
+  // Camera sits 0.75 m behind the duck. Anything closer than 0.15 m is behind
+  // the lens; clamping rather than dropping it is what stopped the floor grid
+  // folding back on itself across the horizon.
+  const depth = Math.max(ry + 0.75, 0.15);
+  const s = cam.scale / depth;
+  return [cam.w / 2 + rx * s, cam.h * 0.70 - (dz - pitch * ry) * s, depth];
 }
 
 function draw() {
@@ -69,19 +75,20 @@ function draw() {
   const css = n => getComputedStyle(document.documentElement).getPropertyValue(n).trim();
   ctx.clearRect(0, 0, w, h);
 
-  const cam = { x: data.qpos[0], y: data.qpos[1], w, h, scale: Math.min(w, h) * 0.9 };
+  const cam = { x: data.qpos[0], y: data.qpos[1], w, h, scale: Math.min(w, h) * 1.15 };
 
   // floor grid, so travel is visible rather than asserted
   ctx.strokeStyle = css('--rule'); ctx.lineWidth = 1; ctx.globalAlpha = 0.55;
-  const step = 0.1, span = 1.4;
+  const step = 0.1, span = 0.8;
   const gx = Math.round(cam.x / step) * step, gy = Math.round(cam.y / step) * step;
+  const seg = (a, b) => {
+    const p = project(a, cam), q = project(b, cam);
+    if (p[2] <= 0.16 || q[2] <= 0.16) return;
+    ctx.beginPath(); ctx.moveTo(p[0], p[1]); ctx.lineTo(q[0], q[1]); ctx.stroke();
+  };
   for (let i = -span; i <= span + 1e-9; i += step) {
-    ctx.beginPath();
-    let a = project([gx + i, gy - span, 0], cam), b = project([gx + i, gy + span, 0], cam);
-    ctx.moveTo(a[0], a[1]); ctx.lineTo(b[0], b[1]); ctx.stroke();
-    ctx.beginPath();
-    a = project([gx - span, gy + i, 0], cam); b = project([gx + span, gy + i, 0], cam);
-    ctx.moveTo(a[0], a[1]); ctx.lineTo(b[0], b[1]); ctx.stroke();
+    seg([gx + i, gy - span, 0], [gx + i, gy + span, 0]);
+    seg([gx - span, gy + i, 0], [gx + span, gy + i, 0]);
   }
   ctx.globalAlpha = 1;
 
@@ -91,18 +98,18 @@ function draw() {
   // contact shadow
   ctx.fillStyle = css('--rule'); ctx.globalAlpha = 0.5;
   const sh = project([data.qpos[0], data.qpos[1], 0], cam);
-  ctx.beginPath(); ctx.ellipse(sh[0], sh[1], 26, 9, 0, 0, Math.PI * 2); ctx.fill();
+  ctx.beginPath(); ctx.ellipse(sh[0], sh[1], 40, 13, 0, 0, Math.PI * 2); ctx.fill();
   ctx.globalAlpha = 1;
 
-  ctx.strokeStyle = css('--duck'); ctx.lineWidth = 4; ctx.lineCap = 'round';
+  ctx.strokeStyle = css('--duck'); ctx.lineWidth = 6; ctx.lineCap = 'round';
   for (const [a, b] of BONES) {
     ctx.beginPath(); ctx.moveTo(pts[a][0], pts[a][1]); ctx.lineTo(pts[b][0], pts[b][1]); ctx.stroke();
   }
   ctx.fillStyle = css('--ink');
-  for (const [, b] of BONES) { ctx.beginPath(); ctx.arc(pts[b][0], pts[b][1], 2.6, 0, Math.PI * 2); ctx.fill(); }
+  for (const [, b] of BONES) { ctx.beginPath(); ctx.arc(pts[b][0], pts[b][1], 3.4, 0, Math.PI * 2); ctx.fill(); }
   // the head, so it reads as a duck facing somewhere
   ctx.fillStyle = css('--duck');
-  ctx.beginPath(); ctx.arc(pts[10][0], pts[10][1], 9, 0, Math.PI * 2); ctx.fill();
+  ctx.beginPath(); ctx.arc(pts[10][0], pts[10][1], 13, 0, Math.PI * 2); ctx.fill();
 
   const speed = Math.hypot(data.qvel[0], data.qvel[1]);
   hud.textContent =

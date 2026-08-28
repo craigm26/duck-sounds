@@ -1,1 +1,1 @@
-{"name":"duck-sim-probe","private":true,"type":"module","dependencies":{"mujoco":"^3.1.16","onnxruntime-node":"^1.29.0","onnxruntime-web":"^1.29.0"}}
+{"name":"duck-sim-probe","private":true,"type":"module","dependencies":{"mujoco":"^3.1.16","onnxruntime-node":"^1.29.0","onnxruntime-web":"^1.29.0","puppeteer-core":"^25.9.0"}}
