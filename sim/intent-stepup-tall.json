@@ -1,0 +1,28 @@
+{
+  "maxHeightMm": 18,
+  "params": {
+    "lead": 0,
+    "blend": 0.766784456175259,
+    "approach": 0.18317219846212884,
+    "tPlant": 1.0022075370204067,
+    "tPush": 0.3683825560209552,
+    "tSwing": 0.6834479344449649,
+    "tTransfer": 0.8334448610008675,
+    "tRecover": 0.8222026768506117,
+    "neckPlant": 0.09549770363208454,
+    "headPlant": 0.8344049257117503,
+    "neckPush": 0.4867985975064902,
+    "headPush": 0.6766679368741362,
+    "neckLift": -1.2,
+    "headLift": -0.4218003925655678,
+    "leadHipPush": 0.23671192593306434,
+    "leadKneePush": 0.5490556967303664,
+    "trailHipPush": -0.031190114805782154,
+    "trailKneePush": 0.362454745994476,
+    "leadHipSwing": 1.13536793395515,
+    "leadKneeSwing": 0.8229130145410471,
+    "leadAnkleSwing": -0.14811443779116862,
+    "leadHipPlant": 0.6571557965996886,
+    "leadKneePlant": 0.7707951812132402
+  }
+}

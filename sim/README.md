@@ -273,3 +273,47 @@ node zoomcheck.mjs       # zoom, on-screen remap, AR button honesty
 
 Each takes a URL, so the same checks run against localhost and against
 production.
+
+## What this robot can physically do
+
+Straight from the model (`node torque.mjs`, `node reach.mjs`):
+
+| | |
+|---|---|
+| Actuators | **14**, all identical: &plusmn;0.96 N&middot;m, gear 1.0, kp 0.55 |
+| **The beak is not actuated** | there is no mouth/jaw actuator, so it cannot *grip* anything |
+| Mass | 737 g total (7.23 N). Trunk 199 g, head 189 g |
+| Head as a lever | 0.96 N&middot;m over a 236 mm trunk&rarr;beak arm = **4.07 N**, about 415 g |
+| | which is **56%** of the robot's weight &mdash; and the head's own 1.85 N comes out of that, leaving ~30% net |
+| Foot lift | a sole reaches 188 mm above its standing height, with the trunk held at 120 mm |
+
+### So: can it get up a 7-inch step?
+
+**No.** 178 mm is inside its *kinematic* reach — just — but not its dynamic one.
+Two searches say so: the best head-plant move manages **26 mm**, and widening
+the head's range so it could hook *over* a tall tread and running 700
+evaluations produced **18 mm**, not more.
+
+The reason is in the table. To put a foot on a 178 mm tread the trunk has to
+rise above 178 mm, and the standing leg tops out near 120 mm. The head can take
+about a third of the robot's weight after holding itself up — enough to unweight
+a leg, which is exactly why the plant works at all and turns 2 mm into 26 mm —
+but nowhere near enough to hoist the body 60 mm higher than its own legs reach.
+
+A grip would not change it, and cannot be tried: the beak has no actuator.
+
+### Backward roll
+
+Pollen ship a forward roll and no backward one, and forward is the easy
+direction: past the toes, gravity finishes the job. Backwards the duck carries
+its own mass over its heels on &plusmn;0.96 N&middot;m.
+
+Three hand-authored attempts reached about **60&deg;** and rocked back upright.
+A search over the same shape found one that reaches **179&deg;** — fully
+inverted — and lands upright, **five times out of five**. It ships on `B`.
+
+That gap is the argument for searching these rather than authoring them: the
+move exists, and hand-guessing did not find it.
+
+A flip is a different question and is not claimed. A roll can borrow the floor;
+a flip cannot.

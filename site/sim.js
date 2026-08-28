@@ -10,7 +10,7 @@ import { makeLoop } from './duckloop.mjs';
 import { createRenderer } from './render.js';
 import { findStairJoints, layoutStairs, clearStairs, STAIR_COUNT } from './stairs.js';
 import { buildTrack, poseAt } from './intent.mjs';
-import { INTENTS, STEP_UP_KEY, DEFAULTS, speeds } from './intents.js';
+import { INTENTS, STEP_UP_KEY, BACK_ROLL_KEY, DEFAULTS, speeds } from './intents.js';
 import { isTouch, makeStick } from './touch.js';
 import { makePad, ACTIONS } from './gamepad.js';
 import { xrSupport, startXR } from './xr.js';
@@ -46,6 +46,7 @@ let STAIRS = null, DUCK = null, stairCfg = { count: 8, rise: 0, run: 0.09, start
 let manual = null;   // 14 hand-set targets, or null while the policy drives
 let intent = null;   // { params, track, t0 } while the step-up move is playing
 let stepupParams = null;
+let backRoll = null;
 let variant = 'legs';
 let driveSpeed = speeds('legs');
 let switching = false;
@@ -136,14 +137,17 @@ async function tick() {
     // encodes. Measured, an open-loop version fell over on a flat floor.
     const cmd = command({ vx: intent.params.approach });
     const obs = buildObs(gyro, projectedGravity(q), jpos, jvel, lastAction, cmd);
-    const out = await session.run({ [inputName]: new ort.Tensor('float32', obs, [1, 61]) });
+    // A shipped track brings its own policy; the step-up rides the drive one.
+    const runner = intent.session || session;
+    const out = await runner.run({ [inputName]: new ort.Tensor('float32', obs, [1, 61]) });
     lastAction = Array.from(out[session.outputNames[0]].data);
     const elapsed = (ticks - intent.t0) / C.tickHz;
     const offset = poseAt(intent.track, elapsed, HOME);
+    void 0;
     for (let k = 0; k < 14; k++) {
-      data.ctrl[k] = HOME[k] + lastAction[k] + (offset[k] - HOME[k]) * intent.params.blend;
+      data.ctrl[k] = HOME[k] + lastAction[k] + (offset[k] - HOME[k]) * (intent.blend ?? intent.params.blend);
     }
-    if (elapsed > intent.track[intent.track.length - 1].t + 0.6) intent = null;
+    if (elapsed > intent.track[intent.track.length - 1].t + (intent.tail ?? 0.6)) { intent = null; paintKeys(); }
   } else {
     const obs = buildObs(gyro, projectedGravity(q), jpos, jvel, lastAction, command(cmdState));
     const out = await session.run({ [inputName]: new ort.Tensor('float32', obs, [1, 61]) });
@@ -287,7 +291,7 @@ function loadSlots() {
   catch { return { ...SLOT_DEFAULT }; }
 }
 function buildSlots() {
-  const all = [...INTENTS, { id: 'step_up', label: 'Step up' }];
+  const all = [...INTENTS, { id: 'step_up', label: 'Step up' }, { id: 'back_roll', label: 'Back roll' }];
   const slots = loadSlots();
   for (const name of ['A', 'B']) {
     const sel = document.getElementById('slot' + name);
@@ -383,7 +387,8 @@ function busy() { return skill !== null || intent !== null || ticks < lockUntil;
 
 function paintKeys() {
   for (const [id, el] of keyButtons) {
-    const active = (skill && skill.intent.id === id) || (mode && mode.intent.id === id) || (intent && id === 'step_up');
+    const active = (skill && skill.intent.id === id) || (mode && mode.intent.id === id)
+      || (intent && (id === 'step_up' || id === 'back_roll'));
     el.classList.toggle('on', !!active);
     el.disabled = busy() && !active;
   }
@@ -399,6 +404,16 @@ async function fire(item) {
     let s = skillSessions.get(item.policy);
     if (!s) { s = await ort.InferenceSession.create('./' + item.policy); skillSessions.set(item.policy, s); }
     mode = { intent: item, session: s, t0: ticks };
+    paintKeys();
+    return;
+  }
+  if (item.id === 'back_roll') {
+    if (!backRoll) return;
+    let s = skillSessions.get(backRoll.policy);
+    if (!s) { s = await ort.InferenceSession.create('./' + backRoll.policy); skillSessions.set(backRoll.policy, s); }
+    mode = null;
+    intent = { track: backRoll.keyframes, blend: backRoll.blend, session: s, t0: ticks,
+               params: { approach: 0 }, tail: 1.2 };
     paintKeys();
     return;
   }
@@ -421,7 +436,7 @@ async function fire(item) {
 function buildPad() {
   const stateEl = document.getElementById('padState');
   const listEl = document.getElementById('padList');
-  const all = [...INTENTS, { id: 'step_up', label: 'Step up' }];
+  const all = [...INTENTS, { id: 'step_up', label: 'Step up' }, { id: 'back_roll', label: 'Back roll' }];
 
   pad = makePad({
     onConnect: id => {
@@ -496,7 +511,7 @@ function buildTouch() {
           vyaw: -x * driveSpeed.ang };
     window.__stick = stickCmd;
   });
-  const all = [...INTENTS, { key: STEP_UP_KEY, id: 'step_up', label: 'Step up' }];
+  const all = [...INTENTS, { key: STEP_UP_KEY, id: 'step_up', label: 'Step up' }, { key: BACK_ROLL_KEY, id: 'back_roll', label: 'Back roll' }];
   for (const el of document.querySelectorAll('.pad-btn')) {
     // Read the intent at PRESS time, not at wiring time, so re-assigning a
     // button takes effect without rebuilding the handler.
@@ -509,7 +524,9 @@ function buildTouch() {
 }
 
 function buildKeys() {
-  const all = [...INTENTS, { key: STEP_UP_KEY, id: 'step_up', label: 'Step up' }];
+  const all = [...INTENTS,
+    { key: STEP_UP_KEY, id: 'step_up', label: 'Step up' },
+    { key: BACK_ROLL_KEY, id: 'back_roll', label: 'Back roll' }];
   for (const item of all) {
     const b = document.createElement('button');
     b.innerHTML = `<kbd>${item.key.toUpperCase()}</kbd><span>${item.label}</span>`;
@@ -588,6 +605,9 @@ async function loadVariant(name) {
     try {
       stepupParams = (await (await fetch('./intent-stepup.json')).json()).params;
     } catch { /* the button simply does nothing without it */ }
+    try {
+      backRoll = await (await fetch('./intent-backroll.json')).json();
+    } catch { /* likewise */ }
     // AR, where the browser has it. The button stays hidden otherwise rather
     // than offering something that will fail — Safari has no WebXR at all,
     // which is why this project's iOS path is native.

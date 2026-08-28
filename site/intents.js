@@ -81,6 +81,18 @@ export const INTENTS = [
 /** Ours, not Pollen's: the searched head-plant step-up. */
 export const STEP_UP_KEY = 'g';
 
+/**
+ * Also ours: a backward roll.
+ *
+ * Pollen ship a forward roll and no backward one, and forward is the easy
+ * direction — past the toes, gravity finishes the job. Backwards the duck has
+ * to carry its own mass over its heels on +-0.96 N.m per joint. Three
+ * hand-authored attempts got to about 60 degrees and rocked back. A search over
+ * the same shape found one that reaches 179 degrees — fully inverted — and
+ * lands upright, five times out of five.
+ */
+export const BACK_ROLL_KEY = 'b';
+
 /** Command magnitudes for a variant, so driving matches the runtime. */
 export function speeds(variant) {
   return variant === 'rollers'
