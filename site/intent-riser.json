@@ -3,7 +3,7 @@
  "blend": 1.9220187406000337,
  "policy": "BEST_alpha_stand.onnx",
  "approach": 0.07814951441572346,
- "note": "foot on the riser + head on the tread; 55 mm, 3/3 (lever 40, stepping 26)",
+ "note": "foot on the riser and head on the tread; 10 mm standing on a real stair, 3/3 from these keyframes",
  "gap": 0.1266188045283446,
  "keyframes": [
   {

@@ -9,7 +9,7 @@ import load from 'mujoco';
 import * as ort from 'onnxruntime-node';
 import fs from 'node:fs';
 import { makeLoop } from '../site/duckloop.mjs';
-import { findStairJoints, layoutStairs } from '../site/stairs.js';
+import { findStairJoints, layoutStairs, STAIR_Y } from '../site/stairs.js';
 const C = JSON.parse(fs.readFileSync('duckkit-constants.json','utf8'));
 const { HOME, LO, HI, buildObs, projectedGravity, command, findDuckJoints } = makeLoop(C);
 const mj = await load();
@@ -29,10 +29,10 @@ const B = {
   gap:[0.03,0.16], approach:[0.0,0.5],
   tSet:[0.2,0.9], tPlant:[0.12,0.6], tPush:[0.10,0.5], tCatch:[0.2,0.9],
   setNeck:[0.2,1.5], setHead:[-0.6,1.5],
-  plantHip:[-0.4,1.5], plantKnee:[-1.4,1.0], plantAnkle:[-1.4,1.0],
+  plantHip:[-0.6,1.6], plantKnee:[-1.6,1.2], plantAnkle:[-1.6,1.2],
   pushHip:[-1.5,1.5], pushKnee:[-1.5,1.5], pushAnkle:[-1.5,1.2],
   pushNeck:[-1.4,1.2], pushHead:[-1.4,1.2],
-  trailHip:[-1.4,1.4], trailKnee:[-1.4,1.4],
+  trailHip:[-1.6,1.6], trailKnee:[-1.6,1.6], trailAnkle:[-1.4,1.2],
   catchHip:[-1.3,1.3], catchKnee:[-1.3,1.3], catchNeck:[-1.2,1.2],
   blend:[0.7,2.4],
 };
@@ -48,7 +48,7 @@ function trackOf(p){
   b[J.lhp]=HOME[J.lhp]+p.plantHip; b[J.lk]=HOME[J.lk]+p.plantKnee; b[J.la]=HOME[J.la]+p.plantAnkle;
   const c = b.slice();                      // push off it
   c[J.lhp]=HOME[J.lhp]+p.pushHip; c[J.lk]=HOME[J.lk]+p.pushKnee; c[J.la]=HOME[J.la]+p.pushAnkle;
-  c[J.rhp]=HOME[J.rhp]-p.trailHip; c[J.rk]=HOME[J.rk]-p.trailKnee;
+  c[J.rhp]=HOME[J.rhp]-p.trailHip; c[J.rk]=HOME[J.rk]-p.trailKnee; c[J.ra]=HOME[J.ra]-p.trailAnkle;
   c[J.np]=p.pushNeck; c[J.hp]=p.pushHead;
   const d = c.slice();
   d[J.lhp]=HOME[J.lhp]+p.catchHip; d[J.rhp]=HOME[J.rhp]-p.catchHip;
@@ -74,6 +74,7 @@ async function attempt(p, h){
   layoutStairs(data, ADDR, cfg);
   // Start a settable gap from the riser face, which sits at start - halfDepth.
   data.qpos[D.freeQpos] = 0.12 - 0.07 - p.gap;
+  data.qpos[D.freeQpos+1] = STAIR_Y;  // stairs hug the wall now; meet them there
   data.qpos[D.freeQpos+2]=0.12; data.qpos[D.freeQpos+3]=1;
   for(let i=0;i<14;i++){data.qpos[D.qpos[i]]=HOME[i];data.ctrl[i]=HOME[i];}
   mj.mj_forward(model,data);
@@ -96,13 +97,31 @@ async function attempt(p, h){
   };
   for(let t=0;t<25;t++) await step(null);
   for(let t=0;t*DT<total;t++) await step(poseAt(tr,t*DT));
-  const x=data.qpos[D.freeQpos], z=data.qpos[D.freeQpos+2];
-  const up = projectedGravity(quat())[2] < -0.7;
-  const onTop = up && x > 0.14 && (z - h) > 0.060;
-  return { onTop, x, z, above: z-h, up };
+  // SUCCESS MEANS STANDING ON THE STEP, and it is worth being strict about it.
+  // The earlier bar — trunk 60 mm above the tread and past the riser — passes a
+  // duck draped over the edge on its chest. This one wants both feet up, the
+  // body at close to full standing height above the TREAD, upright, and still
+  // there a second later. A move that arrives and then slides off has not
+  // climbed anything.
+  const settle = async () => {
+    for (let t = 0; t < 50; t++) await step(null);
+  };
+  await settle();
+  const x = data.qpos[D.freeQpos], z = data.qpos[D.freeQpos+2];
+  const up = projectedGravity(quat())[2] < -0.90;
+  let feetUp = 0;
+  for (let g = 0; g < model.ngeom; g++) {
+    const n = model.geom(g).name || '';
+    if (!/foot_collision|sole/.test(n)) continue;
+    if (data.geom_xpos[g*3+2] > h - 0.005 && data.geom_xpos[g*3] > 0.12 - 0.07) feetUp++;
+  }
+  const onTop = up && x > 0.12 && (z - h) > 0.095 && feetUp >= 2;
+  return { onTop, x, z, above: z-h, up, feetUp };
 }
 
-const LADDER = [0.040, 0.055, 0.070, 0.090, 0.110, 0.140, 0.178];
+// Against the strict criterion the old numbers do not survive at all, so the
+// ladder starts where a duck might actually stand: a few millimetres.
+const LADDER = [0.005, 0.010, 0.016, 0.024, 0.034, 0.046, 0.060, 0.080];
 async function best(p){ let b=0; for(const h of LADDER){ if(!(await attempt(p,h)).onTop) break; b=h; } return b; }
 
 let bp=null, bh=0, evals=0;
@@ -116,4 +135,4 @@ while(evals<BUDGET){
   if(h>bh){ bh=h; bp=c; console.log(`  riser push: ${(h*1000).toFixed(0)} mm  (${evals} evals)`); }
 }
 console.log(`RISER best ${(bh*1000).toFixed(0)} mm   (lever alone 40 mm, stepping 26 mm)`);
-if(bp) fs.writeFileSync('riser-best.json', JSON.stringify({ mm: bh*1000, p: bp }, null, 1));
+if(bp) fs.writeFileSync('riser-strict.json', JSON.stringify({ mm: bh*1000, p: bp }, null, 1));

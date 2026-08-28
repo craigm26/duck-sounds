@@ -29,6 +29,8 @@ const CASES = [
   { key: 'g', label: 'Step up',      probe: 'height', want: 'dips' },
   { key: 'b', label: 'Back roll',    probe: 'height', want: 'dips' },
   { key: 'h', label: 'Lever up',     probe: 'height', want: 'dips' },
+  { key: 'y', label: 'Riser up',     probe: 'height', want: 'dips' },
+  { key: 'u', label: 'Climb',        probe: 'height', want: 'dips' },
   { key: 't', label: 'Wall flip',    probe: 'height', want: 'dips' },
 ];
 for (const c of CASES) {

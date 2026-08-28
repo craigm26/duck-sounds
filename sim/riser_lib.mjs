@@ -96,10 +96,26 @@ async function attempt(p, h){
   };
   for(let t=0;t<25;t++) await step(null);
   for(let t=0;t*DT<total;t++) await step(poseAt(tr,t*DT));
-  const x=data.qpos[D.freeQpos], z=data.qpos[D.freeQpos+2];
-  const up = projectedGravity(quat())[2] < -0.7;
-  const onTop = up && x > 0.14 && (z - h) > 0.060;
-  return { onTop, x, z, above: z-h, up };
+  // SUCCESS MEANS STANDING ON THE STEP, and it is worth being strict about it.
+  // The earlier bar — trunk 60 mm above the tread and past the riser — passes a
+  // duck draped over the edge on its chest. This one wants both feet up, the
+  // body at close to full standing height above the TREAD, upright, and still
+  // there a second later. A move that arrives and then slides off has not
+  // climbed anything.
+  const settle = async () => {
+    for (let t = 0; t < 50; t++) await step(null);
+  };
+  await settle();
+  const x = data.qpos[D.freeQpos], z = data.qpos[D.freeQpos+2];
+  const up = projectedGravity(quat())[2] < -0.90;
+  let feetUp = 0;
+  for (let g = 0; g < model.ngeom; g++) {
+    const n = model.geom(g).name || '';
+    if (!/foot_collision|sole/.test(n)) continue;
+    if (data.geom_xpos[g*3+2] > h - 0.005 && data.geom_xpos[g*3] > 0.12 - 0.07) feetUp++;
+  }
+  const onTop = up && x > 0.12 && (z - h) > 0.095 && feetUp >= 2;
+  return { onTop, x, z, above: z-h, up, feetUp };
 }
 
 export { attempt, trackOf, poseAt };

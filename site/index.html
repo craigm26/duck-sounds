@@ -223,10 +223,10 @@
     </div>
     <div class="ctl">
       <label for="run">Step depth</label>
-      <input type="range" id="run" min="30" max="120" step="5" value="90">
-      <output id="runOut">90 mm</output>
+      <input type="range" id="run" min="80" max="320" step="10" value="280">
+      <output id="runOut">280 mm</output>
     </div>
-    <p class="ctl-note" id="ctlNote">Walking alone: 2 mm. With the step-up intent: 26 mm.</p>
+    <p class="ctl-note" id="ctlNote">A real flight &mdash; 280 mm treads, flush to the wall. Walking alone clears 2 mm; the best move we have stands on 10 mm.</p>
   </div>
 
   <details class="servos" id="padPanel">
@@ -290,9 +290,10 @@
       <figure><img loading="lazy" src="gifs/stand-up.gif" alt="the duck standing up"><figcaption><b>Stand up</b> <kbd>V</kbd> &middot; hands back to walking once up</figcaption></figure>
       <figure><img loading="lazy" src="gifs/forward-roll.gif" alt="the duck rolling forward"><figcaption><b>Forward roll</b> <kbd>X</kbd> &middot; Pollen's trained <code>roulade</code></figcaption></figure>
       <figure><img loading="lazy" src="gifs/back-roll.gif" alt="the duck rolling backwards"><figcaption><b>Back roll</b> <kbd>B</kbd> &middot; ours. 179&deg;, lands upright</figcaption></figure>
-      <figure><img loading="lazy" src="gifs/step-up.gif" alt="the duck stepping onto a step"><figcaption><b>Step up</b> <kbd>G</kbd> &middot; ours. 26 mm</figcaption></figure>
-      <figure><img loading="lazy" src="gifs/lever-up.gif" alt="the duck levering onto a step with its head"><figcaption><b>Lever up</b> <kbd>H</kbd> &middot; ours. Head as a pivot &mdash; 40 mm</figcaption></figure>
-      <figure><img loading="lazy" src="gifs/riser-up.gif" alt="the duck pushing off a riser"><figcaption><b>Riser up</b> <kbd>Y</kbd> &middot; ours. Foot on the riser too &mdash; 55 mm</figcaption></figure>
+      <figure><img loading="lazy" src="gifs/step-up.gif" alt="the duck stepping onto a step"><figcaption><b>Step up</b> <kbd>G</kbd> &middot; ours. Clears nothing on a real stair</figcaption></figure>
+      <figure><img loading="lazy" src="gifs/lever-up.gif" alt="the duck levering onto a step with its head"><figcaption><b>Lever up</b> <kbd>H</kbd> &middot; ours. Head as a pivot &mdash; clears nothing on a real stair</figcaption></figure>
+      <figure><img loading="lazy" src="gifs/riser-up.gif" alt="the duck pushing off a riser"><figcaption><b>Riser up</b> <kbd>Y</kbd> &middot; ours. Foot on the riser too &mdash; 10 mm</figcaption></figure>
+      <figure><img loading="lazy" src="gifs/climb.gif" alt="the duck shelving its head on a tread and walking its feet up the riser"><figcaption><b>Climb</b> <kbd>U</kbd> &middot; ours. Head on the tread, feet up the riser &mdash; clears nothing on a real stair</figcaption></figure>
       <figure><img loading="lazy" src="gifs/wall-flip.gif" alt="the duck flipping off a wall"><figcaption><b>Wall flip</b> <kbd>T</kbd> &middot; ours. Two feet on a wall &mdash; 179&deg;, lands upright</figcaption></figure>
     </div>
     <p class="note" style="margin-top:1.25rem">Recorded against the simulation clock rather than the wall clock. Screenshotting blocks the animation frame that drives the physics, so capturing as fast as possible advances the duck almost not at all &mdash; an earlier set of these showed a duck standing still through moves it had actually completed.</p>

@@ -74,6 +74,7 @@ const quat = () => [data.qpos[D.freeQpos+3],data.qpos[D.freeQpos+4],data.qpos[D.
 async function attempt(p, h){
   mj.mj_resetData(model,data);
   layoutStairs(data, ADDR, { count: 1, rise: h, run: 0.40, start: 0.10 });
+  data.qpos[D.freeQpos+1] = STAIR_Y;  // stairs hug the wall now; meet them there
   data.qpos[D.freeQpos+2]=0.12; data.qpos[D.freeQpos+3]=1;
   for(let i=0;i<14;i++){data.qpos[D.qpos[i]]=HOME[i];data.ctrl[i]=HOME[i];}
   mj.mj_forward(model,data);
@@ -116,7 +117,11 @@ async function attempt(p, h){
   return { onTop, x, z, above: z - h, maxZ, up };
 }
 
-const LADDER = [0.026, 0.040, 0.060, 0.080, 0.100, 0.130, 0.178];
+// Re-searched against the CURRENT scene: solid 200 mm step blocks with a real
+// riser face, Pollen's physics, arena walls. The previous best was found
+// against thin floating treads and does not survive the change — it claims
+// 40 mm and manages 20.
+const LADDER = [0.020, 0.030, 0.040, 0.055, 0.070, 0.090, 0.120];
 async function best(p){
   let b = 0;
   for (const h of LADDER){ if (!(await attempt(p,h)).onTop) break; b = h; }
@@ -134,4 +139,4 @@ while (evals < BUDGET){
     console.log(`  lever: ${(h*1000).toFixed(0)} mm  (${evals} evals)`); }
 }
 console.log(`LEVER best ${(bh*1000).toFixed(0)} mm   (step-up by stepping was 26 mm)`);
-if (bp) fs.writeFileSync('lever-best.json', JSON.stringify({ mm: bh*1000, p: bp }, null, 1));
+if (bp) fs.writeFileSync('lever-best-v2.json', JSON.stringify({ mm: bh*1000, p: bp }, null, 1));

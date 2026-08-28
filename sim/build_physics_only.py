@@ -49,13 +49,24 @@ phys = re.sub(r'\s+material="[^"]*"', '', phys)
 # with geom_rbound corrected. Position that comes from qpos IS live, which is
 # why Pollen drive their own terrain the same way. Two joints per step means the
 # rise AND the run are both adjustable; parking a step far below removes it.
+# Stairs go against a wall — that is what stairs do, and it puts a vertical
+# surface beside the steps for the duck to brace on. The north wall is at 1.5
+# with half-thickness 0.025 and a tread is 0.17 half-wide, so flush is
+# 1.5 - 0.025 - 0.17. The x and z slide joints then move each step relative to
+# that, which is why no y joint is needed.
+# Each step is 340 mm deep front-to-back while the deepest run the page offers
+# is 320 mm, so consecutive steps always OVERLAP and the flight is one solid
+# mass. At the old 140 mm depth a realistic 280 mm run left 140 mm of air
+# between treads — a set of floating slabs, which is neither a staircase nor
+# something a duck can be fairly scored against.
+STAIR_Y = 1.5 - 0.025 - 0.17
 STAIRS = 14
 steps = "".join(
     f'''
-    <body name="step{i}" pos="0 0 0">
+    <body name="step{i}" pos="0 {STAIR_Y} 0">
       <joint name="step{i}_x" type="slide" axis="1 0 0" limited="false" damping="0" armature="0" frictionloss="0"/>
       <joint name="step{i}_z" type="slide" axis="0 0 1" limited="false" damping="0" armature="0" frictionloss="0"/>
-      <geom name="step{i}_geom" type="box" size="0.07 0.17 0.10" pos="0 0 0"
+      <geom name="step{i}_geom" type="box" size="0.17 0.17 0.10" pos="0 0 0"
             contype="4" conaffinity="4" condim="3" friction="1.0 0.02 0.001"
             rgba="0.62 0.65 0.61 1" mass="200"/>
     </body>'''

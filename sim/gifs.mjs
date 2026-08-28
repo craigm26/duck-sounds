@@ -23,9 +23,10 @@ const SHOTS = [
   { key: 'v', id: 'stand-up',    secs: 4.0, stage: { pre: 'c', preWait: 3000 } },
   { key: 'x', id: 'forward-roll', secs: 4.0, stage: {} },
   { key: 'b', id: 'back-roll',   secs: 4.0, stage: {} },
-  { key: 'g', id: 'step-up',     secs: 4.5, stage: { rise: 26, atStep: true } },
-  { key: 'h', id: 'lever-up',    secs: 5.0, stage: { rise: 40, atStep: true } },
-  { key: 'y', id: 'riser-up',    secs: 5.5, stage: { rise: 55, atStep: true } },
+  { key: 'g', id: 'step-up',     secs: 4.5, stage: { rise: 10, atStep: true } },
+  { key: 'h', id: 'lever-up',    secs: 5.0, stage: { rise: 10, atStep: true } },
+  { key: 'y', id: 'riser-up',    secs: 5.5, stage: { rise: 10, atStep: true } },
+  { key: 'u', id: 'climb',       secs: 6.0, stage: { rise: 10, atStep: true } },
   { key: 't', id: 'wall-flip',   secs: 4.0, stage: { nearWall: true } },
   { key: null, id: 'walking',    secs: 4.0, stage: { hold: 'ArrowUp' } },
   { key: null, id: 'skating',    secs: 4.0, stage: { variant: 'rollers', hold: 'ArrowUp' } },
@@ -81,7 +82,7 @@ for (const shot of SHOTS) {
     // The page lays its stairs out from x = 0.45; the search used 0.12. Place
     // the duck relative to where the stairs ACTUALLY are, or it stands beside
     // them and the recording shows a duck ignoring a staircase.
-    await page.evaluate(g => window.__demo.place(0.45 - 0.07 - g), STEPGAP);
+    await page.evaluate(g => window.__demo.place(0.45 - 0.07 - g, 1.305), STEPGAP);
     await page.evaluate(a => window.__demo.settle(25, a), shot.stage.approach || 0);
     await wait(150);
   }

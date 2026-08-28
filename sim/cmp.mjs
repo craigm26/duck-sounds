@@ -1,0 +1,14 @@
+import fs from 'node:fs';
+const b = JSON.parse(fs.readFileSync('climb-best.json','utf8'));
+const m = JSON.parse(fs.readFileSync('../site/intent-climb.json','utf8'));
+const { attempt, replay, trackOf } = await import('./climb_lib.mjs');
+const tr = trackOf(b.p);
+console.log('search frames', tr.length, 'exported', m.keyframes.length);
+let worst = 0;
+tr.forEach((f,i)=>{ worst = Math.max(worst, Math.abs(f.t - m.keyframes[i].t));
+  f.pose.forEach((v,k)=> worst = Math.max(worst, Math.abs(v - m.keyframes[i].pose[k]))); });
+console.log('max track difference', worst.toExponential(2));
+const a = await attempt(b.p, 0.010);
+const r = await replay(m.keyframes, {blend:m.blend, approach:m.approach, gap:m.gap, side:m.side}, 0.010);
+console.log('attempt', JSON.stringify(a));
+console.log('replay ', JSON.stringify(r));

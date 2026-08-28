@@ -9,8 +9,19 @@
 // placed that way, even with geom_rbound corrected). Position that comes from
 // qpos is live.
 export const STAIR_COUNT = 14;
+/**
+ * Where the staircase sits across the room.
+ *
+ * Stairs go against a wall — that is what stairs do, and it also gives the duck
+ * a vertical surface beside the steps to brace on. The arena's north wall is at
+ * y = 1.5 with a half-thickness of 0.025, and a tread is 0.17 half-wide, so
+ * flush against it is 1.5 - 0.025 - 0.17.
+ */
+export const STAIR_HALF_WIDTH = 0.17;
+export const STAIR_Y = 1.5 - 0.025 - STAIR_HALF_WIDTH;
+
 /** Half-depth of a step block, metres. Runs longer than 2x this leave gaps. */
-export const STEP_HALF_DEPTH = 0.07;
+export const STEP_HALF_DEPTH = 0.17;   // deeper than the deepest run, so steps overlap into one solid flight
 /**
  * Half-height of a step block.
  *
@@ -73,7 +84,7 @@ export function clearStairs(data, addr) {
  * Each block is tall and solid rather than a thin tread on stilts: a foot that
  * catches should stub against something, not drop into a gap under it.
  */
-export function layoutStairs(data, addr, { count, rise, run, start }) {
+export function layoutStairs(data, addr, { count, rise, run, start, y = 0 }) {
   const n = Math.max(0, Math.min(count, STAIR_COUNT));
   for (let i = 0; i < STAIR_COUNT; i++) {
     const a = addr[i];

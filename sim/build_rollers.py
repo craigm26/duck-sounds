@@ -50,12 +50,19 @@ phys = re.sub(r'\s+material="[^"]*"', '', phys)
 # why Pollen drive their own terrain the same way. Two joints per step means the
 # rise AND the run are both adjustable; parking a step far below removes it.
 STAIRS = 14
+# These MUST match site/stairs.js — STEP_HALF_DEPTH, STAIR_HALF_WIDTH,
+# STEP_HALF_HEIGHT and STAIR_Y. The rollers scene positions its steps with the
+# same layoutStairs(), so a step sized differently here lands somewhere the
+# shared code does not expect. It already had: 60x160x25 mm blocks on the
+# centreline while the walking scene used 170x170x100 mm flush to the wall.
+STAIR_Y = 1.5 - 0.025 - 0.17
+
 steps = "".join(
     f'''
-    <body name="step{i}" pos="0 0 0">
+    <body name="step{i}" pos="0 {STAIR_Y} 0">
       <joint name="step{i}_x" type="slide" axis="1 0 0" limited="false" damping="0" armature="0" frictionloss="0"/>
       <joint name="step{i}_z" type="slide" axis="0 0 1" limited="false" damping="0" armature="0" frictionloss="0"/>
-      <geom name="step{i}_geom" type="box" size="0.06 0.16 0.025" pos="0 0 0"
+      <geom name="step{i}_geom" type="box" size="0.17 0.17 0.10" pos="0 0 0"
             contype="4" conaffinity="4" condim="3" friction="1.0 0.02 0.001"
             rgba="0.62 0.65 0.61 1" mass="200"/>
     </body>'''

@@ -2,7 +2,7 @@
  "name": "lever_up",
  "blend": 2.4,
  "policy": "BEST_alpha_stand.onnx",
- "note": "head planted on the tread as a pivot; 40 mm, 3/3 (stepping managed 26)",
+ "note": "head planted on the tread as a pivot; clears nothing on a real 280 mm-run stair",
  "approach": 0.2779264704858216,
  "keyframes": [
   {

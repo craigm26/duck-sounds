@@ -10,7 +10,7 @@ import { makeLoop } from './duckloop.mjs';
 import { createRenderer } from './render.js';
 import { findStairJoints, layoutStairs, clearStairs, STAIR_COUNT } from './stairs.js';
 import { buildTrack, poseAt } from './intent.mjs';
-import { INTENTS, STEP_UP_KEY, BACK_ROLL_KEY, LEVER_KEY, WALL_FLIP_KEY, RISER_KEY, DEFAULTS, speeds } from './intents.js';
+import { INTENTS, STEP_UP_KEY, BACK_ROLL_KEY, LEVER_KEY, WALL_FLIP_KEY, RISER_KEY, CLIMB_KEY, DEFAULTS, speeds } from './intents.js';
 import { isTouch, makeStick } from './touch.js';
 import { makePad, ACTIONS } from './gamepad.js';
 import { xrSupport, startXR } from './xr.js';
@@ -42,7 +42,7 @@ const cmdState = { vx: 0, vy: 0, vyaw: 0 };
 let model, data, mj, session, inputName, C, HOME, buildObs, gaitTargets, projectedGravity, command, findDuckJoints;
 let lastAction = new Array(14).fill(0), previous = null, ticks = 0, GYRO = 0;
 let GEOM_TYPES = null;
-let STAIRS = null, DUCK = null, stairCfg = { count: 8, rise: 0, run: 0.09, start: 0.45 };
+let STAIRS = null, DUCK = null, stairCfg = { count: 8, rise: 0, run: 0.28, start: 0.45 };
 let manual = null;   // 14 hand-set targets, or null while the policy drives
 let intent = null;   // { params, track, t0 } while the step-up move is playing
 let stepupParams = null;
@@ -307,7 +307,7 @@ function loadSlots() {
 function buildSlots() {
   const all = [...INTENTS, { id: 'step_up', label: 'Step up' }, { id: 'back_roll', label: 'Back roll' },
     { id: 'lever_up', label: 'Lever up' }, { id: 'wall_flip', label: 'Wall flip' },
-    { id: 'riser_up', label: 'Riser up' }];
+    { id: 'riser_up', label: 'Riser up' }, { id: 'climb', label: 'Climb' }];
   const slots = loadSlots();
   for (const name of ['A', 'B']) {
     const sel = document.getElementById('slot' + name);
@@ -532,7 +532,8 @@ function buildTouch() {
   });
   const all = [...INTENTS, { key: STEP_UP_KEY, id: 'step_up', label: 'Step up' }, { key: BACK_ROLL_KEY, id: 'back_roll', label: 'Back roll' },
     { key: LEVER_KEY, id: 'lever_up', label: 'Lever up' }, { key: WALL_FLIP_KEY, id: 'wall_flip', label: 'Wall flip' },
-    { key: RISER_KEY, id: 'riser_up', label: 'Riser up' }];
+    { key: RISER_KEY, id: 'riser_up', label: 'Riser up' },
+    { key: CLIMB_KEY, id: 'climb', label: 'Climb' }];
   for (const el of document.querySelectorAll('.pad-btn')) {
     // Read the intent at PRESS time, not at wiring time, so re-assigning a
     // button takes effect without rebuilding the handler.
@@ -550,7 +551,8 @@ function buildKeys() {
     { key: BACK_ROLL_KEY, id: 'back_roll', label: 'Back roll' },
     { key: LEVER_KEY, id: 'lever_up', label: 'Lever up' },
     { key: WALL_FLIP_KEY, id: 'wall_flip', label: 'Wall flip' },
-    { key: RISER_KEY, id: 'riser_up', label: 'Riser up' }];
+    { key: RISER_KEY, id: 'riser_up', label: 'Riser up' },
+    { key: CLIMB_KEY, id: 'climb', label: 'Climb' }];
   for (const item of all) {
     const b = document.createElement('button');
     b.innerHTML = `<kbd>${item.key.toUpperCase()}</kbd><span>${item.label}</span>`;
@@ -633,7 +635,7 @@ async function loadVariant(name) {
       backRoll = await (await fetch('./intent-backroll.json')).json();
       tracks.back_roll = backRoll;
     } catch { /* likewise */ }
-    for (const [id, file] of [['lever_up', 'intent-lever.json'], ['wall_flip', 'intent-wallflip.json'], ['riser_up', 'intent-riser.json']]) {
+    for (const [id, file] of [['lever_up', 'intent-lever.json'], ['wall_flip', 'intent-wallflip.json'], ['riser_up', 'intent-riser.json'], ['climb', 'intent-climb.json']]) {
       try { tracks[id] = await (await fetch('./' + file)).json(); } catch { /* optional */ }
     }
     // AR, where the browser has it. The button stays hidden otherwise rather

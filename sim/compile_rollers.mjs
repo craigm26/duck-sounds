@@ -9,4 +9,4 @@ console.log('compiled: nq', model.nq, 'ngeom', model.ngeom, 'nu', model.nu);
 mj.mj_saveModel(model, '/rollers.mjb', null);
 const bytes = mj.FS.readFile('/rollers.mjb');
 fs.writeFileSync('scene-rollers.mjb', Buffer.from(bytes));
-console.log('SAVED scene.mjb', (bytes.length / 1024).toFixed(1), 'KB');
+console.log('SAVED scene-rollers.mjb', (bytes.length / 1024).toFixed(1), 'KB');

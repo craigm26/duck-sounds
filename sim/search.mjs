@@ -3,7 +3,7 @@ import load from 'mujoco';
 import fs from 'node:fs';
 import * as ort from 'onnxruntime-node';
 import { makeLoop } from '../site/duckloop.mjs';
-import { findStairJoints, layoutStairs, clearStairs } from '../site/stairs.js';
+import { findStairJoints, layoutStairs, clearStairs, STAIR_Y } from '../site/stairs.js';
 import { buildTrack, poseAt, DEFAULTS, BOUNDS } from './intent.mjs';
 
 const C = JSON.parse(fs.readFileSync('duckkit-constants.json', 'utf8'));
@@ -40,6 +40,7 @@ function setStep(h) {
 
 function reset(h) {
   mj.mj_resetData(model, data);
+  data.qpos[D.freeQpos + 1] = STAIR_Y;   // stairs hug the wall now; meet them there
   data.qpos[D.freeQpos + 2] = 0.12;
   data.qpos[D.freeQpos + 3] = 1;
   for (let i = 0; i < 14; i++) { data.qpos[D.qpos[i]] = HOME[i]; data.ctrl[i] = HOME[i]; }
@@ -53,10 +54,8 @@ const upright = () => projectedGravity([
 
 /**
  * Run the move against a step of height h.
+ *
  * Success = ends upright, with both the body and the lead foot up on the tread.
- */
-/**
- * Run the move against a step of height h.
  *
  * The scripted track is an OFFSET on the policy's output, not a replacement.
  * Replacing it does not work: with kp 0.55 the servos are far too soft to hold
@@ -125,7 +124,9 @@ function jitter(p, scale) {
 // Start low enough that a promising candidate is not scored zero for missing
 // the first rung — the previous ladder began at 20 mm and threw away everything
 // that could only manage 15.
-const LADDER = [0.010, 0.018, 0.026, 0.035, 0.045, 0.060, 0.080, 0.105, 0.135, 0.178];
+// Re-searched against the current scene. The first result (26 mm) was found
+// against thin floating treads; on solid blocks with a riser it manages 18.
+const LADDER = [0.010, 0.018, 0.026, 0.034, 0.045, 0.060, 0.080];
 async function maxHeight(p) {
   let best = 0;
   for (const h of LADDER) {
@@ -160,9 +161,9 @@ while (evals < BUDGET) {
   if (h > bestH) {
     bestH = h; best = cand;
     console.log(`  new best ${mm(h)} mm  (${evals} evaluations, ${((Date.now()-t0)/1000).toFixed(0)}s)`);
-    fs.writeFileSync('intent-stepup-tall.json', JSON.stringify({ maxHeightMm: +mm(bestH), params: best }, null, 2));
+    fs.writeFileSync('intent-stepup-v2.json', JSON.stringify({ maxHeightMm: +mm(bestH), params: best }, null, 2));
   }
 }
 console.log(`SEARCH best ${mm(bestH)} mm after ${evals} evaluations in ${((Date.now()-t0)/1000).toFixed(0)}s`);
-fs.writeFileSync('intent-stepup-tall.json', JSON.stringify({ maxHeightMm: +mm(bestH), params: best }, null, 2));
+fs.writeFileSync('intent-stepup-v2.json', JSON.stringify({ maxHeightMm: +mm(bestH), params: best }, null, 2));
 console.log('WROTE intent-stepup.json');

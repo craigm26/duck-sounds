@@ -132,6 +132,27 @@ export const WALL_FLIP_KEY = 't';
  */
 export const RISER_KEY = 'y';
 
+/**
+ * Ours: head on the shelf, then walk the feet up the riser.
+ *
+ * Every earlier attempt treated the step as something to step ONTO — one foot
+ * lifts, reaches the tread, takes weight — which caps at how high a foot can
+ * reach while the other leg holds the body up. This does something different:
+ * the head takes weight on the tread first, unloading both legs at once, then
+ * the feet climb the vertical riser in alternating presses until the body can
+ * be brought over the edge. The legs never reach the tread from the floor.
+ *
+ * Measured on a strict bar — both feet up, standing height above the tread,
+ * upright, and STILL THERE a second later:
+ *
+ *   riser push   16 mm
+ *   climbing     24 mm   3/3
+ *
+ * The older 26 / 40 / 55 mm figures used a looser test that a duck draped over
+ * the edge on its chest could pass. They are withdrawn.
+ */
+export const CLIMB_KEY = 'u';
+
 /** Command magnitudes for a variant, so driving matches the runtime. */
 export function speeds(variant) {
   return variant === 'rollers'
