@@ -10,6 +10,7 @@ import { makeLoop } from './duckloop.mjs';
 import { createRenderer } from './render.js';
 import { findStairJoints, layoutStairs, clearStairs, STAIR_COUNT } from './stairs.js';
 import { buildTrack, poseAt } from './intent.mjs';
+import { INTENTS, STEP_UP_KEY } from './intents.js';
 
 // Absolute, not relative: onnxruntime resolves wasmPaths against its OWN module
 // URL, so './vendor/ort/' became /vendor/ort/vendor/ort/... and every backend
@@ -30,6 +31,8 @@ let STAIRS = null, DUCK = null, stairCfg = { count: 8, rise: 0, run: 0.09, start
 let manual = null;   // 14 hand-set targets, or null while the policy drives
 let intent = null;   // { params, track, t0 } while the step-up move is playing
 let stepupParams = null;
+let skill = null;           // { intent, session, t0 } while a skill holds the robot
+const skillSessions = new Map();   // policies are fetched on first use, not up front
 
 function reset() {
   mj.mj_resetData(model, data);
@@ -38,6 +41,7 @@ function reset() {
   applyStairs();
   mj.mj_forward(model, data);
   lastAction = new Array(14).fill(0); previous = null; ticks = 0;
+  skill = null; intent = null;
 }
 
 function applyStairs() {
@@ -59,6 +63,16 @@ async function tick() {
 
   if (manual) {
     for (let k = 0; k < 14; k++) data.ctrl[k] = manual[k];
+  } else if (skill) {
+    // A skill IS the policy while it runs — a different trained network on the
+    // same 61-in/14-out contract, not a modifier on the walker.
+    const u = (ticks - skill.t0) / (skill.intent.seconds * C.tickHz);
+    const obs = buildObs(gyro, projectedGravity(q), jpos, jvel, lastAction,
+                         command(skill.intent.cmd(Math.min(u, 1))));
+    const out = await skill.session.run({ [inputName]: new ort.Tensor('float32', obs, [1, 61]) });
+    lastAction = Array.from(out[session.outputNames[0]].data);
+    for (let k = 0; k < 14; k++) data.ctrl[k] = HOME[k] + lastAction[k];
+    if (u >= 1) { skill = null; paintKeys(); }
   } else if (intent) {
     // The intent is an OFFSET on the policy, never a replacement. Replacing it
     // collapses the duck: with kp 0.55 the servos cannot hold a pose, so
@@ -205,11 +219,60 @@ modeEl.addEventListener('change', () => {
     previous = null;
   }
 });
-document.getElementById('stepup').addEventListener('click', () => {
-  if (!stepupParams) return;
+// ── intents ───────────────────────────────────────────────────────────────
+const keyRow = document.getElementById('keys');
+const keyButtons = new Map();
+
+function busy() { return skill !== null || intent !== null; }
+
+function paintKeys() {
+  for (const [id, el] of keyButtons) {
+    const active = (skill && skill.intent.id === id) || (intent && id === 'step_up');
+    el.classList.toggle('on', !!active);
+    el.disabled = busy() && !active;
+  }
+}
+
+async function fire(item) {
+  // One-shot and exclusive, as robotd treats them: a skill arriving while
+  // another holds the robot is refused, not blended into it.
+  if (busy()) return;
   manual = null; modeEl.value = 'policy';
-  intent = { params: stepupParams, track: buildTrack(stepupParams, HOME), t0: ticks };
-});
+  if (item.id === 'step_up') {
+    if (!stepupParams) return;
+    intent = { params: stepupParams, track: buildTrack(stepupParams, HOME), t0: ticks };
+  } else {
+    let s = skillSessions.get(item.policy);
+    if (!s) {
+      keyRow.classList.add('loading');
+      s = await ort.InferenceSession.create('./' + item.policy);
+      skillSessions.set(item.policy, s);
+      keyRow.classList.remove('loading');
+    }
+    skill = { intent: item, session: s, t0: ticks };
+  }
+  paintKeys();
+}
+
+function buildKeys() {
+  const all = [...INTENTS, { key: STEP_UP_KEY, id: 'step_up', label: 'Step up' }];
+  for (const item of all) {
+    const b = document.createElement('button');
+    b.innerHTML = `<kbd>${item.key.toUpperCase()}</kbd><span>${item.label}</span>`;
+    b.title = item.id === 'step_up'
+      ? 'The authored move: plant the head, lift onto a 26 mm step'
+      : `${item.policy} for ${item.seconds}s`;
+    b.addEventListener('click', () => fire(item));
+    keyRow.appendChild(b);
+    keyButtons.set(item.id, b);
+  }
+  const byKey = new Map(all.map(i => [i.key, i]));
+  addEventListener('keydown', e => {
+    if (e.metaKey || e.ctrlKey || e.altKey) return;
+    const item = byKey.get(e.key.toLowerCase());
+    if (item) { e.preventDefault(); fire(item); }
+  });
+}
 document.getElementById('copyPose').addEventListener('click', async () => {
   const names = C.jointNames.filter(n => n !== 'mouth');
   const pose = Object.fromEntries(names.map((n, k) => [n, +(manual ? manual[k] : data.ctrl[k]).toFixed(4)]));
@@ -255,6 +318,7 @@ document.getElementById('copyPose').addEventListener('click', async () => {
     try {
       stepupParams = (await (await fetch('./intent-stepup.json')).json()).params;
     } catch { /* the button simply does nothing without it */ }
+    buildKeys();
     buildServos();
     readStairs();
     reset();

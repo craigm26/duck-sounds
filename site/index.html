@@ -54,6 +54,17 @@
   }
   .pad button.on,.pad button:active{border-color:var(--duck);color:var(--duck)}
   .hint{font-family:var(--mono);font-size:.68rem;color:var(--muted);text-align:center;margin:.7rem 0 0}
+  .keys{display:flex;flex-wrap:wrap;gap:.4rem;justify-content:center;margin:.8rem auto 0;max-width:30rem}
+  .keys button{
+    font-family:var(--mono);font-size:.7rem;padding:.45rem .6rem;
+    border:1px solid var(--rule);border-radius:3px;background:var(--panel);
+    color:var(--ink);cursor:pointer;display:flex;gap:.4rem;align-items:baseline;
+  }
+  .keys button:hover{border-color:var(--duck)}
+  .keys button.on{border-color:var(--duck);color:var(--duck)}
+  .keys button[disabled]{opacity:.45;cursor:default}
+  .keys kbd{font-family:var(--mono);font-size:.62rem;color:var(--muted);border:1px solid var(--rule);border-radius:2px;padding:0 .25rem}
+  .keys button.on kbd{color:var(--duck)}
   .controls{margin:1.25rem auto 0;max-width:26rem;display:grid;gap:.6rem}
   .ctl{display:grid;grid-template-columns:5.6rem 1fr 4.2rem;align-items:center;gap:.7rem}
   .ctl label{font-family:var(--mono);font-size:.7rem;color:var(--muted)}
@@ -112,10 +123,10 @@
     <button data-key="ArrowUp" aria-label="walk forward">&uarr;</button>
     <button data-key="ArrowDown" aria-label="walk backward">&darr;</button>
     <button data-key="ArrowRight" aria-label="turn right">&rarr;</button>
-    <button id="stepup" aria-label="run the step-up intent">step up</button>
     <button id="reset" aria-label="stand it back up">reset</button>
   </div>
-  <p class="hint">arrow keys or WASD &middot; R to stand it back up</p>
+  <p class="hint">arrow keys or WASD to drive &middot; R resets</p>
+  <div class="keys" id="keys"></div>
 
   <div class="controls">
     <div class="ctl">

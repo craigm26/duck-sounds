@@ -118,3 +118,43 @@ Using two is deliberate: one can be redeployed and checked while the other
 keeps serving. To make one a staging site, deploy to it first, run
 `node browsercheck.mjs https://<name>.pages.dev/`, and only then deploy the
 other.
+
+## Intents, and the keys that fire them
+
+Each intent is a separate trained network on the same 61-in / 14-out contract as
+the walker, so firing one is switching which session runs — not a different
+pipeline.
+
+| Key | Intent | Policy | Measured effect |
+|---|---|---|---|
+| `Q` | Kick left | `ball_kick_left` | leg motion, body stays put |
+| `E` | Kick right | `ball_kick_right` | leg motion, body stays put |
+| `F` | Pick up | `alpha_ground_pick` | crouches to 0.09 m, recovers |
+| `X` | Forward roll | `roulade` | travels 0.55 m, goes over, lands upright |
+| `C` | Sit | `BEST_alpha_sitstand`, cmd 1 | 0.116 m &rarr; 0.059 m |
+| `V` | Stand up | `BEST_alpha_sitstand`, cmd 0 | back to 0.116 m |
+| `Z` | Hold still | `BEST_alpha_stand` | holds |
+| `G` | Step up | *authored* | the head-plant move, 26 mm |
+| arrows / WASD | drive | `alpha_walking` | |
+| `R` | reset | | |
+
+They are one-shot and **exclusive**: a second intent arriving while one holds
+the robot is refused, not blended in — the rule robotd enforces, and the reason
+`DuckSkill` exists in DuckKit. The key row greys out while one is running.
+
+`G` is the odd one: it is not a policy but an offset applied on top of one. It
+has to be, because with `kp 0.55` the servos cannot hold a pose — an open-loop
+version of it fell over on a flat floor.
+
+Policies are fetched on first press rather than at load, so pressing nothing
+costs nothing.
+
+```bash
+node skills.mjs        # what each policy does to the body, measured
+node intentcheck.mjs   # press every key in a real browser, watch the HUD
+```
+
+`intentcheck.mjs` matches its probe to the motion: height for a sit, trunk
+speed for a kick, and it sits the duck down before testing "stand up". The two
+kicks report no change through the HUD because they move the legs and not the
+trunk — `skills.mjs` measures them properly.
