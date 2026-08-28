@@ -40,13 +40,42 @@ phys = re.sub(r'\s*<mesh\b[^>]*/>', drop_mesh, phys)
 phys = re.sub(r'\s*<material\b[^>]*/>', '', phys)
 phys = re.sub(r'\s+material="[^"]*"', '', phys)
 
+# A fixed bank of stair boxes, each on its own x and z slide joints.
+#
+# Two things forced this shape. Geometry cannot be created at runtime — a meshed
+# MJCF will not compile in the browser, it dies in MuJoCo's threaded convex-hull
+# pass. And moving a STATIC geom by writing model.geom_pos does not work either:
+# measured, the duck walks straight through a platform placed that way, even
+# with geom_rbound corrected. Position that comes from qpos IS live, which is
+# why Pollen drive their own terrain the same way. Two joints per step means the
+# rise AND the run are both adjustable; parking a step far below removes it.
+STAIRS = 14
+steps = "".join(
+    f'''
+    <body name="step{i}" pos="0 0 0">
+      <joint name="step{i}_x" type="slide" axis="1 0 0" limited="false" damping="0" armature="0" frictionloss="0"/>
+      <joint name="step{i}_z" type="slide" axis="0 0 1" limited="false" damping="0" armature="0" frictionloss="0"/>
+      <geom name="step{i}_geom" type="box" size="0.045 0.30 0.30" pos="0 0 0"
+            contype="2" conaffinity="2" condim="3" friction="1.0 0.02 0.001"
+            rgba="0.62 0.65 0.61 1" mass="200"/>
+    </body>'''
+    for i in range(STAIRS))
+
 add = '''  <option timestep="0.005" gravity="0 0 -9.81" integrator="implicitfast" />
   <worldbody>
     <geom name="floor" type="plane" size="6 6 0.05" pos="0 0 0" rgba="0.16 0.18 0.16 1"
-          contype="1" conaffinity="1" condim="3" friction="1.0 0.02 0.001" />
+          contype="1" conaffinity="1" condim="3" friction="1.0 0.02 0.001" />%s
   </worldbody>
-'''
+''' % steps
 phys = phys.replace("<worldbody>", add + "  <worldbody>", 1)
+# The step blocks are tall and sit buried in the floor plane, which as a
+# collision pair generates enormous forces and destabilises the whole solve —
+# measured, a 1 mm step toppled a duck that walks 3 m on the flat. So steps live
+# on collision bit 2 and the floor on bit 1, which never meet, while the duck's
+# own collision geoms answer to both.
+phys = re.sub(r'(<default class="collision">\s*<geom group="3")(/>)',
+              r'\1 contype="3" conaffinity="3"\2', phys)
+
 io.open("scene_physics.xml", "w", encoding="utf-8").write(phys)
 print("physics meshes kept:", len(kept), "->", sorted(kept))
 print("scene_physics.xml", len(phys), "bytes")

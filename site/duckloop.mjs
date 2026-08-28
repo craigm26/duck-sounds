@@ -47,5 +47,33 @@ export function makeLoop(C) {
     return [vx, vy, vyaw, head[0], head[1], head[2], head[3], 0, 0, bodyZ, bodyRoll, bodyPitch, 0];
   }
 
-  return { C, HOME, LO, HI, ALPHA, projectedGravity, buildObs, gaitTargets, command };
+  /**
+   * Where the duck's own joints live in qpos/qvel, by NAME.
+   *
+   * Never assume qpos[7 + k]. Adding stair bodies to the scene put their
+   * joints ahead of the duck's in document order, and every index shifted —
+   * the loop then fed the policy a staircase's positions as if they were leg
+   * angles, and the duck fell over on a flat floor. Names do not shift.
+   */
+  function findDuckJoints(model) {
+    const names = POLICY.map(i => C.jointNames[i]);
+    const qpos = [], dof = [];
+    for (const name of names) {
+      let found = false;
+      for (let j = 0; j < model.njnt; j++) {
+        if (model.jnt(j).name === name) {
+          qpos.push(model.jnt_qposadr[j]); dof.push(model.jnt_dofadr[j]); found = true; break;
+        }
+      }
+      if (!found) throw new Error('joint missing from the model: ' + name);
+    }
+    // the trunk's free joint: 7 qpos (pos + quat), 6 dof
+    let freeQpos = -1, freeDof = -1;
+    for (let j = 0; j < model.njnt; j++) {
+      if (model.jnt_type[j] === 0) { freeQpos = model.jnt_qposadr[j]; freeDof = model.jnt_dofadr[j]; break; }
+    }
+    return { qpos, dof, freeQpos, freeDof };
+  }
+
+  return { C, HOME, LO, HI, ALPHA, projectedGravity, buildObs, gaitTargets, command, findDuckJoints };
 }

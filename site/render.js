@@ -156,7 +156,9 @@ export async function createRenderer(canvas, url) {
       gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
 
       // The camera trails the duck at a fixed offset, looking at its chest.
-      const cx = data.qpos[0], cy = data.qpos[1];
+      // NOT qpos[0]: the stair bodies sit ahead of the duck in the model, so
+      // the trunk's free joint starts wherever opts.root says it does.
+      const cx = data.qpos[opts.root], cy = data.qpos[opts.root + 1];
       // Close enough that a 25 cm robot reads as the subject: the duck is
       // about 0.25 m tall, so a 0.42 m standoff at 40 degrees fills the frame.
       const eye = [cx - 0.34, cy - 0.55, 0.30];

@@ -8,6 +8,7 @@ import loadMuJoCo from './vendor/mujoco.js';
 import * as ort from './vendor/ort/ort.wasm.min.mjs';
 import { makeLoop } from './duckloop.mjs';
 import { createRenderer } from './render.js';
+import { findStairJoints, layoutStairs, clearStairs, STAIR_COUNT } from './stairs.js';
 
 // Absolute, not relative: onnxruntime resolves wasmPaths against its OWN module
 // URL, so './vendor/ort/' became /vendor/ort/vendor/ort/... and every backend
@@ -22,29 +23,45 @@ const statusEl = document.getElementById('status');
 const hud = document.getElementById('hud');
 
 const cmdState = { vx: 0, vy: 0, vyaw: 0 };
-let model, data, mj, session, inputName, C, HOME, buildObs, gaitTargets, projectedGravity, command;
+let model, data, mj, session, inputName, C, HOME, buildObs, gaitTargets, projectedGravity, command, findDuckJoints;
 let lastAction = new Array(14).fill(0), previous = null, ticks = 0, GYRO = 0;
+let STAIRS = null, DUCK = null, stairCfg = { count: 8, rise: 0, run: 0.09, start: 0.45 };
+let manual = null;   // 14 hand-set targets, or null while the policy drives
 
 function reset() {
   mj.mj_resetData(model, data);
-  data.qpos[2] = 0.12; data.qpos[3] = 1;
-  for (let i = 0; i < 14; i++) { data.qpos[7 + i] = HOME[i]; data.ctrl[i] = HOME[i]; }
+  data.qpos[DUCK.freeQpos + 2] = 0.12; data.qpos[DUCK.freeQpos + 3] = 1;
+  for (let i = 0; i < 14; i++) { data.qpos[DUCK.qpos[i]] = HOME[i]; data.ctrl[i] = HOME[i]; }
+  applyStairs();
   mj.mj_forward(model, data);
   lastAction = new Array(14).fill(0); previous = null; ticks = 0;
 }
 
+function applyStairs() {
+  if (!STAIRS) return;
+  if (stairCfg.rise > 0) layoutStairs(data, STAIRS, stairCfg);
+  else clearStairs(data, STAIRS);
+}
+
 async function tick() {
-  const q = [data.qpos[3], data.qpos[4], data.qpos[5], data.qpos[6]];
+  // The steps are heavy bodies on frictionless slides: their position has to be
+  // re-asserted every tick, velocity included, or they drift and then catapult.
+  applyStairs();
+
+  const f = DUCK.freeQpos;
+  const q = [data.qpos[f+3], data.qpos[f+4], data.qpos[f+5], data.qpos[f+6]];
   const gyro = [data.sensordata[GYRO], data.sensordata[GYRO + 1], data.sensordata[GYRO + 2]];
   const jpos = [], jvel = [];
-  for (let k = 0; k < 14; k++) { jpos.push(data.qpos[7 + k]); jvel.push(data.qvel[6 + k]); }
-  const obs = buildObs(gyro, projectedGravity(q), jpos, jvel, lastAction, command(cmdState));
-  const out = await session.run({ [inputName]: new ort.Tensor('float32', obs, [1, 61]) });
-  lastAction = Array.from(out[session.outputNames[0]].data);
-  // Pollen's simulator drives ctrl = pose + action, scale 1.0, no low-pass.
-  // DuckKit's 0.9 + filter is robotd's on-robot behaviour, which is a
-  // different thing; matching mjlab here is what makes the gait match.
-  for (let k = 0; k < 14; k++) data.ctrl[k] = HOME[k] + lastAction[k];
+  for (let k = 0; k < 14; k++) { jpos.push(data.qpos[DUCK.qpos[k]]); jvel.push(data.qvel[DUCK.dof[k]]); }
+
+  if (manual) {
+    for (let k = 0; k < 14; k++) data.ctrl[k] = manual[k];
+  } else {
+    const obs = buildObs(gyro, projectedGravity(q), jpos, jvel, lastAction, command(cmdState));
+    const out = await session.run({ [inputName]: new ort.Tensor('float32', obs, [1, 61]) });
+    lastAction = Array.from(out[session.outputNames[0]].data);
+    for (let k = 0; k < 14; k++) data.ctrl[k] = HOME[k] + lastAction[k];
+  }
   for (let s = 0; s < DECIMATION; s++) mj.mj_step(model, data);
   ticks++;
 }
@@ -63,12 +80,14 @@ function draw() {
   renderer.render(data, {
     bg: themeColour('--panel', [0.91, 0.92, 0.90]),
     grid: themeColour('--rule', [0.79, 0.82, 0.78]),
+    root: DUCK.freeQpos,
   });
-  const speed = Math.hypot(data.qvel[0], data.qvel[1]);
+  const f = DUCK.freeQpos, fd = DUCK.freeDof;
+  const speed = Math.hypot(data.qvel[fd], data.qvel[fd+1]);
   hud.textContent =
     `tick ${String(ticks).padStart(5, '0')}   ` +
     `speed ${speed.toFixed(2)} m/s   ` +
-    `height ${data.qpos[2].toFixed(3)} m   ` +
+    `height ${data.qpos[f+2].toFixed(3)} m   ` +
     `contacts ${data.ncon}`;
 }
 
@@ -96,12 +115,92 @@ for (const el of document.querySelectorAll('[data-key]')) {
 }
 document.getElementById('reset').addEventListener('click', reset);
 
+// ── stairs ────────────────────────────────────────────────────────────────
+const riseEl = document.getElementById('rise'), riseOut = document.getElementById('riseOut');
+const countEl = document.getElementById('count'), countOut = document.getElementById('countOut');
+const runEl = document.getElementById('run'), runOut = document.getElementById('runOut');
+const ctlNote = document.getElementById('ctlNote');
+function readStairs() {
+  stairCfg = {
+    count: +countEl.value,
+    rise: +riseEl.value / 1000,
+    run: +runEl.value / 1000,
+    start: 0.45,
+  };
+  riseOut.textContent = +riseEl.value === 0 ? 'flat' : riseEl.value + ' mm';
+  countOut.textContent = countEl.value;
+  runOut.textContent = runEl.value + ' mm';
+  // Measured, not guessed: 1 and 2 mm are walkable, 3 mm and up are not.
+  ctlNote.textContent = +riseEl.value === 0
+    ? 'Flat floor.'
+    : (+riseEl.value <= 2
+        ? 'It can walk up these.'
+        : `It cannot walk up ${riseEl.value} mm. Measured: 2 mm is the limit, 3 mm tips it over.`);
+  if (data) applyStairs();
+}
+for (const el of [riseEl, countEl, runEl]) el.addEventListener('input', readStairs);
+
+// ── servos ────────────────────────────────────────────────────────────────
+const modeEl = document.getElementById('mode');
+const servoList = document.getElementById('servoList');
+const servoInputs = [];
+function buildServos() {
+  const names = C.jointNames.filter(n => n !== 'mouth');
+  const lo = C.rangeLo.filter((_, i) => C.jointNames[i] !== 'mouth');
+  const hi = C.rangeHi.filter((_, i) => C.jointNames[i] !== 'mouth');
+  names.forEach((name, k) => {
+    const row = document.createElement('div');
+    row.className = 'ctl';
+    const label = document.createElement('label');
+    label.textContent = name;
+    const input = document.createElement('input');
+    input.type = 'range';
+    // The real travel limits from the model, so a slider cannot ask for a
+    // joint angle the robot does not have.
+    input.min = lo[k].toFixed(4); input.max = hi[k].toFixed(4);
+    input.step = 0.005; input.value = HOME[k].toFixed(4);
+    const out = document.createElement('output');
+    const show = () => { out.textContent = (+input.value).toFixed(2); };
+    input.addEventListener('input', () => {
+      show();
+      if (manual) manual[k] = +input.value;
+    });
+    show();
+    row.append(label, input, out);
+    servoList.appendChild(row);
+    servoInputs.push(input);
+  });
+}
+modeEl.addEventListener('change', () => {
+  if (modeEl.value === 'manual') {
+    // Start from whatever it is doing right now, so you can catch a pose
+    // mid-stride and edit it rather than beginning from the home stance.
+    manual = [];
+    for (let k = 0; k < 14; k++) {
+      const v = data.ctrl[k];
+      manual.push(v);
+      servoInputs[k].value = v.toFixed(4);
+      servoInputs[k].nextElementSibling.textContent = v.toFixed(2);
+    }
+  } else {
+    manual = null;
+    previous = null;
+  }
+});
+document.getElementById('copyPose').addEventListener('click', async () => {
+  const names = C.jointNames.filter(n => n !== 'mouth');
+  const pose = Object.fromEntries(names.map((n, k) => [n, +(manual ? manual[k] : data.ctrl[k]).toFixed(4)]));
+  const text = JSON.stringify(pose, null, 2);
+  try { await navigator.clipboard.writeText(text); ctlNote.textContent = 'Pose copied.'; }
+  catch { console.log(text); ctlNote.textContent = 'Pose logged to the console.'; }
+});
+
 // ── boot ───────────────────────────────────────────────────────────────────
 (async function start() {
   try {
     statusEl.textContent = 'loading physics…';
     C = await (await fetch('./duckkit-constants.json')).json();
-    ({ HOME, buildObs, gaitTargets, projectedGravity, command } = makeLoop(C));
+    ({ HOME, buildObs, gaitTargets, projectedGravity, command, findDuckJoints } = makeLoop(C));
     mj = await loadMuJoCo();
     statusEl.textContent = 'loading the robot…';
     // A PRECOMPILED model, not XML. Compiling Pollen's meshed MJCF in the
@@ -119,6 +218,8 @@ document.getElementById('reset').addEventListener('click', reset);
     for (let i = 0; i < model.nsensor; i++) {
       if (model.sensor(i).name === 'imu_ang_vel') GYRO = model.sensor(i).adr;
     }
+    DUCK = findDuckJoints(model);
+    STAIRS = findStairJoints(model);
 
     statusEl.textContent = 'loading the policy…';
     session = await ort.InferenceSession.create('./alpha_walking.onnx');
@@ -128,6 +229,8 @@ document.getElementById('reset').addEventListener('click', reset);
     renderer = await createRenderer(cv, './duck-visual.bin');
     console.log('renderer:', renderer.draws, 'parts,', renderer.triangles, 'triangles');
 
+    buildServos();
+    readStairs();
     reset();
     statusEl.textContent = '';
     document.body.classList.add('ready');

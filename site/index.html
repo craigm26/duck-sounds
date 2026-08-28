@@ -54,6 +54,22 @@
   }
   .pad button.on,.pad button:active{border-color:var(--duck);color:var(--duck)}
   .hint{font-family:var(--mono);font-size:.68rem;color:var(--muted);text-align:center;margin:.7rem 0 0}
+  .controls{margin:1.25rem auto 0;max-width:26rem;display:grid;gap:.6rem}
+  .ctl{display:grid;grid-template-columns:5.6rem 1fr 4.2rem;align-items:center;gap:.7rem}
+  .ctl label{font-family:var(--mono);font-size:.7rem;color:var(--muted)}
+  .ctl output{font-family:var(--mono);font-size:.7rem;color:var(--ink);text-align:right}
+  .ctl input[type=range]{width:100%;accent-color:var(--duck)}
+  .ctl-note{font-family:var(--mono);font-size:.66rem;color:var(--muted);margin:.2rem 0 0;text-align:center}
+  .servos{max-width:26rem;margin:1rem auto 0;border:1px solid var(--rule);border-radius:3px;padding:.6rem .8rem;background:var(--panel)}
+  .servos summary{font-family:var(--mono);font-size:.72rem;color:var(--muted);cursor:pointer}
+  .servos .ctl{margin-top:.6rem}
+  .servos select,.mini{font-family:var(--mono);font-size:.7rem;padding:.35rem .5rem;border:1px solid var(--rule);border-radius:3px;background:var(--paper);color:var(--ink)}
+  .mini{cursor:pointer}
+  .mini:hover{border-color:var(--duck);color:var(--duck)}
+  #servoList{margin-top:.5rem;display:grid;gap:.28rem}
+  #servoList .ctl{grid-template-columns:6.6rem 1fr 3.4rem;gap:.5rem;margin:0}
+  #servoList label{font-size:.62rem}
+  #servoList output{font-size:.62rem}
 
   section{padding:2.25rem 0;border-top:1px solid var(--rule);margin-top:2.25rem}
   section:first-of-type{margin-top:2.75rem}
@@ -80,7 +96,7 @@
 <header>
   <div class="wrap">
     <p class="eyebrow">Pollen Robotics Microduck</p>
-    <h1>Drive a duck that <span class="is">taught itself</span> to walk.</h1>
+    <h1>Microduck <span class="is">simulator</span></h1>
     <p class="standfirst">Nobody wrote this walk. Below, the robot's own trained network is steering fifteen joints against real gravity and a real floor — in your browser, fifty times a second.</p>
   </div>
 </header>
@@ -99,6 +115,36 @@
     <button id="reset" aria-label="stand it back up">reset</button>
   </div>
   <p class="hint">arrow keys or WASD &middot; R to stand it back up</p>
+
+  <div class="controls">
+    <div class="ctl">
+      <label for="rise">Step height</label>
+      <input type="range" id="rise" min="0" max="20" step="1" value="0">
+      <output id="riseOut">flat</output>
+    </div>
+    <div class="ctl">
+      <label for="count">Steps</label>
+      <input type="range" id="count" min="1" max="14" step="1" value="8">
+      <output id="countOut">8</output>
+    </div>
+    <div class="ctl">
+      <label for="run">Step depth</label>
+      <input type="range" id="run" min="30" max="120" step="5" value="90">
+      <output id="runOut">90 mm</output>
+    </div>
+    <p class="ctl-note" id="ctlNote">It walks up 2 mm steps. At 3 mm it falls over.</p>
+  </div>
+
+  <details class="servos">
+    <summary>Servos</summary>
+    <p class="ctl-note" style="text-align:left">Take the servos off the policy and set them by hand. The duck will fall over unless you hold it up; that is what the policy was doing. Copy the pose when you have one worth keeping.</p>
+    <div class="ctl" style="grid-template-columns:5.6rem 1fr 4.2rem">
+      <label for="mode">Driven by</label>
+      <select id="mode"><option value="policy">the policy</option><option value="manual">these sliders</option></select>
+      <button id="copyPose" class="mini">copy pose</button>
+    </div>
+    <div id="servoList"></div>
+  </details>
 </div>
 
 <div class="wrap">
@@ -128,11 +174,11 @@
   </section>
 
   <section>
-    <p class="label">With thanks</p>
-    <h2>None of this is ours</h2>
-    <p><strong><a href="https://www.pollen-robotics.com/">Pollen Robotics</a> designed and built the Microduck, trained the policy that walks it, and gave permission for their model to be used here.</strong> That permission is the reason this page exists in the form it does.</p>
-    <p>Concretely, what is theirs: the robot; <code>alpha_walking.onnx</code>, the network doing the walking; the MuJoCo model with its measured masses, inertia tensors and collision geometry; the servo parameters; and all 70 meshes you are looking at. What is ours is a floor, a camera, and the arithmetic joining them up.</p>
-    <p>Their own simulator is better than this one and does more &mdash; it has a ball, an arena, a full set of moves. If you came here to see the duck, go and see it there too.</p>
+    <p class="label">Credit</p>
+    <h2>Thanks to Pollen Robotics</h2>
+    <p><a href="https://www.pollen-robotics.com/">Pollen Robotics</a> built the Microduck, trained the policy, and gave permission for their model to be used here.</p>
+    <p>Theirs: the robot, <code>alpha_walking.onnx</code>, the MuJoCo model, the servo parameters, and all 70 meshes. Ours: the floor, the stairs, the camera.</p>
+    <p><a href="https://huggingface.co/spaces/pollen-robotics/microduck-simulator">Their simulator</a> does more than this one.</p>
   </section>
 
   <section>
