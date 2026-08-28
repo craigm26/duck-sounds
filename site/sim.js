@@ -7,6 +7,7 @@
 import loadMuJoCo from './vendor/mujoco.js';
 import * as ort from './vendor/ort/ort.wasm.min.mjs';
 import { makeLoop } from './duckloop.mjs';
+import { createRenderer } from './render.js';
 
 // Absolute, not relative: onnxruntime resolves wasmPaths against its OWN module
 // URL, so './vendor/ort/' became /vendor/ort/vendor/ort/... and every backend
@@ -15,71 +16,8 @@ ort.env.wasm.wasmPaths = new URL('./vendor/ort/', document.baseURI).href;
 ort.env.wasm.numThreads = 1;
 
 const DECIMATION = 4;
-// The duck is drawn as solid limbs, not a stick figure. Each link is a real box
-// spanning from its own joint to its child's, so the proportions are the
-// model's own measured link lengths (thigh 42 mm, shin 49 mm, neck 50 mm)
-// rather than anything guessed. Pollen's simulator uses their sculpted meshes;
-// those live in a Space with no licence, so this is the honest alternative —
-// the right shape, in the robot's colours: white shells, dark brackets, orange
-// feet.
-//
-// MJCF body ids: 1 trunk, 2-6 left leg, 7-10 neck+head, 11-15 right leg.
-const LIMB = {  // child id -> how the bone INTO it is drawn
-  2:  { r: 0.017, c: 'joint' },  11: { r: 0.017, c: 'joint' },
-  3:  { r: 0.015, c: 'joint' },  12: { r: 0.015, c: 'joint' },
-  4:  { r: 0.015, c: 'shell' },  13: { r: 0.015, c: 'shell' },
-  5:  { r: 0.014, c: 'shell' },  14: { r: 0.014, c: 'shell' },
-  6:  { r: 0.012, c: 'joint' },  15: { r: 0.012, c: 'joint' },
-  7:  { r: 0.013, c: 'joint' },
-  8:  { r: 0.012, c: 'joint' },
-  9:  { r: 0.013, c: 'joint' },
-  10: { r: 0.014, c: 'joint' },
-};
-// Leaf volumes the bones cannot express: the head shell and the two feet.
-const BLOCKS = [
-  { body: 10, w: 0.060, d: 0.068, h: 0.042, up: 0.012, c: 'shell' },
-  { body: 6,  w: 0.034, d: 0.052, h: 0.011, up: -0.014, c: 'foot' },
-  { body: 15, w: 0.034, d: 0.052, h: 0.011, up: -0.014, c: 'foot' },
-  { body: 1,  w: 0.050, d: 0.058, h: 0.040, up: 0.000, c: 'shell' },
-];
-const FACES = [[0,1,2,3],[4,5,6,7],[0,1,5,4],[2,3,7,6],[1,2,6,5],[0,3,7,4]];
-const CORNERS = [[-1,-1,-1],[1,-1,-1],[1,1,-1],[-1,1,-1],[-1,-1,1],[1,-1,1],[1,1,1],[-1,1,1]];
-
-function rotate(q, v) {
-  const [w, x, y, z] = q;
-  const tx = 2 * (y * v[2] - z * v[1]);
-  const ty = 2 * (z * v[0] - x * v[2]);
-  const tz = 2 * (x * v[1] - y * v[0]);
-  return [v[0] + w * tx + (y * tz - z * ty),
-          v[1] + w * ty + (z * tx - x * tz),
-          v[2] + w * tz + (x * ty - y * tx)];
-}
-
-/** Eight corners of a box spanning a→b with square cross-section 2r. */
-function boxBetween(a, b, r) {
-  const d = [b[0] - a[0], b[1] - a[1], b[2] - a[2]];
-  const len = Math.hypot(d[0], d[1], d[2]) || 1e-6;
-  const u = [d[0] / len, d[1] / len, d[2] / len];
-  // any vector not parallel to u
-  const seed = Math.abs(u[2]) < 0.9 ? [0, 0, 1] : [1, 0, 0];
-  let n1 = [u[1] * seed[2] - u[2] * seed[1], u[2] * seed[0] - u[0] * seed[2], u[0] * seed[1] - u[1] * seed[0]];
-  const n1l = Math.hypot(n1[0], n1[1], n1[2]) || 1e-6;
-  n1 = n1.map(v => v / n1l);
-  const n2 = [u[1] * n1[2] - u[2] * n1[1], u[2] * n1[0] - u[0] * n1[2], u[0] * n1[1] - u[1] * n1[0]];
-  const out = [];
-  for (const c of CORNERS) {
-    const t = c[2] > 0 ? 1 : 0;
-    out.push([
-      a[0] + d[0] * t + n1[0] * c[0] * r + n2[0] * c[1] * r,
-      a[1] + d[1] * t + n1[1] * c[0] * r + n2[1] * c[1] * r,
-      a[2] + d[2] * t + n1[2] * c[0] * r + n2[2] * c[1] * r,
-    ]);
-  }
-  return out;
-}
-
 const cv = document.getElementById('view');
-const ctx = cv.getContext('2d');
+let renderer = null;
 const statusEl = document.getElementById('status');
 const hud = document.getElementById('hud');
 
@@ -111,92 +49,21 @@ async function tick() {
   ticks++;
 }
 
-// ── drawing ────────────────────────────────────────────────────────────────
-function project(p, cam) {
-  const dx = p[0] - cam.x, dy = p[1] - cam.y, dz = p[2];
-  const yaw = 0.9, pitch = 0.30;
-  const rx = dx * Math.cos(yaw) - dy * Math.sin(yaw);
-  const ry = dx * Math.sin(yaw) + dy * Math.cos(yaw);
-  const depth = Math.max(ry + 0.75, 0.15);
-  const s = cam.scale / depth;
-  return [cam.w / 2 + rx * s, cam.h * 0.70 - (dz - pitch * ry) * s, depth];
+// ── drawing ───────────────────────────────────────────────────────────────
+function themeColour(name, fallback) {
+  const v = getComputedStyle(document.documentElement).getPropertyValue(name).trim();
+  const m = /^#([0-9a-f]{6})$/i.exec(v);
+  if (!m) return fallback;
+  const n = parseInt(m[1], 16);
+  return [(n >> 16 & 255) / 255, (n >> 8 & 255) / 255, (n & 255) / 255];
 }
 
 function draw() {
-  const w = cv.clientWidth, h = cv.clientHeight, dpr = Math.min(devicePixelRatio || 1, 2);
-  if (cv.width !== Math.round(w * dpr)) { cv.width = Math.round(w * dpr); cv.height = Math.round(h * dpr); }
-  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-  const css = n => getComputedStyle(document.documentElement).getPropertyValue(n).trim();
-  ctx.clearRect(0, 0, w, h);
-
-  const cam = { x: data.qpos[0], y: data.qpos[1], w, h, scale: Math.min(w, h) * 1.15 };
-
-  // floor
-  ctx.strokeStyle = css('--rule'); ctx.lineWidth = 1; ctx.globalAlpha = 0.55;
-  const step = 0.1, span = 0.8;
-  const gx = Math.round(cam.x / step) * step, gy = Math.round(cam.y / step) * step;
-  const seg = (a, b) => {
-    const p = project(a, cam), q2 = project(b, cam);
-    if (p[2] <= 0.16 || q2[2] <= 0.16) return;
-    ctx.beginPath(); ctx.moveTo(p[0], p[1]); ctx.lineTo(q2[0], q2[1]); ctx.stroke();
-  };
-  for (let i = -span; i <= span + 1e-9; i += step) {
-    seg([gx + i, gy - span, 0], [gx + i, gy + span, 0]);
-    seg([gx - span, gy + i, 0], [gx + span, gy + i, 0]);
-  }
-  ctx.globalAlpha = 1;
-
-  // contact shadow
-  ctx.fillStyle = css('--rule'); ctx.globalAlpha = 0.55;
-  const sh = project([data.qpos[0], data.qpos[1], 0.001], cam);
-  ctx.beginPath(); ctx.ellipse(sh[0], sh[1], 42, 14, 0, 0, Math.PI * 2); ctx.fill();
-  ctx.globalAlpha = 1;
-
-  // limbs and volumes, painted back to front
-  const palette = { shell: css('--shell'), joint: css('--bracket'), foot: css('--duck') };
-  const world = b => [data.xpos[b * 3], data.xpos[b * 3 + 1], data.xpos[b * 3 + 2]];
-  const PARENT = { 2:1, 3:2, 4:3, 5:4, 6:5, 7:1, 8:7, 9:8, 10:9, 11:1, 12:11, 13:12, 14:13, 15:14 };
-
-  const shapes = [];
-  for (const key of Object.keys(LIMB)) {
-    const child = +key, spec = LIMB[child];
-    shapes.push({ corners: boxBetween(world(PARENT[child]), world(child), spec.r), c: spec.c });
-  }
-  for (const blk of BLOCKS) {
-    const pos = world(blk.body);
-    const quat = [data.xquat[blk.body * 4], data.xquat[blk.body * 4 + 1],
-                  data.xquat[blk.body * 4 + 2], data.xquat[blk.body * 4 + 3]];
-    const half = [blk.w / 2, blk.d / 2, blk.h / 2];
-    shapes.push({
-      corners: CORNERS.map(c => {
-        const local = [c[0] * half[0], c[1] * half[1], c[2] * half[2] + blk.up];
-        const wpt = rotate(quat, local);
-        return [pos[0] + wpt[0], pos[1] + wpt[1], pos[2] + wpt[2]];
-      }), c: blk.c,
-    });
-  }
-
-  const quads = [];
-  for (const shape of shapes) {
-    const pts = shape.corners.map(p => project(p, cam));
-    for (const f of FACES) {
-      const [ax, ay] = pts[f[0]], [bx, by] = pts[f[1]], [cx2, cy2] = pts[f[2]];
-      if ((bx - ax) * (cy2 - ay) - (by - ay) * (cx2 - ax) <= 0) continue;  // back-face cull
-      const depth = (pts[f[0]][2] + pts[f[1]][2] + pts[f[2]][2] + pts[f[3]][2]) / 4;
-      quads.push({ depth, pts: f.map(k => pts[k]), fill: palette[shape.c] });
-    }
-  }
-  quads.sort((a, b) => b.depth - a.depth);
-  ctx.lineJoin = 'round';
-  ctx.strokeStyle = css('--outline'); ctx.lineWidth = 1;
-  for (const q of quads) {
-    ctx.beginPath();
-    ctx.moveTo(q.pts[0][0], q.pts[0][1]);
-    for (let k = 1; k < 4; k++) ctx.lineTo(q.pts[k][0], q.pts[k][1]);
-    ctx.closePath();
-    ctx.fillStyle = q.fill; ctx.fill(); ctx.stroke();
-  }
-
+  if (!renderer) return;
+  renderer.render(data, {
+    bg: themeColour('--panel', [0.91, 0.92, 0.90]),
+    grid: themeColour('--rule', [0.79, 0.82, 0.78]),
+  });
   const speed = Math.hypot(data.qvel[0], data.qvel[1]);
   hud.textContent =
     `tick ${String(ticks).padStart(5, '0')}   ` +
@@ -256,6 +123,10 @@ document.getElementById('reset').addEventListener('click', reset);
     statusEl.textContent = 'loading the policy…';
     session = await ort.InferenceSession.create('./alpha_walking.onnx');
     inputName = session.inputNames[0];
+
+    statusEl.textContent = 'loading the robot\u2019s geometry\u2026';
+    renderer = await createRenderer(cv, './duck-visual.bin');
+    console.log('renderer:', renderer.draws, 'parts,', renderer.triangles, 'triangles');
 
     reset();
     statusEl.textContent = '';

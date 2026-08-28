@@ -3,7 +3,7 @@
 // drives it forward and checks the duck moved.
 import puppeteer from 'puppeteer-core';
 
-const URL_ = process.argv[2] || 'https://duck-craigmerry.pages.dev/';
+const URL_ = (process.argv[2] || 'https://duck-craigmerry.pages.dev/') + '?v=' + Date.now();
 const browser = await puppeteer.launch({
   executablePath: '/usr/bin/chromium',
   headless: 'new',
@@ -13,7 +13,8 @@ const page = await browser.newPage();
 await page.setViewport({ width: 1200, height: 900 });
 
 const errors = [];
-page.on('console', m => { if (m.type() === 'error') errors.push('console: ' + m.text()); });
+const logs = [];
+page.on('console', m => { if (m.type() === 'error') errors.push('console: ' + m.text()); else logs.push(m.text()); });
 page.on('pageerror', e => errors.push('pageerror: ' + e.message));
 page.on('requestfailed', r => errors.push('requestfailed: ' + r.url() + ' ' + (r.failure()?.errorText || '')));
 
@@ -50,18 +51,11 @@ if (ready) {
   const t1 = parseInt(hud1.match(/tick (\d+)/)?.[1] ?? '0', 10);
   console.log('TICKS  :', t0, '->', t1, `(${((t1 - t0) / 6).toFixed(1)} Hz, want ~50)`);
   // did anything actually get drawn?
-  const ink = await page.evaluate(() => {
-    const c = document.getElementById('view');
-    const g = c.getContext('2d');
-    const d = g.getImageData(0, 0, c.width, c.height).data;
-    let n = 0;
-    for (let i = 3; i < d.length; i += 4) if (d[i] > 8) n++;
-    return { painted: n, total: d.length / 4 };
-  });
-  console.log('CANVAS :', ink.painted, 'of', ink.total, 'pixels painted',
-              `(${(100 * ink.painted / ink.total).toFixed(1)}%)`);
+  const box = await page.$eval('#view', el => { const r = el.getBoundingClientRect(); return { w: Math.round(r.width), h: Math.round(r.height) }; });
+  console.log('CANVAS :', box.w + 'x' + box.h);
   await page.screenshot({ path: 'shot.png' });
   console.log('SHOT   : shot.png');
 }
+console.log('LOGS   :', logs.slice(0,6).join(' | '));
 console.log('ERRORS :', errors.length ? '\n  ' + errors.slice(0, 12).join('\n  ') : 'none');
 await browser.close();
