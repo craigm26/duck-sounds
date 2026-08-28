@@ -149,6 +149,7 @@ async function capture(spec) {
   let netYaw = 0, lastYaw = null;
   const settle = spec.continueFrom ? 0 : (spec.settle ?? 25);
   const ticks = Math.round(spec.seconds * C.tickHz);
+  const tail = [];
 
   for (let t = -settle; t < ticks; t++) {
     if (spec.stairs) layoutStairs(data, ADDR, spec.stairs);
@@ -319,181 +320,256 @@ const SPECS = [
   ...COMMUNITY,
 ];
 
-/**
- * Move a clip so it starts at the origin, facing along +x.
- *
- * MANDATORY, NOT COSMETIC. A recorded root carries wherever the duck happened
- * to be in MuJoCo. `stand` is captured with `continueFrom: 'sit'`, so it begins
- * 74 mm and 0.033 rad away from where `sit` began; the stair moves start at
- * y = 1.305, beside a wall. Replayed as recorded, firing an intent teleports
- * the duck across the room. De-origined, a clip is droppable anywhere on an AR
- * floor, and "frame 0 is at the origin" becomes something a decoder can assert
- * rather than something a comment hopes for.
- */
-/**
- * What posture a trunk height AND ORIENTATION mean together.
- *
- * Height alone is not enough, and the corpus proves it: the community headspin
- * clip sits at 0.048 m, lower than a fallen duck, because it is balanced on its
- * head ON PURPOSE. Classifying by height called that "fallen", which is the
- * same species of wrong as the hardcoded labels this replaced — a confident
- * claim contradicted by the recording it describes.
- *
- * So gravity decides first. Projected gravity z is -1 when the trunk is upright
- * and +1 when it is upside down; past +0.5 the duck is inverted whatever its
- * height, and that is a posture rather than a failure. Only once it is the
- * right way up does height separate standing (hold settles at 0.116) from
- * seated (sit settles at 0.059), with the midpoint between them.
- */
-/**
- * Posture over a WINDOW, never a single tick.
- *
- * The headspin holds gravity z between +0.56 and +0.93 for its whole run, and
- * was still classified "toppled" because the one frame sampled — the last —
- * happened to sit on the +0.5 boundary. A single tick of a dynamic motion is
- * noise, and a label taken from noise is a label that flickers between
- * recordings of the same clip.
- */
-function postureOver(roots, from, to) {
-  const slice = roots.slice(from, to);
-  const z = slice.reduce((a, r) => a + r[2], 0) / slice.length;
-  const g = slice.reduce((a, r) => a + projectedGravity(r.slice(3))[2], 0) / slice.length;
-  return posture(z, g);
-}
+// ─────────────────────────────────────────────────────────────────────────────
+// HOW OFTEN DOES IT ACTUALLY WORK?
+//
+// A recording is one run. "Ends toppled" tells you what happened that time and
+// nothing about whether it happens every time, and a panel that printed a
+// success rate from a single clip would be printing 0% or 100% and calling it a
+// measurement. So this runs each intent many times under randomised conditions
+// and counts.
+//
+// THE RANDOMISATION IS POLLEN'S OWN, read out of microduck_velocity_env_cfg.py
+// rather than invented, because a robustness number is only meaningful against
+// a stated distribution:
+//
+//   reset_base pose_range z .... (0.12, 0.13) m      — the drop height
+//   foot_friction ranges ....... (0.7, 1.3)          — how grippy the footpad is
+//   push_robot velocity_range .. (-0.3, +0.3) m/s    — a shove in x and y
+//   push interval .............. (3.0, 6.0) s, so a 4 s clip gets at most one
+//   randomize_com .............. ±0.003 m on the trunk
+//
+// The seed is fixed, so two runs of this script agree and a change in the
+// numbers means a change in the robot rather than a change in the dice.
+const ROLLOUTS = +(process.env.ROLLOUTS || 12);
 
+// A small deterministic generator. Math.random would make every run disagree
+// with the last one by a few percent, which is indistinguishable from a
+// regression.
+let seed = 0x2f6e2b1;
+function rand() {
+  seed ^= seed << 13; seed >>>= 0;
+  seed ^= seed >> 17;
+  seed ^= seed << 5;  seed >>>= 0;
+  return seed / 0x100000000;
+}
+const between = (lo, hi) => lo + rand() * (hi - lo);
+
+// The footpad geoms, so friction can be randomised where Pollen randomise it.
+const FOOT_GEOMS = [];
+for (let g = 0; g < model.ngeom; g++) {
+  const name = model.geom(g).name || '';
+  if (/foot/i.test(name)) FOOT_GEOMS.push(g);
+}
+const BASE_FRICTION = FOOT_GEOMS.map(g => model.geom_friction[g * 3]);
+const TRUNK_BODY = (() => {
+  for (let b = 0; b < model.nbody; b++) if (model.body(b).name === 'trunk_base') return b;
+  return -1;
+})();
+const BASE_COM = TRUNK_BODY >= 0
+  ? [model.body_ipos[TRUNK_BODY * 3], model.body_ipos[TRUNK_BODY * 3 + 1],
+     model.body_ipos[TRUNK_BODY * 3 + 2]]
+  : null;
+
+/**
+ * WHAT COUNTS AS SUCCESS, stated per intent rather than assumed.
+ *
+ * "Ends upright" is right for a kick and wrong for `sit`, which succeeds by
+ * ending seated, and wrong for a stair move, which succeeds only by ending ON
+ * the step — a duck standing perfectly upright at the bottom has failed. Every
+ * criterion below is a measurement of the final state against a threshold that
+ * is written down, so a rate can be read as "how often did it do THAT".
+ */
+// What each clip was RECORDED doing, so a rollout can be asked the second
+// question as well as the first.
+const RECORDED = JSON.parse(fs.readFileSync('duck-intent-clips.json', 'utf8')).clips;
+
+/// The recorder's own classifier, copied here rather than re-derived: gravity
+/// decides first, because a duck balanced on its head is lower than a fallen
+/// one and is not fallen.
 function posture(z, up) {
   if (up > 0.5) return 'inverted';
-  if (up > -0.5) return 'toppled';    // on its side: neither upright nor over
+  if (up > -0.5) return 'toppled';
   if (z >= 0.100) return 'standing';
   if (z >= 0.075) return 'crouched';
   if (z >= 0.052) return 'seated';
   return 'fallen';
 }
 
-/**
- * The props a clip was recorded against, moved into the clip's own frame.
- *
- * De-origining moves the DUCK to (0,0) facing +x; the world has to move with
- * it or the stair ends up behind the robot. So every prop is expressed
- * relative to the raw starting root, then rotated by the same −yaw0.
- */
-function environmentFor(spec, firstRoot) {
-  const [x0, y0] = firstRoot;
-  const q0 = firstRoot.slice(3);
-  const yaw0 = Math.atan2(2 * (q0[0] * q0[3] + q0[1] * q0[2]),
-                          1 - 2 * (q0[2] * q0[2] + q0[3] * q0[3]));
-  const c = Math.cos(-yaw0), s2 = Math.sin(-yaw0);
-  const place = (x, y) => {
-    const dx = x - x0, dy = y - y0;
-    return [+(dx * c - dy * s2).toFixed(4), +(dx * s2 + dy * c).toFixed(4)];
-  };
+/// OVER A WINDOW, never a single tick — the same rule the recorder follows.
+/// The headspin holds gravity between +0.56 and +0.93 for its whole run and was
+/// once labelled "toppled" because the one tick sampled sat on the boundary.
+function postureOf(tail) {
+  const z = tail.reduce((a, r) => a + r[2], 0) / tail.length;
+  const g = tail.reduce((a, r) => a + projectedGravity(r.slice(3))[2], 0) / tail.length;
+  return posture(z, g);
+}
 
-  // The ground is always there, and it is the single most useful piece of
-  // context: it is what says whether the feet are on the floor.
-  const env = { ground: true, yaw: +(-yaw0).toFixed(4), steps: [], walls: [] };
-
+function verdictFor(spec) {
+  if (spec.id === 'sit') {
+    return { text: 'ends seated, trunk between 52 and 100 mm',
+             ok: r => upright(r) && r[2] >= 0.052 && r[2] < 0.100 };
+  }
   if (spec.stairs) {
-    const { count, rise, run, start } = spec.stairs;
-    for (let i = 0; i < count; i++) {
-      const [px, py] = place(start + i * run + STEP_HALF_DEPTH, STAIR_Y);
-      env.steps.push({
-        x: px, y: py,
-        // The block top lands on (i+1)*rise; it extends STEP_HALF_HEIGHT below,
-        // which is how a shallow step still has a solid body under it.
-        top: +((i + 1) * rise).toFixed(4),
-        halfDepth: STEP_HALF_DEPTH, halfWidth: STAIR_HALF_WIDTH,
-        halfHeight: STEP_HALF_HEIGHT,
-      });
+    const target = spec.stairs.count * spec.stairs.rise;
+    return {
+      text: `ends standing on the flight, trunk at least ${Math.round(target * 1000)} mm up`,
+      // ON the step, not beside it: the trunk has to be as high as the top of
+      // the flight plus a standing robot's own height, less a tolerance.
+      ok: r => upright(r) && r[2] >= 0.100 + target - 0.004,
+    };
+  }
+  // A CLIP WITH NO STATED GOAL IS JUDGED AGAINST ITS OWN RECORDING. The
+  // community headspin ENDS ON ITS HEAD on purpose, and scoring it by "ends
+  // standing" measured the opposite of what it is for — 0/16, for a motion
+  // that did exactly what its author intended. Nothing here knows another
+  // owner's intent, so the only criterion available is the one the recording
+  // itself demonstrates.
+  const recorded = RECORDED[spec.id]?.endsIn;
+  if (recorded && recorded !== 'standing') {
+    return { text: `ends ${recorded}, as the recording did — this motion has no stated goal here`,
+             ok: r => posture(r[2], projectedGravity(r.slice(3))[2]) === recorded };
+  }
+  return { text: 'ends standing, trunk at least 100 mm up',
+           ok: r => upright(r) && r[2] >= 0.100 };
+}
+
+// Upright by GRAVITY, not by height — a duck balanced on its head is low and
+// not fallen, and one lying flat is at a plausible height and is not standing.
+const upright = r => projectedGravity(r.slice(3))[2] < -0.5;
+
+async function rollout(spec) {
+  const session = await policy(spec.policy);
+  const settling = await policy(STAND);
+
+  // Domain randomisation, applied before the reset so the settle happens under
+  // the conditions the run will be judged in.
+  const friction = between(0.7, 1.3);
+  for (let i = 0; i < FOOT_GEOMS.length; i++) {
+    model.geom_friction[FOOT_GEOMS[i] * 3] = BASE_FRICTION[i] * friction;
+  }
+  if (BASE_COM) {
+    for (let k = 0; k < 3; k++) {
+      model.body_ipos[TRUNK_BODY * 3 + k] = BASE_COM[k] + between(-0.003, 0.003);
     }
   }
-  if (spec.start && spec.start.y !== undefined && !spec.stairs) {
-    // wall_flip is the only clip staged against the arena wall.
-    const [wx, wy] = place(0, 1.5);
-    env.walls.push({ x: wx, y: wy, halfThickness: 0.025, height: 0.6, halfLength: 1.5 });
+  const dropHeight = between(0.12, 0.13);
+
+  const start = { ...(spec.start || {}), z: dropHeight };
+  if (!spec.continueFrom) resetDuck(start);
+  if (spec.stairs) layoutStairs(data, ADDR, spec.stairs);
+
+  const ticks = Math.round(spec.seconds * C.tickHz);
+  const tail = [];
+  const settle = spec.continueFrom ? 0 : (spec.settle ?? 25);
+  // At most one push in a clip this short, at Pollen's own interval.
+  const pushAt = Math.round(between(3.0, 6.0) * C.tickHz);
+  let lastAction = new Array(14).fill(0);
+
+  for (let t = -settle; t < ticks; t++) {
+    if (spec.stairs) layoutStairs(data, ADDR, spec.stairs);
+    if (t === pushAt) {
+      data.qvel[D.freeDof] += between(-0.3, 0.3);
+      data.qvel[D.freeDof + 1] += between(-0.3, 0.3);
+    }
+    const jp = [], jv = [];
+    for (let k = 0; k < 14; k++) { jp.push(data.qpos[D.qpos[k]]); jv.push(data.qvel[D.dof[k]]); }
+    const cmd = command(spec.command && t >= 0 ? spec.command(t * DT) : {});
+    const obs = buildObs([data.sensordata[GYRO], data.sensordata[GYRO + 1], data.sensordata[GYRO + 2]],
+                         projectedGravity(quat()), jp, jv, lastAction, cmd);
+    const runner = t < 0 ? settling : session;
+    const out = await runner.run({ obs: new ort.Tensor('float32', obs, [1, 61]) });
+    lastAction = Array.from(out.actions.data);
+
+    const offsets = spec.track && t >= 0 ? poseAt(spec.track, t * DT) : null;
+    for (let k = 0; k < 14; k++) {
+      const base = HOME[k] + lastAction[k];
+      const v = offsets ? base + (offsets[k] - HOME[k]) * spec.blend : base;
+      data.ctrl[k] = Math.min(Math.max(v, LO[k]), HI[k]);
+    }
+    for (let s = 0; s < 4; s++) mj.mj_step(model, data);
+    // A NaN state is a failed rollout, not a crash. MuJoCo can produce one on
+    // an extreme contact impulse, which is exactly why Pollen's config carries
+    // a `nan_state` termination.
+    if (!Number.isFinite(data.qpos[D.freeQpos + 2])) return null;
+    if (t >= ticks - 15) {
+      const q = quat();
+      tail.push([data.qpos[D.freeQpos], data.qpos[D.freeQpos + 1],
+                 data.qpos[D.freeQpos + 2], q[0], q[1], q[2], q[3]]);
+    }
   }
-  return env;
+  return tail;
 }
 
-function deOrigin(roots) {
-  const [x0, y0] = roots[0];
-  const q0 = [roots[0][3], roots[0][4], roots[0][5], roots[0][6]];
-  // Only the YAW is removed. Taking out the whole orientation would stand a
-  // duck that starts mid-roll upright and destroy the motion.
-  const yaw0 = Math.atan2(2 * (q0[0] * q0[3] + q0[1] * q0[2]),
-                          1 - 2 * (q0[2] * q0[2] + q0[3] * q0[3]));
-  const c = Math.cos(-yaw0), s2 = Math.sin(-yaw0);
-  const inv = [Math.cos(-yaw0 / 2), 0, 0, Math.sin(-yaw0 / 2)];
-  const mul = (a, b) => [
-    a[0]*b[0] - a[1]*b[1] - a[2]*b[2] - a[3]*b[3],
-    a[0]*b[1] + a[1]*b[0] + a[2]*b[3] - a[3]*b[2],
-    a[0]*b[2] - a[1]*b[3] + a[2]*b[0] + a[3]*b[1],
-    a[0]*b[3] + a[1]*b[2] - a[2]*b[1] + a[3]*b[0]];
-  return roots.map(r => {
-    const dx = r[0] - x0, dy = r[1] - y0;
-    const q = mul(inv, [r[3], r[4], r[5], r[6]]);
-    return [+(dx * c - dy * s2).toFixed(5), +(dx * s2 + dy * c).toFixed(5), +r[2].toFixed(5),
-            +q[0].toFixed(5), +q[1].toFixed(5), +q[2].toFixed(5), +q[3].toFixed(5)];
-  });
+// Restore whatever the model shipped with, so one intent's dice do not carry
+// into the next one's baseline.
+function restoreModel() {
+  for (let i = 0; i < FOOT_GEOMS.length; i++) {
+    model.geom_friction[FOOT_GEOMS[i] * 3] = BASE_FRICTION[i];
+  }
+  if (BASE_COM) {
+    for (let k = 0; k < 3; k++) model.body_ipos[TRUNK_BODY * 3 + k] = BASE_COM[k];
+  }
 }
 
-const out = {
-  format: 'duck-intent-clips/3',
-  hz: C.tickHz,
-  joints: C.jointNames.filter(n => n !== 'mouth'),
-  clips: {},
-};
+const results = {};
 for (const spec of SPECS) {
-  const r = await capture(spec);
-  const roots = deOrigin(r.roots);
-  const last = roots[roots.length - 1];
-  out.clips[spec.id] = {
-    frames: r.frames,
-    // The network's own fourteen outputs, per tick, before the gait turns them
-    // into joint targets and before the travel stops clamp them.
-    actions: r.actions,
-    // (vx, vy, wz) as handed to the policy. What these MEAN is the policy's
-    // business — a velocity for the walkers, a phase clock for ground_pick, a
-    // flag for sitstand — so a reader must check the policy before treating
-    // them as a velocity to track against.
-    commands: r.commands,
-    // The trunk's own twist, body frame: (vx, vy, vz, wx, wy, wz).
-    twists: r.twists,
-    // Per frame: x, y, z, then the trunk quaternion (w, x, y, z). NOT a yaw
-    // scalar — a duck that rolls or flips has an orientation a single angle
-    // cannot carry, and roulade and back_roll both do.
-    roots,
-    // Unwrapped total rotation. The one summary kept, because it cannot be
-    // recovered from the last quaternion: that only gives an angle modulo 2pi.
-    netYaw: +r.netYaw.toFixed(5),
-    // `hold` is the only clip that loops. Everything else happens once.
-    loops: spec.id === 'hold',
-    policy: spec.policy,
-    authored: !!spec.track,
-    // MEASURED FROM THE TRUNK, NOT ASSERTED. These were hardcoded from the
-    // clip's own id — `stand` starts seated, `sit` ends seated, everything else
-    // standing — which is a label describing what the clip was MEANT to do. A
-    // review measured the corpus and found them fabricated: step_up ends at
-    // 49 mm having fallen over, and was labelled "standing" because its id is
-    // not "sit". A posture claim next to a recording that contradicts it is
-    // worse than no claim, because something downstream will chain on it.
-    startsFrom: postureOver(roots, 0, 10),
-    endsIn: postureOver(roots, Math.max(0, roots.length - 15), roots.length),
-    // Whose policy this is. Absent for Pollen's own; the app resolves the
-    // real answer from the policy's fingerprint rather than from this string.
-    ...(spec.credit ? { credit: spec.credit } : {}),
-    // WHAT THE MOTION WAS PERFORMED AGAINST.
-    //
-    // A clip played in an empty void cannot be judged. step_up ends toppled
-    // because it fails to climb A STAIR; wall_flip pushes off A WALL. Without
-    // the prop on screen a viewer sees a duck falling over for no reason and
-    // has no way to tell a bad recording from a bad move. Coordinates are
-    // relative to the clip's own de-origined start, exactly like the roots, so
-    // a renderer can draw the world and the robot in one frame.
-    environment: environmentFor(spec, r.roots[0]),
+  // `stand` continues from `sit`, so it has no start state of its own to
+  // randomise and cannot be rolled out independently.
+  if (spec.continueFrom) {
+    console.log(`SKIP ${spec.id} — continues from ${spec.continueFrom}`);
+    continue;
+  }
+  const verdict = verdictFor(spec);
+  const recordedEnd = RECORDED[spec.id]?.endsIn ?? null;
+  let ok = 0, same = 0, unstable = 0;
+  const heights = [], endings = {};
+  for (let i = 0; i < ROLLOUTS; i++) {
+    const tail = await rollout(spec);
+    restoreModel();
+    if (!tail || !tail.length) { unstable++; continue; }
+    const final = tail[tail.length - 1];
+    heights.push(final[2]);
+    const ending = postureOf(tail);
+    endings[ending] = (endings[ending] ?? 0) + 1;
+    if (verdict.ok(final)) ok++;
+    if (ending === recordedEnd) same++;
+  }
+  heights.sort((a, b) => a - b);
+  results[spec.id] = {
+    rollouts: ROLLOUTS,
+    unstable,
+    // TWO DIFFERENT QUESTIONS, and conflating them is how a corpus of
+    // recordings starts lying about itself. `achieves` asks whether the move
+    // did what it is FOR — a stair move that ends upright on the floor has
+    // failed, however tidily it is standing. `repeats` asks only whether it
+    // did again what it did the day it was recorded, which is what says
+    // whether the clip on file is representative or a lucky take.
+    achieves: ok,
+    criterion: verdict.text,
+    repeats: same,
+    recordedEnding: recordedEnd,
+    endings,
+    medianHeight: heights.length ? +heights[heights.length >> 1].toFixed(4) : null,
+    worstHeight: heights.length ? +heights[0].toFixed(4) : null,
   };
-  console.log(`CLIP ${spec.id.padEnd(12)} ${String(r.frames.length).padStart(4)} ticks  `
-    + `z ${roots[0][2].toFixed(3)}\u2192${last[2].toFixed(3)}  `
-    + `\u0394(${last[0].toFixed(3)}, ${last[1].toFixed(3)}) m  netYaw ${r.netYaw.toFixed(3)}`);
+  console.log(`${spec.id.padEnd(12)} achieves ${String(ok).padStart(3)}/${ROLLOUTS}`
+    + `  repeats ${String(same).padStart(3)}/${ROLLOUTS}`
+    + `  median z ${results[spec.id].medianHeight}  ${verdict.text}`);
 }
-fs.writeFileSync('duck-intent-clips.json', JSON.stringify(out));
-console.log(`wrote ${Object.keys(out.clips).length} clips`);
+
+fs.writeFileSync('intent-success.json', JSON.stringify({
+  format: 'duck-intent-success/1',
+  rollouts: ROLLOUTS,
+  seed: '0x2f6e2b1',
+  randomisation: {
+    source: 'pollen-robotics/microduck_rl · microduck_velocity_env_cfg.py',
+    dropHeightMetres: [0.12, 0.13],
+    footFrictionScale: [0.7, 1.3],
+    pushMetresPerSecond: [-0.3, 0.3],
+    pushIntervalSeconds: [3.0, 6.0],
+    trunkCentreOfMassMetres: [-0.003, 0.003],
+  },
+  intents: results,
+}, null, 2));
+console.log(`wrote ${Object.keys(results).length} intents`);
