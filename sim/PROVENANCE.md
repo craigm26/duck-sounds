@@ -1,5 +1,10 @@
 # Where the model comes from
 
+**Thanks to Pollen Robotics**, who designed and built the Microduck, trained the
+policy, and gave permission for their model to be used here. The robot, the
+network, the MuJoCo model, the servo parameters and every mesh are their work.
+This project adds a floor, a camera, and the arithmetic joining them up.
+
 The simulator runs **Pollen Robotics' own physics model**, used **with Pollen's
 permission** (granted to the operator; not implied by any licence file — the
 `microduck-simulator` Space declares none).

@@ -128,11 +128,19 @@
   </section>
 
   <section>
+    <p class="label">With thanks</p>
+    <h2>None of this is ours</h2>
+    <p><strong><a href="https://www.pollen-robotics.com/">Pollen Robotics</a> designed and built the Microduck, trained the policy that walks it, and gave permission for their model to be used here.</strong> That permission is the reason this page exists in the form it does.</p>
+    <p>Concretely, what is theirs: the robot; <code>alpha_walking.onnx</code>, the network doing the walking; the MuJoCo model with its measured masses, inertia tensors and collision geometry; the servo parameters; and all 70 meshes you are looking at. What is ours is a floor, a camera, and the arithmetic joining them up.</p>
+    <p>Their own simulator is better than this one and does more &mdash; it has a ball, an arena, a full set of moves. If you came here to see the duck, go and see it there too.</p>
+  </section>
+
+  <section>
     <p class="label">Where next</p>
     <h2>The robot, and the code</h2>
     <div class="go">
-      <a href="https://www.pollen-robotics.com/"><strong>Pollen Robotics</strong><span>the actual duck &rarr;</span></a>
-      <a href="https://huggingface.co/spaces/pollen-robotics/microduck-simulator"><strong>Pollen's simulator</strong><span>the official one &rarr;</span></a>
+      <a href="https://www.pollen-robotics.com/"><strong>Pollen Robotics</strong><span>who made the duck &rarr;</span></a>
+      <a href="https://huggingface.co/spaces/pollen-robotics/microduck-simulator"><strong>Pollen's simulator</strong><span>theirs, and better &rarr;</span></a>
       <a href="https://github.com/craigm26/duckkit"><strong>DuckKit</strong><span>the policy, in Swift &rarr;</span></a>
     </div>
   </section>
@@ -141,7 +149,8 @@
 
 <footer>
   <div class="wrap">
-    <p>Not affiliated with Pollen Robotics. The Microduck, its model and its policies are theirs, and are Apache-2.0.</p>
+    <p>An independent project, not affiliated with or endorsed by Pollen Robotics. The Microduck, its policies, its model and its meshes are theirs. The policy is Apache-2.0; the physics model and meshes are used with their permission, and remain their work.</p>
+    <p>Anything that looks wrong here is far more likely to be our simulation than their robot.</p>
     <p>Everything runs on your machine. No cookies, no tracking, no server.</p>
   </div>
 </footer>
