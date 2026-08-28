@@ -95,6 +95,16 @@ function poseAt(track, time) {
  */
 async function capture(spec) {
   const session = await policy(spec.policy);
+  // THE SETTLE STANDS; THE INTENT'S POLICY ONLY TAKES OVER AT t=0.
+  //
+  // Running the spec's own policy through the settle starts the motion before
+  // recording does. It was already fixed once for the command — `sit` opened
+  // halfway down — and the policy is the same bug wearing different clothes:
+  // roulade tips over regardless of what the command says, so its 25 settle
+  // ticks had it already rolling and the clip opened INVERTED. The browser
+  // does not work that way either; sim.js swaps the intent's session in at
+  // fire time, over a duck that was standing.
+  const settling = await policy(STAND);
   if (!spec.continueFrom) resetDuck(spec.start);
   if (spec.stairs) layoutStairs(data, ADDR, spec.stairs);
 
@@ -120,7 +130,8 @@ async function capture(spec) {
     const cmd = command(spec.command && t >= 0 ? spec.command(t * DT) : {});
     const obs = buildObs([data.sensordata[GYRO], data.sensordata[GYRO + 1], data.sensordata[GYRO + 2]],
                          projectedGravity(quat()), jp, jv, lastAction, cmd);
-    const out = await session.run({ obs: new ort.Tensor('float32', obs, [1, 61]) });
+    const runner = t < 0 ? settling : session;
+    const out = await runner.run({ obs: new ort.Tensor('float32', obs, [1, 61]) });
     lastAction = Array.from(out.actions.data);
 
     const offsets = spec.track && t >= 0 ? poseAt(spec.track, t * DT) : null;
@@ -273,6 +284,46 @@ const SPECS = [
  * floor, and "frame 0 is at the origin" becomes something a decoder can assert
  * rather than something a comment hopes for.
  */
+/**
+ * What posture a trunk height AND ORIENTATION mean together.
+ *
+ * Height alone is not enough, and the corpus proves it: the community headspin
+ * clip sits at 0.048 m, lower than a fallen duck, because it is balanced on its
+ * head ON PURPOSE. Classifying by height called that "fallen", which is the
+ * same species of wrong as the hardcoded labels this replaced — a confident
+ * claim contradicted by the recording it describes.
+ *
+ * So gravity decides first. Projected gravity z is -1 when the trunk is upright
+ * and +1 when it is upside down; past +0.5 the duck is inverted whatever its
+ * height, and that is a posture rather than a failure. Only once it is the
+ * right way up does height separate standing (hold settles at 0.116) from
+ * seated (sit settles at 0.059), with the midpoint between them.
+ */
+/**
+ * Posture over a WINDOW, never a single tick.
+ *
+ * The headspin holds gravity z between +0.56 and +0.93 for its whole run, and
+ * was still classified "toppled" because the one frame sampled — the last —
+ * happened to sit on the +0.5 boundary. A single tick of a dynamic motion is
+ * noise, and a label taken from noise is a label that flickers between
+ * recordings of the same clip.
+ */
+function postureOver(roots, from, to) {
+  const slice = roots.slice(from, to);
+  const z = slice.reduce((a, r) => a + r[2], 0) / slice.length;
+  const g = slice.reduce((a, r) => a + projectedGravity(r.slice(3))[2], 0) / slice.length;
+  return posture(z, g);
+}
+
+function posture(z, up) {
+  if (up > 0.5) return 'inverted';
+  if (up > -0.5) return 'toppled';    // on its side: neither upright nor over
+  if (z >= 0.100) return 'standing';
+  if (z >= 0.075) return 'crouched';
+  if (z >= 0.052) return 'seated';
+  return 'fallen';
+}
+
 function deOrigin(roots) {
   const [x0, y0] = roots[0];
   const q0 = [roots[0][3], roots[0][4], roots[0][5], roots[0][6]];
@@ -304,6 +355,7 @@ const out = {
 for (const spec of SPECS) {
   const r = await capture(spec);
   const roots = deOrigin(r.roots);
+  const last = roots[roots.length - 1];
   out.clips[spec.id] = {
     frames: r.frames,
     // Per frame: x, y, z, then the trunk quaternion (w, x, y, z). NOT a yaw
@@ -317,15 +369,19 @@ for (const spec of SPECS) {
     loops: spec.id === 'hold',
     policy: spec.policy,
     authored: !!spec.track,
-    // Sitting is the one posture a clip can start or end in other than
-    // standing, and `stand` is the only clip that begins there.
-    startsFrom: spec.id === 'stand' ? 'seated' : 'standing',
-    endsIn: spec.id === 'sit' ? 'seated' : 'standing',
+    // MEASURED FROM THE TRUNK, NOT ASSERTED. These were hardcoded from the
+    // clip's own id — `stand` starts seated, `sit` ends seated, everything else
+    // standing — which is a label describing what the clip was MEANT to do. A
+    // review measured the corpus and found them fabricated: step_up ends at
+    // 49 mm having fallen over, and was labelled "standing" because its id is
+    // not "sit". A posture claim next to a recording that contradicts it is
+    // worse than no claim, because something downstream will chain on it.
+    startsFrom: postureOver(roots, 0, 10),
+    endsIn: postureOver(roots, Math.max(0, roots.length - 15), roots.length),
     // Whose policy this is. Absent for Pollen's own; the app resolves the
     // real answer from the policy's fingerprint rather than from this string.
     ...(spec.credit ? { credit: spec.credit } : {}),
   };
-  const last = roots[roots.length - 1];
   console.log(`CLIP ${spec.id.padEnd(12)} ${String(r.frames.length).padStart(4)} ticks  `
     + `z ${roots[0][2].toFixed(3)}\u2192${last[2].toFixed(3)}  `
     + `\u0394(${last[0].toFixed(3)}, ${last[1].toFixed(3)}) m  netYaw ${r.netYaw.toFixed(3)}`);
