@@ -1,0 +1,4 @@
+DIAG h= 0mm  x=0.615  z=0.118  up=0.118  peak=0.120  fell=false  onTop=true
+DIAG h= 4mm  x=0.624  z=0.116  up=0.112  peak=0.121  fell=false  onTop=true
+DIAG h=10mm  x=0.493  z=0.116  up=0.106  peak=0.121  fell=false  onTop=true
+DIAG h=20mm  x=0.225  z=0.052  up=0.032  peak=0.126  fell=true  onTop=false

@@ -1,0 +1,26 @@
+{
+  "maxHeightMm": 0,
+  "params": {
+    "lead": 0,
+    "tPlant": 0.5,
+    "tPush": 0.4,
+    "tSwing": 0.35,
+    "tTransfer": 0.45,
+    "tRecover": 0.6,
+    "neckPlant": 1,
+    "headPlant": 0.9,
+    "neckPush": 1.25,
+    "headPush": 1.1,
+    "neckLift": 0.2,
+    "headLift": 0.2,
+    "leadHipPush": 0.25,
+    "leadKneePush": 0.3,
+    "trailHipPush": 0.2,
+    "trailKneePush": 0.25,
+    "leadHipSwing": 0.75,
+    "leadKneeSwing": 0.85,
+    "leadAnkleSwing": -0.3,
+    "leadHipPlant": 0.45,
+    "leadKneePlant": 0.35
+  }
+}
