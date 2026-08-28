@@ -27,14 +27,13 @@
     --dock-line:color-mix(in srgb, var(--rule) 88%, transparent);
     --dock-pad:.8rem;
     --rail-w:clamp(18rem,24vw,23rem);
-    --head-h:auto;
   }
   @media (prefers-color-scheme:dark){
     :root{ --paper:#121412; --ink:#E8EBE6; --rule:#2A2F29; --muted:#98A096;
            --duck:#E6A81F; --net:#8FA0D8; --panel:#191C19;
            --shell:#E9EBE6; --bracket:#3A4043; --outline:#0E100F;
            --dock:color-mix(in srgb, var(--panel) 84%, transparent);
-           --dock-line:color-mix(in srgb, var(--ink) 20%, transparent); }
+           --dock-line:color-mix(in srgb, var(--rule) 100%, transparent); }
   }
   *{box-sizing:border-box}
   html{-webkit-text-size-adjust:100%}
@@ -59,7 +58,7 @@
   .rig{position:relative;max-width:56rem;margin:0 auto;padding:0 var(--gutter)}
   .stage{position:relative;border:1px solid var(--rule);border-radius:3px;
          background:var(--panel);overflow:hidden}
-  #view{display:block;width:100%;height:min(62vh,480px);touch-action:none}
+  #view{display:block;width:100%;height:min(62vh,480px)}
   #status{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
           font-family:var(--mono);font-size:.8rem;color:var(--muted);text-align:center;
           padding:1rem;pointer-events:none}
@@ -67,7 +66,7 @@
   #hud{font-family:var(--mono);font-size:.7rem;color:var(--muted);
        padding:.55rem .75rem;border:1px solid var(--rule);border-top:0;
        border-radius:0 0 3px 3px;display:flex;flex-wrap:wrap;gap:.1rem .9rem}
-  .hud-f{display:inline-flex;gap:.4rem;align-items:baseline}
+  .hud-f{display:inline-flex;align-items:baseline;white-space:pre}
   .hud-f i{font-style:normal;color:var(--muted)}
   .hud-f b{font-weight:400;color:var(--ink);font-variant-numeric:tabular-nums}
 
@@ -135,6 +134,22 @@
                        border:1px solid var(--rule);border-radius:3px;background:var(--paper);color:var(--ink)}
   .mini{cursor:pointer}
   .mini:hover{border-color:var(--duck);color:var(--duck)}
+  .seq-bar{display:flex;gap:.3rem;flex-wrap:wrap}
+  .seq-bar .mini{flex:1 1 auto}
+  .seq-bar .mini.on{border-color:var(--duck);color:var(--duck)}
+  .seq-list{list-style:none;margin:.5rem 0 0;padding:0;display:grid;gap:.16rem;
+            max-height:9rem;overflow-y:auto;scrollbar-width:thin}
+  .seq-list li{display:flex;gap:.4rem;align-items:center;font-family:var(--mono);
+               font-size:.62rem;color:var(--muted);border:1px solid transparent;
+               border-radius:2px;padding:.1rem .2rem}
+  .seq-list li span{flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .seq-list li .mini{padding:0 .28rem;line-height:1.3}
+  .seq-list li.at{border-color:var(--duck);color:var(--duck)}
+  /* A move that cannot run here still looks like a button — it is one, and
+     pressing it is how you ask to be walked over there. It just says so. */
+  .keys button.unready{color:var(--muted)}
+  .keys button.unready kbd{opacity:.6}
+  .keys button.blocked{border-style:dashed}
   #padList{margin-top:.5rem;display:grid;gap:.28rem}
   #padList .ctl{grid-template-columns:1fr auto 3.4rem;gap:.45rem;margin:0}
   #padList label{font-size:.62rem}
@@ -319,7 +334,7 @@
   <div class="wrap">
     <p class="eyebrow">Pollen Robotics Microduck</p>
     <h1>Microduck <span class="is">simulator</span></h1>
-    <p class="standfirst">Nobody wrote this walk. Below, the robot's own trained network is steering fifteen joints against real gravity and a real floor &mdash; in your browser, fifty times a second.</p>
+    <p class="standfirst">Nobody wrote this walk. Below, the robot's own trained network is steering fourteen joints against real gravity and a real floor &mdash; in your browser, fifty times a second.</p>
   </div>
 </header>
 
@@ -327,8 +342,8 @@
   <div class="stage">
     <canvas id="view" aria-label="A Microduck walking in a physics simulation"></canvas>
     <div id="status" role="status" aria-live="polite">starting&hellip;</div>
-    <div class="touch-layer" id="touch" aria-hidden="true">
-      <div class="stick" id="stick"><div class="knob"></div></div>
+    <div class="touch-layer" id="touch">
+      <div class="stick" id="stick" aria-hidden="true"><div class="knob"></div></div>
       <div class="pads">
         <button class="pad-btn" id="padA" data-slot="A"><span>A</span><em>kick</em></button>
         <button class="pad-btn" id="padB" data-slot="B"><span>B</span><em>step up</em></button>
@@ -342,6 +357,7 @@
     <button class="tool" id="full" title="Fill the screen" aria-label="Fill the screen">
       <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M6 1.5H1.5V6M10 1.5H14.5V6M10 14.5H14.5V10M6 14.5H1.5V10"/></svg>
     </button>
+    <button class="tool" id="xr" hidden>AR</button>
     <button class="tool" id="railToggle" title="Hide the controls" aria-label="Hide the controls" aria-expanded="true" aria-controls="rail">
       <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M1.5 2.5h13v11h-13z"/><path d="M10 2.5v11"/></svg>
     </button>
@@ -354,7 +370,6 @@
       <button data-key="ArrowDown" aria-label="walk backward">&darr;</button>
       <button data-key="ArrowRight" aria-label="turn right">&rarr;</button>
       <button id="reset" aria-label="stand it back up">reset</button>
-      <button id="xr" hidden>view in AR</button>
     </div>
     <p class="hint">arrow keys or WASD to drive &middot; R resets &middot; scroll to zoom</p>
   </div>
@@ -418,6 +433,25 @@
         </div>
         <p class="ctl-note">Which two moves the round A and B pads fire on a touchscreen. Saved in this browser.</p>
       </section>
+
+      <details class="servos" id="seqPanel">
+        <summary>Sequence <span id="seqState">empty</span></summary>
+        <p class="ctl-note" style="text-align:left">Six of the thirteen moves need a step or a wall in front of them. Ask for one anyway and it will set the room up, walk to the mark and settle the way the move was searched, then fire. Record what you do and it plays back against the simulation clock.</p>
+        <div class="ctl" style="grid-template-columns:5.4rem 1fr;margin-bottom:.45rem">
+          <label for="seqMode">Get there</label>
+          <select id="seqMode">
+            <option value="walk">by walking</option>
+            <option value="place">by placing (teleport)</option>
+          </select>
+        </div>
+        <div class="seq-bar">
+          <button id="seqRec" class="mini">record</button>
+          <button id="seqPlay" class="mini">play</button>
+          <button id="seqClear" class="mini">clear</button>
+          <button id="seqCopy" class="mini">copy</button>
+        </div>
+        <ol id="seqList" class="seq-list"></ol>
+      </details>
 
       <details class="servos" id="padPanel">
         <summary>Controller <span id="padState">not connected</span></summary>

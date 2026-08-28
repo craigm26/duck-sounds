@@ -12,6 +12,9 @@ import { findStairJoints, layoutStairs, clearStairs, STAIR_COUNT } from './stair
 import { buildTrack, poseAt } from './intent.mjs';
 import { INTENTS, STEP_UP_KEY, BACK_ROLL_KEY, LEVER_KEY, WALL_FLIP_KEY, RISER_KEY, CLIMB_KEY, DEFAULTS, speeds } from './intents.js';
 import { isTouch, makeStick } from './touch.js';
+import { readiness as readyOf, stagingFor, SETTLE_TICKS, SETTLE_POLICY, TOL, NEEDS } from './intent-specs.js';
+import { yawOf } from './approach.js';
+import { makeRunner, stageFor, describe as describeStep } from './sequence.js';
 import { makePad, ACTIONS } from './gamepad.js';
 import { xrSupport, startXR } from './xr.js';
 
@@ -59,6 +62,11 @@ let lockUntil = 0;          // post-kick input lock, as the runtime has it
 // by design never ends) held the robot forever and refused to stand up again.
 let mode = null;
 const skillSessions = new Map();   // policies are fetched on first use, not up front
+// A command from the sequence runner, which outranks every human input while it
+// holds — otherwise a hand on the arrow keys fights the approach controller.
+let autoCmd = null;
+// The 25-tick hold under the STAND policy that every searched move begins from.
+let settleState = null;   // { until, approach, session }
 
 function reset() {
   mj.mj_resetData(model, data);
@@ -89,6 +97,17 @@ async function tick() {
 
   if (manual) {
     for (let k = 0; k < 14; k++) data.ctrl[k] = manual[k];
+  } else if (settleState) {
+    // Exactly what the search did before playing a track: the stand policy,
+    // holding the move's own approach command, for a fixed number of control
+    // ticks. Not decoration — a duck settled any other way has joint velocities
+    // out by up to 0.147, and those are 14 of the 61 observation floats.
+    const obs = buildObs(gyro, projectedGravity(q), jpos, jvel, lastAction,
+                         command({ vx: settleState.approach }));
+    const out = await settleState.session.run({ [inputName]: new ort.Tensor('float32', obs, [1, 61]) });
+    lastAction = Array.from(out[settleState.session.outputNames[0]].data);
+    for (let k = 0; k < 14; k++) data.ctrl[k] = HOME[k] + lastAction[k];
+    if (ticks >= settleState.until) settleState = null;
   } else if (skill) {
     // A skill IS the policy while it runs — a different trained network on the
     // same 61-in/14-out contract, not a modifier on the walker.
@@ -204,12 +223,18 @@ function draw() {
 // edge into a horizontal scroll nobody would find. As label/value pairs it
 // wraps, and the per-frame work is four textContent writes instead of building
 // and re-parsing a string sixty times a second.
+//
+// The trailing space in the label is load-bearing: six headless checks in
+// sim/ read this element with /speed ([\d.]+)/ and friends, so the element's
+// textContent has to keep saying "speed 0.00 m/s" even though the layout no
+// longer comes from the text. The space is inside the label rather than a flex
+// gap for exactly that reason.
 const hudVal = {};
 for (const field of ['tick', 'speed', 'height', 'contacts']) {
   const wrap = document.createElement('span');
   wrap.className = 'hud-f';
   const key = document.createElement('i');
-  key.textContent = field;
+  key.textContent = field + ' ';
   const val = document.createElement('b');
   wrap.append(key, val);
   hud.appendChild(wrap);
@@ -256,6 +281,9 @@ let zoom = 1;
 const SLOT_STORE = 'microduck.slots.v1';
 
 function readControls() {
+  // A sequence in flight outranks all three: the approach controller is closing
+  // a loop on position, and a hand resting on an arrow key would fight it.
+  if (autoCmd) { cmdState.vx = autoCmd.vx; cmdState.vyaw = autoCmd.vyaw; return; }
   // A connected pad wins over the thumbstick, which wins over the keyboard —
   // whichever the person actually touched last is the one they meant.
   if (padCmd && (Math.abs(padCmd.vx) > 0.001 || Math.abs(padCmd.vyaw) > 0.001)) {
@@ -429,9 +457,7 @@ function loadSlots() {
   catch { return { ...SLOT_DEFAULT }; }
 }
 function buildSlots() {
-  const all = [...INTENTS, { id: 'step_up', label: 'Step up' }, { id: 'back_roll', label: 'Back roll' },
-    { id: 'lever_up', label: 'Lever up' }, { id: 'wall_flip', label: 'Wall flip' },
-    { id: 'riser_up', label: 'Riser up' }, { id: 'climb', label: 'Climb' }];
+  const all = ALL_MOVES;
   const slots = loadSlots();
   for (const name of ['A', 'B']) {
     const sel = document.getElementById('slot' + name);
@@ -485,6 +511,8 @@ function buildServos() {
     const label = document.createElement('label');
     label.textContent = name;
     const input = document.createElement('input');
+    input.id = 'servo-' + name;
+    label.htmlFor = input.id;
     input.type = 'range';
     // The real travel limits from the model, so a slider cannot ask for a
     // joint angle the robot does not have.
@@ -522,27 +550,132 @@ modeEl.addEventListener('change', () => {
 const keyRow = document.getElementById('keys');
 const keyButtons = new Map();
 
+/**
+ * Every fireable move, in one place.
+ *
+ * This list was written out four times — in buildSlots, buildPad, buildTouch
+ * and buildKeys — and the four had drifted: the gamepad's copy stopped after
+ * step_up and back_roll, so a paired controller could not reach lever_up,
+ * wall_flip, riser_up or climb at all, while the on-screen slot selects offered
+ * all thirteen.
+ */
+const TRACK_MOVES = [
+  { key: STEP_UP_KEY,   id: 'step_up',   label: 'Step up' },
+  { key: BACK_ROLL_KEY, id: 'back_roll', label: 'Back roll' },
+  { key: LEVER_KEY,     id: 'lever_up',  label: 'Lever up' },
+  { key: WALL_FLIP_KEY, id: 'wall_flip', label: 'Wall flip' },
+  { key: RISER_KEY,     id: 'riser_up',  label: 'Riser up' },
+  { key: CLIMB_KEY,     id: 'climb',     label: 'Climb' },
+];
+const ALL_MOVES = [...INTENTS, ...TRACK_MOVES];
+
+/** What a move is, and what it needs — the tooltip that used to say "undefined". */
+function titleFor(id) {
+  const item = ALL_MOVES.find(i => i.id === id);
+  const t = tracks[id];
+  const how = item && item.policy
+    ? `${item.policy}${item.steps ? `, ${(item.steps / 50).toFixed(1)} s` : ''}`
+    : t ? `${t.policy}, ${t.keyframes.length} keyframes`
+    : id === 'step_up' ? 'an authored track over the drive policy'
+    : 'authored';
+  const need = NEEDS[id];
+  const what = need === 'stair' ? 'needs a 10 mm step in front of it'
+             : need === 'wall'  ? 'needs the arena wall beside it'
+             : null;
+  return what ? `${how} — ${what}` : how;
+}
+
 // Only ONE-SHOTS are exclusive. A mode can always be replaced.
 function busy() { return skill !== null || intent !== null || ticks < lockUntil; }
 
+// True while a policy is being fetched. Each one is 794 KB and arrives with no
+// feedback, so a second press during the download used to fire the move twice.
+let arming = false;
+
+/**
+ * A policy, fetched once and cached — with the wait made visible.
+ *
+ * Every one of these is 794 KB and the first press of any move pays for it.
+ * Silently, before: the duck just did nothing for a second or two.
+ */
+async function policyFor(file) {
+  let s = skillSessions.get(file);
+  if (s) return s;
+  arming = true; paintKeys();
+  statusEl.textContent = 'loading the move\u2026';
+  try {
+    s = await ort.InferenceSession.create('./' + file);
+    skillSessions.set(file, s);
+    return s;
+  } catch (err) {
+    statusEl.textContent = 'that move could not be loaded: ' + (err.message || err);
+    setTimeout(() => { if (/could not be loaded/.test(statusEl.textContent)) statusEl.textContent = ''; }, 4000);
+    return null;
+  } finally {
+    arming = false;
+    if (statusEl.textContent === 'loading the move\u2026') statusEl.textContent = '';
+    paintKeys();
+  }
+}
+
 function paintKeys() {
   for (const [id, el] of keyButtons) {
+    // `intent.id`, not "is this id a track" — the old test lit step_up and every
+    // shipped track at once, so firing Riser up highlighted six buttons and you
+    // could not read which move the duck was actually doing.
     const active = (skill && skill.intent.id === id) || (mode && mode.intent.id === id)
-      || (intent && (id === 'step_up' || tracks[id]));
+      || (intent && intent.id === id);
     el.classList.toggle('on', !!active);
-    el.disabled = busy() && !active;
+    el.disabled = (busy() || arming) && !active;
   }
+  paintReady();
+}
+
+/**
+ * Say whether each move can actually run here.
+ *
+ * Six of the thirteen need a stair or a wall the UI never checked, so pressing
+ * them anywhere else played a track authored against something that was not
+ * there. Recomputed off the live room rather than cached, but only WRITTEN when
+ * the text changes — this is called every few frames and there are thirteen of
+ * them.
+ */
+function paintReady() {
+  for (const [id, el] of keyButtons) {
+    const r = readyFor(id);
+    const blocked = !!(r && !r.ok && r.fix === 'stairs');
+    const title = titleFor(id) + (r && !r.ok ? ` — ${r.reason}` : '');
+    if (el.title !== title) el.title = title;
+    // Not colour alone: the reason is in the accessible name too.
+    const label = el.textContent.trim() + (r && !r.ok ? `, ${r.reason}` : '');
+    if (el.getAttribute('aria-label') !== label) el.setAttribute('aria-label', label);
+    el.classList.toggle('unready', !!(r && !r.ok));
+    el.classList.toggle('blocked', blocked);
+  }
+}
+
+// paintKeys() only ever ran on a state CHANGE we made ourselves, and the
+// post-kick input lock expires on the clock instead. So the last repaint after
+// a kick happened while `ticks < lockUntil` was still true, every button was
+// disabled, and nothing ever repainted again — one kick killed all thirteen
+// buttons for good, and reset() cleared lockUntil without repainting. Polling
+// the predicate once a frame is the only thing that catches a clock.
+let wasBusy = false;
+function repaintIfIdle() {
+  const now = busy() || arming;
+  if (now !== wasBusy) { wasBusy = now; paintKeys(); }
 }
 
 async function fire(item) {
   // One-shot and exclusive, as robotd treats them: a skill arriving while
   // another holds the robot is refused, not blended into it.
+  if (arming) return;
   if (busy() && item.kind !== 'mode') return;
   manual = null; modeEl.value = 'policy';
   if (item.kind === 'mode') {
     // Modes replace each other freely and do not take the exclusive hold.
-    let s = skillSessions.get(item.policy);
-    if (!s) { s = await ort.InferenceSession.create('./' + item.policy); skillSessions.set(item.policy, s); }
+    const s = await policyFor(item.policy);
+    if (!s) return;
     mode = { intent: item, session: s, t0: ticks };
     paintKeys();
     return;
@@ -552,34 +685,232 @@ async function fire(item) {
   // which policy, how hard, and what command to hold while it plays.
   if (tracks[item.id]) {
     const t = tracks[item.id];
-    let s = skillSessions.get(t.policy);
-    if (!s) { s = await ort.InferenceSession.create('./' + t.policy); skillSessions.set(t.policy, s); }
+    const s = await policyFor(t.policy);
+    if (!s) return;
     mode = null;
-    intent = { track: t.keyframes, blend: t.blend, session: s, t0: ticks,
+    intent = { id: item.id, track: t.keyframes, blend: t.blend, session: s, t0: ticks,
                params: { approach: t.approach || 0 }, tail: 1.2 };
     paintKeys();
     return;
   }
   if (item.id === 'step_up') {
     if (!stepupParams) return;
-    intent = { params: stepupParams, track: buildTrack(stepupParams, HOME), t0: ticks };
+    intent = { id: 'step_up', params: stepupParams, track: buildTrack(stepupParams, HOME), t0: ticks };
   } else {
-    let s = skillSessions.get(item.policy);
-    if (!s) {
-      keyRow.classList.add('loading');
-      s = await ort.InferenceSession.create('./' + item.policy);
-      skillSessions.set(item.policy, s);
-      keyRow.classList.remove('loading');
-    }
+    const s = await policyFor(item.policy);
+    if (!s) return;
     skill = { intent: item, session: s, t0: ticks };
   }
   paintKeys();
 }
 
+// ── sequences ─────────────────────────────────────────────────────────────
+// Everything the runner needs from the simulator, handed over explicitly so
+// sequence.js can be exercised without a DOM.
+const pose = () => ({
+  x: data.qpos[DUCK.freeQpos],
+  y: data.qpos[DUCK.freeQpos + 1],
+  yaw: yawOf([data.qpos[DUCK.freeQpos + 3], data.qpos[DUCK.freeQpos + 4],
+              data.qpos[DUCK.freeQpos + 5], data.qpos[DUCK.freeQpos + 6]]),
+});
+
+/** The shipped JSON for an intent, which is where its staging comes from. */
+function jsonFor(id) {
+  if (id === 'step_up') return stepupParams ? { params: stepupParams } : null;
+  return tracks[id] || null;
+}
+
+/** Can this move run, here, now? Null when the intent needs nothing staged. */
+function readyFor(id) {
+  if (!(id in NEEDS) || NEEDS[id] === null) return null;
+  const j = jsonFor(id);
+  if (!j) return null;
+  return readyOf(id, j, { stairCfg, pose: pose() });
+}
+
+/**
+ * Put the duck exactly where a move was searched from.
+ *
+ * The same reset the demo seam does, and for the same reason: a duck moved by
+ * writing qpos still carries the policy's own feedback — lastAction is 14 of
+ * the 61 observation floats — so a placed duck with a stale action history is
+ * not in the state the move was searched from.
+ */
+function placeDuck(x, y) {
+  const f = DUCK.freeQpos;
+  data.qpos[f] = x; data.qpos[f + 1] = y; data.qpos[f + 2] = 0.12;
+  data.qpos[f + 3] = 1; data.qpos[f + 4] = 0; data.qpos[f + 5] = 0; data.qpos[f + 6] = 0;
+  for (let i = 0; i < 14; i++) { data.qpos[DUCK.qpos[i]] = HOME[i]; data.ctrl[i] = HOME[i]; }
+  for (let i = 0; i < model.nv; i++) data.qvel[i] = 0;
+  lastAction = new Array(14).fill(0);
+  previous = null;
+  skill = null; intent = null; mode = null; lockUntil = 0;
+  mj.mj_forward(model, data);
+}
+
+async function startSettle(n, approach) {
+  const sess = await policyFor(SETTLE_POLICY);
+  if (!sess) return;
+  skill = null; intent = null; mode = null; manual = null;
+  settleState = { until: ticks + n, approach, session: sess };
+}
+
+const runner = makeRunner({
+  ticks: () => ticks,
+  pose,
+  speed: () => driveSpeed,
+  tol: () => TOL,
+  settling: () => settleState !== null,
+  isBusy: () => busy(),
+  drive: c => { autoCmd = c; },
+  place: placeDuck,
+  reset,
+  setStairs: ({ rise, count, run }) => {
+    if (rise !== undefined) riseEl.value = Math.round(rise * 1000);
+    if (count !== undefined) countEl.value = count;
+    if (run !== undefined) runEl.value = Math.round(run * 1000);
+    readStairs();
+  },
+  startSettle,
+  fire: async id => {
+    const item = ALL_MOVES.find(i => i.id === id);
+    if (!item) return false;
+    await fire(item);
+    return true;
+  },
+  onChange: () => paintSequence(),
+});
+
+// Advanced from the physics loop, so a sequence measures its waits in control
+// ticks rather than in wall-clock milliseconds. They are not the same thing:
+// screenshotting or a slow frame stretches the wall clock and leaves the
+// simulation exactly where it was.
+async function sequenceTick() {
+  if (runner.state === 'running') await runner.tick();
+  recordDrive();
+  // Readiness moves as the duck does, but thirteen DOM writes a frame is waste.
+  if ((ticks & 15) === 0) paintReady();
+}
+
+// ── asking for a move, rather than just firing one ────────────────────────
+/**
+ * What a button press means now.
+ *
+ * `fire()` is still the primitive — it plays a track at a duck and asks no
+ * questions. `request()` is the thing a person actually meant: work out whether
+ * the move can run here, and if it cannot but could, set the room up and walk
+ * the duck to the mark first.
+ */
+async function request(item) {
+  if (runner.state === 'running') { runner.stop(); autoCmd = null; return; }
+  const r = readyFor(item.id);
+  if (!r || r.ok) {
+    if (recording) record({ kind: 'move', id: item.id });
+    return fire(item);
+  }
+  const steps = stageFor(item.id, r, { teleport: seqModeEl && seqModeEl.value === 'place' });
+  // Changing the staircase out from under someone is a real side effect, so it
+  // is said out loud rather than done quietly.
+  const setsStairs = steps.some(st => st.kind === 'stairs');
+  say(setsStairs
+    ? `${item.label}: ${r.reason}. Setting the steps to 10 mm — the only height this move has ever cleared.`
+    : `${item.label}: ${r.reason}. Walking there first.`);
+  if (recording) for (const st of steps) record(st);
+  await runner.play(steps);
+}
+
+function say(text) {
+  statusEl.textContent = text;
+  clearTimeout(say.t);
+  say.t = setTimeout(() => { if (statusEl.textContent === text) statusEl.textContent = ''; }, 5000);
+}
+
+// ── recording ─────────────────────────────────────────────────────────────
+let recording = false;
+let program = [];
+// Driving is recorded as SEGMENTS, not as key events: a sequence that replayed
+// keystrokes would be replaying the person, and what matters is the command the
+// policy saw and for how many control ticks it saw it.
+let driveRun = null;
+function record(step) { program.push(step); paintSequence(); }
+function recordDrive() {
+  if (!recording || runner.state === 'running') { driveRun = null; return; }
+  const vx = +cmdState.vx.toFixed(3), vyaw = +cmdState.vyaw.toFixed(3);
+  if (driveRun && driveRun.vx === vx && driveRun.vyaw === vyaw) return;
+  if (driveRun && (vx !== driveRun.vx || vyaw !== driveRun.vyaw)) {
+    const n = ticks - driveRun.t0;
+    if (n > 2 && (driveRun.vx || driveRun.vyaw)) record({ kind: 'drive', vx: driveRun.vx, vyaw: driveRun.vyaw, ticks: n });
+  }
+  driveRun = { vx, vyaw, t0: ticks };
+}
+
+// ── the sequence panel ────────────────────────────────────────────────────
+let seqModeEl = null;
+function buildSequence() {
+  seqModeEl = document.getElementById('seqMode');
+  const rec = document.getElementById('seqRec');
+  const play = document.getElementById('seqPlay');
+  const clear = document.getElementById('seqClear');
+  const copy = document.getElementById('seqCopy');
+
+  rec.addEventListener('click', () => {
+    recording = !recording;
+    driveRun = recording ? { vx: 0, vyaw: 0, t0: ticks } : null;
+    paintSequence();
+  });
+  play.addEventListener('click', async () => {
+    if (runner.state === 'running') { runner.stop(); autoCmd = null; paintSequence(); return; }
+    if (!program.length) return;
+    recording = false;
+    await runner.play(program);
+  });
+  clear.addEventListener('click', () => { program = []; runner.stop(); autoCmd = null; paintSequence(); });
+  copy.addEventListener('click', async () => {
+    const text = JSON.stringify(program, null, 2);
+    try { await navigator.clipboard.writeText(text); say('Sequence copied.'); }
+    catch { console.log(text); say('Sequence logged to the console.'); }
+  });
+  paintSequence();
+}
+
+function paintSequence() {
+  const list = document.getElementById('seqList');
+  const state = document.getElementById('seqState');
+  const rec = document.getElementById('seqRec');
+  const play = document.getElementById('seqPlay');
+  if (!list) return;
+  const running = runner.state === 'running';
+  rec.textContent = recording ? 'stop' : 'record';
+  rec.classList.toggle('on', recording);
+  play.textContent = running ? 'halt' : 'play';
+  play.disabled = !program.length && !running;
+  state.textContent = running ? (runner.note || 'running')
+    : recording ? `recording, ${program.length}`
+    : program.length ? `${program.length} steps` : 'empty';
+  state.classList.toggle('on', running || recording);
+
+  // Rebuild only when the shape changed; the note updates every frame.
+  if (list.children.length !== program.length) {
+    list.textContent = '';
+    program.forEach((st, i) => {
+      const li = document.createElement('li');
+      const txt = document.createElement('span');
+      txt.textContent = describeStep(st);
+      const del = document.createElement('button');
+      del.className = 'mini'; del.textContent = '\u00d7';
+      del.setAttribute('aria-label', 'remove step ' + (i + 1) + ', ' + describeStep(st));
+      del.addEventListener('click', () => { program.splice(i, 1); list.textContent = ''; paintSequence(); });
+      li.append(txt, del);
+      list.appendChild(li);
+    });
+  }
+  [...list.children].forEach((li, i) => li.classList.toggle('at', running && i === runner.pc));
+}
+
 function buildPad() {
   const stateEl = document.getElementById('padState');
   const listEl = document.getElementById('padList');
-  const all = [...INTENTS, { id: 'step_up', label: 'Step up' }, { id: 'back_roll', label: 'Back roll' }];
+  const all = ALL_MOVES;
 
   pad = makePad({
     onConnect: id => {
@@ -601,10 +932,10 @@ function buildPad() {
         // One button for both directions, as the runtime has it: which one you
         // get depends on whether the duck is already down.
         const down = data.qpos[DUCK.freeQpos + 2] < 0.09;
-        return fire(all.find(i => i.id === (down ? 'stand' : 'sit')));
+        return request(all.find(i => i.id === (down ? 'stand' : 'sit')));
       }
       const item = all.find(i => i.id === id);
-      if (item) fire(item);
+      if (item) request(item);
     },
   });
 
@@ -616,6 +947,7 @@ function buildPad() {
     const btn = document.createElement('button');
     btn.className = 'mini';
     btn.textContent = 'set';
+    btn.setAttribute('aria-label', 'remap ' + a.label);
     const shown = document.createElement('span');
     shown.className = 'btnid';
     const paint = () => { shown.textContent = 'btn ' + pad.map[a.id]; };
@@ -654,36 +986,25 @@ function buildTouch() {
           vyaw: -x * driveSpeed.ang };
     window.__stick = stickCmd;
   });
-  const all = [...INTENTS, { key: STEP_UP_KEY, id: 'step_up', label: 'Step up' }, { key: BACK_ROLL_KEY, id: 'back_roll', label: 'Back roll' },
-    { key: LEVER_KEY, id: 'lever_up', label: 'Lever up' }, { key: WALL_FLIP_KEY, id: 'wall_flip', label: 'Wall flip' },
-    { key: RISER_KEY, id: 'riser_up', label: 'Riser up' },
-    { key: CLIMB_KEY, id: 'climb', label: 'Climb' }];
+  const all = ALL_MOVES;
   for (const el of document.querySelectorAll('.pad-btn')) {
     // Read the intent at PRESS time, not at wiring time, so re-assigning a
     // button takes effect without rebuilding the handler.
     el.addEventListener('pointerdown', e => {
       e.preventDefault();
       const item = all.find(i => i.id === el.dataset.intent);
-      if (item) fire(item);
+      if (item) request(item);
     });
   }
 }
 
 function buildKeys() {
-  const all = [...INTENTS,
-    { key: STEP_UP_KEY, id: 'step_up', label: 'Step up' },
-    { key: BACK_ROLL_KEY, id: 'back_roll', label: 'Back roll' },
-    { key: LEVER_KEY, id: 'lever_up', label: 'Lever up' },
-    { key: WALL_FLIP_KEY, id: 'wall_flip', label: 'Wall flip' },
-    { key: RISER_KEY, id: 'riser_up', label: 'Riser up' },
-    { key: CLIMB_KEY, id: 'climb', label: 'Climb' }];
+  const all = ALL_MOVES;
   for (const item of all) {
     const b = document.createElement('button');
     b.innerHTML = `<kbd>${item.key.toUpperCase()}</kbd><span>${item.label}</span>`;
-    b.title = item.id === 'step_up'
-      ? 'The authored move: plant the head, lift a foot onto the tread'
-      : `${item.policy} for ${item.seconds}s`;
-    b.addEventListener('click', () => fire(item));
+    b.title = titleFor(item.id);
+    b.addEventListener('click', () => request(item));
     keyRow.appendChild(b);
     keyButtons.set(item.id, b);
   }
@@ -692,15 +1013,17 @@ function buildKeys() {
     if (e.metaKey || e.ctrlKey || e.altKey) return;
     if (typingIn(e)) return;
     const item = byKey.get(e.key.toLowerCase());
-    if (item) { e.preventDefault(); fire(item); }
+    if (item) { e.preventDefault(); request(item); }
   });
 }
 document.getElementById('copyPose').addEventListener('click', async () => {
   const names = C.jointNames.filter(n => n !== 'mouth');
   const pose = Object.fromEntries(names.map((n, k) => [n, +(manual ? manual[k] : data.ctrl[k]).toFixed(4)]));
   const text = JSON.stringify(pose, null, 2);
-  try { await navigator.clipboard.writeText(text); ctlNote.textContent = 'Pose copied.'; }
-  catch { console.log(text); ctlNote.textContent = 'Pose logged to the console.'; }
+  // Was writing into #ctlNote, which is the STAIRS caption in another card —
+  // it overwrote the stair finding and never restored it.
+  try { await navigator.clipboard.writeText(text); say('Pose copied.'); }
+  catch { console.log(text); say('Pose logged to the console.'); }
 });
 
 // ── boot ───────────────────────────────────────────────────────────────────
@@ -771,7 +1094,9 @@ async function loadVariant(name) {
     const xrMode = support.ar ? 'immersive-ar' : support.vr ? 'immersive-vr' : null;
     if (xrMode) {
       xrBtn.hidden = false;
-      xrBtn.textContent = support.ar ? 'view in AR' : 'view in VR';
+      xrBtn.textContent = support.ar ? 'AR' : 'VR';
+      xrBtn.title = support.ar ? 'View in AR' : 'View in VR';
+      xrBtn.setAttribute('aria-label', xrBtn.title);
       xrBtn.addEventListener('click', async () => {
         if (xrSession) { await xrSession.end(); return; }
         try {
@@ -784,9 +1109,9 @@ async function loadVariant(name) {
                 model, geomTypes: GEOM_TYPES, xr: { view, proj, origin },
               });
             },
-            onEnd: () => { xrSession = null; xrBtn.textContent = support.ar ? 'view in AR' : 'view in VR'; },
+            onEnd: () => { xrSession = null; xrBtn.textContent = support.ar ? 'AR' : 'VR'; },
           });
-          xrBtn.textContent = 'leave AR';
+          xrBtn.textContent = 'exit';
         } catch (err) {
           statusEl.textContent = 'AR could not start: ' + (err.message || err);
           setTimeout(() => { statusEl.textContent = ''; }, 4000);
@@ -854,6 +1179,15 @@ async function loadVariant(name) {
           ticks = 0;
         },
         dump() { return window.__demo.trace; },
+        // The sequence machinery, for the headless checks. Behind ?demo=1 with
+        // everything else that reaches inside.
+        seq: {
+          pose, readyFor, runner,
+          program: () => program,
+          setProgram(p) { program = p.slice(); paintSequence(); },
+          stairs: () => ({ ...stairCfg }),
+          settling: () => settleState !== null,
+        },
       };
     }
 
@@ -863,24 +1197,41 @@ async function loadVariant(name) {
     buildTouch();
     buildKeys();
     buildServos();
+    buildSequence();
     readStairs();
     reset();
     statusEl.textContent = '';
     document.body.classList.add('ready');
 
-    let acc = 0, last = performance.now(), busy = false;
+    // NB `stepping`, not `busy` — busy() is the input-lock predicate and a local
+    // of that name shadowed it here.
+    let acc = 0, last = performance.now(), stepping = false;
     const stepMs = 1000 / C.tickHz;
     async function loop(now) {
-      acc += Math.min(now - last, 100); last = now;
-      padCmd = pad ? pad.poll(now) : null;
-      readControls();
-      if (!busy && !switching) {
-        busy = true;
-        let n = 0;
-        while (acc >= stepMs && n < 4) { acc -= stepMs; await tick(); n++; }
-        busy = false;
+      // Everything inside is guarded. loop() is async, so a rejected await
+      // anywhere in it used to reject the whole promise and never reach the
+      // requestAnimationFrame at the bottom — one bad ONNX run stopped the
+      // physics AND the rendering, permanently and silently, somewhere the
+      // boot try/catch could not see it.
+      try {
+        acc += Math.min(now - last, 100); last = now;
+        padCmd = pad ? pad.poll(now) : null;
+        readControls();
+        if (!stepping && !switching) {
+          stepping = true;
+          try {
+            let n = 0;
+            while (acc >= stepMs && n < 4) { acc -= stepMs; await tick(); n++; }
+          } finally { stepping = false; }
+        }
+        await sequenceTick();
+        // The input lock expires on the clock, so nothing else can notice.
+        repaintIfIdle();
+        if (!switching && !xrSession) draw();
+      } catch (err) {
+        console.error('frame failed', err);
+        statusEl.textContent = 'a frame failed: ' + (err && err.message ? err.message : err);
       }
-      if (!switching && !xrSession) draw();
       requestAnimationFrame(loop);
     }
     requestAnimationFrame(loop);

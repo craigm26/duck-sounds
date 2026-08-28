@@ -218,6 +218,24 @@ const authored = (name, id) => {
   return spec;
 };
 
+/**
+ * Policies this project did not train.
+ *
+ * The whole point of a shareable intent: somebody else's .onnx, run in the same
+ * harness, recorded the same way. `headspin` came from outside — it inverts
+ * within half a second (projected gravity z goes from -1.00 to +0.75) and holds
+ * a headstand for as long as you let it run.
+ *
+ * They are recorded identically to Pollen's own, and marked by their FINGERPRINT
+ * rather than by which list they appear in: `DuckOfficialPolicies` answers
+ * "released" or "unrecognised" from the weights, so a clip carries where it came
+ * from in a form a recipient can check instead of a label they must believe.
+ */
+const COMMUNITY = [
+  { id: 'headspin', policy: 'headspin.onnx', seconds: 4.0,
+    credit: 'shared by another Microduck owner' },
+];
+
 const SPECS = [
   { id: 'hold',        policy: STAND,                     seconds: 2.0 },
   // KICK_STEPS 25 then POST_KICK_LOCK_STEPS 20 — 45 ticks, 0.9 s. The first
@@ -241,6 +259,7 @@ const SPECS = [
                  climb: 'climb', backroll: 'back_roll', wallflip: 'wall_flip' }[name];
     return { id, ...authored(name, id) };
   }),
+  ...COMMUNITY,
 ];
 
 /**
@@ -302,6 +321,9 @@ for (const spec of SPECS) {
     // standing, and `stand` is the only clip that begins there.
     startsFrom: spec.id === 'stand' ? 'seated' : 'standing',
     endsIn: spec.id === 'sit' ? 'seated' : 'standing',
+    // Whose policy this is. Absent for Pollen's own; the app resolves the
+    // real answer from the policy's fingerprint rather than from this string.
+    ...(spec.credit ? { credit: spec.credit } : {}),
   };
   const last = roots[roots.length - 1];
   console.log(`CLIP ${spec.id.padEnd(12)} ${String(r.frames.length).padStart(4)} ticks  `
