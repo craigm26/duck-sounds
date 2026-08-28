@@ -171,7 +171,16 @@ operator has no local Mac.
    hardware lands rather than assuming.
 2. Register `com.ducksounds.ios` on the WYGG3JXWMG team; reserve the App Store
    name.
-3. Stand up `duck.craigm26.com` as a Cloudflare Pages project with Web Analytics
+3. Stand up `duck.craigmerry.com` as a Cloudflare Pages project with Web Analytics
+
+   *(Corrected from `duck.craigm26.com`, which does not exist and never did.
+   `craigm26` is the GitHub handle and the Cloudflare **workers.dev account
+   subdomain** — `golinks.craigm26.workers.dev`, which is real and stays as
+   written. The personal domain is `craigmerry.com`: it resolves, it is already
+   behind this Cloudflare account, so a `duck.` subdomain attaches to a Pages
+   project without buying anything. Worth catching before M0 rather than after,
+   because this hostname is the denominator in `GATES.md` — a gate measured
+   against a domain nobody owns cannot be passed or failed.)*
    on — one page, what a Microduck is, a link to Pollen, a link to DuckKit. It is
    the awareness landing page and the GATES denominator. A bought domain waits
    until the 60-day gate passes.
@@ -230,7 +239,7 @@ second launch. M2 is the set of answers that cost nothing to run.
   from a non-opening intent is a thing we have not verified, and a widget button
   that opens the app is still a launch.
 - **Calls.** Record up to 20 taps over 30 seconds, name it, replay it. Stored as a
-  small JSON file. Share sheet posts the name plus a `duck.craigm26.com/?from=share`
+  small JSON file. Share sheet posts the name plus a `duck.craigmerry.com/?from=share`
   link. Encoding the call into the link so the web page can play it back is M3.
 - **Rate prompt.** `SKStoreReviewController` once, after the fifth distinct
   session, never again.
@@ -256,7 +265,7 @@ second launch. M2 is the set of answers that cost nothing to run.
 ```
 M0-1  check Pollen sound-asset licence; issue if unclear                   [blocker for scope]
 M0-2  register com.ducksounds.ios, reserve App Store name
-M0-3  duck.craigm26.com Pages project + Web Analytics
+M0-3  duck.craigmerry.com Pages project + Web Analytics
 M0-4  golinks: add app=ducksounds
 
 M1-1  DuckKit: DuckSound + tests

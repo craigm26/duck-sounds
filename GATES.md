@@ -34,7 +34,7 @@ measured outside the app. We count doors, never people.
   once. Below that, it is a novelty.
 - **≥ 120 counted taps through to "what is a Microduck?"** — the golinks D1 rollup
   for `app=ducksounds` (counts per app/src/day, no cookies, no IPs), cross-checked
-  against Cloudflare Web Analytics on `duck.craigm26.com`. 120 against 1,000
+  against Cloudflare Web Analytics on `duck.craigmerry.com`. 120 against 1,000
   downloads is a 12% curiosity rate. This is the awareness conversion and the only
   number here that measures the *point* rather than the app.
 
@@ -108,7 +108,7 @@ the whole relationship.)
    increments a `(app, src, day)` count. Counts only. No cookies, no IPs, no
    per-user rows. Already deployed and already used by OpenCastor.
    Read: `curl -H "Authorization: Bearer <token>" https://golinks.craigm26.workers.dev/stats`
-3. **Cloudflare Web Analytics** on `duck.craigm26.com` — cookieless, no
+3. **Cloudflare Web Analytics** on `duck.craigmerry.com` — cookieless, no
    fingerprinting. Cross-check for the golinks number and the place shared Calls
    land.
 4. **GitHub** — stars, forks and clone counts on the public `craigm26/duckkit`.
@@ -125,7 +125,7 @@ it happens to be free.
 - Downloads, Sessions, Active Devices: App Store Connect → App Analytics, from the
   approval date.
 - Link taps: golinks D1 `golinks_stats.clicks`, `app=ducksounds`.
-- Docs visits: Cloudflare Web Analytics, `duck.craigm26.com`.
+- Docs visits: Cloudflare Web Analytics, `duck.craigmerry.com`.
 - DuckKit stars/clones: `gh api repos/craigm26/duckkit/traffic/clones` and the repo
   page.
 - **Evaluate PASS at day 60, KILL at day 90, the single rescue re-measure at day
