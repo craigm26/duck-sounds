@@ -143,10 +143,32 @@ operator has no local Mac.
 
 ### M0 — an hour, before any Swift
 
-1. Check whether Pollen's sound WAVs are in `pollen-robotics/microduck` and under
-   Apache-2.0. If yes, vendoring them replaces most of `DuckVoice`'s reason to
-   exist as the *default* voice (keep it as the offline fallback). If no, open the
-   issue asking, and carry on.
+1. ~~Check whether Pollen's sound WAVs are in `pollen-robotics/microduck`~~ —
+   **done, and the answer inverts the question. There are no WAVs, and there
+   will not be any.** The duck's voice is a seedable synth: `sounds/` is a Rust
+   crate (Apache-2.0, ported from `apirrone/microduck_sounds`) that renders the
+   bank on-device from a seed, and the robot seeds itself from its SoC serial.
+   Its own header states the stakes — the bank re-renders on every install, so
+   *"the generator IS the voice"*.
+
+   Three consequences for this app:
+
+   - `DuckVoice` is the **permanent default**, not an offline fallback. There
+     is nothing to vendor and nothing to fall back from.
+   - Upstream's tags and segmentation match `DuckSound` exactly — the same
+     seven, with `wheee` alone segmented start/loop/end. That was already right.
+   - **Each duck must have its own voice.** DuckKit's seed only re-rolled
+     detail *inside* one rendering, so every duck it produced sounded identical.
+     `DuckVoice.Personality` (duckkit **v1.1.0**) fixes that: twenty-two traits
+     from a seed, ported from `sounds/src/personality.rs`, cross-checked against
+     an independent implementation. Use
+     `DuckVoice.Personality(identifier:)` so a duck keeps its voice across
+     launches — never Swift's `Hasher`, which is salted per process and would
+     re-voice the duck every time the app opened.
+
+   Not claimed: byte-parity with a real robot's bank. The traits for a seed
+   match; the sample recipes are upstream's and are not ported. Check it when
+   hardware lands rather than assuming.
 2. Register `com.ducksounds.ios` on the WYGG3JXWMG team; reserve the App Store
    name.
 3. Stand up `duck.craigm26.com` as a Cloudflare Pages project with Web Analytics
