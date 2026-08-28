@@ -1,0 +1,226 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>What is a Microduck?</title>
+<meta name="description" content="A 25 cm walking robot duck whose gait comes from a trained neural network, not an animation. What it is, how it moves, and the open-source Swift package that runs its real policy.">
+<meta name="color-scheme" content="light dark">
+<meta property="og:title" content="What is a Microduck?">
+<meta property="og:description" content="A 25 cm robot duck that learned to walk. Its gait is a neural network, running fifty times a second.">
+<meta property="og:type" content="website">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🦆</text></svg>">
+<style>
+  /* Zero third-party requests on purpose: no webfonts, no analytics SDK, no
+     CDN. The apps this page serves ship as Data Not Collected, and a landing
+     page that phoned somewhere would be the one place that stopped being true.
+     Everything below is system faces, used deliberately. */
+  :root{
+    --paper:#F1F3EF; --ink:#16181A; --rule:#C9D0C8; --muted:#6E7670;
+    --duck:#B8860B;              /* the animal, and nothing else */
+    --net:#3E4C7A;               /* the network, and nothing else */
+    --panel:#E7EAE5;
+    --mono:ui-monospace,SFMono-Regular,"SF Mono",Menlo,Consolas,"Liberation Mono",monospace;
+    --sans:system-ui,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    --measure:34rem;
+  }
+  @media (prefers-color-scheme:dark){
+    :root{
+      --paper:#121412; --ink:#E8EBE6; --rule:#2A2F29; --muted:#8B938A;
+      --duck:#E6A81F; --net:#8FA0D8; --panel:#191C19;
+    }
+  }
+  *{box-sizing:border-box}
+  html{-webkit-text-size-adjust:100%}
+  body{
+    margin:0; background:var(--paper); color:var(--ink);
+    font-family:var(--sans); font-size:17px; line-height:1.65;
+    -webkit-font-smoothing:antialiased;
+  }
+  .wrap{max-width:var(--measure); margin:0 auto; padding:0 1.25rem}
+  a{color:var(--net); text-underline-offset:.18em; text-decoration-thickness:1px}
+  a:hover{color:var(--ink)}
+  :focus-visible{outline:2px solid var(--net); outline-offset:3px; border-radius:2px}
+
+  /* ── the readout, which is the whole point ───────────────────────────── */
+  header{padding:3.5rem 0 0}
+  .eyebrow{
+    font-family:var(--mono); font-size:.7rem; letter-spacing:.14em;
+    text-transform:uppercase; color:var(--muted); margin:0 0 1.5rem;
+  }
+  h1{
+    /* Display is monospace, at size. The subject is a number that walks; the
+       headline should look like the readout it sits above, not like a poster. */
+    font-family:var(--mono); font-weight:700;
+    font-size:clamp(2rem,8.5vw,3.4rem); line-height:1.02;
+    letter-spacing:-.035em; margin:0 0 1.25rem;
+  }
+  h1 .is{color:var(--duck)}
+  .standfirst{font-size:1.1rem; color:var(--muted); margin:0 0 2.5rem; max-width:30rem}
+
+  .readout{
+    background:var(--panel); border:1px solid var(--rule); border-radius:3px;
+    padding:1rem 1rem .75rem; margin:0 0 .75rem;
+  }
+  .readout-top{
+    display:flex; justify-content:space-between; align-items:baseline; gap:1rem;
+    font-family:var(--mono); font-size:.7rem; letter-spacing:.08em;
+    text-transform:uppercase; color:var(--muted); margin-bottom:.9rem;
+  }
+  #tick{color:var(--duck); font-variant-numeric:tabular-nums}
+  .net{display:flex; align-items:stretch; gap:.4rem; margin:.25rem 0 .1rem}
+  .layer{
+    flex:1; text-align:center; padding:.7rem .2rem;
+    border:1px solid var(--rule); border-radius:2px; background:var(--paper);
+  }
+  .layer b{display:block; font-family:var(--mono); font-size:1rem; color:var(--net); font-weight:600}
+  .layer span{display:block; font-family:var(--mono); font-size:.58rem; color:var(--muted); margin-top:.25rem; line-height:1.3}
+  .layer.out b{color:var(--duck)}
+  .arrow{align-self:center; color:var(--muted); font-size:.75rem}
+  @media (max-width:520px){
+    .arrow{display:none}
+    .net{gap:.3rem}
+    .layer{padding:.55rem .1rem}
+    .layer b{font-size:.85rem}
+  }
+  .caption{
+    font-family:var(--mono); font-size:.7rem; line-height:1.6; color:var(--muted);
+    margin:0 0 3.25rem;
+  }
+
+  /* ── sections. Labels state real quantities, not 01 / 02 / 03. ────────── */
+  section{padding:2.75rem 0; border-top:1px solid var(--rule)}
+  .label{
+    font-family:var(--mono); font-size:.7rem; letter-spacing:.1em;
+    text-transform:uppercase; color:var(--duck); margin:0 0 .85rem;
+  }
+  h2{font-size:1.35rem; line-height:1.25; letter-spacing:-.01em; margin:0 0 .9rem; font-weight:650}
+  p{margin:0 0 1rem}
+  p:last-child{margin-bottom:0}
+  dl{margin:1.5rem 0 0; display:grid; grid-template-columns:auto 1fr; gap:.45rem 1.25rem}
+  dt{font-family:var(--mono); font-size:.75rem; color:var(--muted); white-space:nowrap}
+  dd{margin:0; font-size:.95rem}
+  .note{
+    font-size:.9rem; color:var(--muted); border-left:2px solid var(--rule);
+    padding-left:1rem; margin-top:1.5rem;
+  }
+  code{font-family:var(--mono); font-size:.85em; background:var(--panel); padding:.1em .35em; border-radius:2px}
+
+  .go{display:grid; gap:.6rem; margin-top:1.5rem}
+  .go a{
+    display:flex; justify-content:space-between; align-items:center; gap:1rem;
+    padding:.9rem 1rem; border:1px solid var(--rule); border-radius:3px;
+    text-decoration:none; color:var(--ink); background:var(--panel);
+  }
+  .go a:hover{border-color:var(--net)}
+  .go strong{font-weight:600; font-size:.98rem}
+  .go span{font-family:var(--mono); font-size:.72rem; color:var(--muted); text-align:right}
+  .go a:hover span{color:var(--net)}
+
+  footer{
+    border-top:1px solid var(--rule); padding:2rem 0 3.5rem;
+    font-size:.85rem; color:var(--muted);
+  }
+  footer p{margin:0 0 .6rem}
+
+  @media (prefers-reduced-motion:reduce){ .bar{transition:none} }
+  @media (max-width:420px){
+    .row{grid-template-columns:5.9rem 1fr}
+    .jname{font-size:.62rem}
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="wrap">
+    <p class="eyebrow">Pollen Robotics</p>
+    <h1>A duck that <span class="is">learned</span> to walk.</h1>
+    <p class="standfirst">Nobody wrote its walk. It practised until it worked walking out for itself, and what came out is a small neural network that runs fifty times a second.</p>
+  </div>
+</header>
+
+<div class="wrap">
+  <div class="readout">
+    <div class="readout-top">
+      <span>alpha_walking.onnx</span>
+      <span>~200,000 numbers</span>
+    </div>
+    <div class="net">
+      <div class="layer"><b>61</b><span>what it senses</span></div>
+      <div class="arrow">&rarr;</div>
+      <div class="layer"><b>512</b><span></span></div>
+      <div class="arrow">&rarr;</div>
+      <div class="layer"><b>256</b><span></span></div>
+      <div class="arrow">&rarr;</div>
+      <div class="layer"><b>128</b><span></span></div>
+      <div class="arrow">&rarr;</div>
+      <div class="layer out"><b>14</b><span>what it moves</span></div>
+    </div>
+  </div>
+  <p class="caption">The whole of it. Every twenty milliseconds, on the duck's own processor.</p>
+</div>
+
+<div class="wrap">
+
+  <section>
+    <p class="label">25 cm &middot; 800 g</p>
+    <h2>What it is</h2>
+    <p>The Microduck is a small two-legged robot from <a href="https://www.pollen-robotics.com/">Pollen Robotics</a> — the lab behind the Reachy arms. It is about the height of a wine bottle, walks on two feet, looks around, picks things up in its beak, and quacks.</p>
+    <p>It is not a toy with a motor in it. It is a research robot that happens to be charming, and everything about how it moves is learned rather than scripted.</p>
+    <dl>
+      <dt>Servos</dt><dd>15 — ten in the legs, four in the neck and head, one beak</dd>
+      <dt>Senses</dt><dd>Camera, depth sensor, two inertial units</dd>
+      <dt>Brain</dt><dd>A quad-core Rockchip board, on board, no cloud</dd>
+      <dt>Battery</dt><dd>About an hour, and you can swap it</dd>
+      <dt>Arrives</dt><dd>Around Christmas 2026</dd>
+    </dl>
+  </section>
+
+  <section>
+    <p class="label">61 floats in &middot; 14 joints out</p>
+    <h2>How it walks</h2>
+    <p>Most robots walk by being told exactly where to put each foot. This one was not told. It practised in simulation until it worked out walking for itself, and what came out of that practice is a small neural network — about two hundred thousand numbers.</p>
+    <p>Fifty times a second the robot hands that network 61 numbers describing how it is currently doing: where its joints are, how fast they are moving, which way is down, and where you have asked it to go. The network answers with 14 joint positions. That answer is the readout at the top of this page.</p>
+    <div class="note">
+      <p>Those 61 numbers include which way is down and how fast the body is turning &mdash; and that is the part that matters. Walking is a conversation with the floor: the network is listening for the moment a foot takes weight. Take the floor away and there is nothing to listen to, which is why running this network without physics does not produce a walk. It needs the ground as much as the duck does.</p>
+    </div>
+  </section>
+
+  <section>
+    <p class="label">One integer</p>
+    <h2>Every duck has its own voice</h2>
+    <p>There is no sound file anywhere in the duck. Its quack is computed, from a single number that also decides how high it speaks, how nasal it is, how much of a buzz sits inside the quack, and how briskly it gets through a sentence.</p>
+    <p>That number comes from the robot's own serial. So two Microducks on the same table do not sound like one duck played twice — they sound like two animals, permanently, and yours will always sound like yours.</p>
+  </section>
+
+  <section>
+    <p class="label">Open source</p>
+    <h2>You can run the real thing</h2>
+    <p>The duck's brain also exists as a Swift package. It reads the actual trained network and runs the actual walking policy, with no robot in the room — which is how the numbers on this page were produced, on a Raspberry Pi.</p>
+    <div class="go">
+      <a href="https://www.pollen-robotics.com/">
+        <strong>Pollen Robotics</strong>
+        <span>the robot &rarr;</span>
+      </a>
+      <a href="https://huggingface.co/spaces/pollen-robotics/microduck-simulator">
+        <strong>Pollen's simulator</strong>
+        <span>drive one, in your browser &rarr;</span>
+      </a>
+      <a href="https://github.com/craigm26/duckkit">
+        <strong>DuckKit</strong>
+        <span>the code &rarr;</span>
+      </a>
+    </div>
+  </section>
+
+</div>
+
+<footer>
+  <div class="wrap">
+    <p>This page is not affiliated with Pollen Robotics. The Microduck, its policies and its model are theirs, and are Apache-2.0.</p>
+    <p>No cookies, no tracking, nothing loaded from anywhere else.</p>
+  </div>
+</footer>
+</body>
+</html>
