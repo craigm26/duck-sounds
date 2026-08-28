@@ -166,8 +166,16 @@ DuckKit:
   decay to rest within their end segment, `wheee` crosses the 0.05 twist threshold
   and `chirp` never does.
 - `DuckClock` + tests — 3 ticks in 61 ms, 0 in 19 ms, clamp at 10 after a 5 s stall.
-- `DuckBeak` + tests — closed and open beak tips differ by the expected arc.
-- Tag `0.2.0`.
+- ~~`DuckBeak` + tests~~ — **not built, and not needed as a type.** The mouth is
+  joint 9 (`DuckModel.mouthIndex`), `DuckKinematics` already returns the
+  `mouth_tip` site, and `DuckPerformance` already decides how far open the beak
+  is at each keyframe. The assertion this line wanted — closed and open beak
+  tips differ by the expected arc — is writable against those three today; a
+  fourth type would only wrap them.
+- ~~Tag `0.2.0`~~ — shipped as **`v1.0.0`**. duckkit went out as a public,
+  two-product package rather than a 0.x sibling, so the version reflects a
+  published API rather than a private one. Depend on it with
+  `.package(url: "https://github.com/craigm26/duckkit.git", from: "1.0.0")`.
 
 App:
 - `project.yml`, `PrivacyInfo.xcprivacy`, icon, launch screen.
