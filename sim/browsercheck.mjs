@@ -27,7 +27,13 @@ try {
   ready = true;
 } catch { /* fall through and report status text */ }
 
-const status = await page.$eval('#status', el => el.textContent.trim()).catch(() => '(no #status)');
+const diag = await page.evaluate(() => ({
+  title: document.title,
+  hasStatus: !!document.getElementById('status'),
+  status: document.getElementById('status')?.textContent.trim() ?? null,
+  bodyClass: document.body.className,
+})).catch(e => ({ error: String(e) }));
+const status = diag.status ?? JSON.stringify(diag);
 console.log('READY  :', ready);
 console.log('STATUS :', JSON.stringify(status));
 

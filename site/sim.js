@@ -85,11 +85,11 @@ const hud = document.getElementById('hud');
 
 const cmdState = { vx: 0, vy: 0, vyaw: 0 };
 let model, data, mj, session, inputName, C, HOME, buildObs, gaitTargets, projectedGravity, command;
-let lastAction = new Array(14).fill(0), previous = null, ticks = 0;
+let lastAction = new Array(14).fill(0), previous = null, ticks = 0, GYRO = 0;
 
 function reset() {
   mj.mj_resetData(model, data);
-  data.qpos[2] = 0.1231; data.qpos[3] = 1;
+  data.qpos[2] = 0.12; data.qpos[3] = 1;
   for (let i = 0; i < 14; i++) { data.qpos[7 + i] = HOME[i]; data.ctrl[i] = HOME[i]; }
   mj.mj_forward(model, data);
   lastAction = new Array(14).fill(0); previous = null; ticks = 0;
@@ -97,14 +97,16 @@ function reset() {
 
 async function tick() {
   const q = [data.qpos[3], data.qpos[4], data.qpos[5], data.qpos[6]];
-  const gyro = [data.sensordata[0], data.sensordata[1], data.sensordata[2]];
+  const gyro = [data.sensordata[GYRO], data.sensordata[GYRO + 1], data.sensordata[GYRO + 2]];
   const jpos = [], jvel = [];
   for (let k = 0; k < 14; k++) { jpos.push(data.qpos[7 + k]); jvel.push(data.qvel[6 + k]); }
   const obs = buildObs(gyro, projectedGravity(q), jpos, jvel, lastAction, command(cmdState));
   const out = await session.run({ [inputName]: new ort.Tensor('float32', obs, [1, 61]) });
   lastAction = Array.from(out[session.outputNames[0]].data);
-  previous = gaitTargets(lastAction, previous);
-  for (let k = 0; k < 14; k++) data.ctrl[k] = previous[k];
+  // Pollen's simulator drives ctrl = pose + action, scale 1.0, no low-pass.
+  // DuckKit's 0.9 + filter is robotd's on-robot behaviour, which is a
+  // different thing; matching mjlab here is what makes the gait match.
+  for (let k = 0; k < 14; k++) data.ctrl[k] = HOME[k] + lastAction[k];
   for (let s = 0; s < DECIMATION; s++) mj.mj_step(model, data);
   ticks++;
 }
@@ -215,8 +217,8 @@ addEventListener('keyup', e => keys.delete(e.key));
 function readControls() {
   const fwd = (keys.has('ArrowUp') || keys.has('w') ? 1 : 0) - (keys.has('ArrowDown') || keys.has('s') ? 1 : 0);
   const turn = (keys.has('ArrowLeft') || keys.has('a') ? 1 : 0) - (keys.has('ArrowRight') || keys.has('d') ? 1 : 0);
-  cmdState.vx = fwd * 0.18;
-  cmdState.vyaw = turn * 0.8;
+  cmdState.vx = fwd * 0.45;
+  cmdState.vyaw = turn * 1.0;
 }
 for (const el of document.querySelectorAll('[data-key]')) {
   const k = el.dataset.key;
@@ -234,10 +236,22 @@ document.getElementById('reset').addEventListener('click', reset);
     C = await (await fetch('./duckkit-constants.json')).json();
     ({ HOME, buildObs, gaitTargets, projectedGravity, command } = makeLoop(C));
     mj = await loadMuJoCo();
-    const xml = await (await fetch('./scene.xml')).text();
-    mj.FS.writeFile('/scene.xml', xml);
-    model = mj.MjModel.mj_loadXML('/scene.xml');
+    statusEl.textContent = 'loading the robot…';
+    // A PRECOMPILED model, not XML. Compiling Pollen's meshed MJCF in the
+    // browser fails with "thread constructor failed": MuJoCo parallelises the
+    // convex-hull computation for mesh collision geoms, and the WASM build
+    // cannot spawn those workers here. Compiling once in Node and shipping the
+    // .mjb skips hull generation entirely — it also means no STLs to fetch.
+    const mjb = await (await fetch('./scene.mjb')).arrayBuffer();
+    mj.FS.writeFile('/scene.mjb', new Uint8Array(mjb));
+    model = mj.MjModel.mj_loadBinary('/scene.mjb', new mj.MjVFS());
     data = new mj.MjData(model);
+    // NOT sensordata[0]: their sensor block opens with a 4-value framequat, so
+    // the angular-velocity sensor the runtime reads sits further along. Reading
+    // the first three floats was feeding the policy part of a quaternion.
+    for (let i = 0; i < model.nsensor; i++) {
+      if (model.sensor(i).name === 'imu_ang_vel') GYRO = model.sensor(i).adr;
+    }
 
     statusEl.textContent = 'loading the policy…';
     session = await ort.InferenceSession.create('./alpha_walking.onnx');
