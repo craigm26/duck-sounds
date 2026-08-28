@@ -12,7 +12,15 @@ export const STAIR_COUNT = 14;
 /** Half-depth of a step block, metres. Runs longer than 2x this leave gaps. */
 export const STEP_HALF_DEPTH = 0.07;
 /**
- * Half-height of a step block: a thin tread, not a slab.
+ * Half-height of a step block.
+ *
+ * 200 mm tall, positioned so the TOP is the tread — so it is solid from below
+ * the floor up to the step. That is what a stair looks like, and it is also the
+ * only way there is a riser face to push against: a floating tread has nothing
+ * behind it. The earlier 600 mm version swallowed the room; this is scaled to a
+ * 250 mm duck.
+ *
+ * Older note, kept because it explains the collision bits:
  *
  * They were 0.30 — tall enough to be solid to the floor — which is invisible in
  * physics but not on screen: rendered, fourteen 60 cm slabs swallowed the room.
@@ -20,7 +28,7 @@ export const STEP_HALF_DEPTH = 0.07;
  * and never meet, so a tread floating above the floor costs nothing and reads
  * as a step marker rather than a wall.
  */
-export const STEP_HALF_HEIGHT = 0.006;
+export const STEP_HALF_HEIGHT = 0.10;
 
 /**
  * qpos AND dof addresses for each step's [x, z] joints, looked up once.

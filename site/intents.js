@@ -115,6 +115,23 @@ export const LEVER_KEY = 'h';
  */
 export const WALL_FLIP_KEY = 't';
 
+/**
+ * Ours: the wall-flip trick, borrowed for the stairs.
+ *
+ * A stair riser is a vertical surface and it is already there — so the same
+ * thing that makes the wall flip work is available on every step, with no wall
+ * needed. A foot planted on the riser face pushes against something that is not
+ * underneath it, while the head pivots on the tread. Two points of purchase
+ * instead of one.
+ *
+ *   stepping onto the tread   26 mm
+ *   head as a pivot           40 mm
+ *   foot on the riser too     55 mm   (fails at 70)
+ *
+ * Each idea stacked on the one before rather than replacing it.
+ */
+export const RISER_KEY = 'y';
+
 /** Command magnitudes for a variant, so driving matches the runtime. */
 export function speeds(variant) {
   return variant === 'rollers'

@@ -363,3 +363,51 @@ Every one of these was found by search and missed by hand:
 
 Three hand-guesses at the back roll reached 60 degrees and I would have reported
 it impossible. The move was there.
+
+## Borrowing the wall trick for the stairs
+
+A stair riser *is* a vertical surface, and it is already there — so the thing
+that makes the wall flip work is available on every step without needing a wall.
+A foot planted on the riser pushes against something that is not underneath it,
+while the head pivots on the tread: two points of purchase instead of one.
+
+```
+stepping onto the tread    26 mm   3/3
+head as a pivot            40 mm   3/3
+foot on the riser as well  55 mm   3/3   (fails 3/3 at 70 mm)
+```
+
+Each idea **stacked** on the one before rather than replacing it. Ships on `Y`.
+
+This is also why the steps had to become solid blocks again: a floating tread
+has no riser to push against. They are 200 mm tall, positioned so the top is the
+step, which is what a stair looks like anyway.
+
+## Demo GIFs
+
+```bash
+node gifs.mjs        # records every intent from the running simulator
+```
+
+Each is staged with the conditions it needs — a stair in front of the step-ups,
+the duck placed at the exact distance a searched move was found at. Walking it
+there approximately is not the same thing: staged by walking, the riser push
+simply does not fire.
+
+That needs a placement seam, so `sim.js` exposes `window.__demo` **behind
+`?demo=1`** and nowhere else. It resets the policy's `lastAction` as well as the
+pose, because that is 14 of the 61 observation floats and a duck placed with a
+stale action history is not in the state a move was searched from.
+
+### The wall flip is not in the gallery
+
+It is verified headlessly — 179&deg;, through inverted, upright, 5/5 — and it does
+**not** reproduce when fired from the page. Four attempts at closing the gap
+(exact placement, settling under the stand policy, resetting the action history,
+fixing a `const mode` that shadowed the intent mode) each fixed something real
+and none of them produced a flip in the browser.
+
+So there is no wall-flip GIF. A clip of the duck leaning against a wall,
+captioned "flip", would be worse than no clip. **The discrepancy is open**, and
+the next thing to try is logging the observation vector from both sides on the
+same tick and diffing it — the state differs somewhere and that will say where.

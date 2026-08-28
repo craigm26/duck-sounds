@@ -10,7 +10,7 @@ import { makeLoop } from './duckloop.mjs';
 import { createRenderer } from './render.js';
 import { findStairJoints, layoutStairs, clearStairs, STAIR_COUNT } from './stairs.js';
 import { buildTrack, poseAt } from './intent.mjs';
-import { INTENTS, STEP_UP_KEY, BACK_ROLL_KEY, LEVER_KEY, WALL_FLIP_KEY, DEFAULTS, speeds } from './intents.js';
+import { INTENTS, STEP_UP_KEY, BACK_ROLL_KEY, LEVER_KEY, WALL_FLIP_KEY, RISER_KEY, DEFAULTS, speeds } from './intents.js';
 import { isTouch, makeStick } from './touch.js';
 import { makePad, ACTIONS } from './gamepad.js';
 import { xrSupport, startXR } from './xr.js';
@@ -293,7 +293,8 @@ function loadSlots() {
 }
 function buildSlots() {
   const all = [...INTENTS, { id: 'step_up', label: 'Step up' }, { id: 'back_roll', label: 'Back roll' },
-    { id: 'lever_up', label: 'Lever up' }, { id: 'wall_flip', label: 'Wall flip' }];
+    { id: 'lever_up', label: 'Lever up' }, { id: 'wall_flip', label: 'Wall flip' },
+    { id: 'riser_up', label: 'Riser up' }];
   const slots = loadSlots();
   for (const name of ['A', 'B']) {
     const sel = document.getElementById('slot' + name);
@@ -517,7 +518,8 @@ function buildTouch() {
     window.__stick = stickCmd;
   });
   const all = [...INTENTS, { key: STEP_UP_KEY, id: 'step_up', label: 'Step up' }, { key: BACK_ROLL_KEY, id: 'back_roll', label: 'Back roll' },
-    { key: LEVER_KEY, id: 'lever_up', label: 'Lever up' }, { key: WALL_FLIP_KEY, id: 'wall_flip', label: 'Wall flip' }];
+    { key: LEVER_KEY, id: 'lever_up', label: 'Lever up' }, { key: WALL_FLIP_KEY, id: 'wall_flip', label: 'Wall flip' },
+    { key: RISER_KEY, id: 'riser_up', label: 'Riser up' }];
   for (const el of document.querySelectorAll('.pad-btn')) {
     // Read the intent at PRESS time, not at wiring time, so re-assigning a
     // button takes effect without rebuilding the handler.
@@ -534,7 +536,8 @@ function buildKeys() {
     { key: STEP_UP_KEY, id: 'step_up', label: 'Step up' },
     { key: BACK_ROLL_KEY, id: 'back_roll', label: 'Back roll' },
     { key: LEVER_KEY, id: 'lever_up', label: 'Lever up' },
-    { key: WALL_FLIP_KEY, id: 'wall_flip', label: 'Wall flip' }];
+    { key: WALL_FLIP_KEY, id: 'wall_flip', label: 'Wall flip' },
+    { key: RISER_KEY, id: 'riser_up', label: 'Riser up' }];
   for (const item of all) {
     const b = document.createElement('button');
     b.innerHTML = `<kbd>${item.key.toUpperCase()}</kbd><span>${item.label}</span>`;
@@ -617,7 +620,7 @@ async function loadVariant(name) {
       backRoll = await (await fetch('./intent-backroll.json')).json();
       tracks.back_roll = backRoll;
     } catch { /* likewise */ }
-    for (const [id, file] of [['lever_up', 'intent-lever.json'], ['wall_flip', 'intent-wallflip.json']]) {
+    for (const [id, file] of [['lever_up', 'intent-lever.json'], ['wall_flip', 'intent-wallflip.json'], ['riser_up', 'intent-riser.json']]) {
       try { tracks[id] = await (await fetch('./' + file)).json(); } catch { /* optional */ }
     }
     // AR, where the browser has it. The button stays hidden otherwise rather
@@ -625,15 +628,15 @@ async function loadVariant(name) {
     // which is why this project's iOS path is native.
     const support = await xrSupport();
     const xrBtn = document.getElementById('xr');
-    const mode = support.ar ? 'immersive-ar' : support.vr ? 'immersive-vr' : null;
-    if (mode) {
+    const xrMode = support.ar ? 'immersive-ar' : support.vr ? 'immersive-vr' : null;
+    if (xrMode) {
       xrBtn.hidden = false;
       xrBtn.textContent = support.ar ? 'view in AR' : 'view in VR';
       xrBtn.addEventListener('click', async () => {
         if (xrSession) { await xrSession.end(); return; }
         try {
           xrSession = await startXR({
-            gl: renderer.gl, mode,
+            gl: renderer.gl, mode: xrMode,
             step: () => { /* the 50 Hz loop keeps running below */ },
             onFrame: ({ view, proj, origin }) => {
               renderer.render(data, {
@@ -649,6 +652,33 @@ async function loadVariant(name) {
           setTimeout(() => { statusEl.textContent = ''; }, 4000);
         }
       });
+    }
+
+    // A demo-only seam, behind ?demo=1, for recording GIFs: some moves need
+    // the duck at a specific distance from a wall or a step, and walking it
+    // there approximately is not the same thing. Not present otherwise.
+    if (new URLSearchParams(location.search).has('demo')) {
+      window.__demo = {
+        place(x, y = 0) {
+          data.qpos[DUCK.freeQpos] = x;
+          data.qpos[DUCK.freeQpos + 1] = y;
+          data.qpos[DUCK.freeQpos + 2] = 0.12;
+          data.qpos[DUCK.freeQpos + 3] = 1;
+          for (let i = 4; i < 7; i++) data.qpos[DUCK.freeQpos + i] = 0;
+          for (let i = 0; i < 14; i++) { data.qpos[DUCK.qpos[i]] = HOME[i]; data.ctrl[i] = HOME[i]; }
+          for (let i = 0; i < model.nv; i++) data.qvel[i] = 0;
+          // Reset the policy's own feedback too. lastAction is 14 of the 61
+          // observation floats, so a duck placed with a stale action history is
+          // not in the state the move was searched from — which is exactly why
+          // the wall flip reproduced headlessly and not from the page.
+          lastAction = new Array(14).fill(0);
+          previous = null;
+          skill = null; intent = null; mode = null; lockUntil = 0;
+          ticks = 0;
+          mj.mj_forward(model, data);
+        },
+        x: () => data.qpos[DUCK.freeQpos],
+      };
     }
 
     buildSlots();

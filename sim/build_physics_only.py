@@ -55,7 +55,7 @@ steps = "".join(
     <body name="step{i}" pos="0 0 0">
       <joint name="step{i}_x" type="slide" axis="1 0 0" limited="false" damping="0" armature="0" frictionloss="0"/>
       <joint name="step{i}_z" type="slide" axis="0 0 1" limited="false" damping="0" armature="0" frictionloss="0"/>
-      <geom name="step{i}_geom" type="box" size="0.07 0.17 0.006" pos="0 0 0"
+      <geom name="step{i}_geom" type="box" size="0.07 0.17 0.10" pos="0 0 0"
             contype="4" conaffinity="4" condim="3" friction="1.0 0.02 0.001"
             rgba="0.62 0.65 0.61 1" mass="200"/>
     </body>'''

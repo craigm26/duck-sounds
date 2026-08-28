@@ -278,6 +278,26 @@
   </section>
 
   <section>
+    <p class="label">Every intent</p>
+    <h2>What each one looks like</h2>
+    <p>Recorded from this simulator, each staged with the conditions it needs &mdash; a stair in front of the step-ups, a wall for the flip.</p>
+    <div class="gifs">
+      <figure><img loading="lazy" src="gifs/walking.gif" alt="the duck walking"><figcaption><b>Walking</b> &middot; <code>alpha_walking</code> at 0.25</figcaption></figure>
+      <figure><img loading="lazy" src="gifs/skating.gif" alt="the duck on skates"><figcaption><b>Skating</b> &middot; the roller model, 3&times; faster</figcaption></figure>
+      <figure><img loading="lazy" src="gifs/kick-left.gif" alt="the duck kicking"><figcaption><b>Kick</b> <kbd>Q</kbd><kbd>E</kbd> &middot; 25 steps, then a 0.4 s lock</figcaption></figure>
+      <figure><img loading="lazy" src="gifs/pick-up.gif" alt="the duck picking something up"><figcaption><b>Pick up</b> <kbd>F</kbd> &middot; phase-driven, 4 s period</figcaption></figure>
+      <figure><img loading="lazy" src="gifs/sit.gif" alt="the duck sitting"><figcaption><b>Sit</b> <kbd>C</kbd> &middot; a mode: it stays down</figcaption></figure>
+      <figure><img loading="lazy" src="gifs/stand-up.gif" alt="the duck standing up"><figcaption><b>Stand up</b> <kbd>V</kbd> &middot; hands back to walking once up</figcaption></figure>
+      <figure><img loading="lazy" src="gifs/forward-roll.gif" alt="the duck rolling forward"><figcaption><b>Forward roll</b> <kbd>X</kbd> &middot; Pollen's trained <code>roulade</code></figcaption></figure>
+      <figure><img loading="lazy" src="gifs/back-roll.gif" alt="the duck rolling backwards"><figcaption><b>Back roll</b> <kbd>B</kbd> &middot; ours. 179&deg;, lands upright</figcaption></figure>
+      <figure><img loading="lazy" src="gifs/step-up.gif" alt="the duck stepping onto a step"><figcaption><b>Step up</b> <kbd>G</kbd> &middot; ours. 26 mm</figcaption></figure>
+      <figure><img loading="lazy" src="gifs/lever-up.gif" alt="the duck levering onto a step with its head"><figcaption><b>Lever up</b> <kbd>H</kbd> &middot; ours. Head as a pivot &mdash; 40 mm</figcaption></figure>
+      <figure><img loading="lazy" src="gifs/riser-up.gif" alt="the duck pushing off a riser"><figcaption><b>Riser up</b> <kbd>Y</kbd> &middot; ours. Foot on the riser too &mdash; 55 mm</figcaption></figure>
+    </div>
+    <p class="note" style="margin-top:1.25rem">The wall flip (<kbd>T</kbd>) is not shown. It is verified headlessly &mdash; 179&deg;, through inverted, landing upright, five runs out of five &mdash; but it does not reproduce when fired from this page, and a clip of the duck leaning against a wall labelled &ldquo;flip&rdquo; would be worse than no clip. The discrepancy is open.</p>
+  </section>
+
+  <section>
     <p class="label">Credit</p>
     <h2>Thanks to Pollen Robotics</h2>
     <p><a href="https://www.pollen-robotics.com/">Pollen Robotics</a> built the Microduck, trained the policy, and gave permission for their model to be used here.</p>
