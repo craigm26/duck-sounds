@@ -100,6 +100,7 @@ async function capture(spec) {
 
   let lastAction = new Array(14).fill(0);
   const frames = [], roots = [];
+  let netYaw = 0, lastYaw = null;
   const settle = spec.continueFrom ? 0 : (spec.settle ?? 25);
   const ticks = Math.round(spec.seconds * C.tickHz);
 
@@ -134,13 +135,24 @@ async function capture(spec) {
       const angles = [];
       for (let k = 0; k < 14; k++) angles.push(+data.qpos[D.qpos[k]].toFixed(5));
       frames.push(angles);
-      roots.push([+data.qpos[D.freeQpos].toFixed(5),
-                  +data.qpos[D.freeQpos + 1].toFixed(5),
-                  +data.qpos[D.freeQpos + 2].toFixed(5),
-                  +yaw().toFixed(5)]);
+      const q = quat();
+      roots.push([data.qpos[D.freeQpos], data.qpos[D.freeQpos + 1],
+                  data.qpos[D.freeQpos + 2], q[0], q[1], q[2], q[3]]);
+      // Unwrapped, summed per tick. `atan2(last) - atan2(first)` is ambiguous
+      // the moment a move turns more than half a circle: roulade came out at
+      // -3.272 rad, outside (-pi, pi], and the true rotation could equally have
+      // been +3.011. A cursor folding that number sends the duck the wrong way.
+      const y = yaw();
+      if (lastYaw !== null) {
+        let d = y - lastYaw;
+        while (d > Math.PI) d -= 2 * Math.PI;
+        while (d < -Math.PI) d += 2 * Math.PI;
+        netYaw += d;
+      }
+      lastYaw = y;
     }
   }
-  return { frames, roots, upright: projectedGravity(quat())[2] < -0.9 };
+  return { frames, roots, netYaw };
 }
 
 // ── what to record ────────────────────────────────────────────────────────
@@ -149,17 +161,70 @@ async function capture(spec) {
 // counts at 50 Hz, with a little tail so a clip ends settled rather than
 // mid-motion.
 const STAND = 'BEST_alpha_stand.onnx';
-const authored = name => {
+/**
+ * An authored move, WITH the world it was searched against.
+ *
+ * The first cut of this returned only the keyframes, the blend and a duration —
+ * so `capture` never saw a `stairs` key, `resetDuck` ran `clearStairs`, and five
+ * stair moves were recorded playing into thin air on a bare floor 1.5 m from the
+ * wall the flip needs. Every one came out at exactly hold's flat-floor height of
+ * 0.11622 m, and step_up turned 0.9 rad over a move that does not turn. That is
+ * a duck stumbling, not a stunt, and `endsUpright` was true for all of them, so
+ * nothing caught it.
+ *
+ * The search metadata is right there in the JSON — `approach`, `gap`, `side` —
+ * and the browser reads it: sim.js replaces the driving command with
+ * `{vx: approach}` for the whole move. Threading it here is what makes the
+ * recording the motion the move actually is.
+ */
+const AUTHORED_WORLD = {
+  // Heights each move was last MEASURED to clear, strictly. Recording against a
+  // step it cannot climb produces a faceplant, which is honest but useless as a
+  // clip; recording against the height it does clear shows the move working.
+  step_up:   { rise: 0.010 },
+  lever_up:  { rise: 0.010 },
+  riser_up:  { rise: 0.010 },
+  climb:     { rise: 0.010 },
+  back_roll: null,            // flat floor, no prop — it is a roll
+  wall_flip: { wall: true },  // needs the arena wall, not a stair
+};
+
+const authored = (name, id) => {
   const j = JSON.parse(fs.readFileSync(`../site/intent-${name}.json`, 'utf8'));
   const track = j.keyframes ?? buildTrack(j.params, HOME);
-  const blend = j.blend ?? j.params.blend;
-  return { track, blend, policy: STAND, seconds: track[track.length - 1].t + 1.2 };
+  const params = j.params ?? {};
+  const blend = j.blend ?? params.blend;
+  const approach = j.approach ?? params.approach ?? 0;
+  const gap = j.gap ?? params.gap ?? 0.06;
+  const world = AUTHORED_WORLD[id];
+  const spec = {
+    track, blend, approach,
+    // step_up declares NO policy, so the browser's `intent.session || session`
+    // falls through to whatever is driving — alpha_walking on legs. The other
+    // five name BEST_alpha_stand explicitly.
+    policy: j.policy ?? 'alpha_walking.onnx',
+    seconds: track[track.length - 1].t + 1.2,
+    // The move's own forward velocity replaces the driving command for its
+    // whole duration, exactly as sim.js:139 does.
+    command: () => ({ vx: approach }),
+  };
+  if (world && world.rise !== undefined) {
+    spec.stairs = { count: 4, rise: world.rise, run: 0.28, start: 0.12 };
+    spec.start = { x: 0.12 - 0.07 - gap, y: STAIR_Y + (j.side ?? 0) };
+  } else if (world && world.wall) {
+    // Facing the arena wall at y = 1.5 with half-thickness 0.025.
+    spec.start = { x: 0, y: 1.5 - 0.025 - 0.05 - gap };
+  }
+  return spec;
 };
 
 const SPECS = [
   { id: 'hold',        policy: STAND,                     seconds: 2.0 },
-  { id: 'kick_left',   policy: 'ball_kick_left.onnx',     seconds: 1.4 },
-  { id: 'kick_right',  policy: 'ball_kick_right.onnx',    seconds: 1.4 },
+  // KICK_STEPS 25 then POST_KICK_LOCK_STEPS 20 — 45 ticks, 0.9 s. The first
+  // cut recorded 1.4 s, nearly three times the kick, so the clip was mostly a
+  // duck standing still after one.
+  { id: 'kick_left',   policy: 'ball_kick_left.onnx',     seconds: 0.9 },
+  { id: 'kick_right',  policy: 'ball_kick_right.onnx',    seconds: 0.9 },
   { id: 'ground_pick', policy: 'alpha_ground_pick.onnx',  seconds: 2.8,
     // The command slots carry a clock, not a velocity: cos and sin of progress
     // through a 4 s period. Feeding a velocity here makes the duck try to walk.
@@ -171,31 +236,77 @@ const SPECS = [
   // clip would be three seconds of a robot not moving.
   { id: 'stand',       policy: 'BEST_alpha_sitstand.onnx', seconds: 3.0,
     command: () => ({ vx: 0 }), continueFrom: 'sit' },
-  ...['stepup', 'lever', 'riser', 'climb', 'backroll', 'wallflip'].map(name => ({
-    id: { stepup: 'step_up', lever: 'lever_up', riser: 'riser_up',
-          climb: 'climb', backroll: 'back_roll', wallflip: 'wall_flip' }[name],
-    ...authored(name),
-  })),
+  ...['stepup', 'lever', 'riser', 'climb', 'backroll', 'wallflip'].map(name => {
+    const id = { stepup: 'step_up', lever: 'lever_up', riser: 'riser_up',
+                 climb: 'climb', backroll: 'back_roll', wallflip: 'wall_flip' }[name];
+    return { id, ...authored(name, id) };
+  }),
 ];
 
-const out = { hz: C.tickHz, joints: C.jointNames.filter(n => n !== 'mouth'), clips: {} };
+/**
+ * Move a clip so it starts at the origin, facing along +x.
+ *
+ * MANDATORY, NOT COSMETIC. A recorded root carries wherever the duck happened
+ * to be in MuJoCo. `stand` is captured with `continueFrom: 'sit'`, so it begins
+ * 74 mm and 0.033 rad away from where `sit` began; the stair moves start at
+ * y = 1.305, beside a wall. Replayed as recorded, firing an intent teleports
+ * the duck across the room. De-origined, a clip is droppable anywhere on an AR
+ * floor, and "frame 0 is at the origin" becomes something a decoder can assert
+ * rather than something a comment hopes for.
+ */
+function deOrigin(roots) {
+  const [x0, y0] = roots[0];
+  const q0 = [roots[0][3], roots[0][4], roots[0][5], roots[0][6]];
+  // Only the YAW is removed. Taking out the whole orientation would stand a
+  // duck that starts mid-roll upright and destroy the motion.
+  const yaw0 = Math.atan2(2 * (q0[0] * q0[3] + q0[1] * q0[2]),
+                          1 - 2 * (q0[2] * q0[2] + q0[3] * q0[3]));
+  const c = Math.cos(-yaw0), s2 = Math.sin(-yaw0);
+  const inv = [Math.cos(-yaw0 / 2), 0, 0, Math.sin(-yaw0 / 2)];
+  const mul = (a, b) => [
+    a[0]*b[0] - a[1]*b[1] - a[2]*b[2] - a[3]*b[3],
+    a[0]*b[1] + a[1]*b[0] + a[2]*b[3] - a[3]*b[2],
+    a[0]*b[2] - a[1]*b[3] + a[2]*b[0] + a[3]*b[1],
+    a[0]*b[3] + a[1]*b[2] - a[2]*b[1] + a[3]*b[0]];
+  return roots.map(r => {
+    const dx = r[0] - x0, dy = r[1] - y0;
+    const q = mul(inv, [r[3], r[4], r[5], r[6]]);
+    return [+(dx * c - dy * s2).toFixed(5), +(dx * s2 + dy * c).toFixed(5), +r[2].toFixed(5),
+            +q[0].toFixed(5), +q[1].toFixed(5), +q[2].toFixed(5), +q[3].toFixed(5)];
+  });
+}
+
+const out = {
+  format: 'duck-intent-clips/2',
+  hz: C.tickHz,
+  joints: C.jointNames.filter(n => n !== 'mouth'),
+  clips: {},
+};
 for (const spec of SPECS) {
   const r = await capture(spec);
-  const first = r.roots[0], last = r.roots[r.roots.length - 1];
+  const roots = deOrigin(r.roots);
   out.clips[spec.id] = {
     frames: r.frames,
-    height: first[2],
-    deltaX: +(last[0] - first[0]).toFixed(5),
-    deltaY: +(last[1] - first[1]).toFixed(5),
-    deltaYaw: +(last[3] - first[3]).toFixed(5),
-    endsUpright: r.upright,
+    // Per frame: x, y, z, then the trunk quaternion (w, x, y, z). NOT a yaw
+    // scalar — a duck that rolls or flips has an orientation a single angle
+    // cannot carry, and roulade and back_roll both do.
+    roots,
+    // Unwrapped total rotation. The one summary kept, because it cannot be
+    // recovered from the last quaternion: that only gives an angle modulo 2pi.
+    netYaw: +r.netYaw.toFixed(5),
+    // `hold` is the only clip that loops. Everything else happens once.
+    loops: spec.id === 'hold',
     policy: spec.policy,
     authored: !!spec.track,
+    // Sitting is the one posture a clip can start or end in other than
+    // standing, and `stand` is the only clip that begins there.
+    startsFrom: spec.id === 'stand' ? 'seated' : 'standing',
+    endsIn: spec.id === 'sit' ? 'seated' : 'standing',
   };
+  const last = roots[roots.length - 1];
   console.log(`CLIP ${spec.id.padEnd(12)} ${String(r.frames.length).padStart(4)} ticks  `
-    + `z ${first[2].toFixed(3)}→${last[2].toFixed(3)}  `
-    + `Δ(${(last[0]-first[0]).toFixed(3)}, ${(last[1]-first[1]).toFixed(3)}) m  `
-    + `Δyaw ${(last[3]-first[3]).toFixed(3)}  upright=${r.upright}`);
+    + `z ${roots[0][2].toFixed(3)}\u2192${last[2].toFixed(3)}  `
+    + `\u0394(${last[0].toFixed(3)}, ${last[1].toFixed(3)}) m  netYaw ${r.netYaw.toFixed(3)}`);
 }
 fs.writeFileSync('duck-intent-clips.json', JSON.stringify(out));
 console.log(`wrote ${Object.keys(out.clips).length} clips`);

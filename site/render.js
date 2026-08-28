@@ -212,8 +212,27 @@ export async function createRenderer(canvas, url) {
     render(data, opts) {
       resolve(opts.model);
       const w = canvas.clientWidth, h = canvas.clientHeight;
-      const dpr = Math.min(devicePixelRatio || 1, 2);
-      if (canvas.width !== Math.round(w * dpr)) { canvas.width = Math.round(w*dpr); canvas.height = Math.round(h*dpr); }
+      // Cap the drawing buffer by AREA, not by dpr alone. A stage that fills a
+      // 2560-wide desktop is 2532x1271 CSS px; at dpr 2 that is 12.9 M fragments
+      // a frame, and the physics is sharing the frame budget with it.
+      //
+      // 6 M rather than something tighter, because the measurement says fill
+      // rate is not what costs: this shader is a handful of dot products, and
+      // even SOFTWARE rasterisation holds 42 fps at 1.4 M fragments. What
+      // actually bounds the frame is the awaited ONNX forward pass in the step
+      // loop. So the cap is a guard against a 5K canvas at dpr 2, not a budget
+      // — a retina laptop still gets 1.9x here, near enough to native.
+      const want = Math.min(devicePixelRatio || 1, 2);
+      const MAX_PX = 6_000_000;
+      const dpr = w * h * want * want > MAX_PX
+        ? Math.max(1, Math.sqrt(MAX_PX / Math.max(w * h, 1)))
+        : want;
+      const bw = Math.round(w * dpr), bh = Math.round(h * dpr);
+      // BOTH dimensions, not just width. A window dragged shorter changes the
+      // height and leaves the width alone; guarding on width only left the
+      // buffer at its old height while perspective() used the new aspect, which
+      // is a stretched duck.
+      if (canvas.width !== bw || canvas.height !== bh) { canvas.width = bw; canvas.height = bh; }
       gl.viewport(0, 0, canvas.width, canvas.height);
       gl.enable(gl.DEPTH_TEST);
       gl.clearColor(opts.bg[0], opts.bg[1], opts.bg[2], 0);
@@ -246,6 +265,12 @@ export async function createRenderer(canvas, url) {
         view.set(xr.view);
       } else {
         perspective(proj, 0.70, w / h, 0.01, 8);
+        // The control rail stands on the right edge of the canvas, so the
+        // middle of the canvas is not the middle of what you can see. Shear
+        // the projection — an off-centre principal point — rather than moving
+        // the camera sideways, which would swing the whole scene and show the
+        // duck's flank instead of its front.
+        if (opts.shiftX) proj[8] = opts.shiftX;
         lookAt(view, eye, [cx, cy, 0.13], [0, 0, 1]);
       }
 

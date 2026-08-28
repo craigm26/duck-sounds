@@ -9,3 +9,6 @@ Package.resolved
 *.p12
 *.mobileprovision
 *.cer
+
+# screenshot artefacts from sim/layoutshots.mjs
+sim/shots-*/

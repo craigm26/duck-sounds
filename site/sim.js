@@ -188,26 +188,65 @@ function draw() {
     grid: themeColour('--rule', [0.79, 0.82, 0.78]),
     root: DUCK.freeQpos,
     zoom,
+    shiftX,
     model,
     geomTypes: GEOM_TYPES,
   });
   const f = DUCK.freeQpos, fd = DUCK.freeDof;
   const speed = Math.hypot(data.qvel[fd], data.qvel[fd+1]);
-  hud.textContent =
-    `tick ${String(ticks).padStart(5, '0')}   ` +
-    `speed ${speed.toFixed(2)} m/s   ` +
-    `height ${data.qpos[f+2].toFixed(3)} m   ` +
-    `contacts ${data.ncon}`;
+  hudVal.tick.textContent = String(ticks).padStart(5, '0');
+  hudVal.speed.textContent = speed.toFixed(2) + ' m/s';
+  hudVal.height.textContent = data.qpos[f+2].toFixed(3) + ' m';
+  hudVal.contacts.textContent = data.ncon;
+}
+
+// The readout was one pre-formatted line, which on a phone ran off the right
+// edge into a horizontal scroll nobody would find. As label/value pairs it
+// wraps, and the per-frame work is four textContent writes instead of building
+// and re-parsing a string sixty times a second.
+const hudVal = {};
+for (const field of ['tick', 'speed', 'height', 'contacts']) {
+  const wrap = document.createElement('span');
+  wrap.className = 'hud-f';
+  const key = document.createElement('i');
+  key.textContent = field;
+  const val = document.createElement('b');
+  wrap.append(key, val);
+  hud.appendChild(wrap);
+  hudVal[field] = val;
 }
 
 // ── controls ───────────────────────────────────────────────────────────────
 const keys = new Set();
+/**
+ * A key press means "drive the duck" everywhere EXCEPT inside a control that
+ * has its own use for it.
+ *
+ * This did not matter while every slider and select sat far below the canvas.
+ * It matters now that they are docked over it: arrowing the step-height slider
+ * also walked the duck AND had its default prevented, so the slider did not
+ * move at all, and a <select>'s type-ahead fired an intent per letter.
+ */
+const FORM_TAG = /^(INPUT|SELECT|TEXTAREA)$/;
+export function typingIn(e) {
+  const t = e.target;
+  return !!t && (t.isContentEditable === true || FORM_TAG.test(t.tagName || ''));
+}
+// Space activates whatever has focus, so it is only ours when nothing that
+// wants it does. Arrows scroll the page, and here they drive, so they are
+// always swallowed outside a form control.
+const SPACE_IS_THEIRS = /^(BUTTON|SUMMARY|A|DETAILS)$/;
 addEventListener('keydown', e => {
-  if (['ArrowUp','ArrowDown','ArrowLeft','ArrowRight',' '].includes(e.key)) e.preventDefault();
+  if (typingIn(e)) return;
+  if (['ArrowUp','ArrowDown','ArrowLeft','ArrowRight'].includes(e.key)) e.preventDefault();
+  if (e.key === ' ' && !SPACE_IS_THEIRS.test(e.target && e.target.tagName || '')) e.preventDefault();
   if (e.key === 'r' || e.key === 'R') reset();
   keys.add(e.key);
 });
 addEventListener('keyup', e => keys.delete(e.key));
+// Tab away mid-stride and the keyup never arrives, so the duck walks on with
+// nobody driving. Clearing on blur is the only place that can be noticed.
+addEventListener('blur', () => keys.clear());
 
 // Set by the thumbstick on touch devices; the keyboard path leaves it null.
 let stickCmd = null;
@@ -256,12 +295,16 @@ function readStairs() {
   riseOut.textContent = +riseEl.value === 0 ? 'flat' : riseEl.value + ' mm';
   countOut.textContent = countEl.value;
   runOut.textContent = runEl.value + ' mm';
-  // Measured, not guessed: 1 and 2 mm are walkable, 3 mm and up are not.
-  ctlNote.textContent = +riseEl.value === 0
-    ? 'Flat floor.'
-    : (+riseEl.value <= 2
-        ? 'It can walk up these.'
-        : `It cannot walk up ${riseEl.value} mm. Measured: 2 mm is the limit, 3 mm tips it over.`);
+  // Measured, not guessed: 1 and 2 mm are walkable, 3 mm and up are not, and
+  // the best move we have stands on 10 mm. The flat case used to read just
+  // "Flat floor.", which threw away the one finding this control exists to
+  // show — the slider is the argument, so the note has to make the ask.
+  const mm = +riseEl.value;
+  ctlNote.textContent =
+    mm === 0 ? 'Flat floor. Raise the steps to find where it stops: walking alone clears 2 mm, and the best move we have stands on 10 mm.'
+    : mm <= 2 ? `${mm} mm. It can walk up these.`
+    : mm <= 10 ? `${mm} mm. Too tall to walk up — 2 mm is the walking limit. Try Riser up (Y), the highest we have got a foot onto: 10 mm.`
+    : `${mm} mm. Nothing we have clears this. Walking tops out at 2 mm, the best move at 10 mm.`;
   if (data) applyStairs();
 }
 for (const el of [riseEl, countEl, runEl]) el.addEventListener('input', readStairs);
@@ -295,6 +338,87 @@ cv.addEventListener('pointermove', e => {
 for (const ev of ['pointerup', 'pointercancel', 'pointerleave']) {
   cv.addEventListener(ev, e => { pinch.delete(e.pointerId); if (pinch.size < 2) pinchBase = null; });
 }
+
+// ── stage layout ──────────────────────────────────────────────────────────
+// All of this exists for one reason: on a desktop the simulator should BE the
+// viewport, with the controls floating on it, rather than a 700x440 box in the
+// middle of an otherwise empty 1920 px page. The CSS does the layout; these
+// three measurements are the parts a stylesheet cannot know.
+const rig = document.getElementById('rig');
+const rail = document.getElementById('rail');
+const railToggle = document.getElementById('railToggle');
+const masthead = document.getElementById('masthead');
+const fullBtn = document.getElementById('full');
+let shiftX = 0;
+
+/** The stage is sized against the masthead, which wraps at every width. */
+function measureHead() {
+  const h = masthead.offsetHeight + 'px';
+  const root = document.documentElement;
+  if (root.style.getPropertyValue('--head-h') !== h) root.style.setProperty('--head-h', h);
+}
+
+/**
+ * How much of the canvas the rail is standing on, as a fraction of its width.
+ *
+ * The camera centres the duck in the CANVAS, and the rail covers the canvas's
+ * right edge — so centred in the canvas is off-centre in what you can actually
+ * see. render() shears the projection by this much to put the duck back in the
+ * middle of the visible part. Measured from the live boxes rather than derived
+ * from the CSS, so a collapsed rail, a fullscreen rig and the stacked layout
+ * all fall out of the same two rectangles.
+ */
+function measureShift() {
+  const c = cv.getBoundingClientRect();
+  const r = rail.getBoundingClientRect();
+  const over = !r.width || !r.height ? 0 : Math.max(0, c.right - r.left);
+  const onTop = r.top < c.bottom && r.bottom > c.top;   // beside the canvas, not below it
+  shiftX = c.width && onTop ? Math.min(over / c.width, 0.5) : 0;
+}
+
+const RAIL_STORE = 'microduck.rail.v1';
+function setRail(open) {
+  document.body.classList.toggle('rail-off', !open);
+  railToggle.setAttribute('aria-expanded', String(open));
+  const what = open ? 'Hide the controls' : 'Show the controls';
+  railToggle.title = what;
+  railToggle.setAttribute('aria-label', what);
+  try { localStorage.setItem(RAIL_STORE, open ? '1' : '0'); } catch { /* private mode */ }
+  measureShift();
+}
+railToggle.addEventListener('click', () => setRail(document.body.classList.contains('rail-off')));
+try { if (localStorage.getItem(RAIL_STORE) === '0') setRail(false); } catch { /* likewise */ }
+
+// Fullscreen takes the RIG, not the canvas, so every dock comes with it.
+if (!document.documentElement.requestFullscreen) {
+  fullBtn.hidden = true;
+} else {
+  fullBtn.addEventListener('click', async () => {
+    try {
+      if (document.fullscreenElement) await document.exitFullscreen();
+      else await rig.requestFullscreen();
+    } catch { /* refused; the button simply does nothing */ }
+  });
+  document.addEventListener('fullscreenchange', () => {
+    const on = document.fullscreenElement === rig;
+    const what = on ? 'Leave full screen' : 'Fill the screen';
+    fullBtn.title = what;
+    fullBtn.setAttribute('aria-label', what);
+    // The rig resizes after the event, not before it.
+    requestAnimationFrame(() => { measureHead(); measureShift(); });
+  });
+}
+
+const relayout = () => { measureHead(); measureShift(); };
+if (window.ResizeObserver) {
+  const ro = new ResizeObserver(relayout);
+  ro.observe(masthead); ro.observe(rig);
+}
+addEventListener('resize', relayout);
+// A collapsed <details> in the rail changes its width when the scrollbar
+// appears, which moves the occlusion edge.
+rail.addEventListener('toggle', relayout, true);
+relayout();
 
 // ── which intent each on-screen button fires ─────────────────────────────
 // The phone layout has room for two action buttons, and which two should not
@@ -557,7 +681,7 @@ function buildKeys() {
     const b = document.createElement('button');
     b.innerHTML = `<kbd>${item.key.toUpperCase()}</kbd><span>${item.label}</span>`;
     b.title = item.id === 'step_up'
-      ? 'The authored move: plant the head, lift onto a 26 mm step'
+      ? 'The authored move: plant the head, lift a foot onto the tread'
       : `${item.policy} for ${item.seconds}s`;
     b.addEventListener('click', () => fire(item));
     keyRow.appendChild(b);
@@ -566,6 +690,7 @@ function buildKeys() {
   const byKey = new Map(all.map(i => [i.key, i]));
   addEventListener('keydown', e => {
     if (e.metaKey || e.ctrlKey || e.altKey) return;
+    if (typingIn(e)) return;
     const item = byKey.get(e.key.toLowerCase());
     if (item) { e.preventDefault(); fire(item); }
   });

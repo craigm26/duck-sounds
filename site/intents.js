@@ -98,8 +98,12 @@ export const BACK_ROLL_KEY = 'b';
  *
  * The step-up unweights a leg so a foot can reach the tread, which caps it at
  * the leg's own reach. Levering does not care about leg reach — the head is a
- * pivot and the body rotates over it. Measured 40 mm against 26 mm, 3/3, and it
- * fails at 50 mm.
+ * pivot and the body rotates over it, so it should beat the step-up and on a
+ * loose scorer it did: 40 mm against 26 mm, 3/3.
+ *
+ * Those figures are WITHDRAWN. See [CLIMB_KEY] for what the loose scorer was
+ * accepting. On a real flight — 280 mm treads, flush to the wall — this clears
+ * nothing at all.
  */
 export const LEVER_KEY = 'h';
 
@@ -128,7 +132,11 @@ export const WALL_FLIP_KEY = 't';
  *   head as a pivot           40 mm
  *   foot on the riser too     55 mm   (fails at 70)
  *
- * Each idea stacked on the one before rather than replacing it.
+ * Each idea stacked on the one before rather than replacing it — and every one
+ * of those three numbers is WITHDRAWN. They came off a podium-staged step with
+ * a scorer that a duck draped over the edge on its chest could pass. Under the
+ * strict bar this move manages 16 mm, and on a real flight it manages 10 mm,
+ * which is the highest anything here reaches. See [CLIMB_KEY].
  */
 export const RISER_KEY = 'y';
 
