@@ -112,19 +112,51 @@ function jitter(p, scale) {
   return q;
 }
 
-/** How tall a step can this parameter set manage? Bisect on success. */
-async function maxHeight(p, cap = 0.06) {
-  let lo = 0, hi = cap, best = 0;
-  if (!(await evaluate(p, 0.004)).onTop) return 0;
-  for (let i = 0; i < 7; i++) {
-    const mid = (lo + hi) / 2;
-    if ((await evaluate(p, mid)).onTop) { best = mid; lo = mid; } else { hi = mid; }
+/**
+ * How tall a step can this parameter set manage?
+ *
+ * A ladder that stops at the first failure, not a bisection. Each evaluation
+ * costs about 215 policy inferences, so the number of evaluations per candidate
+ * is what decides whether a search finishes at all.
+ */
+const LADDER = [0.006, 0.010, 0.014, 0.018, 0.022, 0.026, 0.030, 0.035];
+async function maxHeight(p) {
+  let best = 0;
+  for (const h of LADDER) {
+    if (!(await evaluate(p, h)).onTop) break;
+    best = h;
   }
   return best;
 }
 
-// ── diagnose before searching ─────────────────────────────────────────────
-for (const h of [0, 0.004, 0.01, 0.02]) {
-  const r = await evaluate({ ...DEFAULTS, lead: 0 }, h);
-  console.log(`DIAG h=${(h*1000).toFixed(0).padStart(2)}mm  x=${r.x.toFixed(3)}  z=${r.z.toFixed(3)}  up=${r.up.toFixed(3)}  peak=${r.peak.toFixed(3)}  fell=${r.fell}  onTop=${r.onTop}`);
+const mm = v => (v * 1000).toFixed(0);
+
+// ── baseline ──────────────────────────────────────────────────────────────
+const baseL = await maxHeight({ ...DEFAULTS, lead: 0 });
+const baseR = await maxHeight({ ...DEFAULTS, lead: 1 });
+console.log(`BASELINE hand-tuned: lead-left ${mm(baseL)} mm, lead-right ${mm(baseR)} mm`);
+
+// ── search: random restarts, each hill-climbed ────────────────────────────
+const BUDGET = +(process.env.BUDGET || 120);
+let best = baseL >= baseR ? { ...DEFAULTS, lead: 0 } : { ...DEFAULTS, lead: 1 };
+let bestH = Math.max(baseL, baseR), evals = 0;
+const t0 = Date.now();
+
+while (evals < BUDGET) {
+  let cand = randomParams(evals % 2 ? 1 : 0);
+  let h = await maxHeight(cand); evals++;
+  // hill-climb this restart while it keeps paying
+  for (let i = 0; i < 8 && evals < BUDGET; i++) {
+    const q = jitter(cand, i < 4 ? 0.20 : 0.08);
+    const qh = await maxHeight(q); evals++;
+    if (qh > h) { cand = q; h = qh; i = 0; }
+  }
+  if (h > bestH) {
+    bestH = h; best = cand;
+    console.log(`  new best ${mm(h)} mm  (${evals} evaluations, ${((Date.now()-t0)/1000).toFixed(0)}s)`);
+    fs.writeFileSync('intent-stepup.json', JSON.stringify({ maxHeightMm: +mm(bestH), params: best }, null, 2));
+  }
 }
+console.log(`SEARCH best ${mm(bestH)} mm after ${evals} evaluations in ${((Date.now()-t0)/1000).toFixed(0)}s`);
+fs.writeFileSync('intent-stepup.json', JSON.stringify({ maxHeightMm: +mm(bestH), params: best }, null, 2));
+console.log('WROTE intent-stepup.json');

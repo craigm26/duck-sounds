@@ -57,3 +57,64 @@ node walk.mjs          # prints the table above; PASS if it never falls
 
 `walk.mjs` imports `../site/duckloop.mjs` — the *same* control loop the browser
 runs, so the headless result and the page cannot diverge.
+
+## The fast loop
+
+Deploying to see whether a change worked costs a minute and has failure modes of
+its own — a stale cache, or an asset that was edited in `sim/` and never copied
+to `site/`. Both have bitten this project.
+
+```bash
+cd sim
+node dev.mjs            # serve site/ locally, drive it once in headless Chromium
+node dev.mjs --watch     # re-check on every edit under site/
+```
+
+It runs the same `browsercheck.mjs` the deployed site gets — it waits for the
+simulator to report ready, holds ArrowUp for six seconds, and asserts the tick
+rate, the console and that the duck actually moved. A pass locally means the
+same thing it means against production.
+
+Deploy only once it is green:
+
+```bash
+cd ../site && npx wrangler pages deploy . --project-name=duck-craigmerry --branch=main
+cd ../sim && node browsercheck.mjs      # confirm against the real URL
+```
+
+`serve.mjs` sets the MIME types by hand because it matters: a `.wasm` served as
+anything but `application/wasm` will not instantiate.
+
+## Deploying to a pages.dev site
+
+A Cloudflare Pages project gives you a `*.pages.dev` URL immediately — no
+domain, no DNS, no cost. Two commands:
+
+```bash
+npx wrangler pages project create <name> --production-branch=main
+cd site && npx wrangler pages deploy . --project-name=<name> --branch=main
+```
+
+The site is then at `https://<name>.pages.dev`. Redeploy with the same
+`pages deploy` line; it overwrites in place.
+
+**Always pass `--branch=main`.** Without it wrangler labels the deployment with
+whatever branch it infers, ships it as a *Preview*, and still prints
+"Deployment complete" — while the real URL keeps serving the old build. Confirm
+with:
+
+```bash
+npx wrangler pages deployment list --project-name=<name>   # top row: Production | main
+```
+
+This repo currently ships to two:
+
+| Project | URL | Purpose |
+|---|---|---|
+| `microduck-sim` | <https://microduck-sim.pages.dev> | The simulator, on its own name |
+| `duck-craigmerry` | <https://duck-craigmerry.pages.dev> | The same build; `duck.craigmerry.com` will point here |
+
+Using two is deliberate: one can be redeployed and checked while the other
+keeps serving. To make one a staging site, deploy to it first, run
+`node browsercheck.mjs https://<name>.pages.dev/`, and only then deploy the
+other.
