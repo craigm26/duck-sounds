@@ -112,6 +112,7 @@
     <button data-key="ArrowUp" aria-label="walk forward">&uarr;</button>
     <button data-key="ArrowDown" aria-label="walk backward">&darr;</button>
     <button data-key="ArrowRight" aria-label="turn right">&rarr;</button>
+    <button id="stepup" aria-label="run the step-up intent">step up</button>
     <button id="reset" aria-label="stand it back up">reset</button>
   </div>
   <p class="hint">arrow keys or WASD &middot; R to stand it back up</p>
@@ -132,7 +133,7 @@
       <input type="range" id="run" min="30" max="120" step="5" value="90">
       <output id="runOut">90 mm</output>
     </div>
-    <p class="ctl-note" id="ctlNote">It walks up 2 mm steps. At 3 mm it falls over.</p>
+    <p class="ctl-note" id="ctlNote">Walking alone: 2 mm. With the step-up intent: 26 mm.</p>
   </div>
 
   <details class="servos">

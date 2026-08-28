@@ -1,3 +1,6 @@
 BASELINE hand-tuned: lead-left 10 mm, lead-right 10 mm
   new best 14 mm  (14 evaluations, 66s)
   new best 22 mm  (97 evaluations, 375s)
+  new best 26 mm  (134 evaluations, 559s)
+SEARCH best 26 mm after 140 evaluations in 584s
+WROTE intent-stepup.json

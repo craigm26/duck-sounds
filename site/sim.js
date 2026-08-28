@@ -9,6 +9,7 @@ import * as ort from './vendor/ort/ort.wasm.min.mjs';
 import { makeLoop } from './duckloop.mjs';
 import { createRenderer } from './render.js';
 import { findStairJoints, layoutStairs, clearStairs, STAIR_COUNT } from './stairs.js';
+import { buildTrack, poseAt } from './intent.mjs';
 
 // Absolute, not relative: onnxruntime resolves wasmPaths against its OWN module
 // URL, so './vendor/ort/' became /vendor/ort/vendor/ort/... and every backend
@@ -27,6 +28,8 @@ let model, data, mj, session, inputName, C, HOME, buildObs, gaitTargets, project
 let lastAction = new Array(14).fill(0), previous = null, ticks = 0, GYRO = 0;
 let STAIRS = null, DUCK = null, stairCfg = { count: 8, rise: 0, run: 0.09, start: 0.45 };
 let manual = null;   // 14 hand-set targets, or null while the policy drives
+let intent = null;   // { params, track, t0 } while the step-up move is playing
+let stepupParams = null;
 
 function reset() {
   mj.mj_resetData(model, data);
@@ -56,6 +59,21 @@ async function tick() {
 
   if (manual) {
     for (let k = 0; k < 14; k++) data.ctrl[k] = manual[k];
+  } else if (intent) {
+    // The intent is an OFFSET on the policy, never a replacement. Replacing it
+    // collapses the duck: with kp 0.55 the servos cannot hold a pose, so
+    // balance is something the policy does continuously, not something a pose
+    // encodes. Measured, an open-loop version fell over on a flat floor.
+    const cmd = command({ vx: intent.params.approach });
+    const obs = buildObs(gyro, projectedGravity(q), jpos, jvel, lastAction, cmd);
+    const out = await session.run({ [inputName]: new ort.Tensor('float32', obs, [1, 61]) });
+    lastAction = Array.from(out[session.outputNames[0]].data);
+    const elapsed = (ticks - intent.t0) / C.tickHz;
+    const offset = poseAt(intent.track, elapsed, HOME);
+    for (let k = 0; k < 14; k++) {
+      data.ctrl[k] = HOME[k] + lastAction[k] + (offset[k] - HOME[k]) * intent.params.blend;
+    }
+    if (elapsed > intent.track[intent.track.length - 1].t + 0.6) intent = null;
   } else {
     const obs = buildObs(gyro, projectedGravity(q), jpos, jvel, lastAction, command(cmdState));
     const out = await session.run({ [inputName]: new ort.Tensor('float32', obs, [1, 61]) });
@@ -187,6 +205,11 @@ modeEl.addEventListener('change', () => {
     previous = null;
   }
 });
+document.getElementById('stepup').addEventListener('click', () => {
+  if (!stepupParams) return;
+  manual = null; modeEl.value = 'policy';
+  intent = { params: stepupParams, track: buildTrack(stepupParams, HOME), t0: ticks };
+});
 document.getElementById('copyPose').addEventListener('click', async () => {
   const names = C.jointNames.filter(n => n !== 'mouth');
   const pose = Object.fromEntries(names.map((n, k) => [n, +(manual ? manual[k] : data.ctrl[k]).toFixed(4)]));
@@ -229,6 +252,9 @@ document.getElementById('copyPose').addEventListener('click', async () => {
     renderer = await createRenderer(cv, './duck-visual.bin');
     console.log('renderer:', renderer.draws, 'parts,', renderer.triangles, 'triangles');
 
+    try {
+      stepupParams = (await (await fetch('./intent-stepup.json')).json()).params;
+    } catch { /* the button simply does nothing without it */ }
     buildServos();
     readStairs();
     reset();
