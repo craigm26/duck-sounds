@@ -155,6 +155,19 @@ async function tick() {
     lastAction = Array.from(out[session.outputNames[0]].data);
     for (let k = 0; k < 14; k++) data.ctrl[k] = HOME[k] + lastAction[k];
   }
+  const dbg = window.__demo;
+  if (dbg && dbg.recording > 0) {
+    dbg.trace.push({
+      t: ticks,
+      obs: Array.from(buildObs(gyro, projectedGravity(q), jpos, jvel, lastAction,
+                               command(intent ? { vx: intent.params.approach } : cmdState))).map(v => +v.toFixed(5)),
+      ctrl: Array.from({ length: 14 }, (_, k) => +data.ctrl[k].toFixed(5)),
+      z: +data.qpos[DUCK.freeQpos + 2].toFixed(5),
+      gz: +projectedGravity(q)[2].toFixed(4),
+      playing: intent ? 'intent' : skill ? 'skill' : mode ? 'mode' : 'drive',
+    });
+    dbg.recording--;
+  }
   for (let s = 0; s < DECIMATION; s++) mj.mj_step(model, data);
   ticks++;
 }
@@ -678,6 +691,42 @@ async function loadVariant(name) {
           mj.mj_forward(model, data);
         },
         x: () => data.qpos[DUCK.freeQpos],
+        // Capture the observation and the commanded targets for N control
+        // ticks, so the browser's state can be diffed against the search's.
+        trace: [],
+        record(n) { window.__demo.trace = []; window.__demo.recording = n; },
+        /**
+         * Settle exactly as the search does: n control ticks under the STAND
+         * policy holding the move's own approach command.
+         *
+         * Measured: settling any other way leaves the pose right to five
+         * decimals but the joint velocities out by up to 0.147, and those are
+         * 14 of the 61 observation floats. A move searched from one velocity
+         * state does not fire from another.
+         */
+        async settle(n, approach = 0) {
+          let sess = skillSessions.get('BEST_alpha_stand.onnx');
+          if (!sess) {
+            sess = await ort.InferenceSession.create('./BEST_alpha_stand.onnx');
+            skillSessions.set('BEST_alpha_stand.onnx', sess);
+          }
+          skill = null; intent = null; mode = null;
+          for (let i = 0; i < n; i++) {
+            const f = DUCK.freeQpos;
+            const q = [data.qpos[f+3], data.qpos[f+4], data.qpos[f+5], data.qpos[f+6]];
+            const jp = [], jv = [];
+            for (let k = 0; k < 14; k++) { jp.push(data.qpos[DUCK.qpos[k]]); jv.push(data.qvel[DUCK.dof[k]]); }
+            const obs = buildObs(
+              [data.sensordata[GYRO], data.sensordata[GYRO+1], data.sensordata[GYRO+2]],
+              projectedGravity(q), jp, jv, lastAction, command({ vx: approach }));
+            const out = await sess.run({ [inputName]: new ort.Tensor('float32', obs, [1, 61]) });
+            lastAction = Array.from(out[sess.outputNames[0]].data);
+            for (let k = 0; k < 14; k++) data.ctrl[k] = HOME[k] + lastAction[k];
+            for (let s2 = 0; s2 < 4; s2++) mj.mj_step(model, data);
+          }
+          ticks = 0;
+        },
+        dump() { return window.__demo.trace; },
       };
     }
 

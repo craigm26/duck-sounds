@@ -12,6 +12,8 @@ import fs from 'node:fs';
 const URL_ = process.argv[2] || 'http://127.0.0.1:8099/';
 const OUT = 'gifs';
 const FPS = 20;
+const NEARGAP = 0.0654;   // the distance the wall flip was searched at
+const STEPGAP = 0.1266;   // and the riser push
 
 // key, name, seconds to film, and how to stage it.
 const SHOTS = [
@@ -21,10 +23,10 @@ const SHOTS = [
   { key: 'v', id: 'stand-up',    secs: 4.0, stage: { pre: 'c', preWait: 3000 } },
   { key: 'x', id: 'forward-roll', secs: 4.0, stage: {} },
   { key: 'b', id: 'back-roll',   secs: 4.0, stage: {} },
-  { key: 't', id: 'wall-flip',   secs: 4.0, stage: { nearWall: true } },
   { key: 'g', id: 'step-up',     secs: 4.5, stage: { rise: 26, atStep: true } },
   { key: 'h', id: 'lever-up',    secs: 5.0, stage: { rise: 40, atStep: true } },
   { key: 'y', id: 'riser-up',    secs: 5.5, stage: { rise: 55, atStep: true } },
+  { key: 't', id: 'wall-flip',   secs: 4.0, stage: { nearWall: true } },
   { key: null, id: 'walking',    secs: 4.0, stage: { hold: 'ArrowUp' } },
   { key: null, id: 'skating',    secs: 4.0, stage: { variant: 'rollers', hold: 'ArrowUp' } },
 ];
@@ -64,21 +66,24 @@ for (const shot of SHOTS) {
   await wait(700);
 
   if (shot.stage.nearWall) {
-    // The flip was searched at a specific distance from the wall — 0.065 m —
-    // and walking the duck up to it approximately is not the same thing.
-    // Measured: staged by walking, it does not flip at all.
-    // Settle under the STAND policy, as the search did. The page otherwise
-    // settles under the walking policy, and the flip starts from a different
-    // state and does not fire.
-    await page.keyboard.press('z');
-    await wait(900);
-    await page.evaluate(g => window.__demo.place(1.5 - 0.05 - g), 0.0654);
-    await wait(700);
+    // Order matters and I had it backwards. The search does: position, THEN
+    // settle under the stand policy, THEN play the move. Settling first and
+    // placing afterwards throws the settle away, because place() resets the
+    // pose and the action history — which is the whole point of it.
+    await page.evaluate(g => window.__demo.place(1.5 - 0.05 - g), NEARGAP);
+    // 25 ticks under the stand policy holding the approach command — the exact
+    // warm-up the search ran. Not a wall-clock wait under some other policy:
+    // that leaves the pose right and the joint velocities wrong.
+    await page.evaluate(a => window.__demo.settle(25, a), 0.07513);
+    await wait(150);
   }
   if (shot.stage.atStep) {
-    // Likewise the riser push: it starts 0.127 m off the riser face.
-    await page.evaluate(g => window.__demo.place(0.12 - 0.07 - g), 0.1266);
-    await wait(700);
+    // The page lays its stairs out from x = 0.45; the search used 0.12. Place
+    // the duck relative to where the stairs ACTUALLY are, or it stands beside
+    // them and the recording shows a duck ignoring a staircase.
+    await page.evaluate(g => window.__demo.place(0.45 - 0.07 - g), STEPGAP);
+    await page.evaluate(a => window.__demo.settle(25, a), shot.stage.approach || 0);
+    await wait(150);
   }
   if (shot.stage.pre) { await page.keyboard.press(shot.stage.pre); await wait(shot.stage.preWait || 2500); }
 
@@ -86,8 +91,24 @@ for (const shot of SHOTS) {
   if (shot.stage.hold) await page.keyboard.down(shot.stage.hold);
   if (shot.key) await page.keyboard.press(shot.key);
 
+  // Capture against the SIMULATION clock, not the wall clock.
+  //
+  // Screenshotting blocks requestAnimationFrame, which is what drives the
+  // physics — so taking 80 shots back to back advances the sim by almost
+  // nothing and the GIF shows a duck standing still while, in the page, it has
+  // done the whole move. Measured that way the wall flip reached 177 degrees
+  // and the recording of it showed a lean. So: wait for the tick counter to
+  // advance, then take a frame.
+  const ticksTotal = Math.round(shot.secs * 50);
   const frames = Math.round(shot.secs * FPS);
+  const perFrame = Math.max(1, Math.round(ticksTotal / frames));
+  const tickNow = () => page.$eval('#hud', el => {
+    const m = el.textContent.match(/tick (\d+)/); return m ? +m[1] : 0;
+  });
+  const t0 = await tickNow();
   for (let i = 0; i < frames; i++) {
+    const want = t0 + i * perFrame;
+    for (let guard = 0; guard < 60 && (await tickNow()) < want; guard++) await wait(20);
     await el.screenshot({ path: `${dir}/f${String(i).padStart(3, '0')}.png` });
   }
   if (shot.stage.hold) await page.keyboard.up(shot.stage.hold);

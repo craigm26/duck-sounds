@@ -17,7 +17,9 @@ const STEPGAP = 0.1266;   // and the riser push
 
 // key, name, seconds to film, and how to stage it.
 const SHOTS = [
-  { key: 't', id: 'wall-flip', secs: 4.0, stage: { nearWall: true } },
+  { key: 'g', id: 'step-up',   secs: 4.5, stage: { rise: 26, atStep: true } },
+  { key: 'h', id: 'lever-up',  secs: 5.0, stage: { rise: 40, atStep: true } },
+  { key: 'y', id: 'riser-up',  secs: 5.5, stage: { rise: 55, atStep: true } },
 ];
 
 const browser = await puppeteer.launch({ executablePath: '/usr/bin/chromium', headless: 'new',
@@ -67,7 +69,10 @@ for (const shot of SHOTS) {
     await wait(150);
   }
   if (shot.stage.atStep) {
-    await page.evaluate(g => window.__demo.place(0.12 - 0.07 - g), STEPGAP);
+    // The page lays its stairs out from x = 0.45; the search used 0.12. Place
+    // the duck relative to where the stairs ACTUALLY are, or it stands beside
+    // them and the recording shows a duck ignoring a staircase.
+    await page.evaluate(g => window.__demo.place(0.45 - 0.07 - g), STEPGAP);
     await page.evaluate(a => window.__demo.settle(25, a), shot.stage.approach || 0);
     await wait(150);
   }

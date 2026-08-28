@@ -1,0 +1,24 @@
+import puppeteer from 'puppeteer-core';
+import fs from 'node:fs';
+const P = JSON.parse(fs.readFileSync('wallflip-best.json','utf8')).p;
+const browser = await puppeteer.launch({ executablePath: '/usr/bin/chromium', headless: 'new',
+  args: ['--no-sandbox','--disable-dev-shm-usage','--enable-unsafe-swiftshader'] });
+const page = await browser.newPage();
+await page.setViewport({ width: 700, height: 480 });
+await page.goto('http://127.0.0.1:8099/?demo=1&v=' + Date.now(), { waitUntil: 'domcontentloaded' });
+await page.waitForFunction(() => document.body.classList.contains('ready'), { timeout: 180000 });
+const wait = ms => new Promise(r => setTimeout(r, ms));
+await page.evaluate(g => window.__demo.place(1.5 - 0.05 - g), P.startGap);
+await page.evaluate(a => window.__demo.settle(25, a), P.approach);
+await page.evaluate(() => window.__demo.record(220));
+await page.keyboard.press('t');
+await wait(6000);
+const tr = await page.evaluate(() => window.__demo.dump());
+const maxGz = Math.max(...tr.map(r => r.gz));
+const playing = [...new Set(tr.map(r => r.playing))];
+const firstIntent = tr.findIndex(r => r.playing === 'intent');
+const lastIntent = tr.map(r => r.playing).lastIndexOf('intent');
+console.log(`TILT browser peak gz ${maxGz.toFixed(3)} -> ${(Math.acos(Math.max(-1,Math.min(1,-maxGz)))*57.3).toFixed(0)} deg from upright`);
+console.log(`TILT what was playing: ${playing.join(', ')}   intent ticks ${firstIntent}..${lastIntent} (${lastIntent-firstIntent+1})`);
+console.log(`TILT node reaches 179 deg over about ${Math.round(2.27*50)} ticks`);
+await browser.close();

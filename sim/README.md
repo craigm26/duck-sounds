@@ -399,15 +399,24 @@ That needs a placement seam, so `sim.js` exposes `window.__demo` **behind
 pose, because that is 14 of the 61 observation floats and a duck placed with a
 stale action history is not in the state a move was searched from.
 
-### The wall flip is not in the gallery
+### Recording against the simulation clock
 
-It is verified headlessly — 179&deg;, through inverted, upright, 5/5 — and it does
-**not** reproduce when fired from the page. Four attempts at closing the gap
-(exact placement, settling under the stand policy, resetting the action history,
-fixing a `const mode` that shadowed the intent mode) each fixed something real
-and none of them produced a flip in the browser.
+Screenshotting blocks `requestAnimationFrame`, and that is what drives the
+physics. Capturing frames as fast as possible therefore advances the duck almost
+not at all: the first set of these GIFs showed a duck standing still through
+moves it had in fact completed. `gifs.mjs` now waits for the tick counter in the
+HUD to advance before each frame, so a clip spans the simulated time it claims.
 
-So there is no wall-flip GIF. A clip of the duck leaning against a wall,
-captioned "flip", would be worse than no clip. **The discrepancy is open**, and
-the next thing to try is logging the observation vector from both sides on the
-same tick and diffing it — the state differs somewhere and that will say where.
+**This is also what made the wall flip look broken.** Four earlier attempts at
+"fixing" it — exact placement, settling under the stand policy, resetting the
+action history, a `const mode` that shadowed the intent mode — each corrected
+something real and none of them was the problem. The intent had been working the
+whole time: instrumenting the page directly showed it reaching **177 degrees**
+while the recording of it showed a lean.
+
+The lesson is about the instrument, not the robot. Before concluding that
+something does not work, check that the thing measuring it does.
+
+For the record, the flip is also not overfit to its warm-up, which was the other
+hypothesis: run it after 23, 24, 25, 26, 27, 30 or 40 settle ticks and it
+reaches 172-180 degrees and lands upright every time.

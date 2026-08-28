@@ -66,7 +66,7 @@ function poseAt(tr,time){
 }
 const quat = () => [data.qpos[D.freeQpos+3],data.qpos[D.freeQpos+4],data.qpos[D.freeQpos+5],data.qpos[D.freeQpos+6]];
 
-async function attempt(p, warm = 25){
+async function attempt(p){
   mj.mj_resetData(model,data);
   clearStairs(data,ADDR);
   data.qpos[D.freeQpos] = WALL_X - p.startGap;
@@ -78,7 +78,7 @@ async function attempt(p, warm = 25){
   const cmd = command({ vx: p.approach });
   let maxGz = -1, spins = 0, prevGz = -1;
   const total = tr[tr.length-1].t + 1.2;
-  for(let t=0;t<warm;t++){
+  for(let t=0;t<25;t++){
     const q=quat(); const jp=[],jv=[];
     for(let k=0;k<14;k++){jp.push(data.qpos[D.qpos[k]]);jv.push(data.qvel[D.dof[k]]);}
     const obs=buildObs([data.sensordata[GYRO],data.sensordata[GYRO+1],data.sensordata[GYRO+2]],projectedGravity(q),jp,jv,la,cmd);
@@ -109,4 +109,35 @@ async function attempt(p, warm = 25){
   return { tilt, endUp, spins, score: tilt/180 + (endUp ? 0.5 : 0) };
 }
 
+
+export async function attemptTrace(p, n){
+  mj.mj_resetData(model,data);
+  clearStairs(data,ADDR);
+  data.qpos[D.freeQpos] = WALL_X - p.startGap;
+  data.qpos[D.freeQpos+2]=0.12; data.qpos[D.freeQpos+3]=1;
+  for(let i=0;i<14;i++){data.qpos[D.qpos[i]]=HOME[i];data.ctrl[i]=HOME[i];}
+  mj.mj_forward(model,data);
+  const tr = trackOf(p);
+  let la = new Array(14).fill(0);
+  const cmd = command({ vx: p.approach });
+  const out = [];
+  const one = async (off, rec) => {
+    const q=quat(); const jp=[],jv=[];
+    for(let k=0;k<14;k++){jp.push(data.qpos[D.qpos[k]]);jv.push(data.qvel[D.dof[k]]);}
+    const obs=buildObs([data.sensordata[GYRO],data.sensordata[GYRO+1],data.sensordata[GYRO+2]],projectedGravity(q),jp,jv,la,cmd);
+    const r=await stand.run({obs:new ort.Tensor('float32',obs,[1,61])});
+    la=Array.from(r.actions.data);
+    for(let k=0;k<14;k++){
+      const v=HOME[k]+la[k]+(off?(off[k]-HOME[k])*p.blend:0);
+      data.ctrl[k]=Math.min(Math.max(v,LO[k]),HI[k]);
+    }
+    if (rec) out.push({ t: out.length, obs: Array.from(obs).map(v=>+v.toFixed(5)),
+                        ctrl: Array.from({length:14},(_,k)=>+data.ctrl[k].toFixed(5)),
+                        z: +data.qpos[D.freeQpos+2].toFixed(5) });
+    for(let s=0;s<4;s++) mj.mj_step(model,data);
+  };
+  for(let t=0;t<25;t++) await one(null,false);
+  for(let t=0;t<n;t++) await one(poseAt(tr,t*DT), true);
+  return out;
+}
 export { attempt, trackOf, poseAt };
