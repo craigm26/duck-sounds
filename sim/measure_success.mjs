@@ -39,7 +39,11 @@ const { HOME, LO, HI, buildObs, projectedGravity, command, findDuckJoints } = ma
 const DT = 1 / C.tickHz;
 
 const mj = await load();
-mj.FS.writeFile('/s.mjb', new Uint8Array(fs.readFileSync('scene.mjb')));
+// SCENE=rollers measures the roller-only specs on the rollers plant and
+// MERGES into intent-success.json; the default run measures the legs specs
+// and writes the file whole. Same shape as record_intents.mjs.
+const ROLLERS = process.env.SCENE === 'rollers';
+mj.FS.writeFile('/s.mjb', new Uint8Array(fs.readFileSync(ROLLERS ? 'scene-rollers.mjb' : 'scene.mjb')));
 const model = mj.MjModel.mj_loadBinary('/s.mjb', new mj.MjVFS());
 const data = new mj.MjData(model);
 const D = findDuckJoints(model), ADDR = findStairJoints(model);
@@ -223,7 +227,7 @@ async function capture(spec) {
 // Durations come from the browser's own intent table, converted from its step
 // counts at 50 Hz, with a little tail so a clip ends settled rather than
 // mid-motion.
-const STAND = 'BEST_alpha_stand.onnx';
+const STAND = ROLLERS ? 'BEST_roller.onnx' : 'BEST_alpha_stand.onnx';
 /**
  * An authored move, WITH the world it was searched against.
  *
@@ -306,6 +310,9 @@ const SPECS = [
     // through a 4 s period. Feeding a velocity here makes the duck try to walk.
     command: t => ({ vx: Math.cos(2 * Math.PI * t / 4.0), vy: Math.sin(2 * Math.PI * t / 4.0) }) },
   { id: 'roulade',     policy: 'roulade.onnx',            seconds: 3.0 },
+  // On rollers: the crouch-glide trick under its phase clock (see record_intents.mjs).
+  { id: 'roller_crouch', policy: 'BEST_roller_crouch.onnx', scene: 'rollers', seconds: 5.0,
+    command: t => ({ vx: Math.cos(2 * Math.PI * t / 5.0), vy: Math.sin(2 * Math.PI * t / 5.0) }) },
   { id: 'sit',         policy: 'BEST_alpha_sitstand.onnx', seconds: 3.0, command: () => ({ vx: 1 }) },
   // MUST follow `sit`, and the recorder relies on it: asked to stand up from a
   // duck that is already standing, the policy correctly does nothing, and the
@@ -520,7 +527,8 @@ function restoreModel() {
 }
 
 const results = {};
-for (const spec of SPECS) {
+const ACTIVE = SPECS.filter(spec => (spec.scene ?? 'legs') === (ROLLERS ? 'rollers' : 'legs'));
+for (const spec of ACTIVE) {
   // `stand` continues from `sit`, so it has no start state of its own to
   // randomise and cannot be rolled out independently.
   if (spec.continueFrom) {
@@ -565,6 +573,13 @@ for (const spec of SPECS) {
     + `  median z ${results[spec.id].medianHeight}  ${verdict.text}`);
 }
 
+if (ROLLERS) {
+  const existing = JSON.parse(fs.readFileSync('intent-success.json', 'utf8'));
+  Object.assign(existing.intents, results);
+  fs.writeFileSync('intent-success.json', JSON.stringify(existing));
+  console.log('merged', Object.keys(results).join(', '), 'into intent-success.json');
+  process.exit(0);
+}
 fs.writeFileSync('intent-success.json', JSON.stringify({
   format: 'duck-intent-success/1',
   rollouts: ROLLOUTS,
