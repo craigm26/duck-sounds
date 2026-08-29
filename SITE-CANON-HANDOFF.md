@@ -44,3 +44,48 @@ skating with BEST_roller.onnx before copying into site/.
   with a standing settle; if the site ever replays duck-trajectories.json,
   the new clips are straight (old walk veered ~1 rad/loop).
 - sim/BEST_alpha_walking.onnx (inert byte-duplicate) was deleted.
+
+## 2026-08-29 — the head, the rollers, and the assets you are drawing
+
+Findings from the duckkit side that touch `site/`; reported here, not applied.
+
+1. **The jaw hinge exists now, derived — not vendored.** Pollen's plant fuses
+   the lower beak into the head (`scripts/bake-duck-mesh.py` in
+   pollen-robotics/microduck: "`mouth` is a servo without an MJCF joint (the
+   jaw is a fixed geom)"). `robot_allcollisions.xml` does place the mouth's
+   XL330 in the head body at pos (0.003, 0.0255, −0.018) quat (0.707,0,0,−0.707);
+   the same servo mesh sits at every real joint with its horn 14.5 mm along
+   the STL's +X, which puts the mouth horn — the hinge — at **(0.003, 0.040,
+   −0.018) in the head frame, axis lateral (head +Y)**. jaw.stl has a hub of
+   vertices 3–9 mm from that line. The plant comments (lines 76–79) say the
+   real jaw rides a closed-loop linkage, so a single hinge is an approximation
+   of a 4-bar; it is labelled as ours in DuckKinematics. Sense: +angle lowers
+   the tip; runtime range −5° (pressed shut) … +30° (wide). If the site ever
+   draws the beak opening, use this hinge and say the same thing.
+   Moving parts: `jaw` + `jaw_soft` (lower); `soft_mouth_top` stays with the shell.
+
+2. **`sim/assets/*.stl` are NOT the microduck_rl assets.** `git hash-object
+   sim/assets/jaw.stl` = c76bfb66… vs the RL repo's d7b0e12b… (develop @
+   d424a0c), and the whole set is ~188k triangles where the RL set is ~797k.
+   The plant XMLs ARE byte-identical to the RL repo's; only the meshes differ.
+   Whatever `scene.mjb` / `duck-visual*.bin` were built from, their provenance
+   is not "microduck_rl" unless it was rebuilt from a fresh clone. duckkit
+   rebuilt from a sparse clone of `src/mjlab_microduck/robot/microduck`
+   (`tools/export_duck_mesh.py`); the same clone is at the RL repo for you.
+
+3. **One colour per body should be the DOMINANT part's**, not the last geom in
+   the file: the head is otherwise speaker-grey and the trunk battery-black.
+   duckkit's exporter now picks the material of the geom with the most
+   triangles; the beak comes out yellow (jaw_material 0.98, 0.71, 0.004).
+
+4. **Rollers are recorded now.** `sim/record_rollers.mjs` (new) runs
+   BEST_roller.onnx on `scene-rollers.mjb` and writes `skate_stand`, `skate`,
+   `skate_fast`, `skate_back`, `skate_turn` into `duck-trajectories.json`,
+   cut to whole swizzle cycles (period ≈31 ticks, worst-joint seam ≤0.06 rad,
+   clamped to servo travel after rounding, unwrapped yaw). `record_intents.mjs`
+   learns `SCENE=rollers` (roller specs only; settles under BEST_roller; merges)
+   and records `roller_crouch` with the ground-pick phase clock over 5 s. Every
+   clip carries `variant: "rollers"`. Still on the older rollers scene — the
+   training-parameter rebuild of build_rollers.py is still pending — and the
+   turn clip's yaw is not to be trusted there (the policy turned the other way
+   and much faster than commanded).

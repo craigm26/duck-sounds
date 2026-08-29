@@ -40,7 +40,12 @@ const { HOME, LO, HI, buildObs, projectedGravity, command, findDuckJoints } = ma
 const DT = 1 / C.tickHz;
 
 const mj = await load();
-mj.FS.writeFile('/s.mjb', new Uint8Array(fs.readFileSync('scene.mjb')));
+// SCENE=rollers records the roller-only specs on Pollen's rollers plant
+// (scene-rollers.mjb, from robot_allcollisions_rollers.xml) and MERGES them
+// into the existing file; the default run records the legs specs and writes
+// the file whole, as it always did.
+const ROLLERS = process.env.SCENE === 'rollers';
+mj.FS.writeFile('/s.mjb', new Uint8Array(fs.readFileSync(ROLLERS ? 'scene-rollers.mjb' : 'scene.mjb')));
 const model = mj.MjModel.mj_loadBinary('/s.mjb', new mj.MjVFS());
 const data = new mj.MjData(model);
 const D = findDuckJoints(model), ADDR = findStairJoints(model);
@@ -250,7 +255,9 @@ async function capture(spec) {
 // Durations come from the browser's own intent table, converted from its step
 // counts at 50 Hz, with a little tail so a clip ends settled rather than
 // mid-motion.
-const STAND = 'BEST_alpha_stand.onnx';
+// On rollers the settling policy is the roller policy at rest: a legged
+// stand policy on wheels would be settling the wrong robot.
+const STAND = ROLLERS ? 'BEST_roller.onnx' : 'BEST_alpha_stand.onnx';
 /**
  * An authored move, WITH the world it was searched against.
  *
@@ -333,6 +340,12 @@ const SPECS = [
     // through a 4 s period. Feeding a velocity here makes the duck try to walk.
     command: t => ({ vx: Math.cos(2 * Math.PI * t / 4.0), vy: Math.sin(2 * Math.PI * t / 4.0) }) },
   { id: 'roulade',     policy: 'roulade.onnx',            seconds: 3.0 },
+  // ON ROLLERS. The crouch-glide trick: BEST_roller_crouch.onnx is driven by
+  // the ground-pick PHASE clock — cos/sin of progress through a 5 s period,
+  // descending to 10%, holding to 50%, rising by 60% (microduck_rl
+  // microduck_roller_crouch_env_cfg.py) — not by a velocity.
+  { id: 'roller_crouch', policy: 'BEST_roller_crouch.onnx', scene: 'rollers', seconds: 5.0,
+    command: t => ({ vx: Math.cos(2 * Math.PI * t / 5.0), vy: Math.sin(2 * Math.PI * t / 5.0) }) },
   { id: 'sit',         policy: 'BEST_alpha_sitstand.onnx', seconds: 3.0, command: () => ({ vx: 1 }) },
   // MUST follow `sit`, and the recorder relies on it: asked to stand up from a
   // duck that is already standing, the policy correctly does nothing, and the
@@ -470,7 +483,8 @@ const out = {
   joints: C.jointNames.filter(n => n !== 'mouth'),
   clips: {},
 };
-for (const spec of SPECS) {
+const ACTIVE = SPECS.filter(spec => (spec.scene ?? 'legs') === (ROLLERS ? 'rollers' : 'legs'));
+for (const spec of ACTIVE) {
   const r = await capture(spec);
   const roots = deOrigin(r.roots);
   const last = roots[roots.length - 1];
@@ -518,10 +532,18 @@ for (const spec of SPECS) {
     // relative to the clip's own de-origined start, exactly like the roots, so
     // a renderer can draw the world and the robot in one frame.
     environment: environmentFor(spec, r.roots[0]),
+    variant: spec.scene ?? 'legs',
   };
   console.log(`CLIP ${spec.id.padEnd(12)} ${String(r.frames.length).padStart(4)} ticks  `
     + `z ${roots[0][2].toFixed(3)}\u2192${last[2].toFixed(3)}  `
     + `\u0394(${last[0].toFixed(3)}, ${last[1].toFixed(3)}) m  netYaw ${r.netYaw.toFixed(3)}`);
 }
-fs.writeFileSync('duck-intent-clips.json', JSON.stringify(out));
+if (ROLLERS) {
+  const existing = JSON.parse(fs.readFileSync('duck-intent-clips.json', 'utf8'));
+  Object.assign(existing.clips, out.clips);
+  fs.writeFileSync('duck-intent-clips.json', JSON.stringify(existing));
+  console.log('merged', Object.keys(out.clips).join(', '), 'into duck-intent-clips.json');
+} else {
+  fs.writeFileSync('duck-intent-clips.json', JSON.stringify(out));
+}
 console.log(`wrote ${Object.keys(out.clips).length} clips`);
