@@ -340,6 +340,16 @@ const SPECS = [
     // through a 4 s period. Feeding a velocity here makes the duck try to walk.
     command: t => ({ vx: Math.cos(2 * Math.PI * t / 4.0), vy: Math.sin(2 * Math.PI * t / 4.0) }) },
   { id: 'roulade',     policy: 'roulade.onnx',            seconds: 3.0 },
+  // COMMUNITY. RemiFabre/microduck-flamingo-cycle on Hugging Face, Apache-2.0,
+  // built on pollen-robotics/microduck_rl @ 0bf9897 (branch `flamingo`, not
+  // merged). Its command IS the twist block: [flag, side, 0] — flag 1 lifts a
+  // foot, side +1 lifts the LEFT leg (right foot down), -1 the right. The card
+  // publishes 0.09 m of lift and 1.5 s each way; on this plant it measures
+  // 0.092 m left / 0.109 m right, up in ~1.05 s and down in ~0.27 s.
+  ...[['flamingo_left', 1], ['flamingo_right', -1]].map(([id, side]) => ({
+    id, policy: 'community/flamingo-cycle/policy.onnx', seconds: 7.5,
+    credit: 'RemiFabre/microduck-flamingo-cycle (Apache-2.0)',
+    command: t => ({ vx: t >= 1.0 && t < 5.5 ? 1 : 0, vy: side }) })),
   // ON ROLLERS. The crouch-glide trick: BEST_roller_crouch.onnx is driven by
   // the ground-pick PHASE clock — cos/sin of progress through a 5 s period,
   // descending to 10%, holding to 50%, rising by 60% (microduck_rl
@@ -483,7 +493,11 @@ const out = {
   joints: C.jointNames.filter(n => n !== 'mouth'),
   clips: {},
 };
-const ACTIVE = SPECS.filter(spec => (spec.scene ?? 'legs') === (ROLLERS ? 'rollers' : 'legs'));
+// ONLY=a,b records just those ids and merges them in, which is how a single
+// new intent joins the corpus without re-recording fourteen settled ones.
+const ONLY = (process.env.ONLY || '').split(',').map(s => s.trim()).filter(Boolean);
+const ACTIVE = SPECS.filter(spec => (spec.scene ?? 'legs') === (ROLLERS ? 'rollers' : 'legs'))
+                    .filter(spec => !ONLY.length || ONLY.includes(spec.id));
 for (const spec of ACTIVE) {
   const r = await capture(spec);
   const roots = deOrigin(r.roots);
@@ -544,7 +558,8 @@ for (const spec of ACTIVE) {
 if (fs.existsSync('duck-intent-clips.json')) {
   const previous = JSON.parse(fs.readFileSync('duck-intent-clips.json', 'utf8')).clips;
   for (const [name, clip] of Object.entries(previous)) {
-    if ((clip.variant ?? 'legs') !== (ROLLERS ? 'rollers' : 'legs') && !(name in out.clips)) out.clips[name] = clip;
+    const otherScene = (clip.variant ?? 'legs') !== (ROLLERS ? 'rollers' : 'legs');
+    if ((otherScene || ONLY.length) && !(name in out.clips)) out.clips[name] = clip;
   }
 }
 fs.writeFileSync('duck-intent-clips.json', JSON.stringify(out));
