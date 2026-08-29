@@ -133,10 +133,17 @@ PROPS = """
     </body>
 """
 
-add = '''  <option timestep="0.005" gravity="0 0 -9.81" integrator="implicitfast" />
+# TRAINING'S SOLVER AND FLOOR, NOT GUESSES. iterations=10 / ls_iterations=20 is
+# what mjlab configures for these tasks (the previous build left MuJoCo's
+# defaults of 100/50 — a solver four times stiffer than the one the policies
+# were trained against). The floor friction triple 1.0/0.005/0.0001 is the
+# training scene's; ours carried 0.02/0.001 in the torsional and rolling slots,
+# 4x and 10x too grippy. Verified benign for Pollen's corpus and it moves
+# step_up UP — from ending toppled at 47 mm to standing on its flight.
+add = '''  <option timestep="0.005" gravity="0 0 -9.81" integrator="implicitfast" iterations="10" ls_iterations="20" />
   <worldbody>
     <geom name="floor" type="plane" size="6 6 0.05" pos="0 0 0" rgba="0.16 0.18 0.16 1"
-          contype="1" conaffinity="1" condim="3" friction="1.0 0.02 0.001" />%s%s
+          contype="1" conaffinity="1" condim="3" friction="1.0 0.005 0.0001" />%s%s
   </worldbody>
 ''' % (steps, WALLS + (PROPS if __import__('os').environ.get('PROPS','1')=='1' else ''))
 phys = phys.replace("<worldbody>", add + "  <worldbody>", 1)
@@ -151,6 +158,40 @@ phys = phys.replace("<worldbody>", add + "  <worldbody>", 1)
 # start colliding — the duck fought itself and collapsed at spawn.
 phys = re.sub(r'(<default class="collision">\s*<geom group="3")(/>)',
               r'\1 contype="5" conaffinity="5"\2', phys)
+
+# ── training-parameter overrides ─────────────────────────────────────────────
+# pollen_robot.xml is Pollen's robot_allcollisions.xml BYTE-IDENTICAL, and stays
+# that way — every training-specific deviation is applied here, in the build,
+# where it is named and greppable. Sources: microduck_rl's env configs and
+# mjlab's defaults, cross-checked in simulation before shipping.
+
+# Joint dry friction needs training's stiff solver reference or the solver
+# smears it: mjlab sets solreffriction=(-5e4, -2e2) on these joints.
+phys = phys.replace(
+    '<joint damping="0.053" frictionloss="0.0048" armature="0.0018"/>',
+    '<joint damping="0.053" frictionloss="0.0048" armature="0.0018" '
+    'solreffriction="-50000 -200" solimpfriction="0.99 0.9999 0.001 0.5 2"/>', 1)
+
+# Torque ceiling: training clamps at kt * 1.75 A = 0.6405 Nm, the XL330's
+# current limit through BAM's motor constant — not the 0.96 Nm stall figure the
+# surrogate carried. A policy trained under the lower ceiling never learned to
+# use the headroom, and giving it any changes the plant.
+phys = phys.replace(
+    '<position kp="0.55" kv="0.0" forcerange="-0.96 0.96" ctrlrange="-10.0 10.0"/>',
+    '<position kp="0.55" kv="0.0" forcerange="-0.6405 0.6405" ctrlrange="-10.0 10.0"/>', 1)
+
+# The feet get priority=1 with the training friction triple, which makes each
+# foot-floor contact use the FOOT's parameters rather than averaging with the
+# floor — exactly how mjlab configures them.
+for foot in ('left_foot_collision', 'right_foot_collision'):
+    phys = re.sub(
+        r'(<geom type="mesh" name="' + foot + r'"[^/]*?mesh="sole_[a-z]+")/>',
+        r'\1 priority="1" friction="1.0 0.005 0.0001"/>', phys, count=1)
+
+for must in ('solreffriction', '-0.6405', 'iterations="10"',
+             'left_foot_collision" class="collision"'):
+    assert must in phys, "training override failed to land: " + must
+assert phys.count('priority="1"') == 2, "both feet need priority"
 
 io.open("scene_physics.xml", "w", encoding="utf-8").write(phys)
 print("physics meshes kept:", len(kept), "->", sorted(kept))
