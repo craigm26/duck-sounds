@@ -68,10 +68,21 @@ RX180 = (0.0, 1.0, 0.0, 0.0)
 SENSOR_W, SENSOR_H = 720, 1280          # IMX219 as the duck runs it, portrait
 LETTERBOX_PAD = 114                     # duck-detect/src/lib.rs PAD
 HEF_PATH = "/usr/share/hailo-models/yolov8s_h8.hef"
-# MuJoCo's fovy is VERTICAL (45 deg) and the sensor is portrait, so the duck
-# sees only 2*atan(tan(22.5) * 720/1280) = 26.2 degrees across. It must turn
-# to search: a ball 20 degrees off the nose is not in the picture at all.
-HFOV_DEGREES = 26.2
+# THE LENS IS THE SENSOR'S, NOT MUJOCO'S DEFAULT. Pollen's MJCF declares the
+# head_camera with a pose and no `fovy`, so a render inherits MuJoCo's default
+# 45 degrees vertical — which on a portrait frame is 26.2 degrees across, and
+# is nothing to do with the robot. The module is an IMX219 (Pi Cam v2,
+# `microduck/docs/project/media-bringup.md`), nominally 62.2 x 48.8 degrees;
+# rokbenko/quackd independently uses fov_deg=62 for a real one. The frame is
+# portrait, so the sensor's long axis runs up the image and FOVY is 62.2.
+#
+# UNCONFIRMED: whether the mount is rotated 90 or 180 degrees. media-bringup
+# records `rotation: 180` on the alpha ("the IMX219 is mounted upside down")
+# while duck-detect letterboxes a 720x1280 portrait frame, which implies a
+# quarter turn somewhere. Both readings give the same VERTICAL angle; they
+# differ in which way the image is up. Check against hardware before trusting
+# a bearing's sign.
+SENSOR_FOVY_DEGREES = 62.2
 
 
 def qmul(a, b):
@@ -114,6 +125,8 @@ def build_render_scene(out_path: str, ball_rgba="0.93 0.42 0.09 1") -> str:
     q = " ".join(f"{c/n:.6f}" for c in q)
     src = re.sub(r'(<camera name="head_camera" pos="[^"]*" quat=")[^"]*(")',
                  lambda mm: mm.group(1) + q + mm.group(2), src)
+    src = src.replace('<camera name="head_camera"',
+                      f'<camera fovy="{SENSOR_FOVY_DEGREES}" name="head_camera"', 1)
     open(out_path, "w").write(src)
     return out_path
 
@@ -213,6 +226,9 @@ class Detector:
         self._stack.close()
         return False
 
+    hfov_degrees: float = 2 * np.degrees(np.arctan(
+        np.tan(np.radians(SENSOR_FOVY_DEGREES / 2)) * SENSOR_W / SENSOR_H))
+
     def best(self, square: np.ndarray, meta: dict | None = None, floor: float = 0.15):
         """The strongest box in the frame, class-agnostic.
 
@@ -243,7 +259,7 @@ class Detector:
             best["cx_sensor"] = float(np.clip(x_px / meta["fitted_w"], 0.0, 1.0))
         else:
             best["cx_sensor"] = best["cx"]
-        half_h = np.radians(HFOV_DEGREES / 2)
+        half_h = np.radians(self.hfov_degrees / 2)
         best["bearing"] = float(np.arctan(np.tan(half_h) * (best["cx_sensor"] - 0.5) * 2))
         return best
 
