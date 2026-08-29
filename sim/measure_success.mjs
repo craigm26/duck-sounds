@@ -428,7 +428,14 @@ function verdictFor(spec) {
   const recorded = RECORDED[spec.id]?.endsIn;
   if (recorded && recorded !== 'standing') {
     return { text: `ends ${recorded}, as the recording did — this motion has no stated goal here`,
-             ok: r => posture(r[2], projectedGravity(r.slice(3))[2]) === recorded };
+             // OVER THE SAME WINDOW THE LABEL WAS MEASURED ON. Scoring a single
+             // final tick against a label derived from a fifteen-tick average
+             // is comparing two different measurements: a headstand that decays
+             // over the last quarter-second reads as held by one and as fallen
+             // by the other, and the difference decided eight of sixteen
+             // rollouts.
+             window: true,
+             ok: tail => postureOf(tail) === recorded };
   }
   return { text: 'ends standing, trunk at least 100 mm up',
            ok: r => upright(r) && r[2] >= 0.100 };
@@ -532,7 +539,7 @@ for (const spec of SPECS) {
     heights.push(final[2]);
     const ending = postureOf(tail);
     endings[ending] = (endings[ending] ?? 0) + 1;
-    if (verdict.ok(final)) ok++;
+    if (verdict.ok(verdict.window ? tail : final)) ok++;
     if (ending === recordedEnd) same++;
   }
   heights.sort((a, b) => a - b);

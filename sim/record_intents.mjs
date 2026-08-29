@@ -24,6 +24,7 @@
 import load from 'mujoco';
 import * as ort from 'onnxruntime-node';
 import fs from 'node:fs';
+import { declaredDefaultPose } from './onnx_meta.mjs';
 import { makeLoop } from '../site/duckloop.mjs';
 import { clearStairs, findStairJoints, layoutStairs, STAIR_Y, STEP_HALF_DEPTH,
          STEP_HALF_HEIGHT, STAIR_HALF_WIDTH } from '../site/stairs.js';
@@ -52,6 +53,24 @@ const sessions = new Map();
 async function policy(file) {
   if (!sessions.has(file)) sessions.set(file, await ort.InferenceSession.create('./' + file));
   return sessions.get(file);
+}
+
+/**
+ * The neutral pose a policy was trained against.
+ *
+ * EVERY .onnx STATES ITS OWN AND THIS HARNESS USED TO IGNORE THEM ALL. The
+ * observation's joint block is a deviation from that pose, and the action is an
+ * offset from it — so getting it wrong feeds the network a lie and then applies
+ * its answer to the wrong place. Pollen's ten files all declare a pose equal to
+ * HOME, which is why nothing noticed for a year of clips. The community
+ * `headspin.onnx` declares neck_pitch 0.220 and head_pitch 0.680 where HOME has
+ * 0.349 and 0.349: seven degrees and nineteen degrees out, on the head, in a
+ * policy whose whole job is balancing on that head.
+ */
+const neutrals = new Map();
+function neutral(file) {
+  if (!neutrals.has(file)) neutrals.set(file, declaredDefaultPose('./' + file, HOME) ?? HOME);
+  return neutrals.get(file);
 }
 
 function resetDuck({ x = 0, y = 0, z = 0.1231 } = {}) {
@@ -164,15 +183,24 @@ async function capture(spec) {
     // frame, so the clip opened halfway through sitting and a phone replaying
     // it would show a duck that teleports into a crouch.
     const cmd = command(spec.command && t >= 0 ? spec.command(t * DT) : {});
+    // The settle is driven by the STANDING policy, so it gets the standing
+    // policy's neutral; the intent's own takes over at t = 0 along with its
+    // network. Mixing them would hand one policy's answer to another's frame.
+    const reference = t < 0 ? neutral(STAND) : neutral(spec.policy);
     const obs = buildObs([data.sensordata[GYRO], data.sensordata[GYRO + 1], data.sensordata[GYRO + 2]],
-                         projectedGravity(quat()), jp, jv, lastAction, cmd);
+                         projectedGravity(quat()), jp, jv, lastAction, cmd, reference);
     const runner = t < 0 ? settling : session;
     const out = await runner.run({ obs: new ort.Tensor('float32', obs, [1, 61]) });
     lastAction = Array.from(out.actions.data);
 
     const offsets = spec.track && t >= 0 ? poseAt(spec.track, t * DT) : null;
     for (let k = 0; k < 14; k++) {
-      const base = HOME[k] + lastAction[k];
+      // The action is an OFFSET FROM THE POLICY'S OWN NEUTRAL, at scale 1.0 —
+      // which is what every .onnx declares (`action_scale = 1.0`) and what all
+      // six of Pollen's env configs set. There is no low-pass here because
+      // training has none; `site/duckloop.mjs` still applies one, and that is a
+      // hardware smoothing choice rather than anything training did.
+      const base = reference[k] + lastAction[k];
       const v = offsets ? base + (offsets[k] - HOME[k]) * spec.blend : base;
       data.ctrl[k] = Math.min(Math.max(v, LO[k]), HI[k]);
     }

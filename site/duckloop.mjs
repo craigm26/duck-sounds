@@ -16,13 +16,25 @@ export function makeLoop(C) {
     return [-(2 * (x * z - w * y)), -(2 * (y * z + w * x)), -(1 - 2 * (x * x + y * y))];
   }
 
-  /** The 61-float observation, in DuckKit's verified order. */
-  function buildObs(gyro, grav, jpos, jvel, lastAction, cmd) {
+  /**
+   * The 61-float observation, in DuckKit's verified order.
+   *
+   * `reference` IS THE POLICY'S OWN NEUTRAL POSE, NOT NECESSARILY HOME. The
+   * joint_pos block is a deviation from whatever pose the policy was trained
+   * to treat as zero, and every .onnx states its own in
+   * `metadata_props.default_joint_pos`. Pollen's ten all match HOME to three
+   * decimals — which is why nothing noticed — but the community `headspin`
+   * file does not: it wants neck_pitch 0.220 and head_pitch 0.680 where HOME
+   * has 0.349 and 0.349. Feeding it a deviation measured from the wrong
+   * reference lies to it by 7° and 19°, on the head, in a policy whose whole
+   * job is balancing on that head.
+   */
+  function buildObs(gyro, grav, jpos, jvel, lastAction, cmd, reference = HOME) {
     const o = new Float32Array(61);
     let i = 0;
     for (let k = 0; k < 3; k++) o[i++] = gyro[k];
     for (let k = 0; k < 3; k++) o[i++] = grav[k];
-    for (let k = 0; k < 14; k++) o[i++] = jpos[k] - HOME[k];
+    for (let k = 0; k < 14; k++) o[i++] = jpos[k] - reference[k];
     for (let k = 0; k < 14; k++) o[i++] = jvel[k];
     for (let k = 0; k < 14; k++) o[i++] = lastAction[k];
     for (let k = 0; k < 13; k++) o[i++] = cmd[k];
