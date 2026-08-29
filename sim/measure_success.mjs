@@ -366,7 +366,10 @@ const between = (lo, hi) => lo + rand() * (hi - lo);
 const FOOT_GEOMS = [];
 for (let g = 0; g < model.ngeom; g++) {
   const name = model.geom(g).name || '';
-  if (/foot/i.test(name)) FOOT_GEOMS.push(g);
+  // The walker's soles, or on rollers the tyres — the rollers plant has no
+  // geom named 'foot', and the first rollers run varied nothing.
+  const body = model.body(model.geom_bodyid[g]).name || '';
+  if (/foot/i.test(name) || (ROLLERS && /^tire/i.test(body))) FOOT_GEOMS.push(g);
 }
 const BASE_FRICTION = FOOT_GEOMS.map(g => model.geom_friction[g * 3]);
 const TRUNK_BODY = (() => {
@@ -553,6 +556,10 @@ for (const spec of ACTIVE) {
   heights.sort((a, b) => a - b);
   results[spec.id] = {
     rollouts: ROLLOUTS,
+    variant: ROLLERS ? 'rollers' : 'legs',
+    // What was actually varied for THIS intent, so a panel never attributes
+    // the walker's footpad friction to a robot on wheels.
+    randomised: `drop 0.12–0.13 m, ${FOOT_GEOMS.length ? (ROLLERS ? 'tyre' : 'footpad') + ' friction ×0.7–1.3, ' : ''}±0.3 m/s shove every 3–6 s, COM ±3 mm`,
     unstable,
     // TWO DIFFERENT QUESTIONS, and conflating them is how a corpus of
     // recordings starts lying about itself. `achieves` asks whether the move
@@ -573,12 +580,12 @@ for (const spec of ACTIVE) {
     + `  median z ${results[spec.id].medianHeight}  ${verdict.text}`);
 }
 
-if (ROLLERS) {
-  const existing = JSON.parse(fs.readFileSync('intent-success.json', 'utf8'));
-  Object.assign(existing.intents, results);
-  fs.writeFileSync('intent-success.json', JSON.stringify(existing));
-  console.log('merged', Object.keys(results).join(', '), 'into intent-success.json');
-  process.exit(0);
+// EVERY RUN IS A MERGE: keep the other scene's intents, replace this scene's.
+if (fs.existsSync('intent-success.json')) {
+  const previous = JSON.parse(fs.readFileSync('intent-success.json', 'utf8')).intents ?? {};
+  for (const [name, entry] of Object.entries(previous)) {
+    if ((entry.variant ?? 'legs') !== (ROLLERS ? 'rollers' : 'legs') && !(name in results)) results[name] = entry;
+  }
 }
 fs.writeFileSync('intent-success.json', JSON.stringify({
   format: 'duck-intent-success/1',

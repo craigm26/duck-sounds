@@ -15,6 +15,7 @@ import load from 'mujoco';
 import * as ort from 'onnxruntime-node';
 import fs from 'node:fs';
 import { makeLoop } from '../site/duckloop.mjs';
+import { clearStairs, findStairJoints } from '../site/stairs.js';
 
 const C = JSON.parse(fs.readFileSync('duckkit-constants.json', 'utf8'));
 const { HOME, LO, HI, buildObs, projectedGravity, command, findDuckJoints } = makeLoop(C);
@@ -22,7 +23,7 @@ const mj = await load();
 mj.FS.writeFile('/r.mjb', new Uint8Array(fs.readFileSync('scene-rollers.mjb')));
 const model = mj.MjModel.mj_loadBinary('/r.mjb', new mj.MjVFS());
 const data = new mj.MjData(model);
-const D = findDuckJoints(model);
+const D = findDuckJoints(model), ADDR = findStairJoints(model);
 let GYRO = 0;
 for (let i = 0; i < model.nsensor; i++) {
   if (model.sensor(i).name === 'imu_ang_vel') GYRO = model.sensor(i).adr;
@@ -31,8 +32,30 @@ const session = await ort.InferenceSession.create('./BEST_roller.onnx');
 const inputName = session.inputNames[0];
 const MOUTH = C.jointNames.indexOf('mouth');
 
+// PARK THE PROPS. scene-rollers.mjb is the soccer scene: a ball at
+// (0.55, 0.10), three blocks, two cones and the stairs, all in a duck's
+// path. The first recording glided straight into the ball — three of five
+// clips were recorded striking it. Every free body that is not the robot
+// goes far away and the stairs are cleared, exactly as record_intents.mjs
+// does for its own scene.
+function parkProps() {
+  let parked = 0;
+  for (let j = 0; j < model.njnt; j++) {
+    if (model.jnt_type[j] !== 0) continue;               // mjJNT_FREE
+    const adr = model.jnt_qposadr[j], dof = model.jnt_dofadr[j];
+    if (adr === D.freeQpos) continue;                    // the duck
+    data.qpos[adr] = -5 - parked * 1.5; data.qpos[adr + 1] = -5; data.qpos[adr + 2] = 0.2;
+    data.qpos[adr + 3] = 1; data.qpos[adr + 4] = 0; data.qpos[adr + 5] = 0; data.qpos[adr + 6] = 0;
+    for (let k = 0; k < 6; k++) data.qvel[dof + k] = 0;
+    parked++;
+  }
+  if (ADDR) clearStairs(data, ADDR);
+  return parked;
+}
+
 function reset() {
   mj.mj_resetData(model, data);
+  parkProps();
   for (let i = 0; i < 14; i++) { data.qpos[D.qpos[i]] = HOME[i]; data.ctrl[i] = HOME[i]; }
   mj.mj_forward(model, data);
 }
@@ -59,16 +82,23 @@ async function capture(opts, seconds, settleTicks) {
       data.ctrl[k] = Math.min(Math.max(HOME[k] + lastAction[k], LO[k]), HI[k]);
     }
     for (let s = 0; s < 4; s++) mj.mj_step(model, data);   // 200 Hz physics under the 50 Hz policy, as record.mjs
+    // THE FRAME IS THE POST-STEP STATE — joints, root and quaternion all
+    // read after the physics, as record.mjs does. The first version paired
+    // pre-step joints with a post-step root, so every clip's legs lagged its
+    // travel by one tick.
+    const after = [];
+    for (let k = 0; k < 14; k++) after.push(data.qpos[D.qpos[k]]);
+    const qAfter = [data.qpos[f + 3], data.qpos[f + 4], data.qpos[f + 5], data.qpos[f + 6]];
     // MuJoCo's joint limits are soft: a hip driven hard into its stop can sit
     // a few thousandths past the range. The servo's travel is the truth for
     // a render, so the recording is clamped there, and says how often.
-    const joints = jpos.map((v, k) => {
+    const joints = after.map((v, k) => {
       const c = Math.min(Math.max(v, LO[k]), HI[k]);
       if (c !== v) clamped++;
       return c;
     });
     joints.splice(MOUTH, 0, 0);
-    frames.push({ joints, root: [data.qpos[f], data.qpos[f + 1], data.qpos[f + 2]], quat: q });
+    frames.push({ joints, root: [data.qpos[f], data.qpos[f + 1], data.qpos[f + 2]], quat: qAfter });
   }
   const fell = data.qpos[D.freeQpos + 2] < 0.06;
   return { frames, fell, clamped };
@@ -117,7 +147,11 @@ function trimToCycles(frames) {
   return { frames: frames.slice(start, start + k * P), period: P, quality: best.c, seam };
 }
 
+// EVERY RUN IS A MERGE. This recorder owns the rollers clips: it drops the
+// stale ones and leaves the walker's alone, and record.mjs does the reverse,
+// so neither run can silently delete the other's work.
 const out = JSON.parse(fs.readFileSync('duck-trajectories.json', 'utf8'));
+for (const [name, clip] of Object.entries(out.clips)) if (clip.variant === 'rollers') delete out.clips[name];
 for (const [name, opts, secs, settle] of CLIPS) {
   const { frames: all, fell, clamped } = await capture(opts, secs, settle);
   const { frames, period, quality, seam } = trimToCycles(all.slice(all.length - WINDOW));

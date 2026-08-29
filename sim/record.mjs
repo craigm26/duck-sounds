@@ -149,7 +149,13 @@ const CLIPS = [
   ['turn_left', { vx: 0, vyaw: 1.0 },  10, 150],
 ];
 
+// A MERGE, NOT A REWRITE: the rollers clips (record_rollers.mjs, variant
+// 'rollers') survive a walker run; only the walker's own clips are replaced.
 const out = { hz: C.tickHz, joints: C.jointNames, clips: {} };
+if (fs.existsSync('duck-trajectories.json')) {
+  const previous = JSON.parse(fs.readFileSync('duck-trajectories.json', 'utf8')).clips;
+  for (const [name, clip] of Object.entries(previous)) if (clip.variant === 'rollers') out.clips[name] = clip;
+}
 for (const [name, opts, secs, settle] of CLIPS) {
   const raw = await capture(opts, secs);
   const { frames, period, quality, seam } = trimToStride(raw, settle);

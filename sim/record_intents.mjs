@@ -538,12 +538,15 @@ for (const spec of ACTIVE) {
     + `z ${roots[0][2].toFixed(3)}\u2192${last[2].toFixed(3)}  `
     + `\u0394(${last[0].toFixed(3)}, ${last[1].toFixed(3)}) m  netYaw ${r.netYaw.toFixed(3)}`);
 }
-if (ROLLERS) {
-  const existing = JSON.parse(fs.readFileSync('duck-intent-clips.json', 'utf8'));
-  Object.assign(existing.clips, out.clips);
-  fs.writeFileSync('duck-intent-clips.json', JSON.stringify(existing));
-  console.log('merged', Object.keys(out.clips).join(', '), 'into duck-intent-clips.json');
-} else {
-  fs.writeFileSync('duck-intent-clips.json', JSON.stringify(out));
+// EVERY RUN IS A MERGE: a run replaces the clips of ITS scene and keeps the
+// other scene's. The first version wrote the legs run whole and silently
+// deleted roller_crouch.
+if (fs.existsSync('duck-intent-clips.json')) {
+  const previous = JSON.parse(fs.readFileSync('duck-intent-clips.json', 'utf8')).clips;
+  for (const [name, clip] of Object.entries(previous)) {
+    if ((clip.variant ?? 'legs') !== (ROLLERS ? 'rollers' : 'legs') && !(name in out.clips)) out.clips[name] = clip;
+  }
 }
+fs.writeFileSync('duck-intent-clips.json', JSON.stringify(out));
+console.log('wrote duck-intent-clips.json:', Object.keys(out.clips).length, 'clips');
 console.log(`wrote ${Object.keys(out.clips).length} clips`);
