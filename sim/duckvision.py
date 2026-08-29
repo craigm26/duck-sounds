@@ -44,11 +44,13 @@ MEASURED ON THIS MACHINE, 2026-08-29 (Pi 5 + Hailo-8, hailort 4.23):
   * neck_pitch and head_pitch are OPPOSED: positive neck_pitch looks up,
     positive head_pitch looks down, and the home pose (both +0.349) is a level
     gaze. head_pitch 0.6 / 0.9 / 1.2 looks down 14.4 / 31.6 / 48.8 degrees.
-  * Detection of the ball (a 36 mm-RADIUS sphere, 72 mm across — the render
-    scene's `seek_ball` geom is size="0.036"): 0.86 confidence at 0.8 m, 0.26
-    at 0.45 m, nothing at 1.5 m. COCO calls it class 49, "orange" — a smooth
-    orange sphere has none of a sports ball's panel seams. The intent wants
-    the BOX, not the label, so nothing keys on the class id.
+  * Detection of Pollen's ball (radius 0.05 m, the bench's own): 0.73
+    confidence at 0.75 m and 0.45 at 0.44 m, nothing at 21.8 degrees off the
+    nose. Bearing is exact to 0.1 degree against ground truth read out of the
+    plant; distance from apparent size runs about 7% under, which is the
+    "crude but monotonic" quackd warns about and all a steering loop needs.
+    COCO calls it class 49, "orange" — a smooth sphere has no panel seams —
+    so nothing keys on the class id.
   * quackd's own fields, against ground truth read out of the plant: a ball
     11.1 degrees to the duck's LEFT reports bearing_deg +10.9, 0.2 degrees
     off. est_distance_m reads 0.399 / 0.729 / 0.710 m where the lens is truly
@@ -108,11 +110,15 @@ HEF_PATH = "/usr/share/hailo-models/yolov8s_h8.hef"
 # a bearing's sign.
 SENSOR_FOVY_DEGREES = 62.2
 # The render scene's ball, so a monocular range estimate has a real size to
-# divide by. The geom below is `type="sphere" size="0.036"`, and a sphere's
+# divide by. The geom below is a sphere of BALL_RADIUS_M, and a sphere's
 # MJCF size IS its radius, so the thing in front of the lens is 72 mm across.
 # This is the SIM ball's diameter, measured off the scene this file builds —
 # it is not a claim about whatever ball Pollen ship with the hardware.
-BALL_DIAMETER_M = 0.072
+# Pollen's own ball, as the bench's world declares it: BALL_RADIUS 0.05,
+# mass 0.03, condim 6 (scene_physics.xml). The render scene matches it so a
+# distance estimated from apparent size means the same thing in both.
+BALL_RADIUS_M = 0.05
+BALL_DIAMETER_M = 2 * BALL_RADIUS_M
 
 # The 80 COCO classes in the order the stock hailo-models yolov8s was trained
 # in. Confirmed on this machine, not copied on faith: our orange sphere comes
@@ -193,9 +199,9 @@ def build_render_scene(out_path: str, ball_rgba="0.93 0.42 0.09 1") -> str:
            diffuse="0.85 0.85 0.82" specular="0.2 0.2 0.2"/>
     <light name="fill" pos="-0.8 -0.6 0.9" dir="0.5 0.4 -1" directional="true"
            diffuse="0.35 0.38 0.45"/>
-    <body name="seek_ball" pos="0.45 0 0.036">
+    <body name="seek_ball" pos="0.45 0 {BALL_RADIUS_M}">
       <freejoint/>
-      <geom name="seek_ball_geom" type="sphere" size="0.036" rgba="{ball_rgba}"/>
+      <geom name="seek_ball_geom" type="sphere" size="{BALL_RADIUS_M}" rgba="{ball_rgba}"/>
     </body>
 '''
     src = src.replace("<worldbody>", "<worldbody>" + extra, 1)
@@ -244,7 +250,7 @@ class DuckEye:
             if name == "mouth":
                 continue
             self.d.qpos[self.m.jnt_qposadr[self.m.joint(name).id]] = value
-        self.d.qpos[self.ball:self.ball + 7] = [ball[0], ball[1], 0.036, 1, 0, 0, 0]
+        self.d.qpos[self.ball:self.ball + 7] = [ball[0], ball[1], BALL_RADIUS_M, 1, 0, 0, 0]
         self.mujoco.mj_forward(self.m, self.d)
 
     def gaze(self):

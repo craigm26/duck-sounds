@@ -60,6 +60,34 @@ mj.FS.writeFile('/s.mjb', new Uint8Array(fs.readFileSync('scene.mjb')));
 const model = mj.MjModel.mj_loadBinary('/s.mjb', new mj.MjVFS());
 const data = new mj.MjData(model);
 const D = findDuckJoints(model);
+// THE BALL IS THE ONLY OTHER THING WORTH ADDRESSING IN THIS WORLD. It is
+// Pollen's own (radius 0.05, condim 6 so it actually decelerates), and a
+// steering loop needs to put it somewhere and then be scored on reaching it.
+const BALL = (() => {
+  for (let j = 0; j < model.njnt; j++) {
+    if (model.jnt_type[j] !== 0) continue;                 // mjJNT_FREE
+    const adr = model.jnt_qposadr[j];
+    if (adr === D.freeQpos) continue;                      // the duck
+    if (model.body(model.jnt_bodyid[j]).name === 'ball') return { adr, dof: model.jnt_dofadr[j] };
+  }
+  return null;
+})();
+const BALL_RADIUS = 0.05;
+
+function ballOf(d) {
+  if (!BALL) return null;
+  return [d.qpos[BALL.adr], d.qpos[BALL.adr + 1], d.qpos[BALL.adr + 2]].map(r4);
+}
+
+/** Put the ball down and stop it dead. */
+function placeBall(d, x, y, z = BALL_RADIUS) {
+  if (!BALL) throw new Error('this world has no ball');
+  d.qpos[BALL.adr] = x; d.qpos[BALL.adr + 1] = y; d.qpos[BALL.adr + 2] = z;
+  d.qpos[BALL.adr + 3] = 1;
+  for (let k = 4; k < 7; k++) d.qpos[BALL.adr + k] = 0;
+  for (let k = 0; k < 6; k++) d.qvel[BALL.dof + k] = 0;
+  mj.mj_forward(model, d);
+}
 let GYRO = 0;
 for (let i = 0; i < model.nsensor; i++) {
   if (model.sensor(i).name === 'imu_ang_vel') GYRO = model.sensor(i).adr;
@@ -281,6 +309,11 @@ function stateOf() {
     // percentage would be a number nobody measured that a verb might one day
     // decide to land on. null is the honest reading, and the field is here so
     // the shape matches.
+    // GROUND TRUTH, AND IT IS NOT FOR STEERING. A vision loop must earn its
+    // bearing from the camera; this is here so a run can be SCORED — the same
+    // split measure_success.mjs already uses.
+    ball: ballOf(d),
+    ballRadius: BALL_RADIUS,
     battery: null,
     batteryWhy: 'simulated duck: there is nothing to discharge',
   };
@@ -324,7 +357,8 @@ async function handle(url, body) {
         clock: 'sim',
         clockWhy: 'now() reads this world\'s own MuJoCo clock, so a verb steers at '
                 + 'sim speed here and at wall-clock speed on hardware, unchanged.',
-        endpoints: ['GET /state', 'POST /intent', 'POST /stop', 'GET /now', 'POST /policy'],
+        endpoints: ['GET /state', 'POST /intent', 'POST /stop', 'GET /now',
+                  'POST /policy', 'POST /ball', 'POST /reset'],
         frames: false,
         framesWhy: 'No camera and no renderer in this process: perception is duckvision.py, '
                  + 'on a different MuJoCo build so that clips stay canon.',
@@ -341,6 +375,49 @@ async function handle(url, body) {
   // steering loop asks for it instead of Date.now() so the same verb code runs
   // here and on hardware; here it only moves when someone advances physics,
   // which is precisely what makes a sim loop reproducible.
+  // POST /ball — put it somewhere, or {"bearing": deg, "range": m} to place it
+  // relative to where the duck is looking, which is what a trial wants.
+  if (url.pathname === '/ball') {
+    return liveLane(async () => {
+      await ensureStanding();
+      const d = live.world, f = D.freeQpos;
+      if (body.bearing !== undefined || body.range !== undefined) {
+        const bearing = Number(body.bearing ?? 0), range = Number(body.range ?? 0.8);
+        if (!Number.isFinite(bearing) || !Number.isFinite(range)) {
+          throw new Error('bearing and range must be finite numbers');
+        }
+        const q = [d.qpos[f + 3], d.qpos[f + 4], d.qpos[f + 5], d.qpos[f + 6]];
+        const yaw = Math.atan2(2 * (q[0] * q[3] + q[1] * q[2]),
+                               1 - 2 * (q[2] * q[2] + q[3] * q[3]));
+        // Positive bearing is LEFT, the convention duckvision and the robot
+        // both use, so a trial reads the same way the detector reports.
+        const a = yaw + bearing * Math.PI / 180;
+        placeBall(d, d.qpos[f] + range * Math.cos(a), d.qpos[f + 1] + range * Math.sin(a));
+      } else {
+        const x = Number(body.x), y = Number(body.y);
+        if (!Number.isFinite(x) || !Number.isFinite(y)) {
+          throw new Error('give {x, y} or {bearing, range}');
+        }
+        placeBall(d, x, y, Number.isFinite(+body.z) ? +body.z : BALL_RADIUS);
+      }
+      return stateOf();
+    });
+  }
+  // POST /reset — put the live world back to a known start.
+  //
+  // A TRIAL THAT BEGINS WHEREVER THE LAST ONE STOPPED IS NOT A TRIAL. Without
+  // this, a steering run inherited the previous run's position, heading and
+  // half-finished stride, and the second trial of a batch could open already
+  // spinning — which looks exactly like a controller that cannot see.
+  if (url.pathname === '/reset') {
+    return liveLane(async () => {
+      live.standing = false;
+      live.cmd = { vx: 0, vy: 0, vyaw: 0 };
+      await ensureStanding();
+      if (BALL) placeBall(live.world, 0.8, 0, BALL_RADIUS);
+      return stateOf();
+    });
+  }
   if (url.pathname === '/now') {
     return liveLane(async () => {
       await ensureStanding();
