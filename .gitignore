@@ -17,3 +17,4 @@ sim/shots-*/
 # but it is a cache and does not belong in the repo
 .wrangler/
 sim/hailort.log
+sim/__pycache__/
