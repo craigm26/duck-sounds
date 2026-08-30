@@ -164,7 +164,7 @@ if (!(SUBSTEPS >= 1) || Math.abs(SUBSTEPS * TIMESTEP - 1 / C.tickHz) > 1e-9) {
  * through here, so a policy that measured 16/16 behaves identically when
  * quackd steers it live. Two loops would drift apart on the first fix.
  */
-async function tick(d, loaded, last, cmd) {
+async function tick(d, loaded, last, cmd, offsets = null, blend = 1) {
   const { net, reference } = loaded;
   const f = D.freeQpos;
   const q = [d.qpos[f + 3], d.qpos[f + 4], d.qpos[f + 5], d.qpos[f + 6]];
@@ -175,10 +175,38 @@ async function tick(d, loaded, last, cmd) {
   const out = await net.run({ obs: new ort.Tensor('float32', obs, [1, 61]) });
   const action = Array.from(out[net.outputNames[0]].data);
   for (let k = 0; k < 14; k++) {
-    d.ctrl[k] = Math.min(Math.max(reference[k] + action[k], LO[k]), HI[k]);
+    // AUTHORED OFFSETS RIDE ON TOP OF THE POLICY, exactly as record_intents.mjs
+    // applies them: the policy keeps its balance and the track leans on it. The
+    // OBSERVATION is untouched — the network is told what it is actually
+    // standing in, not what the author asked for, because handing a policy its
+    // own request back as state is how a motion looks fine in a recording and
+    // falls over on a robot.
+    const base = reference[k] + action[k];
+    const target = offsets ? base + (offsets[k] - HOME[k]) * blend : base;
+    d.ctrl[k] = Math.min(Math.max(target, LO[k]), HI[k]);
   }
   for (let s = 0; s < SUBSTEPS; s++) mj.mj_step(model, d);
   return action;
+}
+
+/**
+ * Interpolate an authored keyframe track, the same smoothstep the phone draws
+ * with and `record_intents.mjs` records with. Three implementations of this
+ * curve now exist and they have to agree, or a motion previews as one shape and
+ * runs as another.
+ */
+function poseAt(track, time) {
+  if (!track || !track.length) return null;
+  if (time <= 0) return HOME.slice();
+  let pt = 0, pp = HOME;
+  for (const f of track) {
+    if (time <= f.at) {
+      const u = (time - pt) / Math.max(f.at - pt, 1e-9), s = u * u * (3 - 2 * u);
+      return f.pose.map((v, k) => pp[k] + (v - pp[k]) * s);
+    }
+    pt = f.at; pp = f.pose;
+  }
+  return track[track.length - 1].pose.slice();
 }
 
 /**
@@ -186,7 +214,8 @@ async function tick(d, loaded, last, cmd) {
  * the standing policy with a neutral command, then the training path — target
  * = HOME + action at scale 1.0, no filter — and the servo travel as the clamp.
  */
-async function rollout({ name, seconds, schedule, settle = SETTLE_TICKS, drop = 0.1231 }) {
+async function rollout({ name, seconds, schedule, settle = SETTLE_TICKS, drop = 0.1231,
+                         track = null, blend = 1 }) {
   const net = await policy(name);
   const settling = await policy(STAND);
   reset(data, drop);
@@ -196,7 +225,10 @@ async function rollout({ name, seconds, schedule, settle = SETTLE_TICKS, drop = 
   const f = D.freeQpos;
   for (let t = -settle; t < ticks; t++) {
     const cmd = command(t >= 0 ? commandAt(schedule, t / C.tickHz) : {});
-    last = await tick(data, t < 0 ? settling : net, last, cmd);
+    // NEUTRAL THROUGH THE SETTLE. The settle exists to let the drop-bounce die;
+    // feeding the track through it starts the motion before recording does.
+    const offsets = track && t >= 0 ? poseAt(track, t / C.tickHz) : null;
+    last = await tick(data, t < 0 ? settling : net, last, cmd, offsets, blend);
     if (t >= 0) {
       const after = [];
       for (let k = 0; k < 14; k++) {
@@ -499,6 +531,85 @@ async function handle(url, body) {
       endsUpright: upright(last), endHeight: last[2],
     };
   }
+  /*
+   * POST /perform — run an AUTHORED motion in real physics.
+   *
+   * THE HOLE THIS FILLS. Every other endpoint runs a trained policy. An
+   * authored motion — keyframes somebody wrote in Duck Studio — could be
+   * previewed on a phone and published to the world without any physics engine
+   * ever having seen it, because a phone has none. A preview is what you ASKED
+   * for; this is what happens.
+   *
+   * IT RUNS THE MOTION MORE THAN ONCE, and that is the point. A single rollout
+   * that stays up proves very little: the four authored stair motions in the
+   * corpus get up their flight 0 times in 16. The answer to "does it work" is a
+   * count, not a yes.
+   *
+   * The track rides on the standing policy as offsets from HOME, which is what
+   * `record_intents.mjs` does and what the app's own preview draws.
+   */
+  if (url.pathname === '/perform') {
+    const track = Array.isArray(body.track) ? body.track : null;
+    if (!track || !track.length) return { error: 'perform needs a track of keyframes' };
+    for (const key of track) {
+      if (!Array.isArray(key.pose) || key.pose.length !== 14) {
+        return { error: 'every keyframe needs a pose of 14 joint angles, mouth excluded' };
+      }
+      if (!key.pose.every(v => Number.isFinite(v))) {
+        return { error: 'a keyframe pose holds something that is not a number' };
+      }
+      if (!Number.isFinite(+key.at)) return { error: 'every keyframe needs an `at` in seconds' };
+    }
+    const ordered = track.map(k => ({ at: +k.at, pose: k.pose.map(Number) }))
+                         .sort((a, b) => a.at - b.at);
+    const blend = Math.min(Math.max(+body.blend || 1, 0), 1);
+    const seconds = Math.min(Math.max(+body.seconds || (ordered[ordered.length - 1].at + 0.5),
+                                      0.2), 30);
+    const rollouts = Math.min(Math.max(+body.rollouts || 8, 1), 32);
+    const name = body.policy || STAND;
+
+    let first = null, ok = 0;
+    const heights = [];
+    for (let i = 0; i < rollouts; i++) {
+      // Pollen's own randomisation, as measure_success.mjs uses it: the drop
+      // height is what a bench can vary without touching the model.
+      const drop = 0.12 + (0.01 * i) / Math.max(rollouts - 1, 1);
+      const run = await batchLane(() =>
+        rollout({ name, seconds, schedule: body.schedule, track: ordered, blend, drop }));
+      const last = run.roots[run.roots.length - 1];
+      if (upright(last)) ok++;
+      heights.push(last[2]);
+      if (!first) first = run;
+    }
+    heights.sort((a, b) => a - b);
+    const last = first.roots[first.roots.length - 1];
+
+    // Peak joint rate over the first rollout: the fastest any joint was
+    // actually moved, which is the number an authored track most often
+    // overruns without noticing.
+    let peak = 0;
+    for (let t = 1; t < first.frames.length; t++) {
+      for (let k = 0; k < 14; k++) {
+        const rate = Math.abs(first.frames[t][k] - first.frames[t - 1][k]) * C.tickHz;
+        if (rate > peak) peak = rate;
+      }
+    }
+
+    return {
+      format: 'duck-intent-clips/3',
+      hz: C.tickHz,
+      joints: C.jointNames.filter(n => n !== 'mouth'),
+      policy: name,
+      authored: true,
+      blend,
+      frames: first.frames, roots: first.roots, commands: first.commands,
+      rollouts, achieves: ok,
+      criterion: 'stayed upright to the end, over drop heights 0.120-0.130 m',
+      medianHeight: r4(heights[Math.floor(heights.length / 2)]),
+      endsUpright: upright(last), endHeight: r4(last[2]),
+      peakJointRate: r4(peak),
+    };
+  }
   if (url.pathname === '/measure') {
     // The randomisation is Pollen's own, as measure_success.mjs uses it: the
     // drop height is what a bench can vary without touching the model.
@@ -553,6 +664,6 @@ http.createServer((req, res) => {
 }).listen(PORT, '0.0.0.0', () => {
   console.log(`duck bench on http://0.0.0.0:${PORT} — ${TOKEN ? 'token required' : 'OPEN on this network'}`);
   console.log(`plant: ${TIMESTEP} s timestep, ${SUBSTEPS} substeps per ${C.tickHz} Hz tick`);
-  console.log('records/measures: /record /measure — steers: /state /intent /stop /now /policy');
+  console.log('records/measures: /record /measure /perform — steers: /state /intent /stop /now /policy');
   console.log(`policies: ${[...catalogue().keys()].sort().join(', ')}`);
 });
