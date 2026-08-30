@@ -56,7 +56,12 @@ const STAND = 'BEST_alpha_stand.onnx';
 const SETTLE_TICKS = 25;
 
 const mj = await load();
-mj.FS.writeFile('/s.mjb', new Uint8Array(fs.readFileSync('scene.mjb')));
+// WHICH WORLD. The canon plant is scene.mjb and every recorded clip in duckkit
+// claims to come from it, so it is the default and adding bodies to it is not
+// on. A bench that wants something to pick up asks for a different scene:
+//   DUCKBENCH_SCENE=scene_grasp.mjb node duckbench.mjs
+const SCENE = process.env.DUCKBENCH_SCENE || 'scene.mjb';
+mj.FS.writeFile('/s.mjb', new Uint8Array(fs.readFileSync(SCENE)));
 const model = mj.MjModel.mj_loadBinary('/s.mjb', new mj.MjVFS());
 const data = new mj.MjData(model);
 const D = findDuckJoints(model);
@@ -73,6 +78,40 @@ const BALL = (() => {
   return null;
 })();
 const BALL_RADIUS = 0.05;
+
+/**
+ * Every free body in this world that is not the duck and not the ball — the
+ * things a fetch or a drag is about.
+ *
+ * FOUND BY WALKING THE MODEL, not by a list kept in step with the XML. A scene
+ * with a broom in it says so because the broom is there; nothing has to be
+ * told twice, and a scene without one reports an empty list rather than a lie.
+ */
+const GRASPABLES = (() => {
+  const found = [];
+  for (let j = 0; j < model.njnt; j++) {
+    if (model.jnt_type[j] !== 0) continue;                 // mjJNT_FREE
+    const adr = model.jnt_qposadr[j];
+    if (adr === D.freeQpos) continue;                      // the duck
+    const body = model.jnt_bodyid[j];
+    const name = model.body(body).name;
+    if (name === 'ball') continue;                         // it has its own door
+    // `r4` is declared further down and this runs at load, so the rounding is
+    // done longhand rather than reaching into the temporal dead zone.
+    const mass = Math.round(model.body_mass[body] * 10000) / 10000;
+    found.push({ name, adr, dof: model.jnt_dofadr[j], body, mass });
+  }
+  return found;
+})();
+
+/** Where a graspable is now: position and whether it has been moved. */
+function graspableState(d) {
+  return GRASPABLES.map(g => ({
+    name: g.name,
+    mass: g.mass,
+    at: [r4(d.qpos[g.adr]), r4(d.qpos[g.adr + 1]), r4(d.qpos[g.adr + 2])],
+  }));
+}
 
 function ballOf(d) {
   if (!BALL) return null;
@@ -371,7 +410,11 @@ async function handle(url, body) {
   if (url.pathname === '/health') {
     return {
       bench: 'duck-bench/2',
-      plant: 'scene.mjb — Pollen robot_allcollisions, training parameters',
+      plant: `${SCENE} — Pollen robot_allcollisions, training parameters`,
+      // What is in this world that the duck could take hold of. Empty on the
+      // canon scene, which is the point of keeping that one bare.
+      // Name and mass only: the qpos addresses are this file's business.
+      graspables: GRASPABLES.map(g => ({ name: g.name, mass: g.mass })),
       tickHz: C.tickHz,
       timestep: TIMESTEP,
       substepsPerTick: SUBSTEPS,
