@@ -39,6 +39,7 @@
 import http from 'node:http';
 import fs from 'node:fs';
 import path from 'node:path';
+import { createHash } from 'node:crypto';
 import load from 'mujoco';
 import * as ort from 'onnxruntime-node';
 import { makeLoop } from '../site/duckloop.mjs';
@@ -61,7 +62,19 @@ const mj = await load();
 // on. A bench that wants something to pick up asks for a different scene:
 //   DUCKBENCH_SCENE=scene_grasp.mjb node duckbench.mjs
 const SCENE = process.env.DUCKBENCH_SCENE || 'scene.mjb';
-mj.FS.writeFile('/s.mjb', new Uint8Array(fs.readFileSync(SCENE)));
+const SCENE_BYTES = fs.readFileSync(SCENE);
+mj.FS.writeFile('/s.mjb', new Uint8Array(SCENE_BYTES));
+// AND WHICH WORLD IT ACTUALLY WAS, SAID OUT LOUD IN EVERY ANSWER THAT CARRIES
+// A MEASUREMENT. A caller that keeps a result — Duck Studio keeps them beside
+// the draft that caused them, forever — has to be able to say which plant
+// produced it, and it can only say what this bench tells it. Until now
+// /perform and /record told it nothing, so the app wrote a placeholder of its
+// own and then printed the placeholder as though it were a fact about a world.
+// A filename alone is not enough either: `sim/scene.mjb` and `site/scene.mjb`
+// share a name and differ in bytes (see PLANT.md), and it was that pair that
+// made this a bug rather than a nicety. So the digest goes with the name.
+const PLANT = path.basename(SCENE);
+const PLANT_DIGEST = createHash('sha256').update(SCENE_BYTES).digest('hex');
 const model = mj.MjModel.mj_loadBinary('/s.mjb', new mj.MjVFS());
 const data = new mj.MjData(model);
 const D = findDuckJoints(model);
@@ -411,6 +424,8 @@ async function handle(url, body) {
     return {
       bench: 'duck-bench/2',
       plant: `${SCENE} — Pollen robot_allcollisions, training parameters`,
+      plantName: PLANT,
+      plantDigest: PLANT_DIGEST,
       // What is in this world that the duck could take hold of. Empty on the
       // canon scene, which is the point of keeping that one bare.
       // Name and mass only: the qpos addresses are this file's business.
@@ -570,6 +585,10 @@ async function handle(url, body) {
       hz: C.tickHz,
       joints: C.jointNames.filter(n => n !== 'mouth'),
       policy: body.policy,
+      // The world this recording came out of, so a clip kept anywhere else
+      // can still say where it was made. Same two keys /health reports.
+      plantName: PLANT,
+      plantDigest: PLANT_DIGEST,
       frames: run.frames, roots: run.roots, commands: run.commands,
       endsUpright: upright(last), endHeight: last[2],
     };
@@ -644,6 +663,11 @@ async function handle(url, body) {
       joints: C.jointNames.filter(n => n !== 'mouth'),
       policy: name,
       authored: true,
+      // THE ANSWER A CALLER FILES AWAY. /perform is the one endpoint whose
+      // result is stored and shown months later, so it is the one that most
+      // has to name its own world rather than let the caller guess.
+      plantName: PLANT,
+      plantDigest: PLANT_DIGEST,
       blend,
       frames: first.frames, roots: first.roots, commands: first.commands,
       rollouts, achieves: ok,
