@@ -19,10 +19,15 @@
 // firmware; in sim it is a map lookup, so here it exists.
 //
 // NO /frame HERE. quackd's transport also hands over a camera image, and this
-// process has no camera and no renderer: rendering lives in duckvision.py, on
-// MuJoCo 3.12 (pip), while this runs MuJoCo 3.5.1 (WASM) so that clips stay
-// canon. Wiring the two together is a job for whatever composes them, not a
-// stub that returns a grey rectangle.
+// process has no camera and no renderer: rendering lives in duckvision.py,
+// which imports the pip `mujoco`, while this runs the npm one — MUJOCO 3.1.16
+// (WASM), the version in sim/node_modules/mujoco/package.json — so that clips
+// stay canon. This comment said 3.5.1 until 2026-08-30 and a design was
+// written on that number as executed ground truth, which is how a stale
+// comment becomes a stated fact. duckvision's own version is not given here
+// because nothing this file can read says what it is; ask that process.
+// Wiring the two together is a job for whatever composes them, not a stub
+// that returns a grey rectangle.
 //
 // WHAT IT IS NOT. It does not train. The Hailo on this machine is an inference
 // ASIC with no training path at all, and mjlab — what Pollen train with — wants
@@ -243,9 +248,14 @@ async function tick(d, loaded, last, cmd, offsets = null, blend = 1) {
 
 /**
  * Interpolate an authored keyframe track, the same smoothstep the phone draws
- * with and `record_intents.mjs` records with. Three implementations of this
- * curve now exist and they have to agree, or a motion previews as one shape and
- * runs as another.
+ * with and `record_intents.mjs` records with. TWENTY copies of this curve now
+ * exist in this repo — `grep -rn "function poseAt"` over duck-sounds, counted
+ * 2026-08-30: nineteen under sim/ and site/intent.mjs, which the browser
+ * preview imports — and they all have to agree, or a motion previews as one
+ * shape and runs as another. This comment said three, which is how a change
+ * here comes to be costed as touching two other files when it touches
+ * nineteen, one of them the recorder duckkit's shipped corpus came from and
+ * one of them the preview a browser draws.
  */
 function poseAt(track, time) {
   if (!track || !track.length) return null;
@@ -430,8 +440,13 @@ async function handle(url, body) {
       plant: `${SCENE} — Pollen robot_allcollisions, training parameters`,
       plantName: PLANT,
       plantDigest: PLANT_DIGEST,
-      // What is in this world that the duck could take hold of. Empty on the
-      // canon scene, which is the point of keeping that one bare.
+      // What is in this world that the duck could take hold of. NOT EMPTY ON
+      // THE CANON SCENE ANY MORE: scene.mjb as served here on 2026-08-30
+      // answers with five — block_a, block_b, block_c, cone_a, cone_b — where
+      // this comment said it was bare. The list itself is walked out of the
+      // model on every boot, so what is SERVED was right the whole time; it is
+      // the comment that lied, and a caller who read it instead of the answer
+      // is why it is corrected rather than deleted.
       // Name and mass only: the qpos addresses are this file's business.
       graspables: GRASPABLES.map(g => ({ name: g.name, mass: g.mass })),
       tickHz: C.tickHz,
