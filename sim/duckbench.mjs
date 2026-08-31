@@ -181,6 +181,11 @@ const sessions = new Map();
  * that very file mid-run.
  */
 async function policy(name) {
+  // An uploaded policy is already in `sessions` under its own filename and is
+  // not in the catalogue, which only walks what shipped. Check there first.
+  if (name.startsWith('uploaded-') && sessions.has(`${name}.onnx`)) {
+    return sessions.get(`${name}.onnx`);
+  }
   const known = catalogue();
   if (!known.has(name)) throw new Error(`unknown policy: ${name}`);
   const file = known.get(name);
@@ -579,6 +584,55 @@ async function handle(url, body) {
    * The duck is NOT reset around the swap: hot means hot, and a policy that
    * cannot pick up another's pose mid-stance is telling you something true.
    */
+  // A POLICY THAT WAS NOT ALREADY ON THIS DISK.
+  //
+  // /policy takes a NAME and loads from the bench's own directory, which is
+  // right for the nine shipped networks and useless for a network somebody
+  // just made. Duck Studio can now write an ONNX — it blends the ones it has —
+  // and a blend that cannot be run is a file with nothing behind it.
+  //
+  // WRITTEN TO A SCRATCH FILE BECAUSE onnxruntime LOADS FROM A PATH. The name
+  // is derived from the sha256 of the bytes, never from anything the caller
+  // sent: a caller-chosen name is a path traversal waiting to happen, and the
+  // digest is also exactly what identifies which network this is.
+  //
+  // This bench is OPEN on the network it is on, and this endpoint widens what
+  // that means — it accepts bytes and runs them. It is a development tool on a
+  // private network and was already running arbitrary policies from its own
+  // directory, but that is a different sentence from "accepts arbitrary bytes",
+  // and anybody putting this on a network they do not trust should know which
+  // one they have.
+  if (url.pathname === '/upload') {
+    const b64 = typeof body.onnx === 'string' ? body.onnx : null;
+    if (!b64) return { error: 'upload needs an `onnx` field: the file, base64' };
+    let bytes;
+    try { bytes = Buffer.from(b64, 'base64'); }
+    catch { return { error: 'the `onnx` field is not base64' }; }
+    if (!bytes.length) return { error: 'the uploaded policy is empty' };
+    if (bytes.length > 8 * 1024 * 1024) {
+      return { error: `the uploaded policy is ${bytes.length} bytes; the shipped ones are under 1 MB` };
+    }
+    const digest = createHash('sha256').update(bytes).digest('hex');
+    const name = `uploaded-${digest.slice(0, 12)}`;
+    const file = `${name}.onnx`;
+    if (!fs.existsSync(file)) fs.writeFileSync(file, bytes);
+    try {
+      // Load it now rather than at first use, so a file that onnxruntime
+      // cannot open is refused HERE with the reason, not three calls later in
+      // the middle of a rollout.
+      sessions.set(file, {
+        name,
+        net: await ort.InferenceSession.create('./' + file),
+        reference: declaredDefaultPose('./' + file, HOME) ?? HOME,
+      });
+    } catch (e) {
+      fs.unlinkSync(file);
+      return { error: `that file did not load as a policy: ${e.message}` };
+    }
+    return { policy: name, sha256: digest, bytes: bytes.length,
+             note: 'loaded and ready — pass this name to /policy, /record, /measure or /perform' };
+  }
+
   if (url.pathname === '/policy') {
     const wanted = typeof body.policy === 'string' ? body.policy : String(body.policy ?? '');
     return liveLane(async () => {
@@ -734,8 +788,15 @@ http.createServer((req, res) => {
   if (TOKEN && req.headers.authorization !== `Bearer ${TOKEN}`) {
     return send(401, { error: 'this bench wants its token' });
   }
+  // ONE MEGABYTE EVERYWHERE EXCEPT THE ONE ENDPOINT THAT CARRIES A FILE.
+  // Every other body here is a handful of numbers, and a cap is what stops a
+  // stray client filling this process's memory. /upload carries a policy: the
+  // shipped ones are about 790 KB, which is ~1.05 MB once base64'd, so the old
+  // cap silently destroyed the request — the client saw a 100 and no answer,
+  // which took longer to work out than it should have.
+  const cap = url.pathname === '/upload' ? 12e6 : 1e6;
   let raw = '';
-  req.on('data', chunk => { raw += chunk; if (raw.length > 1e6) req.destroy(); });
+  req.on('data', chunk => { raw += chunk; if (raw.length > cap) req.destroy(); });
   req.on('end', async () => {
     let body = {};
     if (raw) { try { body = JSON.parse(raw); } catch { return send(400, { error: 'body is not JSON' }); } }
