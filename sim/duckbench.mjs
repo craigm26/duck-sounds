@@ -422,7 +422,11 @@ function speed(v, field) {
 async function handle(url, body) {
   if (url.pathname === '/health') {
     return {
-      bench: 'duck-bench/2',
+  // BUMPED WITH THE PLANT FIELDS. /health, /perform and /record now carry
+  // plantName and plantDigest, and a reader that sees duck-bench/2 knows it is
+  // talking to a bench that CANNOT say which world it ran, as distinct from one
+  // that did not. Additive fields alone leave those two indistinguishable.
+      bench: 'duck-bench/3',
       plant: `${SCENE} — Pollen robot_allcollisions, training parameters`,
       plantName: PLANT,
       plantDigest: PLANT_DIGEST,
