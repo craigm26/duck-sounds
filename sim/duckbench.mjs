@@ -29,6 +29,37 @@
 // Wiring the two together is a job for whatever composes them, not a stub
 // that returns a grey rectangle.
 //
+// MORE THAN ONE DUCK, AND WHY THAT IS ONLY POSSIBLE HERE. A hardware Microduck
+// cannot perceive another Microduck. The observation robotd builds is 61 values
+// — 48 of proprioception, 3 of commanded twist, 4 of head pose, 6 of body pose
+// (Pollen's `duck-ipc-proto` and the training env, read 2026-09-01) — and there
+// is no slot in it for a second robot. Two real ducks in a room are two blind
+// agents that happen to share a floor, and whatever coordination they show has
+// to be carried over a network, which is where it comes apart: `intents.rs` is
+// last-writer-wins on one slot, so two writers at 50 Hz interleave into that
+// slot and produce a robot that obeys neither, and the deadman is age-based, so
+// a partition does not degrade a duck, it stops one.
+//
+// Ducks in ONE MuJoCo model have none of that, and they DO perceive each other
+// — not through a sensor slot but through the physics itself: contact forces
+// when they touch, the floor they both push against, the dynamics of an object
+// one of them lifts while the other holds it. One integrator, one clock, no
+// link jitter, no last-writer-wins, because there is no link and no writer
+// race. So the simulator is not a lesser swarm than a room full of hardware; it
+// is the only place a swarm can exist right now, and the only place a genuinely
+// multi-duck policy could ever be trained, since training needs exactly the
+// shared-state rollout the 61-wide hardware observation cannot supply.
+//
+// Concretely: a scene may hold N ducks, each with a name taken from its MJCF
+// prefix (`build_multiduck.py` writes them; `compile_multiduck.mjs` compiles
+// them). /intent, /policy, /state, /stop, /ball and /reset take an optional
+// `duck` name and mean the first duck without one, which is what a single-duck
+// caller has always been asking for. Every duck has its own policy slot, so two
+// of them can run different networks. And ONE STEP OF PHYSICS ADVANCES ALL OF
+// THEM: a request addressed to one duck still moves the others under the
+// commands they are holding, because there is one clock and that is the entire
+// point of putting them in one world.
+//
 // WHAT IT IS NOT. It does not train. The Hailo on this machine is an inference
 // ASIC with no training path at all, and mjlab — what Pollen train with — wants
 // a GPU. Training on this box would mean a CPU PPO against plain MuJoCo; at the
@@ -82,7 +113,98 @@ const PLANT = path.basename(SCENE);
 const PLANT_DIGEST = createHash('sha256').update(SCENE_BYTES).digest('hex');
 const model = mj.MjModel.mj_loadBinary('/s.mjb', new mj.MjVFS());
 const data = new mj.MjData(model);
-const D = findDuckJoints(model);
+
+/** The fourteen joints a policy drives, in the order the observation wants them. */
+const DUCK_JOINTS = C.jointNames.filter(n => n !== 'mouth');
+
+const namedIndex = (count, read, name) => {
+  for (let i = 0; i < count; i++) if (read(i) === name) return i;
+  return -1;
+};
+
+/**
+ * EVERY DUCK IN THIS WORLD, FOUND BY WALKING THE MODEL.
+ *
+ * A duck is a body whose name is `trunk_base` or ends in `_trunk_base` and
+ * which carries a free joint, and everything else about it — its fourteen
+ * joints, its fourteen actuators, its gyro — is that body's prefix followed by
+ * the name the single-duck scene uses. That prefix is not decoration: every
+ * name in MJCF is a global, so a second copy of the duck subtree collides with
+ * the first on all thirty-odd of them, and prefixing is how
+ * `build_multiduck.py` gets N of them into one model at all.
+ *
+ * WALKED RATHER THAN CONFIGURED for the reason GRASPABLES is walked: a scene
+ * with three ducks in it says so because the ducks are there. Nothing has to be
+ * told twice, `scene.mjb` keeps answering with exactly one duck named `duck`,
+ * and a caller that never heard of a second one reads the same answers it
+ * always did.
+ *
+ * A MISSING PIECE IS FATAL HERE RATHER THAN SILENT LATER. A trunk whose gyro
+ * cannot be found used to fall back on sensor address 0, which means feeding a
+ * policy some other sensor's three numbers as its angular velocity — a lie that
+ * produces a plausible-looking rollout. Boot is the place to say so.
+ */
+function discoverDucks() {
+  const found = [];
+  for (let b = 0; b < model.nbody; b++) {
+    const body = model.body(b).name;
+    if (body !== 'trunk_base' && !body.endsWith('_trunk_base')) continue;
+    const prefix = body.slice(0, body.length - 'trunk_base'.length);
+    // `trunk_base` alone is the canon scene's duck and has no prefix; it is
+    // named `duck` so that every answer can name a duck even there.
+    const name = prefix ? prefix.slice(0, -1) : 'duck';
+    let freeQpos = -1, freeDof = -1;
+    for (let j = 0; j < model.njnt; j++) {
+      if (model.jnt_type[j] !== 0 || model.jnt_bodyid[j] !== b) continue;
+      freeQpos = model.jnt_qposadr[j]; freeDof = model.jnt_dofadr[j];
+      break;
+    }
+    if (freeQpos < 0) throw new Error(`${body} has no free joint: it is bolted to the world`);
+    const qpos = [], dof = [], ctrl = [];
+    for (const joint of DUCK_JOINTS) {
+      const j = namedIndex(model.njnt, i => model.jnt(i).name, prefix + joint);
+      if (j < 0) throw new Error(`joint missing from the model: ${prefix}${joint}`);
+      qpos.push(model.jnt_qposadr[j]); dof.push(model.jnt_dofadr[j]);
+      const a = namedIndex(model.nu, i => model.actuator(i).name, prefix + joint);
+      if (a < 0) throw new Error(`actuator missing from the model: ${prefix}${joint}`);
+      ctrl.push(a);
+    }
+    const gyro = namedIndex(model.nsensor, i => model.sensor(i).name, prefix + 'imu_ang_vel');
+    if (gyro < 0) throw new Error(`sensor missing from the model: ${prefix}imu_ang_vel`);
+    // Where this duck starts: the free joint's own qpos0, which is the `pos`
+    // the MJCF gave its trunk. `r4` is declared further down and this runs at
+    // load, so the rounding is done longhand rather than reaching into the
+    // temporal dead zone.
+    const spawn = [0, 1, 2].map(k => Math.round(model.qpos0[freeQpos + k] * 10000) / 10000);
+    found.push({ name, prefix, spawn, gyro: model.sensor(gyro).adr,
+                 joints: { qpos, dof, freeQpos, freeDof }, ctrl });
+  }
+  if (!found.length) throw new Error('this world has no duck in it');
+  return found;
+}
+const DUCKS = discoverDucks();
+const DUCK_NAMES = DUCKS.map(d => d.name);
+/** Every duck's root address, so nothing else in the world mistakes one for a prop. */
+const DUCK_ROOTS = new Set(DUCKS.map(d => d.joints.freeQpos));
+
+// THE TWO FINDERS ARE PINNED TO EACH OTHER AT BOOT. `findDuckJoints` is
+// duckloop's, shared with the browser and with every other runner in this
+// directory, and it knows only about an unprefixed duck; `discoverDucks` above
+// is the generalisation. Where both apply — the canon one-duck scene — they
+// must agree, or the multi-duck path has quietly started driving different
+// joints than the recorded corpus came from.
+{
+  const plain = DUCKS.find(d => d.prefix === '');
+  if (plain) {
+    const canon = findDuckJoints(model);
+    const same = canon.freeQpos === plain.joints.freeQpos
+              && canon.freeDof === plain.joints.freeDof
+              && canon.qpos.every((v, i) => v === plain.joints.qpos[i])
+              && canon.dof.every((v, i) => v === plain.joints.dof[i]);
+    if (!same) throw new Error('discoverDucks disagrees with duckloop findDuckJoints about the duck');
+  }
+}
+
 // THE BALL IS THE ONLY OTHER THING WORTH ADDRESSING IN THIS WORLD. It is
 // Pollen's own (radius 0.05, condim 6 so it actually decelerates), and a
 // steering loop needs to put it somewhere and then be scored on reaching it.
@@ -90,7 +212,7 @@ const BALL = (() => {
   for (let j = 0; j < model.njnt; j++) {
     if (model.jnt_type[j] !== 0) continue;                 // mjJNT_FREE
     const adr = model.jnt_qposadr[j];
-    if (adr === D.freeQpos) continue;                      // the duck
+    if (DUCK_ROOTS.has(adr)) continue;                     // a duck, not a prop
     if (model.body(model.jnt_bodyid[j]).name === 'ball') return { adr, dof: model.jnt_dofadr[j] };
   }
   return null;
@@ -110,7 +232,11 @@ const GRASPABLES = (() => {
   for (let j = 0; j < model.njnt; j++) {
     if (model.jnt_type[j] !== 0) continue;                 // mjJNT_FREE
     const adr = model.jnt_qposadr[j];
-    if (adr === D.freeQpos) continue;                      // the duck
+    // A SECOND DUCK IS NOT A GRASPABLE. Its trunk is a free body like any
+    // other and would otherwise be listed as something to pick up, which is
+    // both wrong and — since /health publishes this list — a claim about the
+    // world that the world does not support.
+    if (DUCK_ROOTS.has(adr)) continue;
     const body = model.jnt_bodyid[j];
     const name = model.body(body).name;
     if (name === 'ball') continue;                         // it has its own door
@@ -145,11 +271,6 @@ function placeBall(d, x, y, z = BALL_RADIUS) {
   for (let k = 0; k < 6; k++) d.qvel[BALL.dof + k] = 0;
   mj.mj_forward(model, d);
 }
-let GYRO = 0;
-for (let i = 0; i < model.nsensor; i++) {
-  if (model.sensor(i).name === 'imu_ang_vel') GYRO = model.sensor(i).adr;
-}
-
 /** Every .onnx this bench will run, by bare name — the whole allow-list. */
 function catalogue() {
   const out = new Map();
@@ -199,10 +320,40 @@ async function policy(name) {
   return sessions.get(file);
 }
 
+/**
+ * ONE DUCK, PUT BACK WHERE IT STARTED, WITHOUT DISTURBING THE WORLD AROUND IT.
+ *
+ * `mj_resetData` cannot do this: it resets everything, which in a shared world
+ * means teleporting the other ducks and every prop as well. Writing this duck's
+ * own qpos and qvel is the only way to give one duck a fresh start while the
+ * rest of the scene carries on, and it is what /reset with a `duck` name does.
+ *
+ * The spawn is the free joint's qpos0, so a duck lands back on the mark its
+ * MJCF gave it rather than on the origin, which in a multi-duck scene is
+ * somebody else's mark.
+ */
+function placeDuck(d, duck, z = 0.1231) {
+  const j = duck.joints, f = j.freeQpos;
+  d.qpos[f] = duck.spawn[0]; d.qpos[f + 1] = duck.spawn[1]; d.qpos[f + 2] = z;
+  d.qpos[f + 3] = 1; d.qpos[f + 4] = 0; d.qpos[f + 5] = 0; d.qpos[f + 6] = 0;
+  for (let k = 0; k < 6; k++) d.qvel[j.freeDof + k] = 0;
+  for (let i = 0; i < 14; i++) {
+    d.qpos[j.qpos[i]] = HOME[i];
+    d.qvel[j.dof[i]] = 0;
+    d.ctrl[duck.ctrl[i]] = HOME[i];
+  }
+}
+
+/**
+ * The whole world back to its start, with every duck dropped from `z`.
+ *
+ * All of them, not just the one a caller is about to drive: a duck left in
+ * whatever heap the last rollout ended in is still in the scene, still touching
+ * the floor the driven duck walks on, and would make the run unrepeatable.
+ */
 function reset(d, z = 0.1231) {
   mj.mj_resetData(model, d);
-  d.qpos[D.freeQpos + 2] = z; d.qpos[D.freeQpos + 3] = 1;
-  for (let i = 0; i < 14; i++) { d.qpos[D.qpos[i]] = HOME[i]; d.ctrl[i] = HOME[i]; }
+  for (const duck of DUCKS) placeDuck(d, duck, z);
   mj.mj_forward(model, d);
 }
 
@@ -227,7 +378,15 @@ if (!(SUBSTEPS >= 1) || Math.abs(SUBSTEPS * TIMESTEP - 1 / C.tickHz) > 1e-9) {
  * quackd steers it live. Two loops would drift apart on the first fix.
  */
 /**
- * One control step.
+ * One control step's WORTH OF COMMANDS, for ONE duck, WITHOUT ADVANCING TIME.
+ *
+ * SPLIT OUT OF `tick` BECAUSE A WORLD HAS ONE CLOCK AND MAY HAVE SEVERAL DUCKS.
+ * If each duck stepped physics after choosing its own action, then in a
+ * two-duck world duck A would act, time would move, and duck B would then act
+ * on a world half a control period older than the one A saw — a stagger nobody
+ * asked for and which would be invisible in the answers. Every duck writes its
+ * ctrl against the same instant, and then time moves once for all of them. That
+ * is the difference between N ducks in a world and N worlds.
  *
  * `capture`, when given, collects the pairs a policy would have to reproduce to
  * perform this motion by itself: the 61-wide OBSERVATION the network was shown,
@@ -241,14 +400,14 @@ if (!(SUBSTEPS >= 1) || Math.abs(SUBSTEPS * TIMESTEP - 1 / C.tickHz) > 1e-9) {
  * already gives: a network told what it asked for rather than what it is
  * standing in learns something that only works in a recording.
  */
-async function tick(d, loaded, last, cmd, offsets = null, blend = 1, capture = null,
-                    expert = null, teacherShare = 0, jitter = 0) {
+async function actuate(d, duck, loaded, last, cmd, offsets = null, blend = 1, capture = null,
+                       expert = null, teacherShare = 0, jitter = 0) {
   const { net, reference } = loaded;
-  const f = D.freeQpos;
+  const J = duck.joints, f = J.freeQpos, g = duck.gyro;
   const q = [d.qpos[f + 3], d.qpos[f + 4], d.qpos[f + 5], d.qpos[f + 6]];
   const jp = [], jv = [];
-  for (let k = 0; k < 14; k++) { jp.push(d.qpos[D.qpos[k]]); jv.push(d.qvel[D.dof[k]]); }
-  const obs = buildObs([d.sensordata[GYRO], d.sensordata[GYRO + 1], d.sensordata[GYRO + 2]],
+  for (let k = 0; k < 14; k++) { jp.push(d.qpos[J.qpos[k]]); jv.push(d.qvel[J.dof[k]]); }
+  const obs = buildObs([d.sensordata[g], d.sensordata[g + 1], d.sensordata[g + 2]],
                        projectedGravity(q), jp, jv, last, cmd, reference);
   const out = await net.run({ obs: new ort.Tensor('float32', obs, [1, 61]) });
   const action = Array.from(out[net.outputNames[0]].data);
@@ -261,7 +420,12 @@ async function tick(d, loaded, last, cmd, offsets = null, blend = 1, capture = n
     // falls over on a robot.
     const base = reference[k] + action[k];
     const target = offsets ? base + (offsets[k] - HOME[k]) * blend : base;
-    d.ctrl[k] = Math.min(Math.max(target, LO[k]), HI[k]);
+    // THIS DUCK'S OWN ACTUATORS, BY INDEX LOOKED UP AT BOOT. `ctrl[k]` was
+    // right while there was one duck and every actuator in the model belonged
+    // to it; with two, actuator 3 is the FIRST duck's left knee whichever duck
+    // is being driven, and a second duck steered that way would have moved the
+    // first one's legs.
+    d.ctrl[duck.ctrl[k]] = Math.min(Math.max(target, LO[k]), HI[k]);
   }
   // AFTER THE CLAMP, NOT BEFORE. What the joints were actually commanded is the
   // thing a clone has to reproduce; a label taken before the clamp teaches the
@@ -297,10 +461,10 @@ async function tick(d, loaded, last, cmd, offsets = null, blend = 1, capture = n
       // 2591 of 2720 unusable — so letting it drive alone yields nothing to
       // learn from.
       if (Math.random() < teacherShare) {
-        for (let k = 0; k < 14; k++) d.ctrl[k] = taught[k];
+        for (let k = 0; k < 14; k++) d.ctrl[duck.ctrl[k]] = taught[k];
       }
     } else {
-      for (let k = 0; k < 14; k++) effective.push(d.ctrl[k] - reference[k]);
+      for (let k = 0; k < 14; k++) effective.push(d.ctrl[duck.ctrl[k]] - reference[k]);
     }
 
     // A NON-FINITE STEP IS NOT A TRAINING PAIR, AND MUST NOT LEAVE AS ONE.
@@ -340,11 +504,38 @@ async function tick(d, loaded, last, cmd, offsets = null, blend = 1, capture = n
   // basin around it — measured: without it, a bow clone fell in all 32 of 32.
   if (jitter > 0) {
     for (let k = 0; k < 14; k++) {
-      d.ctrl[k] = Math.min(Math.max(d.ctrl[k] + (Math.random() * 2 - 1) * jitter,
+      const c = duck.ctrl[k];
+      d.ctrl[c] = Math.min(Math.max(d.ctrl[c] + (Math.random() * 2 - 1) * jitter,
                                     LO[k]), HI[k]);
     }
   }
+  return fedBack;
+}
+
+/**
+ * Time, moved once, for everything in the world at once.
+ *
+ * The plant's own substeps, so a control tick is a control tick whether one
+ * duck is standing in this world or three are walking into each other.
+ */
+function stepWorld(d) {
   for (let s = 0; s < SUBSTEPS; s++) mj.mj_step(model, d);
+}
+
+/**
+ * The single-duck control tick: choose this duck's commands, then advance time.
+ *
+ * THE SAME TICK FOR EVERY CALLER that drives one duck — /record, /measure,
+ * /perform and /capture all come through here, so a policy that measured 16/16
+ * behaves identically wherever it is run. The live world does NOT use this one:
+ * it actuates every duck first and calls `stepWorld` once, which is the same
+ * sequence with the loop in the right place.
+ */
+async function tick(d, duck, loaded, last, cmd, offsets = null, blend = 1, capture = null,
+                    expert = null, teacherShare = 0, jitter = 0) {
+  const fedBack = await actuate(d, duck, loaded, last, cmd, offsets, blend, capture,
+                                expert, teacherShare, jitter);
+  stepWorld(d);
   return fedBack;
 }
 
@@ -377,10 +568,18 @@ function poseAt(track, time) {
  * The canon loop, the same one every recorded clip came from: a settle under
  * the standing policy with a neutral command, then the training path — target
  * = HOME + action at scale 1.0, no filter — and the servo travel as the clamp.
+ *
+ * IT DRIVES ONE DUCK. In a multi-duck world the others are reset to HOME with
+ * the rest of the scene and then left holding that pose on their position
+ * servos for the length of the run — they are furniture, not participants, and
+ * a rollout says which duck it drove rather than leaving a reader to assume.
+ * Recording a swarm would mean a clip format that carries N sets of frames, and
+ * duck-intent-clips/3 carries one; the live world is where several ducks are
+ * actually steered at once.
  */
 async function rollout({ name, seconds, schedule, settle = SETTLE_TICKS, drop = 0.1231,
                          track = null, blend = 1, capture = null, expertName = null,
-                         teacherShare = 0, jitter = 0 }) {
+                         teacherShare = 0, jitter = 0, duck = DUCKS[0] }) {
   const net = await policy(name);
   const settling = await policy(STAND);
   // The teacher, when one is asked for: the policy the authored motion rides on.
@@ -389,6 +588,7 @@ async function rollout({ name, seconds, schedule, settle = SETTLE_TICKS, drop = 
   let last = new Array(14).fill(0);
   const frames = [], roots = [], commands = [];
   const ticks = Math.round(seconds * C.tickHz);
+  const D = duck.joints;
   const f = D.freeQpos;
   for (let t = -settle; t < ticks; t++) {
     const cmd = command(t >= 0 ? commandAt(schedule, t / C.tickHz) : {});
@@ -398,7 +598,7 @@ async function rollout({ name, seconds, schedule, settle = SETTLE_TICKS, drop = 
     // NOTHING IS CAPTURED DURING THE SETTLE. Those ticks are the drop bounce
     // dying under a different policy; teaching a clone from them would teach it
     // to recover from a fall it will never be dropped into.
-    last = await tick(data, t < 0 ? settling : net, last, cmd, offsets, blend,
+    last = await tick(data, duck, t < 0 ? settling : net, last, cmd, offsets, blend,
                       t >= 0 ? capture : null, t >= 0 ? expert : null, teacherShare,
                       t >= 0 ? jitter : 0);
     if (t >= 0) {
@@ -449,24 +649,38 @@ function lane() {
 const liveLane = lane(), batchLane = lane();
 
 /**
- * THE LIVE WORLD: one duck that keeps standing between requests.
+ * THE LIVE WORLD: the ducks that keep standing between requests.
  *
  * Its own mjData, not the one /record and /measure reset on every call — that
  * is the whole difference between a bench and a transport. A steering loop
  * sends an intent, reads the state it caused, and sends the next one; sharing
  * a world with a rollout that resets to the drop height would teleport the duck
  * back to the origin in the middle of a walk.
+ *
+ * ONE WORLD, ONE CLOCK, A SLOT PER DUCK. `world` is singular on purpose: the
+ * ducks are in the same mjData, so they collide, share a floor and disturb the
+ * same props. What is per-duck is the STEERING — the policy it is running, the
+ * command it is holding, and the last action its next observation will be told
+ * about — because those are exactly the things two ducks in one world need to
+ * differ in for the world to be worth having.
  */
 const live = {
   world: new mj.MjData(model),
-  policy: STAND,
-  last: new Array(14).fill(0),
-  cmd: { vx: 0, vy: 0, vyaw: 0 },
   standing: false,
+  slots: new Map(DUCKS.map(duck => [duck.name, {
+    duck,
+    policy: STAND,
+    last: new Array(14).fill(0),
+    cmd: { vx: 0, vy: 0, vyaw: 0 },
+  }])),
 };
 
 /**
- * Put the duck on its feet, once, the first time anyone asks anything of it.
+ * Put every duck on its feet, once, the first time anyone asks anything of it.
+ *
+ * ALL OF THEM, EVEN WHEN ONE WAS ASKED FOR. A duck left lying where the model
+ * dropped it is still in the scene the addressed duck has to walk through, so
+ * there is no such thing as settling one of them.
  *
  * Lazy rather than at boot because a bench that is only ever asked to /record
  * should not pay half a second of settle it will throw away.
@@ -475,39 +689,94 @@ async function ensureStanding() {
   if (live.standing) return;
   const settling = await policy(STAND);
   reset(live.world);
-  live.last = new Array(14).fill(0);
   const neutral = command({});
+  for (const slot of live.slots.values()) slot.last = new Array(14).fill(0);
   for (let t = 0; t < SETTLE_TICKS; t++) {
-    live.last = await tick(live.world, settling, live.last, neutral);
+    for (const slot of live.slots.values()) {
+      slot.last = await actuate(live.world, slot.duck, settling, slot.last, neutral);
+    }
+    stepWorld(live.world);
   }
   live.standing = true;
 }
 
-/** Advance the live world under the command it is currently holding. */
+/**
+ * Advance the live world under the commands its ducks are currently holding.
+ *
+ * EVERY DUCK IS DRIVEN, WHOEVER ASKED. This is the sentence a caller most needs
+ * to have read: /intent addressed to one duck advances the whole world, and the
+ * other ducks keep walking under whatever they were last told, because there is
+ * one integrator and it cannot advance half a scene. On hardware the equivalent
+ * would be four robots each running their own loop and nothing keeping their
+ * timelines together; here they are together by construction, and a caller who
+ * wants a duck to stand still says so with /stop rather than by not mentioning
+ * it.
+ *
+ * Each policy is loaded once for the whole span even when several ducks share
+ * one — `policy()` caches by file, and this keeps the lookup out of the tick.
+ */
 async function hold(seconds) {
-  const loaded = await policy(live.policy);
-  const cmd = command(live.cmd);
+  const driving = [];
+  for (const slot of live.slots.values()) {
+    driving.push({ slot, loaded: await policy(slot.policy), cmd: command(slot.cmd) });
+  }
   const ticks = Math.max(1, Math.round(seconds * C.tickHz));
-  for (let i = 0; i < ticks; i++) live.last = await tick(live.world, loaded, live.last, cmd);
+  for (let i = 0; i < ticks; i++) {
+    for (const d of driving) {
+      d.slot.last = await actuate(live.world, d.slot.duck, d.loaded, d.slot.last, d.cmd);
+    }
+    stepWorld(live.world);
+  }
   return ticks;
 }
 
-/** What the duck is doing right now, in the live world. */
-function stateOf() {
-  const d = live.world, f = D.freeQpos;
+/**
+ * A one-line reading of every duck in the world, for the answers that address
+ * only one of them.
+ *
+ * WHY IT RIDES ALONG ON EVERY ANSWER. In a shared world the other ducks are
+ * part of what happened to this one — they are what it bumped into — so a
+ * caller that reads a position without them is reading half a result. On the
+ * canon one-duck scene it is a single entry and costs nothing.
+ */
+function rollCall() {
+  const d = live.world;
+  return DUCKS.map(duck => {
+    const slot = live.slots.get(duck.name), f = duck.joints.freeQpos;
+    const root = [d.qpos[f], d.qpos[f + 1], d.qpos[f + 2],
+                  d.qpos[f + 3], d.qpos[f + 4], d.qpos[f + 5], d.qpos[f + 6]];
+    return {
+      name: duck.name,
+      position: root.slice(0, 3).map(r4),
+      upright: upright(root),
+      policy: slot.policy,
+      command: slot.cmd,
+    };
+  });
+}
+
+/** What one duck is doing right now, in the live world. */
+function stateOf(slot) {
+  const d = live.world, D = slot.duck.joints, f = D.freeQpos;
   const root = [d.qpos[f], d.qpos[f + 1], d.qpos[f + 2],
                 d.qpos[f + 3], d.qpos[f + 4], d.qpos[f + 5], d.qpos[f + 6]];
   const joints = [];
   for (let k = 0; k < 14; k++) joints.push(r4(d.qpos[D.qpos[k]]));
   return {
+    // WHICH DUCK THIS IS ABOUT, ALWAYS SAID. A caller that never passes `duck`
+    // gets the same name every time and can ignore it; a caller steering three
+    // of them can check that the answer is about the one it addressed rather
+    // than trusting that it asked correctly.
+    duck: slot.duck.name,
     t: r4(d.time),
     position: root.slice(0, 3).map(r4),
     quaternion: root.slice(3).map(r4),
     height: r4(root[2]),
     upright: upright(root),
     joints,
-    policy: live.policy,
-    command: live.cmd,
+    policy: slot.policy,
+    command: slot.cmd,
+    ducks: rollCall(),
     // NOT A NUMBER, ON PURPOSE. quackd's transport reports a battery because a
     // real duck has one; this world has no battery to read, and inventing a
     // percentage would be a number nobody measured that a verb might one day
@@ -539,6 +808,35 @@ function speed(v, field) {
   return n;
 }
 
+/**
+ * WHICH DUCK A REQUEST IS ABOUT.
+ *
+ * `duck` in the body, or `?duck=` on the query string for the endpoints that
+ * are GETs. ABSENT MEANS THE FIRST DUCK, which on the canon scene is the only
+ * duck and is exactly what every existing caller has always been asking for;
+ * in a scene with several, the first is the one the MJCF lists first and the
+ * answer names it, so nobody has to guess which one moved.
+ *
+ * A name that is not in this world is refused with the names that are, rather
+ * than silently steering the default — a typo that quietly drives the wrong
+ * duck is the multi-duck version of the ball-instead-of-the-duck bug that
+ * `findDuckJoints` was written to end.
+ */
+function pickSlot(url, body) {
+  const wanted = body?.duck ?? url.searchParams.get('duck');
+  if (wanted === undefined || wanted === null || wanted === '') {
+    return live.slots.get(DUCKS[0].name);
+  }
+  const slot = live.slots.get(String(wanted));
+  if (!slot) throw new Error(`unknown duck: ${wanted} — this world holds ${DUCK_NAMES.join(', ')}`);
+  return slot;
+}
+
+/** The same choice, for the batch endpoints, which address a duck but hold no live slot. */
+function pickDuck(url, body) {
+  return pickSlot(url, body).duck;
+}
+
 async function handle(url, body) {
   if (url.pathname === '/health') {
     return {
@@ -546,10 +844,30 @@ async function handle(url, body) {
   // plantName and plantDigest, and a reader that sees duck-bench/2 knows it is
   // talking to a bench that CANNOT say which world it ran, as distinct from one
   // that did not. Additive fields alone leave those two indistinguishable.
-      bench: 'duck-bench/3',
+  // BUMPED AGAIN FOR THE DUCKS. duck-bench/4 holds N of them in one world and
+  // takes a `duck` name on the steering endpoints. The field is what lets a
+  // reader tell "this bench has one duck" from "this bench cannot tell you how
+  // many it has": a duck-bench/3 answer has no `ducks` key either way, and a
+  // caller that guessed would be guessing about the world.
+      bench: 'duck-bench/4',
       plant: `${SCENE} — Pollen robot_allcollisions, training parameters`,
       plantName: PLANT,
       plantDigest: PLANT_DIGEST,
+      // THE DUCKS PRESENT, walked out of the model at boot rather than
+      // configured, so a scene answers with what is actually in it. `prefix` is
+      // the MJCF name prefix each one's joints and actuators carry and is here
+      // because it is what a caller would need to make sense of the scene XML
+      // beside this answer; `spawn` is where /reset puts that duck back.
+      ducks: DUCKS.map(d => ({
+        name: d.name,
+        prefix: d.prefix,
+        spawn: d.spawn,
+        policy: live.slots.get(d.name).policy,
+      })),
+      ducksWhy: 'One model, one integrator: a single step advances every duck, so they meet '
+              + 'through contact and a shared floor rather than over a link. A hardware duck '
+              + 'cannot perceive another duck at all — the observation is 61 values with no '
+              + 'slot for one — so this is the only place several of them share a world.',
       // What is in this world that the duck could take hold of. NOT EMPTY ON
       // THE CANON SCENE ANY MORE: scene.mjb as served here on 2026-08-30
       // answers with five — block_a, block_b, block_c, cone_a, cone_b — where
@@ -578,17 +896,26 @@ async function handle(url, body) {
                 + 'sim speed here and at wall-clock speed on hardware, unchanged.',
         endpoints: ['GET /state', 'POST /intent', 'POST /stop', 'GET /now',
                   'POST /policy', 'POST /ball', 'POST /reset'],
+        // Every steering endpoint except /now, which reads the world's clock
+        // and so belongs to all of them at once.
+        addressable: '`duck` in the body or ?duck= on a GET; absent means ' + DUCKS[0].name,
         frames: false,
         framesWhy: 'No camera and no renderer in this process: perception is duckvision.py, '
                  + 'on a different MuJoCo build so that clips stay canon.',
-        activePolicy: live.policy,
+        // The first duck's, kept under the name a duck-bench/3 reader already
+        // knows; `ducks` above carries one of these per duck.
+        activePolicy: live.slots.get(DUCKS[0].name).policy,
         standing: live.standing,
       },
     };
   }
   // GET /state — the duck as it is, in the world /intent has been advancing.
   if (url.pathname === '/state') {
-    return liveLane(async () => { await ensureStanding(); return stateOf(); });
+    return liveLane(async () => {
+      const slot = pickSlot(url, body);
+      await ensureStanding();
+      return stateOf(slot);
+    });
   }
   // GET /now — the transport owns time, and this is the clock it owns. A
   // steering loop asks for it instead of Date.now() so the same verb code runs
@@ -598,8 +925,12 @@ async function handle(url, body) {
   // relative to where the duck is looking, which is what a trial wants.
   if (url.pathname === '/ball') {
     return liveLane(async () => {
+      // BEARING AND RANGE ARE RELATIVE TO A DUCK, so which duck is part of the
+      // request even though the ball belongs to nobody. Absent, it is the first
+      // one, the same as everywhere else.
+      const slot = pickSlot(url, body);
       await ensureStanding();
-      const d = live.world, f = D.freeQpos;
+      const d = live.world, f = slot.duck.joints.freeQpos;
       if (body.bearing !== undefined || body.range !== undefined) {
         const bearing = Number(body.bearing ?? 0), range = Number(body.range ?? 0.8);
         if (!Number.isFinite(bearing) || !Number.isFinite(range)) {
@@ -619,7 +950,7 @@ async function handle(url, body) {
         }
         placeBall(d, x, y, Number.isFinite(+body.z) ? +body.z : BALL_RADIUS);
       }
-      return stateOf();
+      return stateOf(slot);
     });
   }
   // POST /reset — put the live world back to a known start.
@@ -628,13 +959,35 @@ async function handle(url, body) {
   // this, a steering run inherited the previous run's position, heading and
   // half-finished stride, and the second trial of a batch could open already
   // spinning — which looks exactly like a controller that cannot see.
+  //
+  // WITH A `duck` NAME IT RESETS THAT DUCK ONLY, and that is a different act,
+  // not a smaller one. `mj_resetData` restarts everything in the world, which
+  // in a shared scene means teleporting the other ducks and every prop; a
+  // named reset writes one duck's qpos and qvel back to its spawn and leaves
+  // the clock, the props and the other ducks exactly where they were. Use it
+  // to give one duck another go at something the rest of the world is in the
+  // middle of; use the plain form to start a trial.
   if (url.pathname === '/reset') {
     return liveLane(async () => {
+      // Asked-for-ness, not truthiness: a duck could legitimately be named
+      // `0`, and testing the name for truth would quietly reset the whole
+      // world instead of that duck.
+      const asked = body?.duck ?? url.searchParams.get('duck');
+      const named = (asked === undefined || asked === null || asked === '')
+        ? null : pickSlot(url, body);
+      if (named) {
+        await ensureStanding();
+        placeDuck(live.world, named.duck);
+        mj.mj_forward(model, live.world);
+        named.cmd = { vx: 0, vy: 0, vyaw: 0 };
+        named.last = new Array(14).fill(0);
+        return { ...stateOf(named), reset: named.duck.name };
+      }
       live.standing = false;
-      live.cmd = { vx: 0, vy: 0, vyaw: 0 };
+      for (const slot of live.slots.values()) slot.cmd = { vx: 0, vy: 0, vyaw: 0 };
       await ensureStanding();
       if (BALL) placeBall(live.world, 0.8, 0, BALL_RADIUS);
-      return stateOf();
+      return { ...stateOf(live.slots.get(DUCKS[0].name)), reset: 'the whole world' };
     });
   }
   if (url.pathname === '/now') {
@@ -657,23 +1010,34 @@ async function handle(url, body) {
   if (url.pathname === '/intent') {
     const seconds = Math.min(Math.max(+body.hold || 0.1, 1 / C.tickHz), 2);
     return liveLane(async () => {
+      const slot = pickSlot(url, body);
       await ensureStanding();
-      live.cmd = { vx: speed(body.vx, 'vx'), vy: speed(body.vy, 'vy'),
+      slot.cmd = { vx: speed(body.vx, 'vx'), vy: speed(body.vy, 'vy'),
                    vyaw: speed(body.vyaw, 'vyaw') };
+      // AND THE HOLD MOVES EVERY DUCK. Only this one's command changed; the
+      // others keep the commands they were holding and keep walking under them
+      // for the same window, because the world has one clock. Steering three
+      // ducks therefore means three calls per window, and between them the
+      // world does not wait.
       const ticks = await hold(seconds);
-      return { ...stateOf(), held: r4(ticks / C.tickHz), ticks };
+      return { ...stateOf(slot), held: r4(ticks / C.tickHz), ticks };
     });
   }
   // POST /stop — zero the command and let the duck settle under it. Not a
   // reset: stopping is a thing the policy does, and a duck that had to be
   // teleported upright to stop would be hiding the fall.
+  // STOPPING ONE DUCK DOES NOT STOP THE WORLD, and that is the honest
+  // behaviour rather than a limitation: the settle it asks for is time, and
+  // time passing is something the other ducks are also in. `duck` with no name
+  // stops the first one, which on the canon scene is the only one.
   if (url.pathname === '/stop') {
     const seconds = Math.min(Math.max(+body.settle || 0.5, 1 / C.tickHz), 5);
     return liveLane(async () => {
+      const slot = pickSlot(url, body);
       await ensureStanding();
-      live.cmd = { vx: 0, vy: 0, vyaw: 0 };
+      slot.cmd = { vx: 0, vy: 0, vyaw: 0 };
       const ticks = await hold(seconds);
-      return { ...stateOf(), settled: r4(ticks / C.tickHz), ticks };
+      return { ...stateOf(slot), settled: r4(ticks / C.tickHz), ticks };
     });
   }
   /*
@@ -741,12 +1105,18 @@ async function handle(url, body) {
   if (url.pathname === '/policy') {
     const wanted = typeof body.policy === 'string' ? body.policy : String(body.policy ?? '');
     return liveLane(async () => {
+      // ONE SLOT PER DUCK, which is what makes two networks in one world
+      // possible: swap huey to a walker and leave dewey standing, and the
+      // contact between them is between two different policies. That
+      // experiment does not exist on hardware, where each duck is its own
+      // process on its own robot and the only thing they share is a room.
+      const slot = pickSlot(url, body);
       await ensureStanding();
       const loaded = await policy(wanted);   // throws `unknown policy: …` -> 400
-      const was = live.policy;
-      live.policy = wanted;
+      const was = slot.policy;
+      slot.policy = wanted;
       return {
-        ...stateOf(), was,
+        ...stateOf(slot), was,
         // Whether this policy declared its own neutral pose or inherited HOME:
         // the one thing about a hot swap that is not visible in the duck's pose.
         reference: loaded.reference === HOME ? 'HOME' : 'declared by the policy',
@@ -755,14 +1125,19 @@ async function handle(url, body) {
   }
   if (url.pathname === '/record') {
     const seconds = Math.min(Math.max(+body.seconds || 3, 0.2), 30);
+    const duck = pickDuck(url, body);
     const run = await batchLane(() =>
-      rollout({ name: body.policy, seconds, schedule: body.schedule }));
+      rollout({ name: body.policy, seconds, schedule: body.schedule, duck }));
     const last = run.roots[run.roots.length - 1];
     return {
       format: 'duck-intent-clips/3',
       hz: C.tickHz,
       joints: C.jointNames.filter(n => n !== 'mouth'),
       policy: body.policy,
+      // WHICH DUCK THE FRAMES ARE OF. One set of frames, one duck, said out
+      // loud — a clip from a multi-duck world that did not name its duck would
+      // be a recording of an unidentified robot.
+      duck: duck.name,
       // The world this recording came out of, so a clip kept anywhere else
       // can still say where it was made. Same two keys /health reports.
       plantName: PLANT,
@@ -814,6 +1189,7 @@ async function handle(url, body) {
                                       0.2), 30);
     const rollouts = Math.min(Math.max(+body.rollouts || 8, 1), 32);
     const name = body.policy || STAND;
+    const duck = pickDuck(url, body);
 
     let first = null, ok = 0;
     const heights = [];
@@ -822,7 +1198,7 @@ async function handle(url, body) {
       // height is what a bench can vary without touching the model.
       const drop = 0.12 + (0.01 * i) / Math.max(rollouts - 1, 1);
       const run = await batchLane(() =>
-        rollout({ name, seconds, schedule: body.schedule, track: ordered, blend, drop }));
+        rollout({ name, seconds, schedule: body.schedule, track: ordered, blend, drop, duck }));
       const last = run.roots[run.roots.length - 1];
       if (upright(last)) ok++;
       heights.push(last[2]);
@@ -847,6 +1223,7 @@ async function handle(url, body) {
       hz: C.tickHz,
       joints: C.jointNames.filter(n => n !== 'mouth'),
       policy: name,
+      duck: duck.name,
       authored: true,
       // THE ANSWER A CALLER FILES AWAY. /perform is the one endpoint whose
       // result is stored and shown months later, so it is the one that most
@@ -910,6 +1287,7 @@ async function handle(url, body) {
     // Radians of noise added to the commanded joints AFTER labelling, so the
     // duck wanders off the demonstration and the labels teach the way back.
     const jitter = Math.min(Math.max(+body.jitter || 0, 0), 0.2);
+    const duck = pickDuck(url, body);
 
     const pairs = [];
     // NOT `upright`: that is the module-level predicate, and a counter of the
@@ -919,7 +1297,7 @@ async function handle(url, body) {
       const drop = 0.12 + (0.01 * i) / Math.max(rollouts - 1, 1);
       const run = await batchLane(() => rollout({
         name, seconds, schedule: body.schedule, track: ordered, blend, drop,
-        capture: pairs, expertName, teacherShare, jitter }));
+        capture: pairs, expertName, teacherShare, jitter, duck }));
       if (endedStanding(run)) stoodUp++;
     }
     function endedStanding(run) {
@@ -932,6 +1310,7 @@ async function handle(url, body) {
       obsWidth: 61,
       actionWidth: 14,
       rollouts, seconds,
+      duck: duck.name,
       ridingOn: expertName ?? name,
       drivenBy: name,
       corrective: expertName != null,
@@ -957,18 +1336,19 @@ async function handle(url, body) {
     // drop height is what a bench can vary without touching the model.
     const rollouts = Math.min(Math.max(+body.rollouts || 8, 1), 32);
     const seconds = Math.min(Math.max(+body.seconds || 3, 0.2), 30);
+    const duck = pickDuck(url, body);
     let ok = 0; const heights = [];
     for (let i = 0; i < rollouts; i++) {
       const drop = 0.12 + (0.01 * i) / Math.max(rollouts - 1, 1);
       const run = await batchLane(() =>
-        rollout({ name: body.policy, seconds, schedule: body.schedule, drop }));
+        rollout({ name: body.policy, seconds, schedule: body.schedule, drop, duck }));
       const last = run.roots[run.roots.length - 1];
       heights.push(last[2]);
       if (upright(last) && last[2] >= 0.100) ok++;
     }
     heights.sort((a, b) => a - b);
     return {
-      policy: body.policy, rollouts, achieves: ok,
+      policy: body.policy, rollouts, achieves: ok, duck: duck.name,
       criterion: 'ends standing, trunk at least 100 mm up',
       randomised: 'drop height 0.12-0.13 m (Pollen’s range)',
       medianHeight: r4(heights[heights.length >> 1]), worstHeight: r4(heights[0]),
@@ -1013,6 +1393,8 @@ http.createServer((req, res) => {
 }).listen(PORT, '0.0.0.0', () => {
   console.log(`duck bench on http://0.0.0.0:${PORT} — ${TOKEN ? 'token required' : 'OPEN on this network'}`);
   console.log(`plant: ${TIMESTEP} s timestep, ${SUBSTEPS} substeps per ${C.tickHz} Hz tick`);
+  console.log(`ducks: ${DUCK_NAMES.join(', ')} — one world, one clock`
+            + `${DUCKS.length > 1 ? ' (pass `duck` to /intent /policy /state /stop /ball /reset)' : ''}`);
   console.log('records/measures: /record /measure /perform — steers: /state /intent /stop /now /policy');
   console.log(`policies: ${[...catalogue().keys()].sort().join(', ')}`);
 });
