@@ -226,7 +226,23 @@ if (!(SUBSTEPS >= 1) || Math.abs(SUBSTEPS * TIMESTEP - 1 / C.tickHz) > 1e-9) {
  * through here, so a policy that measured 16/16 behaves identically when
  * quackd steers it live. Two loops would drift apart on the first fix.
  */
-async function tick(d, loaded, last, cmd, offsets = null, blend = 1) {
+/**
+ * One control step.
+ *
+ * `capture`, when given, collects the pairs a policy would have to reproduce to
+ * perform this motion by itself: the 61-wide OBSERVATION the network was shown,
+ * and the EFFECTIVE ACTION — what it would have had to output for the joints to
+ * end up where the authored track put them. That second number is
+ * `ctrl - reference`, because a pure policy's target is `reference + action`
+ * while an authored run's is `reference + action + offset`. Cloning the sum is
+ * cloning the motion.
+ *
+ * The observation is the untouched one, for the reason the comment below
+ * already gives: a network told what it asked for rather than what it is
+ * standing in learns something that only works in a recording.
+ */
+async function tick(d, loaded, last, cmd, offsets = null, blend = 1, capture = null,
+                    expert = null, teacherShare = 0, jitter = 0) {
   const { net, reference } = loaded;
   const f = D.freeQpos;
   const q = [d.qpos[f + 3], d.qpos[f + 4], d.qpos[f + 5], d.qpos[f + 6]];
@@ -247,8 +263,89 @@ async function tick(d, loaded, last, cmd, offsets = null, blend = 1) {
     const target = offsets ? base + (offsets[k] - HOME[k]) * blend : base;
     d.ctrl[k] = Math.min(Math.max(target, LO[k]), HI[k]);
   }
+  // AFTER THE CLAMP, NOT BEFORE. What the joints were actually commanded is the
+  // thing a clone has to reproduce; a label taken before the clamp teaches the
+  // network to ask for angles the hardware refuses.
+  // What the next observation will be told the last action was. For a plain
+  // rollout that is the acting network's own output; while CAPTURING it must be
+  // the EFFECTIVE action instead — see the note where it is assigned.
+  let fedBack = action;
+
+  if (capture) {
+    // WHAT A POLICY WOULD HAVE TO OUTPUT AT THIS STATE. A pure policy's target
+    // is `reference + action`; an authored run's is that plus the offset. So
+    // the label is `ctrl - reference`, taken AFTER the clamp, because a label
+    // taken before it teaches the network to ask for angles the hardware
+    // refuses.
+    const effective = [];
+    if (expert) {
+      // THE TEACHER LABELS EVERY STATE, whoever drove the duck into it. That
+      // is the pairing a clone actually needs — not "what happened on the good
+      // run" but "what to do from here".
+      const out = await expert.net.run({ obs: new ort.Tensor('float32', obs, [1, 61]) });
+      const teach = Array.from(out[expert.net.outputNames[0]].data);
+      const taught = [];
+      for (let k = 0; k < 14; k++) {
+        const base = expert.reference[k] + teach[k];
+        const target = offsets ? base + (offsets[k] - HOME[k]) * blend : base;
+        const clamped = Math.min(Math.max(target, LO[k]), HI[k]);
+        taught.push(clamped);
+        effective.push(clamped - expert.reference[k]);
+      }
+      // The teacher can also ACT, on a share of steps. A first clone is bad
+      // enough to tear the integrator apart within a few steps — measured:
+      // 2591 of 2720 unusable — so letting it drive alone yields nothing to
+      // learn from.
+      if (Math.random() < teacherShare) {
+        for (let k = 0; k < 14; k++) d.ctrl[k] = taught[k];
+      }
+    } else {
+      for (let k = 0; k < 14; k++) effective.push(d.ctrl[k] - reference[k]);
+    }
+
+    // A NON-FINITE STEP IS NOT A TRAINING PAIR, AND MUST NOT LEAVE AS ONE.
+    // `JSON.stringify` writes NaN and Infinity as `null`, so a diverged step
+    // travels as a hole a consumer reads back as NaN and trains on in silence.
+    //
+    // AND FINITE IS NOT PLAUSIBLE. A diverged MuJoCo state yields enormous
+    // DOUBLES — measured at 6.8e37 — which `Number.isFinite` accepts happily;
+    // train on those and the normaliser's deviation becomes 1e36, every real
+    // observation flattens to zero, and the loss is NaN by the second epoch.
+    // The bound is generous: past a thousand is not a duck in any pose.
+    const sane = v => Number.isFinite(v) && Math.abs(v) < 1000;
+    const row = Array.from(obs);
+    if (row.every(sane) && effective.every(sane)) {
+      capture.push({ obs: row, action: effective });
+    } else {
+      capture.rejected = (capture.rejected || 0) + 1;
+    }
+
+    // THE LABEL IS ALSO WHAT GETS FED BACK, and getting this wrong is what made
+    // three clones in a row saturate a joint within half a second.
+    //
+    // `lastAction` is part of the observation. During capture the acting
+    // network was the teacher, so the raw action fed back carried NO authored
+    // offset — while a policy trained on these labels outputs the effective
+    // action, offset included, and feeds THAT back. The clone therefore met an
+    // observation block it had never seen on its very first step, and the error
+    // grew every tick. The file was never wrong: checked offline, it answered
+    // the training observations to 0.006 rad. The loop was.
+    fedBack = effective;
+  }
+
+  // NOISE ON THE WAY OUT, NEVER ON THE LABEL. The label above is what the
+  // teacher would do AT THIS STATE; the jitter then pushes the duck slightly
+  // off the demonstrated path, so the NEXT step's label is a recovery. That is
+  // the difference between a clone that memorises one trajectory and one with a
+  // basin around it — measured: without it, a bow clone fell in all 32 of 32.
+  if (jitter > 0) {
+    for (let k = 0; k < 14; k++) {
+      d.ctrl[k] = Math.min(Math.max(d.ctrl[k] + (Math.random() * 2 - 1) * jitter,
+                                    LO[k]), HI[k]);
+    }
+  }
   for (let s = 0; s < SUBSTEPS; s++) mj.mj_step(model, d);
-  return action;
+  return fedBack;
 }
 
 /**
@@ -282,9 +379,12 @@ function poseAt(track, time) {
  * = HOME + action at scale 1.0, no filter — and the servo travel as the clamp.
  */
 async function rollout({ name, seconds, schedule, settle = SETTLE_TICKS, drop = 0.1231,
-                         track = null, blend = 1 }) {
+                         track = null, blend = 1, capture = null, expertName = null,
+                         teacherShare = 0, jitter = 0 }) {
   const net = await policy(name);
   const settling = await policy(STAND);
+  // The teacher, when one is asked for: the policy the authored motion rides on.
+  const expert = expertName ? await policy(expertName) : null;
   reset(data, drop);
   let last = new Array(14).fill(0);
   const frames = [], roots = [], commands = [];
@@ -295,7 +395,12 @@ async function rollout({ name, seconds, schedule, settle = SETTLE_TICKS, drop = 
     // NEUTRAL THROUGH THE SETTLE. The settle exists to let the drop-bounce die;
     // feeding the track through it starts the motion before recording does.
     const offsets = track && t >= 0 ? poseAt(track, t / C.tickHz) : null;
-    last = await tick(data, t < 0 ? settling : net, last, cmd, offsets, blend);
+    // NOTHING IS CAPTURED DURING THE SETTLE. Those ticks are the drop bounce
+    // dying under a different policy; teaching a clone from them would teach it
+    // to recover from a fall it will never be dropped into.
+    last = await tick(data, t < 0 ? settling : net, last, cmd, offsets, blend,
+                      t >= 0 ? capture : null, t >= 0 ? expert : null, teacherShare,
+                      t >= 0 ? jitter : 0);
     if (t >= 0) {
       const after = [];
       for (let k = 0; k < 14; k++) {
@@ -698,6 +803,13 @@ async function handle(url, body) {
     const ordered = track.map(k => ({ at: +k.at, pose: k.pose.map(Number) }))
                          .sort((a, b) => a.at - b.at);
     const blend = Math.min(Math.max(+body.blend || 1, 0), 1);
+    // How often the teacher acts rather than the driver. Only meaningful with a
+    // driver; 0 means the driver is on its own.
+    const teacherShare = expertName
+      ? Math.min(Math.max(body.teacherShare ?? 0.9, 0), 1) : 0;
+    // Radians of noise added to the commanded joints AFTER labelling, so the
+    // duck wanders off the demonstration and the labels teach the way back.
+    const jitter = Math.min(Math.max(+body.jitter || 0, 0), 0.2);
     const seconds = Math.min(Math.max(+body.seconds || (ordered[ordered.length - 1].at + 0.5),
                                       0.2), 30);
     const rollouts = Math.min(Math.max(+body.rollouts || 8, 1), 32);
@@ -750,6 +862,96 @@ async function handle(url, body) {
       peakJointRate: r4(peak),
     };
   }
+  /*
+   * POST /capture — the pairs a POLICY would have to reproduce to perform an
+   * authored motion by itself.
+   *
+   * THE LAST MILE STARTS HERE, AND IT IS NOT A FILE FORMAT PROBLEM. A motion is
+   * a function of time; a policy is a function of state, closed-loop at 50 Hz.
+   * robotd runs the second kind and nothing else, so an authored motion reaches
+   * a real duck only by being cloned into one. This endpoint produces the
+   * training set for that: for every control step, the observation the network
+   * was shown and the action it would have had to output.
+   *
+   * IT RUNS THE MOTION SEVERAL TIMES ON PURPOSE. One rollout teaches a clone a
+   * single trajectory from a single drop height; the randomised drops are what
+   * give it anything to generalise from. It is still a narrow dataset and the
+   * clone is still a hypothesis — /measure is what settles whether it worked.
+   */
+  if (url.pathname === '/capture') {
+    const track = Array.isArray(body.track) ? body.track : null;
+    if (!track || !track.length) return { error: 'capture needs a track of keyframes' };
+    for (const key of track) {
+      if (!Array.isArray(key.pose) || key.pose.length !== 14) {
+        return { error: 'every keyframe needs a pose of 14 joint angles, mouth excluded' };
+      }
+      if (!key.pose.every(v => Number.isFinite(v))) {
+        return { error: 'a keyframe pose holds something that is not a number' };
+      }
+      if (!Number.isFinite(+key.at)) return { error: 'every keyframe needs an `at` in seconds' };
+    }
+    const ordered = track.map(k => ({ at: +k.at, pose: k.pose.map(Number) }))
+                         .sort((a, b) => a.at - b.at);
+    const rollouts = Math.min(Math.max(+body.rollouts || 8, 1), 32);
+    const seconds = Math.min(Math.max(+body.seconds || (ordered[ordered.length - 1].at + 0.5),
+                                      0.2), 30);
+    // WHO DRIVES, AND WHO TEACHES. Without `driver` the authored motion runs on
+    // the standing policy and labels itself — the first dataset. With one, the
+    // named policy drives the duck into states of its OWN, and every label is
+    // what the authored motion would have commanded from there. That second
+    // dataset is the one a clone that fell over needs.
+    const name = body.driver || body.policy || STAND;
+    const expertName = body.driver ? (body.policy || STAND) : null;
+    const blend = Math.min(Math.max(+body.blend || 1, 0), 1);
+    // How often the teacher acts rather than the driver. Only meaningful with a
+    // driver; 0 means the driver is on its own.
+    const teacherShare = expertName
+      ? Math.min(Math.max(body.teacherShare ?? 0.9, 0), 1) : 0;
+    // Radians of noise added to the commanded joints AFTER labelling, so the
+    // duck wanders off the demonstration and the labels teach the way back.
+    const jitter = Math.min(Math.max(+body.jitter || 0, 0), 0.2);
+
+    const pairs = [];
+    // NOT `upright`: that is the module-level predicate, and a counter of the
+    // same name shadows it inside this block — "upright is not a function".
+    let stoodUp = 0;
+    for (let i = 0; i < rollouts; i++) {
+      const drop = 0.12 + (0.01 * i) / Math.max(rollouts - 1, 1);
+      const run = await batchLane(() => rollout({
+        name, seconds, schedule: body.schedule, track: ordered, blend, drop,
+        capture: pairs, expertName, teacherShare, jitter }));
+      if (endedStanding(run)) stoodUp++;
+    }
+    function endedStanding(run) {
+      const last = run.roots[run.roots.length - 1];
+      return upright(last) && last[2] >= 0.100;
+    }
+    return {
+      format: 'duck-clone-pairs/1',
+      hz: C.tickHz,
+      obsWidth: 61,
+      actionWidth: 14,
+      rollouts, seconds,
+      ridingOn: expertName ?? name,
+      drivenBy: name,
+      corrective: expertName != null,
+      teacherShare,
+      jitter,
+      // THE SOURCE MOTION'S OWN RECORD. A clone measured later has to be
+      // comparable to the thing it was cloned from, and both are only
+      // comparable within one world.
+      plantName: PLANT,
+      plantDigest: PLANT_DIGEST,
+      uprightRollouts: stoodUp,
+      criterion: 'the authored run itself ended standing, trunk at least 100 mm up',
+      pairs: pairs.length,
+      // Steps the physics diverged on, dropped rather than exported as nulls.
+      rejected: pairs.rejected || 0,
+      obs: pairs.map(p => p.obs.map(r4)),
+      actions: pairs.map(p => p.action.map(r4)),
+    };
+  }
+
   if (url.pathname === '/measure') {
     // The randomisation is Pollen's own, as measure_success.mjs uses it: the
     // drop height is what a bench can vary without touching the model.
