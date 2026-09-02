@@ -132,7 +132,16 @@ node sim/bench_parity.mjs --mode core --against parity/core-v5-performfix.json \
                           --allow /host/tickMillis   # 60 requests, 5,751 leaves
 node sim/policy_parity.mjs                            # onnxruntime vs policyforward
 node sim/physics_parity.mjs --engine policyforward    # the number the phone must match
+
+Run `bench_parity` and `physics_parity` on a bench with NO world set (`systemctl --user
+restart duckbench` gives you one): both drive the LIVE lane, and a standing `/world` moves
+them by design. `climb_parity`, `chase_parity` and `tune_parity` use their own mjData and are
+unmoved by a world; `world_parity` phase 4 is the proof. `/health` deliberately does not
+advertise `/world` (its `transport.endpoints` still lists the two older world-shaping verbs):
+adding a field would move every leaf of `bench_parity`'s baseline, so a client learns the
+route the way it learns `/tune` and `/climb` — by sending one and reading the answer.
 node sim/tune_parity.mjs                              # /tune's reward and fold, vs Swift
+node sim/world_parity.mjs                             # /world, and that it leaks into nothing
 node sim/webcheck.mjs                                 # the browser shell, over real HTTP
 node sim/pagecheck.mjs                                # the probe page, in Chromium
 ```
@@ -167,6 +176,53 @@ plausible. So:
 `swift test` has to run before this script, because the fold half of it is
 consuming what that test writes. With the fixture missing, the script says so
 and **fails** rather than reporting a pass it did not earn.
+
+### `/world`, and the fourteen blocks nobody had parked
+
+`POST /world` gives the LIVE world a different room: up to fourteen step blocks
+at a chosen x and tread height, the ball somewhere else, a graspable moved.
+`GET /world` reads back what is actually standing — out of `qpos`, not out of
+the request — together with the bank's fixed facts, the arena's four walls and
+an `unexpressed` list of everything the request asked for that this plant cannot
+express. It is the only endpoint here that is about the room rather than about a
+duck in it, and an older bench 404s it.
+
+**Nothing parks the step bank in the live world.** The climb rig and the chase
+rig each build their own `MjData` and park their bank in a `finally`; the live
+world has never had one. So `live.world` boots with all fourteen 200 kg blocks
+stacked at (0, 1.305, 0), colliding on every `/intent`, and **every live number
+this bench has ever published was measured with them there.** They do not stay
+stacked either: they are 200 kg bodies on frictionless slides with nothing
+pinning them, so the solver throws them apart, and twenty-five ticks of boot
+settle is enough to leave the fourteen in a column from a tread height of
+**−11.715 m to +1.618 m**, all still at x = 0. That is what `GET /world` on a
+fresh bench answers, and it is the first time anything in this repo has looked.
+That is why a bare floor is an explicit request (`{"clear": true}` or
+`{"steps": []}`) and never a default: parking the bank at boot would move
+`physics_parity`'s trunk and every leaf of `bench_parity`'s baseline. A first
+`POST /world` that says nothing about the bank is **refused**, with that
+paragraph as the refusal, rather than quietly choosing for the caller.
+
+`/reset` re-lays a standing world, because `mj_resetData` wipes it — the flight,
+the props and the ball all go back to `qpos0` otherwise, and a world that
+survived a settle but not a reset would vanish at the start of the first trial.
+
+`world_parity.mjs` is the gate, in four phases: `placeSteps` lays the stairs
+challenge's grid exactly where `layoutStairs` lays it (280 slots, `Object.is`);
+a four-step 60 mm flight posted and read back against `parity/world-v1.json`
+(the same bytes as duck-studio's `Fixtures/bench/world.json`, so the Swift
+reader and this bench are held to one document); `/reset` re-laying it; and the
+one that licenses the design — with that world standing, a `/climb` cell, a
+`/chase` cell and a `/record` answer **byte-for-byte** what they answered with
+no world set (28, 97 and 1,222 leaves, wall-clock timings named and excluded).
+The full `climb_parity.mjs` and `chase_parity.mjs` have also been re-run with a
+world standing: 70/70 and 56/56 rows, identical to the runs without one.
+
+The isolation that makes that true is one synchronous block. `stepLive` zeroes
+the step geoms' `conaffinity` in the SHARED model, writes the flight, steps, and
+restores in a `finally` — **with no `await` inside it**. One `await` there and a
+`/record` that happened to overlap a steering loop would step its duck through a
+plant with the step blocks isolated, silently, in a number somebody keeps.
 
 `bench_parity.mjs` is the one that licensed splitting `duckbench.mjs` into a
 core and a shell: it replays a fixed script and compares every leaf of every

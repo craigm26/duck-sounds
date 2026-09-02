@@ -66,6 +66,14 @@ import { makeChaseRig, gridCells as chaseGridCells, checkEntrant as chaseCheckEn
          SETTLE_TICKS as CHASE_SETTLE_TICKS, N_CORE as CHASE_N_CORE, N_EXT as CHASE_N_EXT,
          BALL_CAVEAT, CHASE_CONFIG, CHASE_CONFIG_SOURCE, DEFAULT_SECONDS as CHASE_SECONDS,
          ACTION_RATE_SOURCE_WHY } from './chase_score.mjs';
+// THE STEP BANK ITSELF, for the one endpoint that is about the world rather
+// than about a duck in it. /world lays the fourteen compiled step blocks out
+// where a caller asks for them, and it reaches them through the SAME file the
+// climb episode reaches them through — the shim in sim/, the flat copy in the
+// phone bundles — because two spellings of STEP_HALF_HEIGHT are two different
+// tread heights and the one that goes stale is the one nobody reads.
+import { findStairJoints, placeSteps, clearStairs, STAIR_COUNT, STAIR_Y,
+         STAIR_HALF_WIDTH, STEP_HALF_DEPTH, STEP_HALF_HEIGHT } from './stairs.js';
 
 /**
  * A bench, over the machine `env` describes.
@@ -469,6 +477,108 @@ export async function makeBench(env) {
     return found;
   })();
 
+  /**
+   * THE STEP BANK, AND THE FACT NOBODY HAD WRITTEN DOWN ABOUT IT.
+   *
+   * The plant compiles fourteen 340×340×200 mm blocks at (0, STAIR_Y, 0), each
+   * on an x and a z slide and nothing else. The climb rig and the chase rig
+   * each build their OWN mjData and park the bank in their `finally`; the LIVE
+   * world has never parked it. So `live.world` boots with all fourteen stacked
+   * inside each other at the origin's y-offset, colliding and shoving on every
+   * live tick, and it has always done so — every /intent, every /state, every
+   * number bench_parity and physics_parity pin was measured in that world.
+   *
+   * WHICH IS WHY NOTHING HERE PARKS THEM AT BOOT. Parking the bank would be an
+   * improvement and it would also move the live trunk trajectory, i.e. every
+   * leaf of the parity baselines. A caller that wants a flat room asks for one
+   * (POST /world {clear:true}) and is told, in the answer, that asking is a
+   * change to the world every published live number ran in.
+   *
+   * WALKED AT BOOT, BEFORE ANY LANE RUNS, for the same reason GEOM_FRICTION0 is
+   * captured here: `stepLive` restores each step geom's conaffinity from this
+   * array, and an array read lazily could be read while a climb cell had them
+   * zeroed and would then restore zeros for the life of the process.
+   */
+  const STEPG = [], STEP_CONAFF0 = [];
+  for (let g = 0; g < model.ngeom; g++) {
+    if (/^step\d+_geom$/.test(model.geom(g).name || '')) {
+      STEPG.push(g);
+      STEP_CONAFF0.push(model.geom_conaffinity[g]);
+    }
+  }
+  /**
+   * The qpos and dof addresses of the bank's twenty-eight slides.
+   *
+   * `{ isolate: false }` ON PURPOSE. The default zeroes every step geom's
+   * conaffinity as a side effect of looking the joints up, which is right for a
+   * scoring rig that is about to lay a flight and wrong here: this runs at boot
+   * in the shared model, and it would hand every lane — /record, /perform,
+   * /climb, /chase — a world whose steps stopped colliding with each other
+   * because the live lane once looked up an address. The isolation `stepLive`
+   * needs is taken and given back inside one synchronous block instead.
+   */
+  const STAIR_ADDR = STEPG.length === STAIR_COUNT
+    ? findStairJoints(model, { isolate: false }) : null;
+
+  /**
+   * The four static walls, read out of the plant by name.
+   *
+   * They have no joints, so this is a description and not a control: a world
+   * cannot move them, and a request that asks for a wall is told so. What they
+   * ARE is the limit on where a step may go — a 200 kg block half inside a
+   * static wall is a solver problem, not a room — so the inner faces are
+   * computed here and the refusal quotes them.
+   */
+  const ARENA = (() => {
+    // `r4` is declared further down and this runs at load, so the rounding is
+    // done longhand rather than reaching into the temporal dead zone — the same
+    // reason GRASPABLES rounds its masses by hand.
+    const q = v => Math.round(v * 10000) / 10000;
+    const walls = [];
+    for (let g = 0; g < model.ngeom; g++) {
+      const name = model.geom(g).name || '';
+      if (!/^wall_[nsew]$/.test(name)) continue;
+      const s = g * 3;
+      const size = [model.geom_size[s], model.geom_size[s + 1], model.geom_size[s + 2]];
+      const pos = [model.geom_pos[s], model.geom_pos[s + 1], model.geom_pos[s + 2]];
+      // The long axis is the one it runs along; the short one is its thickness.
+      const along = size[0] >= size[1] ? 'x' : 'y';
+      walls.push({
+        name,
+        x: q(pos[0]), y: q(pos[1]),
+        along,
+        halfLength: q(along === 'x' ? size[0] : size[1]),
+        halfThickness: q(along === 'x' ? size[1] : size[0]),
+        height: q(pos[2] + size[2]),
+      });
+    }
+    walls.sort((a, b) => (a.name < b.name ? -1 : a.name > b.name ? 1 : 0));
+    const inner = axis => {
+      const along = axis === 'x' ? 'y' : 'x';
+      const faces = walls.filter(w => w.along === along)
+        .map(w => Math.abs(axis === 'x' ? w.x : w.y) - w.halfThickness);
+      return faces.length ? q(Math.min(...faces)) : null;
+    };
+    return {
+      walls,
+      innerX_m: inner('x'),
+      innerY_m: inner('y'),
+      why: 'static geoms with no joints: a world can put steps and props between them '
+         + 'and cannot move them. The inner faces are where a step block has to stop.',
+    };
+  })();
+
+  /**
+   * THE WORLD THE LIVE LANE IS STANDING IN, or none.
+   *
+   * `set` false is the bench's own world — the one every published live number
+   * was measured in, bank stacked and all — and while it is false the live tick
+   * is byte-for-byte the tick it has always been. Once something has asked for a
+   * world, this is what /reset re-lays after `mj_resetData` wipes it and what
+   * GET /world reads back.
+   */
+  const WORLD = { set: false, name: null, steps: [], ball: null, props: [], unexpressed: [] };
+
   /** Where a graspable is now: position and whether it has been moved. */
   function graspableState(d) {
     return GRASPABLES.map(g => ({
@@ -768,6 +878,49 @@ export async function makeBench(env) {
    */
   function stepWorld(d) {
     for (let s = 0; s < SUBSTEPS; s++) mj.mj_step(model, d);
+  }
+
+  /**
+   * One live tick, in whatever world the live lane has been asked to stand in.
+   *
+   * WITH NO WORLD SET THIS IS `stepWorld`, REACHED BY THE SAME CALL. That is
+   * the first thing to check when reading it: a bench nobody has asked for a
+   * world runs the tick it has always run, through one extra boolean test, so
+   * `bench_parity` and `physics_parity` see the trajectory they pinned.
+   *
+   * WITH A WORLD SET IT BORROWS THE MODEL AND GIVES IT BACK. Two things have to
+   * be true at once: the fourteen blocks must be where the world put them (they
+   * are 200 kg bodies on frictionless slides — leave them and the solver walks
+   * them out of the flight inside one tick, so they are re-written and re-pinned
+   * every tick, which is what site/stairs.js means by "call after any qpos
+   * write, and every tick"), and the step-step isolation that makes an
+   * overlapping flight solid must be on. The isolation is a MODEL field, shared
+   * with every other lane, so it is taken and handed back around the one step.
+   *
+   * THERE IS NO `await` IN HERE AND THERE MUST NEVER BE ONE. The isolation is
+   * atomic only because this block is synchronous: JavaScript will not run
+   * another lane's code between the zeroing and the `finally`. One `await`
+   * inside it and a /record or a /climb that happens to overlap a steering loop
+   * would step ITS duck through a world with the step blocks' conaffinity
+   * zeroed — a different plant, silently, in a number somebody keeps. The
+   * `finally` is what makes a throw safe; `world_parity.mjs` phase 4 is what
+   * proves the leak does not happen, by scoring a /climb cell and a /record
+   * with a world standing and requiring the same answers as without.
+   *
+   * (climb_score.mjs:431–443 takes the same loan the same way, for the same
+   * reason, around a whole episode.)
+   */
+  function stepLive(d) {
+    // A plant without a full bank has nothing to lay and nothing to isolate;
+    // a world set on it (a bare-floor request, say) must not break driving.
+    if (!WORLD.set || !STAIR_ADDR) return stepWorld(d);
+    STEPG.forEach(g => { model.geom_conaffinity[g] = 0; });
+    try {
+      placeSteps(d, STAIR_ADDR, WORLD.steps);
+      stepWorld(d);
+    } finally {
+      STEPG.forEach((g, i) => { model.geom_conaffinity[g] = STEP_CONAFF0[i]; });
+    }
   }
 
   /**
@@ -1134,7 +1287,7 @@ export async function makeBench(env) {
       for (const slot of live.slots.values()) {
         slot.last = await actuate(live.world, slot.duck, settling, slot.last, neutral);
       }
-      stepWorld(live.world);
+      stepLive(live.world);
     }
     live.standing = true;
   }
@@ -1164,7 +1317,7 @@ export async function makeBench(env) {
       for (const d of driving) {
         d.slot.last = await actuate(live.world, d.slot.duck, d.loaded, d.slot.last, d.cmd);
       }
-      stepWorld(live.world);
+      stepLive(live.world);
     }
     return ticks;
   }
@@ -1229,6 +1382,318 @@ export async function makeBench(env) {
       battery: null,
       batteryWhy: 'simulated duck: there is nothing to discharge',
     };
+  }
+
+  /**
+   * WHAT THIS WORLD CANNOT DO, SAID PER REQUEST RATHER THAN PER DOCUMENT.
+   *
+   * A caller describes a scene it drew somewhere else; this plant expresses some
+   * of it exactly and some of it not at all, and the difference is a fact the
+   * caller has to be able to draw. So every gap is an entry here — what was
+   * asked, what it got instead, and why — and the answer that comes back is the
+   * world that IS standing, never the world that was asked for.
+   *
+   * REFUSAL AND UNEXPRESSED ARE DIFFERENT ACTS. A step whose block would sit
+   * half inside a static wall is refused, because laying it would put a 200 kg
+   * body in a place the solver has to fight; a step at a y this bank has no
+   * joint for is laid at the y it has and the difference is reported. Refusing
+   * everything would make the endpoint unusable; expressing everything silently
+   * would make its answers a lie.
+   */
+  function unexpressed(what, extra) { return { what, ...extra }; }
+
+  /** Put a graspable body down at (x, y), upright and dead still. */
+  function seatProp(d, p) {
+    const g = GRASPABLES.find(q => q.name === p.name);
+    if (!g) return false;
+    d.qpos[g.adr] = p.x; d.qpos[g.adr + 1] = p.y; d.qpos[g.adr + 2] = p.z;
+    d.qpos[g.adr + 3] = 1;
+    for (let k = 4; k < 7; k++) d.qpos[g.adr + k] = 0;
+    for (let k = 0; k < 6; k++) d.qvel[g.dof + k] = 0;
+    return true;
+  }
+
+  /**
+   * Put the standing world back after something wiped it.
+   *
+   * `mj_resetData` is the thing that wipes it — /reset runs it through
+   * `ensureStanding`, and it takes every slide and every free body back to
+   * qpos0, which for the step bank means fourteen blocks stacked at the origin
+   * again. A world that survived a settle and not a reset would be a world that
+   * quietly disappears the first time a trial starts, which is exactly when it
+   * matters most. No-op with no world set, so the untouched bench keeps its
+   * untouched code path.
+   */
+  function relayWorld() {
+    if (!WORLD.set) return;
+    if (STAIR_ADDR) placeSteps(live.world, STAIR_ADDR, WORLD.steps);
+    for (const p of WORLD.props) seatProp(live.world, p);
+    mj.mj_forward(model, live.world);
+  }
+
+  /**
+   * THE WORLD AS IT ACTUALLY STANDS, read out of the live mjData.
+   *
+   * READ, NOT ECHOED. The request is not the answer: a bank with no y joint
+   * lays a step somewhere the caller did not name, a parked block is at (i·1.5,
+   * −5) and not absent, and the ball is wherever the last kick left it. Reading
+   * qpos back is the only version of this that stays true after a tick of
+   * physics, and it is what the app draws — so what is on screen is the world
+   * the bench built rather than the world the app asked for.
+   */
+  function worldReadback() {
+    const d = live.world;
+    const steps = [];
+    let parked = 0;
+    if (STAIR_ADDR) {
+      for (let i = 0; i < STAIR_COUNT; i++) {
+        const a = STAIR_ADDR[i];
+        const z = d.qpos[a.z];
+        // PARKED IS A MARK SOMEBODY WROTE, NOT A DEPTH SOMETHING FELL TO.
+        // `placeSteps` puts an unused block at (i·1.5, −5) and re-writes it
+        // every tick, so its x is EXACTLY i·1.5 (nothing pushes along x and the
+        // slide's velocity is zeroed) and its z is −5 or the two millimetres
+        // below it that one tick of free fall adds after the write.
+        //
+        // AND ONLY A WORLD PARKS ANYTHING. With no world set nothing has ever
+        // called `placeSteps` on this mjData, so nothing is parked and all
+        // fourteen are listed wherever they are — which on a fresh bench is a
+        // column from about −11.7 m to +1.6 m, because they boot stacked and
+        // 200 kg bodies on frictionless slides do not stay stacked. That is the
+        // fact this readback exists to stop being invisible, and calling those
+        // blocks "parked" would be reporting an intention as a position.
+        // THE FIRST `WORLD.steps.length` BLOCKS ARE LAID, whatever their qpos
+        // reads after a tick — that is the contract placeSteps implements — and
+        // only the ones after them are tested against the park mark. Inferring
+        // "laid" from the mark alone could drop a laid block out of the readback.
+        if (WORLD.set && i >= WORLD.steps.length && d.qpos[a.x] === i * 1.5 && z <= -5) { parked++; continue; }
+        steps.push({
+          x: r4(d.qpos[a.x]), y: r4(STAIR_Y), top: r4(z + STEP_HALF_HEIGHT),
+          halfDepth: STEP_HALF_DEPTH, halfWidth: STAIR_HALF_WIDTH,
+          halfHeight: STEP_HALF_HEIGHT,
+        });
+      }
+    }
+    const b = ballOf(d);
+    return {
+      world: { set: WORLD.set, name: WORLD.name },
+      steps,
+      ball: b ? { x: b[0], y: b[1], z: b[2] } : null,
+      ballRadius: BALL ? BALL_RADIUS : null,
+      props: graspableState(d),
+      bank: {
+        count: STAIR_COUNT,
+        present: STAIR_ADDR ? STEPG.length : 0,
+        y: r4(STAIR_Y),
+        halfDepth: STEP_HALF_DEPTH,
+        halfWidth: STAIR_HALF_WIDTH,
+        halfHeight: STEP_HALF_HEIGHT,
+        yWhy: `every block is COMPILED at y = ${r4(STAIR_Y)} with an x and a z slide and no y `
+            + 'joint, so this is where the blocks are and not where a request puts them. '
+            + 'Moving them means recompiling the scene (site/stairs.js STAIR_Y).',
+        sizeWhy: `the bank is ${STAIR_COUNT} identical `
+            + `${r4(STEP_HALF_DEPTH * 2)}×${r4(STAIR_HALF_WIDTH * 2)}×${r4(STEP_HALF_HEIGHT * 2)} m `
+            + 'blocks; a step is placed by moving one, so a different size is not '
+            + 'something this world can be asked for.',
+        stackedAtBoot: 'nothing parks this bank in the live world: it boots stacked at '
+            + `(0, ${r4(STAIR_Y)}, 0) and every live number ever published was measured `
+            + 'with it there. A flat room is a change, not a default.',
+        // NOT HIDDEN, COUNTED. `steps` lists every block this world is not
+        // using as a park space — including one that has fallen through the
+        // floor, because that is where it IS — and this is the rest. A reader
+        // that saw four steps and no count would think the plant had four
+        // blocks.
+        parked,
+        parkedWhy: `${parked} of the ${STAIR_COUNT} blocks are at the park mark, `
+            + '(i·1.5, −5) — parked, not absent: this plant compiles the bank and a world '
+            + `chooses how many of it to use. The other ${STAIR_COUNT - parked} are listed in `
+            + '`steps`, wherever they actually are. Nothing is parked until a world parks it.',
+      },
+      arena: ARENA,
+      unexpressed: WORLD.unexpressed,
+      plantName: PLANT,
+      plantDigest: PLANT_DIGEST,
+    };
+  }
+
+  /**
+   * Take a described world, lay what this plant can lay, and say what it could
+   * not.
+   *
+   * ORDER MATTERS: everything is checked before anything is written, so a
+   * refused request leaves the world it found. A half-applied world would be a
+   * world nobody asked for standing under a duck somebody is steering.
+   */
+  function setWorld(body) {
+    const notes = [];
+    const inX = ARENA.innerX_m, inY = ARENA.innerY_m;
+
+    // --- steps -------------------------------------------------------------
+    // A STANDING FLIGHT STAYS STANDING when a post says nothing about the
+    // bank: moving the ball is not a request to park the stairs.
+    let steps = WORLD.set ? WORLD.steps.slice() : [];
+    const asked = body.steps !== undefined && body.steps !== null;
+    if (body.clear === true && asked) {
+      throw new Error('say one or the other: `clear: true` for a bare floor, or `steps` to lay them');
+    }
+    if (body.clear === true) {
+      steps = [];
+    } else if (asked) {
+      if (!Array.isArray(body.steps)) throw new Error('steps must be an array of {x, top}');
+      if (!STAIR_ADDR) {
+        throw new Error(`this plant has no step bank: ${STEPG.length} step geoms, `
+                      + `${STAIR_COUNT} wanted`);
+      }
+      if (body.steps.length > STAIR_COUNT) {
+        throw new Error(`${body.steps.length} steps: this world has a bank of ${STAIR_COUNT} `
+                      + 'blocks and cannot lay more than it has');
+      }
+      body.steps.forEach((s, i) => {
+        const x = Number(s?.x), top = Number(s?.top);
+        if (!Number.isFinite(x) || !Number.isFinite(top)) {
+          throw new Error(`step ${i}: give {x, top} as finite numbers`);
+        }
+        // THE FOOTPRINT, NOT THE CENTRE. A block is 340 mm deep; a centre 100 mm
+        // inside the wall still puts 70 mm of a 200 kg body inside a static
+        // geom, which is a solver fight and not a room.
+        if (inX !== null && Math.abs(x) + STEP_HALF_DEPTH > inX + 1e-12) {
+          throw new Error(`step ${i} at x = ${x} reaches `
+            + `${r4(Math.abs(x) + STEP_HALF_DEPTH)} m, past the arena's inner face at ${inX} m `
+            + `(${ARENA.walls.filter(w => w.along === 'y').map(w => w.name).join(' and ')}); `
+            + `a ${r4(STEP_HALF_DEPTH * 2)} m block has to fit between the walls`);
+        }
+        steps.push({ x, top });
+        // Asked-for fields this bank cannot honour. Absent means not asked.
+        if (s.y !== undefined && s.y !== null && Number(s.y) !== STAIR_Y) {
+          notes.push(unexpressed('step y', { index: i, field: 'y', asked: Number(s.y),
+            got: r4(STAIR_Y), why: 'the block has an x and a z slide and no y joint' }));
+        }
+        for (const [field, bank] of [['halfDepth', STEP_HALF_DEPTH],
+                                     ['halfWidth', STAIR_HALF_WIDTH],
+                                     ['halfHeight', STEP_HALF_HEIGHT]]) {
+          if (s[field] !== undefined && s[field] !== null && Number(s[field]) !== bank) {
+            notes.push(unexpressed('step size', { index: i, field, asked: Number(s[field]),
+              got: bank, why: 'the bank is fourteen identical blocks; a step is one of them moved' }));
+          }
+        }
+      });
+      // A run longer than a block is deep leaves daylight between treads. It is
+      // laid anyway — it is a legal world — but it is not the solid flight the
+      // stairs challenge means by a staircase.
+      for (let i = 1; i < steps.length; i++) {
+        const gap = Math.abs(steps[i].x - steps[i - 1].x) - STEP_HALF_DEPTH * 2;
+        if (gap > 1e-9) {
+          // `asked` is the spacing that was laid, `got` the DAYLIGHT it leaves —
+          // the blocks are where they were asked, so the number that is not
+          // what was wanted is the gap, not a substituted run.
+          notes.push(unexpressed('gap between steps', { index: i, field: 'x',
+            asked: r4(Math.abs(steps[i].x - steps[i - 1].x)), got: r4(gap),
+            why: `blocks ${STEP_HALF_DEPTH * 2} m deep laid ${r4(Math.abs(steps[i].x - steps[i - 1].x))} m `
+               + `apart leave ${r4(gap)} m of daylight: this is not a solid flight, and a foot `
+               + 'that lands in the gap falls to the floor' }));
+        }
+      }
+    } else if (WORLD.set) {
+      steps = WORLD.steps;                      // not mentioned: leave them where they are
+    } else {
+      // THE ONE REFUSAL THAT IS ABOUT A DEFAULT AND NOT ABOUT A NUMBER. Nothing
+      // parks this bank in the live world: it boots with fourteen 200 kg blocks
+      // stacked at (0, STAIR_Y, 0), colliding on every tick, and that is the
+      // world every published live number was measured in. A first world that
+      // said nothing about the bank would have to either park it (a silent
+      // change to the plant under a duck somebody is steering) or freeze it
+      // where it is (a silent pin). Both are decisions, so the caller makes
+      // one.
+      throw new Error('say what the step bank should do: `steps: [{x, top}]` to lay them, '
+        + `\`steps: []\` or \`clear: true\` for a bare floor. This bench boots with all `
+        + `${STAIR_COUNT} blocks stacked at (0, ${r4(STAIR_Y)}, 0) — nothing parks them — `
+        + 'so a bare floor is a change to the world every live number here was measured in, '
+        + 'not a default');
+    }
+
+    // --- the ball ----------------------------------------------------------
+    let ball = WORLD.ball;
+    if (body.ball === null) {
+      const at = ballOf(live.world);
+      notes.push(unexpressed('remove the ball', { field: 'ball', asked: null,
+        got: at ? { x: at[0], y: at[1], z: at[2] } : null,
+        why: 'the ball is a permanent body in this plant, not something a world adds; '
+           + 'it can be moved and it cannot be taken out' }));
+    } else if (body.ball !== undefined) {
+      if (!BALL) throw new Error('this world has no ball');
+      const x = Number(body.ball.x), y = Number(body.ball.y);
+      if (!Number.isFinite(x) || !Number.isFinite(y)) {
+        throw new Error('ball: give {x, y} as finite numbers');
+      }
+      if ((inX !== null && Math.abs(x) + BALL_RADIUS > inX + 1e-12)
+       || (inY !== null && Math.abs(y) + BALL_RADIUS > inY + 1e-12)) {
+        throw new Error(`a ball at (${x}, ${y}) is outside this arena: the inner faces are at `
+                      + `x = ±${inX} and y = ±${inY}, and the ball is ${BALL_RADIUS} m in radius`);
+      }
+      ball = { x, y };
+    }
+
+    // --- props -------------------------------------------------------------
+    let props = WORLD.props;
+    if (body.props !== undefined && body.props !== null) {
+      if (!Array.isArray(body.props)) throw new Error('props must be an array of {name, x, y}');
+      props = [];
+      body.props.forEach((p, i) => {
+        const g = GRASPABLES.find(q => q.name === p?.name);
+        if (!g) {
+          notes.push(unexpressed('prop', { index: i, field: 'name', asked: p?.name ?? null,
+            got: GRASPABLES.map(q => q.name),
+            why: `${PLANT} has no body by that name; a prop is a body this plant compiled, `
+               + 'and there is no way to add one at run time' }));
+          return;
+        }
+        const x = Number(p.x), y = Number(p.y);
+        if (!Number.isFinite(x) || !Number.isFinite(y)) {
+          throw new Error(`prop ${i} (${g.name}): give {x, y} as finite numbers`);
+        }
+        // NOT BOUNDED BY THE ARENA, AND THAT IS NOT AN OVERSIGHT. A step block
+        // is 200 kg and a static wall is immovable, so a block half inside one
+        // is a fight the solver has to have every tick; a graspable is 18 to
+        // 30 g on a 6 × 6 m floor, and one put down outside the walls simply
+        // sits there. The refusals here are about the plant, not about tidiness.
+        // Its own compiled drop height, so a cone lands the way the plant drops it.
+        props.push({ name: g.name, x, y, z: model.qpos0[g.adr + 2] });
+      });
+    }
+
+    // --- walls -------------------------------------------------------------
+    if (body.walls !== undefined && body.walls !== null && Array.isArray(body.walls)) {
+      body.walls.forEach((w, i) => {
+        notes.push(unexpressed('wall', { index: i, field: 'walls', asked: w?.name ?? null,
+          got: ARENA.walls.map(x => x.name),
+          why: 'the four arena walls are static geoms with no joints; this world has exactly '
+             + 'those four and cannot be given another' }));
+      });
+    }
+
+    // --- nothing has been written until here -------------------------------
+    // MERGE BY SECTION, NEVER REPLACE. A post that restates one part of a
+    // standing world carries that part's honesty; the parts it did not mention
+    // keep theirs, or a ball move would silently erase what the stairs could
+    // not express.
+    const restated = new Set();
+    if (asked || body.clear === true) restated.add('steps');
+    if (body.ball !== undefined) restated.add('ball');
+    if (body.props !== undefined && body.props !== null) restated.add('props');
+    if (Array.isArray(body.walls)) restated.add('walls');
+    const sectionOf = n => ({ 'step y': 'steps', 'step size': 'steps', 'gap between steps': 'steps',
+                              'remove the ball': 'ball', prop: 'props', wall: 'walls' })[n.what] ?? 'other';
+    const kept = (WORLD.unexpressed || []).filter(n => !restated.has(sectionOf(n)));
+    WORLD.steps = steps;
+    WORLD.ball = ball;
+    WORLD.props = props;
+    WORLD.name = body.name === undefined ? WORLD.name
+               : (body.name === null ? null : String(body.name));
+    WORLD.unexpressed = kept.concat(notes);
+    WORLD.set = true;
+    relayWorld();
+    if (ball && BALL) placeBall(live.world, ball.x, ball.y, BALL_RADIUS);
+    else mj.mj_forward(model, live.world);
   }
 
   /**
@@ -1434,6 +1899,51 @@ export async function makeBench(env) {
         return stateOf(slot);
       });
     }
+    /*
+     * GET /world — what is standing in the live world right now.
+     * POST /world — put something else there.
+     *
+     * THE ONLY ENDPOINT THAT IS ABOUT THE ROOM AND NOT ABOUT A DUCK. Everything
+     * else here steers, records or scores; this one moves the fourteen step
+     * blocks the plant compiled, the ball and the graspables, so that a caller
+     * driving a duck can drive it somewhere other than the room the plant was
+     * compiled with.
+     *
+     * WHAT IT CANNOT DO IS PART OF THE ANSWER. This plant has a fixed bank of
+     * blocks at a fixed y, four static walls and five graspables; nothing can be
+     * added, nothing can be resized and nothing can be moved out of the room. A
+     * request that asks for more is either refused (a step that would sit inside
+     * a wall, more steps than there are blocks, a ball outside the arena) or
+     * laid as close as the plant allows with the difference named in
+     * `unexpressed` — never silently approximated.
+     *
+     * AND THE ANSWER IS THE READBACK, NOT THE REQUEST. `steps` comes back out of
+     * qpos, so it is where the blocks are; an app that draws this draws the
+     * world the bench built.
+     *
+     * IT ONLY TOUCHES THE LIVE WORLD. /record, /measure, /perform, /capture and
+     * /tune reset their own mjData and /climb and /chase build theirs, so a
+     * world standing here changes nothing any of them answer —
+     * `sim/world_parity.mjs` phase 4 is the gate that says so.
+     */
+    if (url.pathname === '/world') {
+      return liveLane(async () => {
+        // A WORLD IS NOT ABOUT A DUCK, and `duck` is still refused if it names
+        // one this scene does not hold. The addressing convention is the same
+        // on every endpoint — a typo that quietly does the right thing on one
+        // door and the wrong thing on another is worse than either — and
+        // `pickSlot` is the one place that decides it.
+        pickSlot(url, body);
+        await ensureStanding();
+        // A GET arrives here with an empty body in both shells, and reading is
+        // the safe reading of "no fields": a caller that meant to change
+        // something named the thing it wanted changed. `duck` is addressing and
+        // not a field, so it alone is still a read.
+        const FIELDS = ['name', 'steps', 'ball', 'props', 'walls', 'clear'];
+        if (body && FIELDS.some(k => k in body)) setWorld(body);
+        return worldReadback();
+      });
+    }
     // POST /reset — put the live world back to a known start.
     //
     // A TRIAL THAT BEGINS WHEREVER THE LAST ONE STOPPED IS NOT A TRIAL. Without
@@ -1467,7 +1977,16 @@ export async function makeBench(env) {
         live.standing = false;
         for (const slot of live.slots.values()) slot.cmd = { vx: 0, vy: 0, vyaw: 0 };
         await ensureStanding();
-        if (BALL) placeBall(live.world, 0.8, 0, BALL_RADIUS);
+        // AND THE WORLD IS RE-LAID, BECAUSE `mj_resetData` JUST WIPED IT.
+        // `ensureStanding` above resets every slide and every free body to
+        // qpos0, which puts the step bank back in the stack it boots in and the
+        // props back on their compiled marks. A /reset that lost the world
+        // would lose it at exactly the moment it is wanted most — the start of
+        // a trial. With no world set this does nothing and the ball goes to the
+        // literal (0.8, 0) it has always gone to.
+        relayWorld();
+        if (BALL) placeBall(live.world, WORLD.ball ? WORLD.ball.x : 0.8,
+                                        WORLD.ball ? WORLD.ball.y : 0, BALL_RADIUS);
         return { ...stateOf(live.slots.get(DUCKS[0].name)), reset: 'the whole world' };
       });
     }

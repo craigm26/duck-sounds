@@ -1,0 +1,236 @@
+{
+ "arena": {
+  "innerX_m": 1.45,
+  "innerY_m": 1.45,
+  "walls": [
+   {
+    "along": "y",
+    "halfLength": 1.55,
+    "halfThickness": 0.05,
+    "height": 0.25,
+    "name": "wall_e",
+    "x": 1.5,
+    "y": 0
+   },
+   {
+    "along": "x",
+    "halfLength": 1.55,
+    "halfThickness": 0.05,
+    "height": 0.25,
+    "name": "wall_n",
+    "x": 0,
+    "y": 1.5
+   },
+   {
+    "along": "x",
+    "halfLength": 1.55,
+    "halfThickness": 0.05,
+    "height": 0.25,
+    "name": "wall_s",
+    "x": 0,
+    "y": -1.5
+   },
+   {
+    "along": "y",
+    "halfLength": 1.55,
+    "halfThickness": 0.05,
+    "height": 0.25,
+    "name": "wall_w",
+    "x": -1.5,
+    "y": 0
+   }
+  ],
+  "why": "static geoms with no joints: a world can put steps and props between them and cannot move them. The inner faces are where a step block has to stop."
+ },
+ "ball": {
+  "x": 0.8,
+  "y": 0,
+  "z": 0.05
+ },
+ "ballRadius": 0.05,
+ "bank": {
+  "count": 14,
+  "halfDepth": 0.17,
+  "halfHeight": 0.1,
+  "halfWidth": 0.17,
+  "parked": 10,
+  "parkedWhy": "10 of the 14 blocks are at the park mark, (i·1.5, −5) — parked, not absent: this plant compiles the bank and a world chooses how many of it to use. The other 4 are listed in `steps`, wherever they actually are. Nothing is parked until a world parks it.",
+  "present": 14,
+  "sizeWhy": "the bank is 14 identical 0.34×0.34×0.2 m blocks; a step is placed by moving one, so a different size is not something this world can be asked for.",
+  "stackedAtBoot": "nothing parks this bank in the live world: it boots stacked at (0, 1.305, 0) and every live number ever published was measured with it there. A flat room is a change, not a default.",
+  "y": 1.305,
+  "yWhy": "every block is COMPILED at y = 1.305 with an x and a z slide and no y joint, so this is where the blocks are and not where a request puts them. Moving them means recompiling the scene (site/stairs.js STAIR_Y)."
+ },
+ "plantDigest": "3f8c9ab9b409ba74c73c30179d5f7c12b025f631693f9eec78d80dca242547be",
+ "plantName": "scene.mjb",
+ "props": [
+  {
+   "at": [
+    0.45,
+    -0.3,
+    0.021
+   ],
+   "mass": 0.03,
+   "name": "block_a"
+  },
+  {
+   "at": [
+    0.42,
+    -0.36,
+    0.0179
+   ],
+   "mass": 0.025,
+   "name": "block_b"
+  },
+  {
+   "at": [
+    0.62,
+    -0.14,
+    0.0149
+   ],
+   "mass": 0.018,
+   "name": "block_c"
+  },
+  {
+   "at": [
+    0.2,
+    -0.44,
+    0.0377
+   ],
+   "mass": 0.02,
+   "name": "cone_a"
+  },
+  {
+   "at": [
+    0.2,
+    0.46,
+    0.0377
+   ],
+   "mass": 0.02,
+   "name": "cone_b"
+  }
+ ],
+ "steps": [
+  {
+   "halfDepth": 0.17,
+   "halfHeight": 0.1,
+   "halfWidth": 0.17,
+   "top": 0.06,
+   "x": 0.29,
+   "y": 1.305
+  },
+  {
+   "halfDepth": 0.17,
+   "halfHeight": 0.1,
+   "halfWidth": 0.17,
+   "top": 0.12,
+   "x": 0.57,
+   "y": 1.305
+  },
+  {
+   "halfDepth": 0.17,
+   "halfHeight": 0.1,
+   "halfWidth": 0.17,
+   "top": 0.18,
+   "x": 0.85,
+   "y": 1.305
+  },
+  {
+   "halfDepth": 0.17,
+   "halfHeight": 0.1,
+   "halfWidth": 0.17,
+   "top": 0.24,
+   "x": 1.13,
+   "y": 1.305
+  }
+ ],
+ "unexpressed": [
+  {
+   "asked": 0,
+   "field": "y",
+   "got": 1.305,
+   "index": 0,
+   "what": "step y",
+   "why": "the block has an x and a z slide and no y joint"
+  },
+  {
+   "asked": 0,
+   "field": "y",
+   "got": 1.305,
+   "index": 1,
+   "what": "step y",
+   "why": "the block has an x and a z slide and no y joint"
+  },
+  {
+   "asked": 0.12,
+   "field": "halfHeight",
+   "got": 0.1,
+   "index": 1,
+   "what": "step size",
+   "why": "the bank is fourteen identical blocks; a step is one of them moved"
+  },
+  {
+   "asked": 0,
+   "field": "y",
+   "got": 1.305,
+   "index": 2,
+   "what": "step y",
+   "why": "the block has an x and a z slide and no y joint"
+  },
+  {
+   "asked": 0.18,
+   "field": "halfHeight",
+   "got": 0.1,
+   "index": 2,
+   "what": "step size",
+   "why": "the bank is fourteen identical blocks; a step is one of them moved"
+  },
+  {
+   "asked": 0,
+   "field": "y",
+   "got": 1.305,
+   "index": 3,
+   "what": "step y",
+   "why": "the block has an x and a z slide and no y joint"
+  },
+  {
+   "asked": 0.24,
+   "field": "halfHeight",
+   "got": 0.1,
+   "index": 3,
+   "what": "step size",
+   "why": "the bank is fourteen identical blocks; a step is one of them moved"
+  },
+  {
+   "asked": "broom",
+   "field": "name",
+   "got": [
+    "block_a",
+    "block_b",
+    "block_c",
+    "cone_a",
+    "cone_b"
+   ],
+   "index": 1,
+   "what": "prop",
+   "why": "scene.mjb has no body by that name; a prop is a body this plant compiled, and there is no way to add one at run time"
+  },
+  {
+   "asked": "partition",
+   "field": "walls",
+   "got": [
+    "wall_e",
+    "wall_n",
+    "wall_s",
+    "wall_w"
+   ],
+   "index": 0,
+   "what": "wall",
+   "why": "the four arena walls are static geoms with no joints; this world has exactly those four and cannot be given another"
+  }
+ ],
+ "world": {
+  "name": "Stairs challenge, 60 mm",
+  "set": true
+ }
+}

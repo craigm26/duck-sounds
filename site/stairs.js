@@ -135,6 +135,44 @@ export function layoutStairs(data, addr, { count, rise, run, start, y = 0 }) {
   return n;
 }
 
+/**
+ * ANY set of blocks, each at its own x with its own tread height.
+ *
+ * `layoutStairs` lays a REGULAR flight — one rise, one run, a first riser — and
+ * that is the only shape the stairs challenge has ever needed. This one takes
+ * the blocks themselves: `[{ x, top }]`, x the block centre in metres and `top`
+ * the height of the tread, which is what a caller describing a world says and
+ * what a readback can echo. Everything past the list is parked exactly as
+ * `clearStairs` parks it, so a two-block world leaves twelve blocks under the
+ * floor and spread along x rather than stacked.
+ *
+ * WHY THIS IS NOT layoutStairs' IMPLEMENTATION. It could be — the regular
+ * flight is a special case of an arbitrary one — but every published stairs
+ * number in this repo went through `layoutStairs` as it is written above, and
+ * a refactor that moved the arithmetic into a different function would put a
+ * different sequence of floating-point operations under `climb/robust.mjs`,
+ * `climb/rig3.mjs` and every audit that quotes them. So this is additive and
+ * `layoutStairs` is untouched, and `sim/world_parity.mjs` phase 1 is the gate
+ * that says the two agree bit for bit on the grid's own configuration.
+ *
+ * The y of a block is NOT a parameter, because there is no joint for it: the
+ * step bodies are compiled at y = STAIR_Y with an x and a z slide only (see
+ * STAIR_Y above). A caller that wants a block somewhere else in y is asking
+ * for a recompile, and the bench says so rather than silently laying it here.
+ */
+export function placeSteps(data, addr, blocks) {
+  const n = Math.max(0, Math.min(blocks.length, STAIR_COUNT));
+  for (let i = 0; i < STAIR_COUNT; i++) {
+    const a = addr[i];
+    if (i >= n) { data.qpos[a.x] = i * 1.5; data.qpos[a.z] = -5; pin(data, a); continue; }
+    const top = blocks[i].top;
+    data.qpos[a.x] = blocks[i].x;
+    data.qpos[a.z] = top - STEP_HALF_HEIGHT;   // block top lands on `top`
+    pin(data, a);
+  }
+  return n;
+}
+
 /** Height of the tread the duck is standing over, for the HUD. */
 export function groundUnder(x, { count, rise, run, start }) {
   if (x < start) return 0;
