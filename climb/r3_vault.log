@@ -1,0 +1,167 @@
+[   0s] family A start. clear bonus 4, pop 24, elite 5, sig0 0.045, sigMin 0.018, seed 1000, budget 2350s
+[   0s] grid: rise offsets -10/0/10 mm x plants 0.12/x1 0.13/x0.7 0.125/x1.3
+[   5s] baseline best_r2_vault_40mm.json: k=1/9 obj=9.647 meanR=5.647 | rise[-10:0/3 +0:1/3 +10:0/3] plant[d0.120/f1.0:1/3 d0.130/f0.7:0/3 d0.125/f1.3:0/3]
+[  10s] baseline best_r2_vault_60mm.json: k=2/9 obj=11.437 meanR=3.437 | rise[-10:0/3 +0:2/3 +10:0/3] plant[d0.120/f1.0:1/3 d0.130/f0.7:0/3 d0.125/f1.3:1/3]
+[  14s] 40mm warm-start: k=1/9 obj=9.647 meanR=5.647 | rise[-10:0/3 +0:1/3 +10:0/3] plant[d0.120/f1.0:1/3 d0.130/f0.7:0/3 d0.125/f1.3:0/3]
+[  27s] 40mm gen1 IMPROVE k=2/9 obj=13.946 meanR=5.946 | rise[-10:1/3 +0:1/3 +10:0/3] plant[d0.120/f1.0:2/3 d0.130/f0.7:0/3 d0.125/f1.3:0/3]
+[  28s] 40mm gen1: full=1 eliteObj 13.95 s15.5 s11.3 s10.6 s9.4 | best k=2/9 obj=13.946 | evals=25 fullEvals=2
+[  37s] 40mm gen2: full=0 eliteObj 13.95 s17.1 s12.9 s11.3 s9.4 | best k=2/9 obj=13.946 | evals=49 fullEvals=2
+[  45s] 40mm gen3: full=0 eliteObj 13.95 s11.7 s10.4 s9.4 s9.0 | best k=2/9 obj=13.946 | evals=73 fullEvals=2
+[  54s] 40mm gen4: full=0 eliteObj 13.95 s14.4 s12.3 s11.9 s11.1 | best k=2/9 obj=13.946 | evals=97 fullEvals=2
+[  66s] 40mm gen5: full=1 eliteObj 13.95 4.65 s13.9 s12.7 s11.5 | best k=2/9 obj=13.946 | evals=121 fullEvals=3
+[  74s] 40mm gen6: full=0 eliteObj 13.95 s10.3 s9.3 s9.2 s9.0 | best k=2/9 obj=13.946 | evals=145 fullEvals=3
+[  83s] 40mm gen7: full=0 eliteObj 13.95 s13.5 s12.6 s11.1 s10.4 | best k=2/9 obj=13.946 | evals=169 fullEvals=3
+[  94s] 40mm gen8: full=1 eliteObj 13.95 6.10 s17.0 s12.5 s11.6 | best k=2/9 obj=13.946 | evals=193 fullEvals=4
+[ 106s] 40mm gen9: full=1 eliteObj 13.95 4.01 s16.5 s13.5 s12.4 | best k=2/9 obj=13.946 | evals=217 fullEvals=5
+[ 114s] 40mm gen10: full=0 eliteObj 13.95 s17.9 s13.0 s11.8 s11.2 | best k=2/9 obj=13.946 | evals=241 fullEvals=5
+[ 127s] 40mm gen11: full=1 eliteObj 13.95 4.44 s19.1 s17.3 s15.3 | best k=2/9 obj=13.946 | evals=265 fullEvals=6
+[ 135s] 40mm gen12: full=0 eliteObj 13.95 s12.1 s10.2 s9.7 s9.0 | best k=2/9 obj=13.946 | evals=289 fullEvals=6
+[ 147s] 40mm gen13: full=1 eliteObj 13.95 8.57 s16.8 s16.8 s13.2 | best k=2/9 obj=13.946 | evals=313 fullEvals=7
+[ 159s] 40mm gen14: full=1 eliteObj 13.95 9.59 s13.5 s11.9 s11.9 | best k=2/9 obj=13.946 | evals=337 fullEvals=8
+[ 177s] 40mm gen15: full=2 eliteObj 13.95 8.68 8.53 s16.7 s16.0 | best k=2/9 obj=13.946 | evals=361 fullEvals=10
+[ 201s] 40mm gen16: full=3 eliteObj 13.95 12.91 9.19 9.02 s13.2 | best k=2/9 obj=13.946 | evals=385 fullEvals=13
+[ 223s] 40mm gen17: full=2 eliteObj 13.95 9.31 4.43 s16.2 s15.2 | best k=2/9 obj=13.946 | evals=409 fullEvals=15
+[ 248s] 40mm gen18: full=3 eliteObj 13.95 10.06 4.85 4.36 s17.0 | best k=2/9 obj=13.946 | evals=433 fullEvals=18
+[ 266s] 40mm gen19: full=1 eliteObj 13.95 4.70 s14.4 s13.8 s13.6 | best k=2/9 obj=13.946 | evals=457 fullEvals=19
+[ 282s] 40mm gen20: full=1 eliteObj 13.95 9.20 s17.4 s17.3 s16.2 | best k=2/9 obj=13.946 | evals=481 fullEvals=20
+[ 307s] 40mm gen21: full=3 eliteObj 13.95 9.31 8.64 4.45 s14.9 | best k=2/9 obj=13.946 | evals=505 fullEvals=23
+[ 320s] 40mm gen22: full=0 eliteObj 13.95 s16.8 s16.4 s12.9 s12.3 | best k=2/9 obj=13.946 | evals=529 fullEvals=23
+[ 340s] 40mm gen23: full=1 eliteObj 13.95 12.40 s14.3 s13.2 s13.0 | best k=2/9 obj=13.946 | evals=553 fullEvals=24
+[ 361s] 40mm gen24 IMPROVE k=2/9 obj=14.295 meanR=6.295 | rise[-10:1/3 +0:1/3 +10:0/3] plant[d0.120/f1.0:1/3 d0.130/f0.7:0/3 d0.125/f1.3:1/3]
+[ 369s] 40mm gen24: full=4 eliteObj 14.29 9.89 8.23 4.60 s11.9 | best k=2/9 obj=14.295 | evals=577 fullEvals=28
+[ 385s] 40mm gen25: full=1 eliteObj 14.29 8.86 s18.5 s15.6 s15.2 | best k=2/9 obj=14.295 | evals=601 fullEvals=29
+[ 409s] 40mm gen26: full=3 eliteObj 14.29 10.23 10.08 9.95 s17.0 | best k=2/9 obj=14.295 | evals=625 fullEvals=32
+[ 431s] 40mm gen27: full=2 eliteObj 14.29 9.00 8.82 s14.7 s14.6 | best k=2/9 obj=14.295 | evals=649 fullEvals=34
+[ 442s] 40mm gen28: full=0 eliteObj 14.29 s16.0 s13.0 s12.3 s12.3 | best k=2/9 obj=14.295 | evals=673 fullEvals=34
+[ 466s] 40mm gen29: full=3 eliteObj 14.29 13.10 9.87 5.32 s15.3 | best k=2/9 obj=14.295 | evals=697 fullEvals=37
+[ 477s] 40mm gen30: full=0 eliteObj 14.29 s13.2 s12.8 s10.2 s10.0 | best k=2/9 obj=14.295 | evals=721 fullEvals=37
+[ 493s] 40mm gen31: full=1 eliteObj 14.29 12.84 s13.8 s13.4 s12.3 | best k=2/9 obj=14.295 | evals=745 fullEvals=38
+[ 512s] 40mm gen32 IMPROVE k=2/9 obj=15.472 meanR=7.472 | rise[-10:1/3 +0:1/3 +10:0/3] plant[d0.120/f1.0:1/3 d0.130/f0.7:0/3 d0.125/f1.3:1/3]
+[ 512s] 40mm gen32: full=2 eliteObj 15.47 8.27 s12.7 s12.4 s11.2 | best k=2/9 obj=15.472 | evals=769 fullEvals=40
+[ 528s] 40mm gen33: full=1 eliteObj 15.47 5.41 s17.0 s15.8 s14.3 | best k=2/9 obj=15.472 | evals=793 fullEvals=41
+[ 539s] 40mm gen34: full=0 eliteObj 15.47 s12.9 s12.9 s12.5 s12.4 | best k=2/9 obj=15.472 | evals=817 fullEvals=41
+[ 572s] 40mm gen35: full=4 eliteObj 15.47 14.83 9.83 8.69 6.24 | best k=2/9 obj=15.472 | evals=841 fullEvals=45
+[ 576s] 60mm warm-start: k=2/9 obj=11.437 meanR=3.437 | rise[-10:0/3 +0:2/3 +10:0/3] plant[d0.120/f1.0:1/3 d0.130/f0.7:0/3 d0.125/f1.3:1/3]
+[ 588s] 60mm gen1: full=0 eliteObj 11.44 s13.5 s8.2 s8.2 s8.1 | best k=2/9 obj=11.437 | evals=866 fullEvals=46
+[ 600s] 60mm gen2: full=0 eliteObj 11.44 s9.5 s8.8 s8.7 s8.4 | best k=2/9 obj=11.437 | evals=890 fullEvals=46
+[ 611s] 60mm gen3: full=0 eliteObj 11.44 s11.4 s9.7 s9.3 s8.9 | best k=2/9 obj=11.437 | evals=914 fullEvals=46
+[ 623s] 60mm gen4: full=0 eliteObj 11.44 s8.9 s8.9 s8.8 s8.6 | best k=2/9 obj=11.437 | evals=938 fullEvals=46
+[ 637s] 60mm gen5: full=1 eliteObj 11.44 8.60 s10.4 s9.6 s8.6 | best k=2/9 obj=11.437 | evals=962 fullEvals=47
+[ 652s] 60mm gen6: full=1 eliteObj 11.44 7.67 s10.0 s9.5 s8.4 | best k=2/9 obj=11.437 | evals=986 fullEvals=48
+[ 663s] 60mm gen7 IMPROVE k=2/9 obj=12.359 meanR=4.359 | rise[-10:0/3 +0:2/3 +10:0/3] plant[d0.120/f1.0:1/3 d0.130/f0.7:0/3 d0.125/f1.3:1/3]
+[ 672s] 60mm gen7: full=1 eliteObj 12.36 s12.3 s10.4 s10.0 s9.8 | best k=2/9 obj=12.359 | evals=1010 fullEvals=49
+[ 688s] 60mm gen8: full=1 eliteObj 12.36 7.53 s10.4 s10.1 s9.5 | best k=2/9 obj=12.359 | evals=1034 fullEvals=50
+[ 702s] 60mm gen9 IMPROVE k=2/9 obj=12.883 meanR=4.883 | rise[-10:1/3 +0:1/3 +10:0/3] plant[d0.120/f1.0:1/3 d0.130/f0.7:0/3 d0.125/f1.3:1/3]
+[ 703s] 60mm gen9: full=1 eliteObj 12.88 s13.4 s10.3 s10.1 s9.9 | best k=2/9 obj=12.883 | evals=1058 fullEvals=51
+[ 714s] 60mm gen10: full=0 eliteObj 12.88 s11.8 s10.4 s10.3 s10.1 | best k=2/9 obj=12.883 | evals=1082 fullEvals=51
+[ 729s] 60mm gen11: full=1 eliteObj 12.88 7.82 s13.2 s10.2 s9.9 | best k=2/9 obj=12.883 | evals=1106 fullEvals=52
+[ 736s] 60mm gen12 IMPROVE k=4/9 obj=23.788 meanR=7.788 | rise[-10:2/3 +0:1/3 +10:1/3] plant[d0.120/f1.0:1/3 d0.130/f0.7:1/3 d0.125/f1.3:2/3]
+[ 745s] 60mm gen12: full=1 eliteObj 23.79 s10.5 s10.3 s8.7 s8.1 | best k=4/9 obj=23.788 | evals=1130 fullEvals=53
+[ 763s] 60mm gen13: full=2 eliteObj 23.79 13.36 8.16 s11.7 s10.5 | best k=4/9 obj=23.788 | evals=1154 fullEvals=55
+[ 773s] 60mm gen14: full=0 eliteObj 23.79 s11.8 s10.1 s9.2 s8.8 | best k=4/9 obj=23.788 | evals=1178 fullEvals=55
+[ 793s] 60mm gen15: full=2 eliteObj 23.79 7.84 7.46 s14.3 s12.1 | best k=4/9 obj=23.788 | evals=1202 fullEvals=57
+[ 811s] 60mm gen16: full=2 eliteObj 23.79 13.63 12.84 s13.8 s13.2 | best k=4/9 obj=23.788 | evals=1226 fullEvals=59
+[ 822s] 60mm gen17: full=0 eliteObj 23.79 s14.2 s12.4 s10.3 s10.1 | best k=4/9 obj=23.788 | evals=1250 fullEvals=59
+[ 838s] 60mm gen18: full=1 eliteObj 23.79 13.24 s11.9 s11.4 s10.8 | best k=4/9 obj=23.788 | evals=1274 fullEvals=60
+[ 849s] 60mm gen19: full=0 eliteObj 23.79 s13.5 s12.1 s12.1 s10.9 | best k=4/9 obj=23.788 | evals=1298 fullEvals=60
+[ 861s] 60mm gen20: full=0 eliteObj 23.79 s14.1 s11.0 s10.1 s9.3 | best k=4/9 obj=23.788 | evals=1322 fullEvals=60
+[ 876s] 60mm gen21: full=1 eliteObj 23.79 8.28 s12.8 s12.1 s11.2 | best k=4/9 obj=23.788 | evals=1346 fullEvals=61
+[ 890s] 60mm gen22: full=1 eliteObj 23.79 6.94 s12.3 s11.8 s11.2 | best k=4/9 obj=23.788 | evals=1370 fullEvals=62
+[ 900s] 60mm gen23: full=0 eliteObj 23.79 s11.4 s10.8 s9.8 s9.3 | best k=4/9 obj=23.788 | evals=1394 fullEvals=62
+[ 915s] 60mm gen24: full=1 eliteObj 23.79 8.53 s13.7 s13.5 s9.9 | best k=4/9 obj=23.788 | evals=1418 fullEvals=63
+[ 925s] 60mm gen25: full=0 eliteObj 23.79 s12.1 s12.0 s11.1 s11.1 | best k=4/9 obj=23.788 | evals=1442 fullEvals=63
+[ 935s] 60mm gen26: full=0 eliteObj 23.79 s10.3 s8.4 s8.3 s8.2 | best k=4/9 obj=23.788 | evals=1466 fullEvals=63
+[ 951s] 60mm gen27: full=1 eliteObj 23.79 13.34 s12.0 s11.9 s11.9 | best k=4/9 obj=23.788 | evals=1490 fullEvals=64
+[ 974s] 60mm gen28: full=3 eliteObj 23.79 14.00 12.54 8.35 s10.0 | best k=4/9 obj=23.788 | evals=1514 fullEvals=67
+[ 989s] 60mm gen29: full=1 eliteObj 23.79 12.90 s11.1 s10.4 s10.0 | best k=4/9 obj=23.788 | evals=1538 fullEvals=68
+[1009s] 60mm gen30: full=2 eliteObj 23.79 12.21 8.72 s11.8 s10.7 | best k=4/9 obj=23.788 | evals=1562 fullEvals=70
+[1021s] 60mm gen31: full=0 eliteObj 23.79 s11.5 s9.8 s9.7 s9.6 | best k=4/9 obj=23.788 | evals=1586 fullEvals=70
+[1032s] 60mm gen32: full=0 eliteObj 23.79 s12.2 s11.9 s10.6 s10.6 | best k=4/9 obj=23.788 | evals=1610 fullEvals=70
+[1046s] 60mm gen33: full=1 eliteObj 23.79 6.80 s12.1 s10.9 s10.3 | best k=4/9 obj=23.788 | evals=1634 fullEvals=71
+[1058s] 60mm gen34: full=0 eliteObj 23.79 s13.9 s11.0 s10.4 s9.8 | best k=4/9 obj=23.788 | evals=1658 fullEvals=71
+[1076s] 60mm gen35: full=2 eliteObj 23.79 8.59 7.83 s12.4 s10.2 | best k=4/9 obj=23.788 | evals=1682 fullEvals=73
+[1087s] 60mm gen36: full=0 eliteObj 23.79 s13.8 s12.1 s11.9 s11.6 | best k=4/9 obj=23.788 | evals=1706 fullEvals=73
+[1103s] 60mm gen37: full=1 eliteObj 23.79 18.70 s13.0 s12.0 s10.6 | best k=4/9 obj=23.788 | evals=1730 fullEvals=74
+[1114s] 60mm gen38: full=0 eliteObj 23.79 s13.4 s13.0 s11.3 s10.6 | best k=4/9 obj=23.788 | evals=1754 fullEvals=74
+[1129s] 60mm gen39: full=1 eliteObj 23.79 7.90 s13.9 s12.0 s11.2 | best k=4/9 obj=23.788 | evals=1778 fullEvals=75
+[1139s] 60mm gen40: full=0 eliteObj 23.79 s10.5 s10.2 s9.7 s9.4 | best k=4/9 obj=23.788 | evals=1802 fullEvals=75
+[1141s] 60mm gen41: full=0 eliteObj 23.79 s8.7 s7.6 s6.9 | best k=4/9 obj=23.788 | evals=1805 fullEvals=75
+[1145s] 50mm warm-start: k=1/9 obj=9.588 meanR=5.588 | rise[-10:1/3 +0:0/3 +10:0/3] plant[d0.120/f1.0:0/3 d0.130/f0.7:0/3 d0.125/f1.3:1/3]
+[1157s] 50mm gen1: full=0 eliteObj 9.59 s13.5 s10.7 s8.6 s8.2 | best k=1/9 obj=9.588 | evals=1830 fullEvals=76
+[1173s] 50mm gen2: full=1 eliteObj 9.59 8.67 s15.1 s10.0 s9.6 | best k=1/9 obj=9.588 | evals=1854 fullEvals=77
+[1193s] 50mm gen3: full=2 eliteObj 9.59 8.79 8.22 s11.9 s10.8 | best k=1/9 obj=9.588 | evals=1878 fullEvals=79
+[1205s] 50mm gen4: full=0 eliteObj 9.59 s15.5 s12.2 s11.4 s11.0 | best k=1/9 obj=9.588 | evals=1902 fullEvals=79
+[1216s] 50mm gen5: full=0 eliteObj 9.59 s11.3 s10.3 s9.5 s7.9 | best k=1/9 obj=9.588 | evals=1926 fullEvals=79
+[1232s] 50mm gen6: full=1 eliteObj 9.59 8.90 s14.6 s13.7 s13.2 | best k=1/9 obj=9.588 | evals=1950 fullEvals=80
+[1244s] 50mm gen7: full=0 eliteObj 9.59 s13.5 s12.8 s12.1 s11.6 | best k=1/9 obj=9.588 | evals=1974 fullEvals=80
+[1259s] 50mm gen8: full=1 eliteObj 9.59 6.74 s13.1 s12.2 s11.8 | best k=1/9 obj=9.588 | evals=1998 fullEvals=81
+[1270s] 50mm gen9: full=0 eliteObj 9.59 s15.3 s11.7 s9.9 s9.7 | best k=1/9 obj=9.588 | evals=2022 fullEvals=81
+[1281s] 50mm gen10: full=0 eliteObj 9.59 s16.1 s16.0 s15.9 s13.8 | best k=1/9 obj=9.588 | evals=2046 fullEvals=81
+[1297s] 50mm gen11: full=1 eliteObj 9.59 5.33 s16.1 s11.1 s11.0 | best k=1/9 obj=9.588 | evals=2070 fullEvals=82
+[1318s] 50mm gen12: full=2 eliteObj 9.59 8.36 7.04 s16.7 s15.9 | best k=1/9 obj=9.588 | evals=2094 fullEvals=84
+[1335s] 50mm gen13 IMPROVE k=1/9 obj=12.661 meanR=8.661 | rise[-10:1/3 +0:0/3 +10:0/3] plant[d0.120/f1.0:1/3 d0.130/f0.7:0/3 d0.125/f1.3:0/3]
+[1351s] 50mm gen13: full=5 eliteObj 12.66 7.50 5.63 5.17 5.12 | best k=1/9 obj=12.661 | evals=2118 fullEvals=89
+[1380s] 50mm gen14: full=4 eliteObj 12.66 6.83 6.47 6.10 5.16 | best k=1/9 obj=12.661 | evals=2142 fullEvals=93
+[1389s] 50mm gen15 IMPROVE k=2/9 obj=17.021 meanR=9.021 | rise[-10:2/3 +0:0/3 +10:0/3] plant[d0.120/f1.0:1/3 d0.130/f0.7:0/3 d0.125/f1.3:1/3]
+[1433s] 50mm gen15: full=9 eliteObj 17.02 12.53 12.28 7.62 7.16 | best k=2/9 obj=17.021 | evals=2166 fullEvals=102
+[1483s] 50mm gen16: full=8 eliteObj 17.02 8.15 8.08 7.94 7.70 | best k=2/9 obj=17.021 | evals=2190 fullEvals=110
+[1546s] 50mm gen17: full=11 eliteObj 17.02 12.26 11.84 11.41 10.80 | best k=2/9 obj=17.021 | evals=2210 fullEvals=121
+[1551s] 70mm warm-start: k=2/9 obj=13.478 meanR=5.478 | rise[-10:1/3 +0:1/3 +10:0/3] plant[d0.120/f1.0:1/3 d0.130/f0.7:0/3 d0.125/f1.3:1/3]
+[1565s] 70mm gen1: full=0 eliteObj 13.48 s8.3 s8.3 s7.9 s7.4 | best k=2/9 obj=13.478 | evals=2235 fullEvals=122
+[1580s] 70mm gen2: full=0 eliteObj 13.48 s12.0 s9.9 s9.2 s7.6 | best k=2/9 obj=13.478 | evals=2259 fullEvals=122
+[1597s] 70mm gen3: full=0 eliteObj 13.48 s8.7 s8.4 s8.2 s8.2 | best k=2/9 obj=13.478 | evals=2283 fullEvals=122
+[1615s] 70mm gen4: full=0 eliteObj 13.48 s10.9 s7.7 s7.6 s7.6 | best k=2/9 obj=13.478 | evals=2307 fullEvals=122
+[1637s] 70mm gen5: full=0 eliteObj 13.48 s8.5 s8.2 s8.0 s7.8 | best k=2/9 obj=13.478 | evals=2331 fullEvals=122
+[1661s] 70mm gen6: full=0 eliteObj 13.48 s11.4 s8.2 s7.7 s7.6 | best k=2/9 obj=13.478 | evals=2355 fullEvals=122
+[1678s] 70mm gen7: full=0 eliteObj 13.48 s8.5 s7.8 s7.6 s7.5 | best k=2/9 obj=13.478 | evals=2379 fullEvals=122
+[1698s] 70mm gen8: full=0 eliteObj 13.48 s8.1 s7.8 s7.8 s7.6 | best k=2/9 obj=13.478 | evals=2403 fullEvals=122
+[1717s] 70mm gen9: full=0 eliteObj 13.48 s10.1 s7.7 s7.6 s7.6 | best k=2/9 obj=13.478 | evals=2427 fullEvals=122
+[1736s] 70mm gen10: full=0 eliteObj 13.48 s8.2 s8.0 s7.8 s7.5 | best k=2/9 obj=13.478 | evals=2451 fullEvals=122
+[1753s] 70mm gen11: full=0 eliteObj 13.48 s11.3 s11.3 s8.7 s7.7 | best k=2/9 obj=13.478 | evals=2475 fullEvals=122
+[1764s] 70mm gen12: full=0 eliteObj 13.48 s8.9 s8.5 s8.3 s7.9 | best k=2/9 obj=13.478 | evals=2499 fullEvals=122
+[1781s] 70mm gen13: full=0 eliteObj 13.48 s10.3 s9.7 s9.1 s7.8 | best k=2/9 obj=13.478 | evals=2523 fullEvals=122
+[1797s] 70mm gen14: full=0 eliteObj 13.48 s8.8 s8.0 s7.9 s7.7 | best k=2/9 obj=13.478 | evals=2547 fullEvals=122
+[1823s] 70mm gen15: full=1 eliteObj 13.48 8.92 s8.9 s8.2 s7.8 | best k=2/9 obj=13.478 | evals=2571 fullEvals=123
+[1845s] 70mm gen16: full=0 eliteObj 13.48 s9.8 s8.4 s8.3 s8.3 | best k=2/9 obj=13.478 | evals=2595 fullEvals=123
+[1858s] 70mm gen17: full=0 eliteObj 13.48 s9.2 s9.0 s8.6 s8.5 | best k=2/9 obj=13.478 | evals=2619 fullEvals=123
+[1875s] 70mm gen18: full=0 eliteObj 13.48 s9.8 s7.3 s6.5 s6.4 | best k=2/9 obj=13.478 | evals=2643 fullEvals=123
+[1892s] 70mm gen19: full=0 eliteObj 13.48 s11.1 s9.6 s8.3 s7.5 | best k=2/9 obj=13.478 | evals=2667 fullEvals=123
+[1911s] 70mm gen20: full=0 eliteObj 13.48 s9.3 s9.2 s8.3 s8.2 | best k=2/9 obj=13.478 | evals=2691 fullEvals=123
+[1929s] 70mm gen21: full=0 eliteObj 13.48 s8.0 s7.8 s7.7 s7.6 | best k=2/9 obj=13.478 | evals=2715 fullEvals=123
+[1948s] 70mm gen22: full=0 eliteObj 13.48 s8.2 s7.8 s7.7 s7.6 | best k=2/9 obj=13.478 | evals=2734 fullEvals=123
+[1957s] 80mm warm-start: k=1/9 obj=8.919 meanR=4.919 | rise[-10:1/3 +0:0/3 +10:0/3] plant[d0.120/f1.0:0/3 d0.130/f0.7:0/3 d0.125/f1.3:1/3]
+[1977s] 80mm gen1: full=0 eliteObj 8.92 s8.2 s7.8 s7.6 s7.5 | best k=1/9 obj=8.919 | evals=2759 fullEvals=124
+[1996s] 80mm gen2: full=0 eliteObj 8.92 s8.1 s7.5 s7.5 s7.4 | best k=1/9 obj=8.919 | evals=2783 fullEvals=124
+[2013s] 80mm gen3: full=0 eliteObj 8.92 s7.8 s7.6 s7.5 s7.4 | best k=1/9 obj=8.919 | evals=2807 fullEvals=124
+[2028s] 80mm gen4: full=0 eliteObj 8.92 s8.3 s7.4 s7.4 s7.4 | best k=1/9 obj=8.919 | evals=2831 fullEvals=124
+[2051s] 80mm gen5: full=0 eliteObj 8.92 s7.4 s6.9 s6.8 s6.8 | best k=1/9 obj=8.919 | evals=2855 fullEvals=124
+[2066s] 80mm gen6: full=0 eliteObj 8.92 s9.0 s7.7 s7.5 s7.5 | best k=1/9 obj=8.919 | evals=2879 fullEvals=124
+[2081s] 80mm gen7: full=0 eliteObj 8.92 s7.6 s7.3 s6.6 s6.5 | best k=1/9 obj=8.919 | evals=2903 fullEvals=124
+[2092s] 80mm gen8: full=0 eliteObj 8.92 s7.6 s7.2 s7.2 s7.1 | best k=1/9 obj=8.919 | evals=2927 fullEvals=124
+[2103s] 80mm gen9: full=0 eliteObj 8.92 s7.5 s7.5 s7.1 s7.0 | best k=1/9 obj=8.919 | evals=2951 fullEvals=124
+[2117s] 80mm gen10: full=0 eliteObj 8.92 s7.7 s7.5 s7.2 s7.2 | best k=1/9 obj=8.919 | evals=2975 fullEvals=124
+[2133s] 80mm gen11: full=0 eliteObj 8.92 s9.0 s8.5 s7.4 s7.0 | best k=1/9 obj=8.919 | evals=2999 fullEvals=124
+[2157s] 80mm gen12: full=0 eliteObj 8.92 s10.9 s7.6 s7.3 s7.2 | best k=1/9 obj=8.919 | evals=3023 fullEvals=124
+[2177s] 80mm gen13: full=0 eliteObj 8.92 s7.9 s7.9 s7.4 s7.1 | best k=1/9 obj=8.919 | evals=3047 fullEvals=124
+[2196s] 80mm gen14: full=0 eliteObj 8.92 s8.5 s8.4 s7.8 s7.6 | best k=1/9 obj=8.919 | evals=3071 fullEvals=124
+[2208s] 80mm gen15: full=0 eliteObj 8.92 s10.7 s7.4 s7.2 s6.9 | best k=1/9 obj=8.919 | evals=3095 fullEvals=124
+[2219s] 80mm gen16: full=0 eliteObj 8.92 s10.1 s7.6 s7.5 s7.3 | best k=1/9 obj=8.919 | evals=3119 fullEvals=124
+[2230s] 80mm gen17: full=0 eliteObj 8.92 s7.8 s7.3 s7.3 s7.1 | best k=1/9 obj=8.919 | evals=3143 fullEvals=124
+[2241s] 80mm gen18: full=0 eliteObj 8.92 s7.0 s5.9 s5.3 s5.1 | best k=1/9 obj=8.919 | evals=3167 fullEvals=124
+[2251s] 80mm gen19: full=0 eliteObj 8.92 s10.0 s9.9 s7.5 s7.4 | best k=1/9 obj=8.919 | evals=3191 fullEvals=124
+[2263s] 80mm gen20: full=0 eliteObj 8.92 s7.9 s7.9 s7.0 s6.7 | best k=1/9 obj=8.919 | evals=3215 fullEvals=124
+[2274s] 80mm gen21: full=0 eliteObj 8.92 s7.7 s7.6 s7.6 s7.5 | best k=1/9 obj=8.919 | evals=3239 fullEvals=124
+[2285s] 80mm gen22: full=0 eliteObj 8.92 s10.0 s8.3 s7.3 s7.2 | best k=1/9 obj=8.919 | evals=3263 fullEvals=124
+[2295s] 80mm gen23: full=0 eliteObj 8.92 s7.7 s7.6 s6.9 s6.8 | best k=1/9 obj=8.919 | evals=3287 fullEvals=124
+[2305s] 80mm gen24: full=0 eliteObj 8.92 s7.8 s7.8 s7.6 s7.6 | best k=1/9 obj=8.919 | evals=3311 fullEvals=124
+[2316s] 80mm gen25: full=0 eliteObj 8.92 s7.3 s7.3 s7.3 s7.2 | best k=1/9 obj=8.919 | evals=3335 fullEvals=124
+[2326s] 80mm gen26: full=0 eliteObj 8.92 s7.9 s7.6 s7.1 s7.1 | best k=1/9 obj=8.919 | evals=3359 fullEvals=124
+[2337s] 80mm gen27: full=0 eliteObj 8.92 s9.2 s8.1 s7.3 s7.2 | best k=1/9 obj=8.919 | evals=3383 fullEvals=124
+[2349s] 80mm gen28: full=0 eliteObj 8.92 s8.4 s8.2 s7.5 s7.0 | best k=1/9 obj=8.919 | evals=3407 fullEvals=124
+[2350s] 80mm gen29: full=0 eliteObj 8.92 s7.3 s7.0 s6.7 s2.5 | best k=1/9 obj=8.919 | evals=3411 fullEvals=124
+[2350s] DONE. evals=3411 (full 9-cell 124) wall=2350s
+[2350s]   40 mm: cleared 2 of 9, objective 15.4718, rise[-10:1/3 +0:1/3 +10:0/3] plant[d0.120/f1.0:1/3 d0.130/f0.7:0/3 d0.125/f1.3:1/3]
+[2350s]   60 mm: cleared 4 of 9, objective 23.7882, rise[-10:2/3 +0:1/3 +10:1/3] plant[d0.120/f1.0:1/3 d0.130/f0.7:1/3 d0.125/f1.3:2/3]
+[2350s]   50 mm: cleared 2 of 9, objective 17.0209, rise[-10:2/3 +0:0/3 +10:0/3] plant[d0.120/f1.0:1/3 d0.130/f0.7:0/3 d0.125/f1.3:1/3]
+[2350s]   70 mm: cleared 2 of 9, objective 13.4779, rise[-10:1/3 +0:1/3 +10:0/3] plant[d0.120/f1.0:1/3 d0.130/f0.7:0/3 d0.125/f1.3:1/3]
+[2350s]   80 mm: cleared 1 of 9, objective 8.9192, rise[-10:1/3 +0:0/3 +10:0/3] plant[d0.120/f1.0:0/3 d0.130/f0.7:0/3 d0.125/f1.3:1/3]

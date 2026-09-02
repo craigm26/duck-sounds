@@ -1,0 +1,17 @@
+=== FAMILY C refinement @120 mm, seed 16840, budget 660 s ===
+start shaped2 14.29 8.51 6.35 4.69 3.05 1.07 1.04 0.16
+[10s] incumbent k=0/9 obj=3.728 up=0/9 fotFinal=0.67 above=-0.7mm
+[356s] it=387 shaped2=14.49 k=0/9 obj=3.835 ADOPT up=0/9 fotFinal=0.67 fotMax=1 above=-1.1mm peakZ=159.6 bothNear=160mm seq=FHPRKSE
+refinement done: 726 iterations, 2220 episodes
+SAVED ../climb/best_r3_cornerclimb2_120mm.json re-scored from the published file: k=0/9 obj=3.835 up=0/9 fotFinal=0.67
+   rise=110 drop=0.12 f=1 honest=false rew=5.158 x=36.3 above=33.6 up=false fot=1 fotMax=1 peakZ=153.5 head=0.083 riser=0.228 wall=0
+   rise=110 drop=0.13 f=0.7 honest=false rew=5.276 x=45.4 above=33.1 up=false fot=1 fotMax=1 peakZ=158.9 head=0.05 riser=0.328 wall=0.111
+   rise=110 drop=0.125 f=1.3 honest=false rew=1.916 x=47.7 above=-21.5 up=false fot=0 fotMax=0 peakZ=116.2 head=0 riser=0.328 wall=0
+   rise=120 drop=0.12 f=1 honest=false rew=5.155 x=32.9 above=34.7 up=false fot=1 fotMax=1 peakZ=157.8 head=0.067 riser=0.194 wall=0.006
+   rise=120 drop=0.13 f=0.7 honest=false rew=5.239 x=34.1 above=36.3 up=false fot=1 fotMax=1 peakZ=159.6 head=0.028 riser=0.311 wall=0.111
+   rise=120 drop=0.125 f=1.3 honest=false rew=2.021 x=54.7 above=-30.6 up=false fot=0 fotMax=1 peakZ=116.2 head=0 riser=0.322 wall=0
+   rise=130 drop=0.12 f=1 honest=false rew=4.382 x=78.8 above=-10.8 up=false fot=1 fotMax=1 peakZ=138 head=0 riser=0.222 wall=0
+   rise=130 drop=0.13 f=0.7 honest=false rew=1.347 x=9.8 above=-44.7 up=false fot=0 fotMax=0 peakZ=116.5 head=0 riser=0.35 wall=0.094
+   rise=130 drop=0.125 f=1.3 honest=false rew=4.02 x=54.7 above=-39.9 up=false fot=1 fotMax=1 peakZ=116.2 head=0 riser=0.15 wall=0
+ladder: 40:-(above 70.3 fot 0 up false) 60:SIM(above 65.1 fot 1 up false) 80:SIM(above 67.7 fot 1 up false) 100:SIM(above 52.4 fot 1 up false) 110:SIM(above 33.6 fot 1 up false) 120:SIM(above 36.3 fot 1 up false) 130:-(above -10.8 fot 1 up false) 140:-(above -48.2 fot 1 up false) 160:-(above -76.1 fot 0 up false) 180:-(above -96.1 fot 0 up false)
+wrote ../climb/r3_cornerclimb2-results.json  total 672 s

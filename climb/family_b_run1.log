@@ -1,0 +1,75 @@
+family B — land the vault. budget 2340s, seed base 8919
+[5s] BASELINE r2 vault 60mm move, at 80mm @80mm: k=0/9 obj=2.365 peakGain=13.8mm head=0.253 riser=0.176 wall=0.061 fotMax=1
+[9s] BASELINE r2 vault 90mm move, at 90mm @90mm: k=0/9 obj=4.063 peakGain=8.5mm head=0.533 riser=0.21 wall=0.283 fotMax=0
+[15s] BASELINE placed-on-tread control @90mm: k=9/9 obj=48 peakGain=0mm head=0 riser=0 wall=0 fotMax=2
+[18s] BASELINE do-nothing control @90mm: k=0/9 obj=3.345 peakGain=0mm head=0 riser=0 wall=0 fotMax=0
+
+[18s] === CEM at 80 mm, deadline 831s ===
+[23s] 80mm gen0 IMPROVED cleared 0 of 9  obj=2.814 fit=8.021 order=both peakZ=129mm gain=12.6mm head=0.301 riser=0.319 wall=0.154 sustain=0.01 fotMax=1 fotFinal=0.11 bothNear=153.5mm up=6/9
+[28s] 80mm gen0 IMPROVED cleared 0 of 9  obj=4.071 fit=12.862 order=both peakZ=136.9mm gain=20.3mm head=0.247 riser=0.191 wall=0.319 sustain=0.103 fotMax=2 fotFinal=0.33 bothNear=134.8mm up=0/9
+[81s] 80mm gen0 done: evals=22 grids=12 gate=9.21 eliteFit=[12.9 9.2 8.9 8.6 8.0 8.0] pOrder=[0.22 0.33 0.45] bestK=0
+[95s] 80mm gen1 done: evals=44 grids=13 gate=8.73 eliteFit=[5.1 2.3 2.1 2.1 2.0 2.0] pOrder=[0.22 0.57 0.22] bestK=0
+[119s] 80mm gen2 done: evals=66 grids=16 gate=8.67 eliteFit=[9.1 9.0 8.9 2.4 2.3 2.3] pOrder=[0.45 0.45 0.10] bestK=0
+[163s] 80mm RESTART #1 (3 stale generations)
+[163s] 80mm gen3 done: evals=88 grids=22 gate=8.87 eliteFit=[11.2 8.4 8.0 7.2 6.9 6.5] pOrder=[0.45 0.33 0.22] bestK=0
+[200s] 80mm gen4 done: evals=110 grids=27 gate=8.96 eliteFit=[9.5 8.1 8.0 7.8 7.3 2.5] pOrder=[0.68 0.22 0.10] bestK=0
+[246s] 80mm gen5 done: evals=132 grids=36 gate=9.15 eliteFit=[9.8 9.3 9.2 9.1 9.1 8.9] pOrder=[0.80 0.10 0.10] bestK=0
+[264s] 80mm RESTART #2 (3 stale generations)
+[264s] 80mm gen6 done: evals=154 grids=38 gate=9.09 eliteFit=[8.6 7.2 2.7 2.7 2.6 2.6] pOrder=[0.57 0.22 0.22] bestK=0
+[289s] 80mm gen7 done: evals=176 grids=41 gate=9.01 eliteFit=[9.4 7.8 7.5 2.7 2.5 2.4] pOrder=[0.22 0.33 0.45] bestK=0
+[307s] 80mm gen8 done: evals=198 grids=43 gate=8.97 eliteFit=[8.0 8.0 2.7 2.6 2.6 2.6] pOrder=[0.22 0.22 0.57] bestK=0
+[340s] 80mm RESTART #3 (3 stale generations)
+[340s] 80mm gen9 done: evals=220 grids=48 gate=9.00 eliteFit=[9.3 9.0 9.0 8.2 6.9 2.6] pOrder=[0.22 0.33 0.45] bestK=0
+[363s] 80mm gen10 done: evals=242 grids=51 gate=8.97 eliteFit=[9.4 8.2 7.9 2.6 2.6 2.5] pOrder=[0.22 0.33 0.45] bestK=0
+[388s] 80mm gen11 done: evals=264 grids=54 gate=8.96 eliteFit=[9.0 7.2 6.4 2.6 2.6 2.2] pOrder=[0.22 0.45 0.33] bestK=0
+[402s] 80mm RESTART #4 (3 stale generations)
+[402s] 80mm gen12 done: evals=286 grids=55 gate=8.85 eliteFit=[7.3 2.5 2.3 2.2 2.2 2.2] pOrder=[0.33 0.33 0.33] bestK=0
+[429s] 80mm gen13 done: evals=308 grids=59 gate=8.85 eliteFit=[9.7 7.7 7.1 7.1 2.4 2.4] pOrder=[0.22 0.57 0.22] bestK=0
+[440s] 80mm gen14 done: evals=330 grids=59 gate=8.80 eliteFit=[2.6 2.5 2.4 2.4 2.3 2.3] pOrder=[0.22 0.45 0.33] bestK=0
+[456s] 80mm RESTART #5 (3 stale generations)
+[456s] 80mm gen15 done: evals=352 grids=60 gate=8.75 eliteFit=[8.0 2.6 2.5 2.4 2.4 2.4] pOrder=[0.22 0.57 0.22] bestK=0
+[479s] 80mm gen16 done: evals=374 grids=62 gate=8.73 eliteFit=[7.8 6.6 2.5 2.5 2.5 2.4] pOrder=[0.33 0.45 0.22] bestK=0
+[509s] 80mm gen17 done: evals=396 grids=67 gate=8.74 eliteFit=[9.3 8.9 8.7 8.6 8.0 2.2] pOrder=[0.10 0.33 0.57] bestK=0
+[532s] 80mm RESTART #6 (3 stale generations)
+[532s] 80mm gen18 done: evals=418 grids=70 gate=8.73 eliteFit=[9.6 8.7 8.5 2.6 2.5 2.4] pOrder=[0.22 0.10 0.68] bestK=0
+[556s] 80mm gen19 done: evals=440 grids=73 gate=8.73 eliteFit=[9.5 8.8 7.4 2.6 2.5 2.5] pOrder=[0.10 0.10 0.80] bestK=0
+[589s] 80mm gen20 done: evals=462 grids=78 gate=8.73 eliteFit=[9.0 8.3 8.0 7.8 7.8 2.5] pOrder=[0.10 0.22 0.68] bestK=0
+[608s] 80mm RESTART #7 (3 stale generations)
+[608s] 80mm gen21 done: evals=484 grids=80 gate=8.71 eliteFit=[7.2 6.8 2.5 2.4 2.3 2.2] pOrder=[0.22 0.22 0.57] bestK=0
+[638s] 80mm gen22 done: evals=506 grids=85 gate=8.73 eliteFit=[9.4 8.7 8.5 7.5 6.4 2.5] pOrder=[0.33 0.33 0.33] bestK=0
+[655s] 80mm gen23 done: evals=528 grids=87 gate=8.71 eliteFit=[7.8 7.4 2.6 2.6 2.5 2.5] pOrder=[0.57 0.22 0.22] bestK=0
+[670s] 80mm RESTART #8 (3 stale generations)
+[670s] 80mm gen24 done: evals=550 grids=88 gate=8.68 eliteFit=[8.6 2.5 2.5 2.4 2.3 2.2] pOrder=[0.45 0.33 0.22] bestK=0
+[707s] 80mm gen25 done: evals=572 grids=94 gate=8.71 eliteFit=[10.2 9.2 7.9 7.2 6.7 6.4] pOrder=[0.10 0.45 0.45] bestK=0
+[736s] 80mm gen26 done: evals=594 grids=98 gate=8.71 eliteFit=[9.6 8.3 8.1 6.7 2.3 2.3] pOrder=[0.10 0.33 0.57] bestK=0
+[756s] 80mm RESTART #9 (3 stale generations)
+[756s] 80mm gen27 done: evals=616 grids=100 gate=8.68 eliteFit=[8.2 7.7 2.6 2.5 2.5 2.3] pOrder=[0.22 0.22 0.57] bestK=0
+[792s] 80mm gen28 done: evals=638 grids=106 gate=8.71 eliteFit=[8.4 8.2 7.5 6.7 6.6 5.7] pOrder=[0.45 0.22 0.33] bestK=0
+[813s] 80mm gen29 done: evals=660 grids=109 gate=8.69 eliteFit=[8.5 7.4 6.8 2.6 2.3 2.3] pOrder=[0.33 0.45 0.22] bestK=0
+[826s] 80mm RESTART #10 (3 stale generations)
+[826s] 80mm gen30 done: evals=682 grids=110 gate=8.66 eliteFit=[9.5 2.5 2.5 2.5 2.3 2.3] pOrder=[0.33 0.33 0.33] bestK=0
+[832s] 80mm gen31 done: evals=687 grids=111 gate=8.66 eliteFit=[8.9 2.4 1.8 1.6 0.9] pOrder=[0.24 0.52 0.24] bestK=0
+
+[832s] === CEM at 90 mm, deadline 2310s ===
+[837s] 90mm gen0 IMPROVED cleared 0 of 9  obj=2.862 fit=10.173 order=both peakZ=134.9mm gain=18.4mm head=0.175 riser=0.272 wall=0.371 sustain=0.023 fotMax=1 fotFinal=0.22 bothNear=139.8mm up=0/9
+[902s] 90mm gen0 done: evals=709 grids=125 gate=8.16 eliteFit=[10.2 10.2 8.2 7.7 7.6 7.3] pOrder=[0.10 0.22 0.68] bestK=0
+[933s] 90mm gen1 done: evals=731 grids=130 gate=8.36 eliteFit=[8.2 8.2 8.0 7.5 5.9 2.4] pOrder=[0.10 0.10 0.80] bestK=0
+[953s] 90mm gen2 done: evals=753 grids=132 gate=8.16 eliteFit=[8.0 7.7 2.5 2.4 2.2 2.1] pOrder=[0.10 0.10 0.80] bestK=0
+[999s] 90mm RESTART #1 (3 stale generations)
+[999s] 90mm gen3 done: evals=775 grids=140 gate=8.43 eliteFit=[8.9 8.7 8.2 7.8 7.6 7.5] pOrder=[0.10 0.22 0.68] bestK=0
+[1009s] 90mm gen4 done: evals=797 grids=140 gate=8.20 eliteFit=[2.5 2.5 2.3 2.2 2.1 2.1] pOrder=[0.10 0.22 0.68] bestK=0
+[1042s] 90mm gen5 done: evals=819 grids=145 gate=8.20 eliteFit=[8.8 8.5 8.4 7.5 7.4 2.5] pOrder=[0.10 0.33 0.57] bestK=0
+[1080s] 90mm RESTART #2 (3 stale generations)
+[1080s] 90mm gen6 done: evals=841 grids=151 gate=8.36 eliteFit=[8.4 8.3 8.2 7.9 7.9 7.8] pOrder=[0.10 0.33 0.57] bestK=0
+[1112s] 90mm gen7 done: evals=863 grids=156 gate=8.39 eliteFit=[9.3 9.1 8.4 8.0 6.4 2.4] pOrder=[0.10 0.22 0.68] bestK=0
+[1130s] 90mm gen8 done: evals=885 grids=158 gate=8.26 eliteFit=[8.6 7.9 2.4 2.4 2.4 2.1] pOrder=[0.10 0.33 0.57] bestK=0
+[1160s] 90mm RESTART #3 (3 stale generations)
+[1160s] 90mm gen9 done: evals=907 grids=163 gate=8.26 eliteFit=[8.5 7.9 6.7 6.5 6.0 2.4] pOrder=[0.10 0.68 0.22] bestK=0
+[1178s] 90mm gen10 done: evals=929 grids=165 gate=8.20 eliteFit=[6.9 5.5 2.4 2.4 2.2 2.2] pOrder=[0.10 0.80 0.10] bestK=0
+[1207s] 90mm gen11 done: evals=951 grids=169 gate=8.20 eliteFit=[7.2 6.8 6.3 6.2 2.4 2.4] pOrder=[0.10 0.80 0.10] bestK=0
+[1237s] 90mm RESTART #4 (3 stale generations)
+[1237s] 90mm gen12 done: evals=973 grids=174 gate=8.24 eliteFit=[7.6 6.3 5.4 5.1 5.1 2.4] pOrder=[0.33 0.45 0.22] bestK=0
+[1259s] 90mm gen13 done: evals=995 grids=177 gate=8.20 eliteFit=[6.8 6.6 6.5 2.2 2.0 1.9] pOrder=[0.33 0.33 0.33] bestK=0
+[1278s] 90mm gen14 done: evals=1017 grids=179 gate=8.19 eliteFit=[7.5 7.0 2.4 2.2 2.2 2.2] pOrder=[0.45 0.33 0.22] bestK=0
+[1291s] 90mm RESTART #5 (3 stale generations)
+[1291s] 90mm gen15 done: evals=1039 grids=180 gate=8.16 eliteFit=[8.0 2.2 2.1 2.0 1.9 1.9] pOrder=[0.33 0.45 0.22] bestK=0

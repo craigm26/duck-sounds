@@ -1,0 +1,126 @@
+plant scene.mjb — actuator forcerange ceiling read from the model: 0.6405 N.m
+flight half-width 170.0 mm | riser face x 120.0 mm | nominal foot friction 1
+duck collidable geoms 11 (root body 21) | step geoms 14
+
+=== PHASE P — is this loop rig3? same file, same rise, nominal cell, FULL FLOAT DIGITS ===
+  best_r3_vault_40mm.json          h= 40  rig3 x=0.15256673832897624 z=0.1438750247756981 rew=11
+                                          mine x=0.15256673832897624 z=0.1438750247756981 rew=11   EXACT=true
+  best_r3_vault_50mm.json          h= 50  rig3 x=0.10435649203670454 z=0.13126962192720593 rew=10.187226198538188
+                                          mine x=0.10435649203670454 z=0.13126962192720593 rew=10.187226198538188   EXACT=true
+  best_r3_vault_60mm.json          h= 60  rig3 x=0.3342751251273466 z=0.17613474586397462 rew=12
+                                          mine x=0.3342751251273466 z=0.17613474586397462 rew=12   EXACT=true
+  best_r3_vault_70mm.json          h= 70  rig3 x=0.07315596233440862 z=0.11636938665320784 rew=5.249734662519618
+                                          mine x=0.07315596233440862 z=0.11636938665320784 rew=5.249734662519618   EXACT=true
+  best_r3_vault_80mm.json          h= 80  rig3 x=0.07102591757958462 z=0.116162638718689 rew=4.788026183428043
+                                          mine x=0.07102591757958462 z=0.116162638718689 rew=4.788026183428043   EXACT=true
+  best_r2_vault_40mm.json          h= 40  rig3 x=0.1422605779184436 z=0.15633799589438296 rew=12
+                                          mine x=0.1422605779184436 z=0.15633799589438296 rew=12   EXACT=true
+  best_r2_vault_60mm.json          h= 60  rig3 x=0.3805401176680053 z=0.17976822581803467 rew=12
+                                          mine x=0.3805401176680053 z=0.17976822581803467 rew=12   EXACT=true
+  best_r3_landvault_90mm.json      h= 90  rig3 x=0.08048745834377286 z=0.11661964099145021 rew=4.528138864270286
+                                          mine x=0.08048745834377286 z=0.11661964099145021 rew=4.528138864270286   EXACT=true
+  best_r3_cornerclimb_120mm.json   h=120  rig3 x=0.047205568756983105 z=0.1365877019727104 rew=4.6065130881004475
+                                          mine x=0.047205568756983105 z=0.1365877019727104 rew=4.6065130881004475   EXACT=true
+  ctrl_do_nothing.json             h= 60  rig3 x=0.0019814926726257733 z=0.11623081135898501 rew=4.597335499941387
+                                          mine x=0.0019814926726257733 z=0.11623081135898501 rew=4.597335499941387   EXACT=true
+  ctrl_on_tread_60mm.json          h= 60  rig3 x=0.25235392706381016 z=0.17593235458753445 rew=12
+                                          mine x=0.25235392706381016 z=0.17593235458753445 rew=12   EXACT=true
+  parityAll = true
+
+=== PHASE F — declared parameters (blend in [0.7,2.4], side in [-0.02,0.09]), spawn overrides ===
+  best_r3_vault_40mm.json            blend=  1.676 ok   side=  0.0546 ok   gap=  0.0337  approach= 0.3601  spawnOverride=false  isolate=true  steps=4
+  best_r3_vault_50mm.json            blend= 1.6068 ok   side=  0.0514 ok   gap=   0.032  approach= 0.3624  spawnOverride=false  isolate=true  steps=4
+  best_r3_vault_60mm.json            blend= 2.1572 ok   side=  0.0078 ok   gap=  0.0187  approach= 0.1663  spawnOverride=false  isolate=true  steps=4
+  best_r3_vault_70mm.json            blend= 2.1572 ok   side=  0.0078 ok   gap=  0.0187  approach= 0.1663  spawnOverride=false  isolate=true  steps=4
+  best_r3_vault_80mm.json            blend= 2.1572 ok   side=  0.0078 ok   gap=  0.0187  approach= 0.1663  spawnOverride=false  isolate=true  steps=4
+  best_r2_vault_40mm.json            blend= 1.5517 ok   side=  0.0541 ok   gap=  0.0338  approach=  0.341  spawnOverride=false  isolate=true  steps=4
+  best_r2_vault_60mm.json            blend= 2.0949 ok   side=  0.0085 ok   gap=   0.018  approach= 0.1625  spawnOverride=false  isolate=true  steps=4
+  best_r3_landvault_80mm.json        blend= 1.5517 ok   side=  0.0541 ok   gap=  0.0338  approach=  0.341  spawnOverride=false  isolate=true  steps=4
+  best_r3_landvault_90mm.json        blend= 1.1581 ok   side=   0.072 ok   gap=  0.0275  approach= 0.3331  spawnOverride=false  isolate=true  steps=4
+  best_r3_cornerclimb_120mm.json     blend=    2.4 ok   side=   -0.06 OUT  gap=  0.0212  approach=      0  spawnOverride=false  isolate=true  steps=4
+  best_r3_cornerclimb2_120mm.json    blend= 2.3629 ok   side= -0.0558 OUT  gap=  0.0213  approach=      0  spawnOverride=false  isolate=true  steps=4
+  best_r3_cornerclimb_180mm.json     blend=  1.418 ok   side=  0.0054 ok   gap= -0.0139  approach=      0  spawnOverride=false  isolate=true  steps=4
+
+=== PHASE G — the 9-cell grid re-derived from the SAVED file, for every k>=1 claim ===
+  best_r3_vault_40mm.json        @40mm  claimed k=2/9 obj=15.4718   REPRODUCED k=2/9 obj=15.4718  match=true  dObj=0
+      PASS  rise=30 drop=0.12 fric=x1  x=213mm above=115.9mm dy=-2mm fot=2 maxDY=83.1mm maxTq=0.6405 penStep=-7mm rew=12
+      PASS  rise=40 drop=0.125 fric=x1.3  x=297.6mm above=115.9mm dy=73.7mm fot=2 maxDY=74.2mm maxTq=0.6405 penStep=-6.4mm rew=12
+  best_r3_vault_50mm.json        @50mm  claimed k=2/9 obj=17.0209   REPRODUCED k=2/9 obj=17.0209  match=true  dObj=0
+      PASS  rise=40 drop=0.12 fric=x1  x=206mm above=116.3mm dy=-58.7mm fot=2 maxDY=62.2mm maxTq=0.6405 penStep=-7.4mm rew=12
+      PASS  rise=40 drop=0.125 fric=x1.3  x=227.6mm above=115.8mm dy=-16.4mm fot=2 maxDY=60.7mm maxTq=0.6405 penStep=-5.4mm rew=12
+  best_r3_vault_60mm.json        @60mm  claimed k=4/9 obj=23.7882   REPRODUCED k=4/9 obj=23.7882  match=true  dObj=0
+      PASS  rise=50 drop=0.13 fric=x0.7  x=328.5mm above=116.1mm dy=-59.5mm fot=2 maxDY=66.3mm maxTq=0.6405 penStep=-8.5mm rew=12
+      PASS  rise=50 drop=0.125 fric=x1.3  x=213mm above=115.4mm dy=33.3mm fot=2 maxDY=47.2mm maxTq=0.6405 penStep=-9.3mm rew=12
+      PASS  rise=60 drop=0.12 fric=x1  x=334.3mm above=116.1mm dy=-27.6mm fot=2 maxDY=75.6mm maxTq=0.6405 penStep=-8.6mm rew=12
+      PASS  rise=70 drop=0.125 fric=x1.3  x=255.5mm above=115.6mm dy=15.1mm fot=2 maxDY=52.5mm maxTq=0.6405 penStep=-8.9mm rew=12
+  best_r3_vault_70mm.json        @70mm  claimed k=2/9 obj=13.4779   REPRODUCED k=2/9 obj=13.4779  match=true  dObj=0
+      PASS  rise=60 drop=0.12 fric=x1  x=177.2mm above=116.1mm dy=0.4mm fot=2 maxDY=44.8mm maxTq=0.6405 penStep=-8.6mm rew=12
+      PASS  rise=70 drop=0.125 fric=x1.3  x=255.4mm above=115.6mm dy=15.1mm fot=2 maxDY=52.5mm maxTq=0.6405 penStep=-8.9mm rew=12
+  best_r3_vault_80mm.json        @80mm  claimed k=1/9 obj=8.9192   REPRODUCED k=1/9 obj=8.9192  match=true  dObj=0
+      PASS  rise=70 drop=0.125 fric=x1.3  x=255.4mm above=115.6mm dy=15.1mm fot=2 maxDY=52.5mm maxTq=0.6405 penStep=-8.9mm rew=12
+  best_r2_vault_40mm.json        @40mm  claimed k=1/9 obj=9.6465   REPRODUCED k=1/9 obj=9.6465  match=true  dObj=0
+      PASS  rise=40 drop=0.12 fric=x1  x=142.3mm above=116.3mm dy=68.3mm fot=2 maxDY=82.7mm maxTq=0.6405 penStep=-6.8mm rew=12
+  best_r2_vault_60mm.json        @60mm  claimed k=2/9 obj=11.4366   REPRODUCED k=2/9 obj=11.4367  match=true  dObj=0.0001
+      PASS  rise=60 drop=0.12 fric=x1  x=380.5mm above=119.8mm dy=-74.9mm fot=2 maxDY=91.9mm maxTq=0.6405 penStep=-9mm rew=12
+      PASS  rise=60 drop=0.125 fric=x1.3  x=177.9mm above=115.6mm dy=-1mm fot=2 maxDY=30.5mm maxTq=0.6405 penStep=-8.7mm rew=12
+
+=== PHASE Z — the two families that claimed k=0, confirmed from file ===
+  best_r3_landvault_80mm.json        @80mm  k=0/9 obj=4.0706 meanRew=4.0706
+  best_r3_landvault_90mm.json        @90mm  k=0/9 obj=4.4729 meanRew=4.4729
+  best_r3_cornerclimb_120mm.json     @120mm  k=0/9 obj=3.7284 meanRew=3.7284
+  best_r3_cornerclimb2_120mm.json    @120mm  k=0/9 obj=3.835 meanRew=3.835
+  best_r3_cornerclimb_180mm.json     @180mm  k=0/9 obj=2.2376 meanRew=2.2376
+
+=== PHASE X — the extended plant (friction x0.5 / x1.5, drop 0.11 / 0.14) x the same three rises ===
+  best_r3_vault_40mm.json        @40mm  extended k=1/12  d0.12/f0.5:0/3  d0.12/f1.5:0/3  d0.11/f1:0/3  d0.14/f1:1/3   ==> combined 3 of 21
+      PASS  rise=40 drop=0.14 fric=x1  x=249.6mm above=114.1mm fot=2 maxDY=80.3mm
+  best_r3_vault_50mm.json        @50mm  extended k=0/12  d0.12/f0.5:0/3  d0.12/f1.5:0/3  d0.11/f1:0/3  d0.14/f1:0/3   ==> combined 2 of 21
+  best_r3_vault_60mm.json        @60mm  extended k=1/12  d0.12/f0.5:0/3  d0.12/f1.5:1/3  d0.11/f1:0/3  d0.14/f1:0/3   ==> combined 5 of 21
+      PASS  rise=60 drop=0.12 fric=x1.5  x=328.9mm above=114.4mm fot=2 maxDY=53.6mm
+  best_r3_vault_70mm.json        @70mm  extended k=1/12  d0.12/f0.5:0/3  d0.12/f1.5:1/3  d0.11/f1:0/3  d0.14/f1:0/3   ==> combined 3 of 21
+      PASS  rise=60 drop=0.12 fric=x1.5  x=333.9mm above=113.4mm fot=2 maxDY=54.7mm
+  best_r3_vault_80mm.json        @80mm  extended k=0/12  d0.12/f0.5:0/3  d0.12/f1.5:0/3  d0.11/f1:0/3  d0.14/f1:0/3   ==> combined 1 of 21
+  best_r2_vault_40mm.json        @40mm  extended k=0/12  d0.12/f0.5:0/3  d0.12/f1.5:0/3  d0.11/f1:0/3  d0.14/f1:0/3   ==> combined 1 of 21
+  best_r2_vault_60mm.json        @60mm  extended k=1/12  d0.12/f0.5:0/3  d0.12/f1.5:0/3  d0.11/f1:1/3  d0.14/f1:0/3   ==> combined 3 of 21
+      PASS  rise=60 drop=0.11 fric=x1  x=161.3mm above=116mm fot=2 maxDY=48.9mm
+
+=== PHASE C — controls on the same plant: do-nothing must fail 9/9, a placed duck must pass 9/9 ===
+  rise  40 mm   do-nothing k=0/9 (must be 0)   placed-duck (ctrl_on_tread_40mm.json) k=9/9 (must be 9)   placed above=115.9mm fot=2.00
+  rise  50 mm   do-nothing k=0/9 (must be 0)   placed-duck (audit_r3_ctrl_on_tread_50mm.json) k=9/9 (must be 9)   placed above=115.9mm fot=2.00
+  rise  60 mm   do-nothing k=0/9 (must be 0)   placed-duck (ctrl_on_tread_60mm.json) k=9/9 (must be 9)   placed above=115.9mm fot=2.00
+  rise  70 mm   do-nothing k=0/9 (must be 0)   placed-duck (audit_r3_ctrl_on_tread_70mm.json) k=9/9 (must be 9)   placed above=115.9mm fot=2.00
+  rise  80 mm   do-nothing k=0/9 (must be 0)   placed-duck (audit_r3_ctrl_on_tread_80mm.json) k=9/9 (must be 9)   placed above=115.9mm fot=2.00
+
+=== PHASE H — hygiene over every cell scored above ===
+  cells scored: 282
+  max |actuator_force| over every cell : 0.6405 N.m  (plant ceiling 0.6405) -> WITHIN
+  max |trunk y - STAIR_Y| over every cell : 340.2 mm  (gate 170.0 mm) -> SOME CELL LEFT THE FLIGHT
+  most-negative duck<->step mj_geomDistance : -14.10 mm
+  max tread drift in x : 0.000 mm ; min step0<->step1 gap : -60.0 mm
+  HONEST passes anywhere in this audit: 63
+    that left the 340 mm flight mid-episode : 0
+    that exceeded the actuator ceiling      : 0
+    with >2 mm of duck-into-step penetration: 18
+    that did not start on the floor         : 0
+  widest lateral excursion anywhere: 340.2 mm  (best_r2_vault_60mm.json rise=50 drop=0.13 f=x0.7, honest=false)
+  NOTE: rig3.criteria() tests |dy| ONLY at the scored instant; rig3.reward() applies the whole-episode gate.
+        So an 'honest' pass can in principle have left the flight mid-episode. In this audit 0 did.
+  soft-contact reference — a duck PLACED on the tread: min duck<->step distance -1.30 mm over the episode, -1.20 mm at the scored instant
+  the vault's clears: whole-episode min -9.40 mm, at the scored instant -2.20 mm
+  of the 63 honest passes, still honest after 100 MORE ticks of the stand policy: 63
+  of the 18 vault clears, still honest after 100 more ticks: 18  | honest already at the track's end (before the 50-tick tail): 14
+  distinct MOVES among the 7 claimed candidates: 5
+      identical vector 4b9110c448ec: best_r3_vault_60mm.json, best_r3_vault_70mm.json, best_r3_vault_80mm.json
+  rises cleared by a SEARCHED move anywhere in this audit: 30, 40, 50, 60, 70 mm
+  tallest: 70 mm, cleared only under plant(s) drop 0.125/fric x1.3
+
+=== VERDICT ===
+  best_r3_vault_40mm.json        @ 40mm  claimed 2/9 -> reproduced 2/9 (MATCH)  extended 1/12  combined 3/21
+  best_r3_vault_50mm.json        @ 50mm  claimed 2/9 -> reproduced 2/9 (MATCH)  extended 0/12  combined 2/21
+  best_r3_vault_60mm.json        @ 60mm  claimed 4/9 -> reproduced 4/9 (MATCH)  extended 1/12  combined 5/21
+  best_r3_vault_70mm.json        @ 70mm  claimed 2/9 -> reproduced 2/9 (MATCH)  extended 1/12  combined 3/21
+  best_r3_vault_80mm.json        @ 80mm  claimed 1/9 -> reproduced 1/9 (MATCH)  extended 0/12  combined 1/21
+  best_r2_vault_40mm.json        @ 40mm  claimed 1/9 -> reproduced 1/9 (MATCH)  extended 0/12  combined 1/21
+  best_r2_vault_60mm.json        @ 60mm  claimed 2/9 -> reproduced 2/9 (MATCH)  extended 1/12  combined 3/21
+  best single move on the 9-cell grid: best_r3_vault_60mm.json at 60 mm, k=4/9
+  moves reaching k>=7 of 9 (the round-3 bar for "cleared"): 0

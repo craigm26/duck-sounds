@@ -1,0 +1,50 @@
+family B — land the vault. budget 1140s, seed base 8919
+[8s] BASELINE r2 vault 60mm move, at 80mm @80mm: k=0/9 obj=2.365 peakGain=13.8mm head=0.253 riser=0.176 wall=0.061 fotMax=1
+[14s] BASELINE r2 vault 90mm move, at 90mm @90mm: k=0/9 obj=4.063 peakGain=8.5mm head=0.533 riser=0.21 wall=0.283 fotMax=0
+[25s] BASELINE placed-on-tread control @90mm: k=9/9 obj=48 peakGain=0mm head=0 riser=0 wall=0 fotMax=2
+[29s] BASELINE do-nothing control @90mm: k=0/9 obj=3.345 peakGain=0mm head=0 riser=0 wall=0 fotMax=0
+carrying 2 run-1 bests into generation 0
+
+[29s] === CEM at 80 mm, deadline 362s ===
+[79s] 80mm gen0 IMPROVED cleared 0 of 9  obj=4.071 fit=12.862 order=both peakZ=136.9mm gain=20.3mm head=0.247 riser=0.191 wall=0.319 sustain=0.103 fotMax=2 fotFinal=0.33 bothNear=134.8mm up=0/9
+[79s] 80mm gen0 done: evals=24 grids=4 bestScreen=11.66 eliteFit=[12.9 12.9 12.9 9.4 9.2 9.2] pOrder=[0.22 0.33 0.45] bestK=0
+[123s] 80mm gen1 done: evals=48 grids=8 bestScreen=11.66 eliteFit=[8.3 8.2 7.2 6.9 6.5 6.5] pOrder=[0.22 0.33 0.45] bestK=0
+[166s] 80mm gen2 done: evals=72 grids=12 bestScreen=11.66 eliteFit=[7.9 7.4 7.2 7.2 7.1 6.9] pOrder=[0.57 0.22 0.22] bestK=0
+[215s] 80mm RESTART #1 (3 stale generations)
+[215s] 80mm gen3 done: evals=96 grids=16 bestScreen=18.17 eliteFit=[11.2 8.8 8.0 7.4 7.3 6.9] pOrder=[0.45 0.22 0.33] bestK=0
+[263s] 80mm gen4 done: evals=120 grids=20 bestScreen=18.17 eliteFit=[9.1 8.7 8.5 8.3 8.0 7.8] pOrder=[0.57 0.22 0.22] bestK=0
+[301s] 80mm gen5 done: evals=144 grids=24 bestScreen=18.17 eliteFit=[9.1 8.8 8.2 8.2 8.1 8.1] pOrder=[0.45 0.22 0.33] bestK=0
+[340s] 80mm RESTART #2 (3 stale generations)
+[340s] 80mm gen6 done: evals=168 grids=28 bestScreen=18.17 eliteFit=[9.5 8.4 8.2 8.0 7.4 7.1] pOrder=[0.22 0.33 0.45] bestK=0
+[363s] 80mm gen7 done: evals=191 grids=28 bestScreen=18.17 eliteFit=[10.1 8.5 8.3 8.1 7.8 7.2] pOrder=[0.33 0.22 0.45] bestK=0
+
+[363s] === CEM at 90 mm, deadline 1110s ===
+[408s] 90mm gen0 IMPROVED cleared 0 of 9  obj=2.282 fit=7.555 order=both peakZ=128.5mm gain=12.1mm head=0.204 riser=0.38 wall=0.19 sustain=0.01 fotMax=1 fotFinal=0.11 bothNear=148.8mm up=3/9
+[408s] 90mm gen0 IMPROVED cleared 0 of 9  obj=3.26 fit=8.277 order=beak peakZ=123.8mm gain=7.4mm head=0.256 riser=0.413 wall=0.203 sustain=0 fotMax=1 fotFinal=0 bothNear=161.7mm up=6/9
+[408s] 90mm gen0 done: evals=215 grids=32 bestScreen=18.17 eliteFit=[8.7 8.3 8.2 8.1 7.6 7.4] pOrder=[0.57 0.22 0.22] bestK=0
+[450s] 90mm gen1 IMPROVED cleared 0 of 9  obj=3.728 fit=8.319 order=beak peakZ=122.4mm gain=6mm head=0.322 riser=0.294 wall=0.151 sustain=0 fotMax=1 fotFinal=0.11 bothNear=171.3mm up=7/9
+[450s] 90mm gen1 done: evals=239 grids=36 bestScreen=18.17 eliteFit=[8.3 8.0 7.5 7.4 7.0 7.0] pOrder=[0.57 0.22 0.22] bestK=0
+[494s] 90mm gen2 done: evals=263 grids=40 bestScreen=18.17 eliteFit=[8.1 7.9 7.7 7.5 7.4 7.2] pOrder=[0.45 0.22 0.33] bestK=0
+[537s] 90mm gen3 IMPROVED cleared 0 of 9  obj=2.59 fit=8.649 order=beak peakZ=134.5mm gain=18.2mm head=0.06 riser=0.096 wall=0.235 sustain=0.015 fotMax=1 fotFinal=0.22 bothNear=153.1mm up=3/9
+[537s] 90mm gen3 done: evals=287 grids=44 bestScreen=18.17 eliteFit=[8.6 7.6 6.9 6.8 6.6 6.2] pOrder=[0.57 0.10 0.33] bestK=0
+[582s] 90mm gen4 IMPROVED cleared 0 of 9  obj=4.473 fit=9.162 order=riser peakZ=129.5mm gain=12.9mm head=0.404 riser=0.43 wall=0.489 sustain=0.01 fotMax=0 fotFinal=0 bothNear=195.4mm up=8/9
+[582s] 90mm gen4 done: evals=311 grids=48 bestScreen=18.17 eliteFit=[9.2 7.8 7.6 7.2 7.1 7.1] pOrder=[0.33 0.45 0.22] bestK=0
+[622s] 90mm gen5 done: evals=335 grids=52 bestScreen=18.17 eliteFit=[6.7 6.7 6.6 6.3 6.2 5.9] pOrder=[0.33 0.22 0.45] bestK=0
+[658s] 90mm gen6 done: evals=359 grids=56 bestScreen=18.17 eliteFit=[8.8 8.1 7.6 7.1 6.9 6.5] pOrder=[0.57 0.33 0.10] bestK=0
+[687s] 90mm RESTART #1 (3 stale generations)
+[687s] 90mm gen7 done: evals=383 grids=60 bestScreen=18.17 eliteFit=[8.1 7.9 7.1 6.3 6.2 6.2] pOrder=[0.57 0.10 0.33] bestK=0
+[716s] 90mm gen8 done: evals=407 grids=64 bestScreen=18.17 eliteFit=[8.9 8.8 8.5 8.1 7.7 7.5] pOrder=[0.33 0.22 0.45] bestK=0
+[746s] 90mm gen9 done: evals=431 grids=68 bestScreen=18.17 eliteFit=[8.7 8.3 8.1 7.8 7.5 7.0] pOrder=[0.33 0.33 0.33] bestK=0
+[776s] 90mm RESTART #2 (3 stale generations)
+[776s] 90mm gen10 done: evals=455 grids=72 bestScreen=18.17 eliteFit=[7.8 7.7 7.6 7.5 7.4 7.2] pOrder=[0.22 0.45 0.33] bestK=0
+[805s] 90mm gen11 done: evals=479 grids=76 bestScreen=18.17 eliteFit=[9.4 8.6 8.4 7.9 7.8 7.7] pOrder=[0.33 0.33 0.33] bestK=0
+[835s] 90mm gen12 done: evals=503 grids=80 bestScreen=18.17 eliteFit=[8.0 7.3 6.8 6.7 6.7 6.6] pOrder=[0.45 0.45 0.10] bestK=0
+[856s] 90mm RESTART #3 (3 stale generations)
+[856s] 90mm gen13 done: evals=527 grids=84 bestScreen=18.17 eliteFit=[8.3 7.8 7.8 7.6 7.1 7.1] pOrder=[0.22 0.68 0.10] bestK=0
+[876s] 90mm gen14 done: evals=551 grids=88 bestScreen=18.17 eliteFit=[8.0 7.9 7.8 7.7 7.6 7.3] pOrder=[0.10 0.57 0.33] bestK=0
+[897s] 90mm gen15 done: evals=575 grids=92 bestScreen=18.17 eliteFit=[9.2 9.0 8.4 8.2 7.8 7.7] pOrder=[0.33 0.33 0.33] bestK=0
+[918s] 90mm RESTART #4 (3 stale generations)
+[918s] 90mm gen16 done: evals=599 grids=96 bestScreen=18.17 eliteFit=[9.0 7.7 6.0 5.9 5.9 5.9] pOrder=[0.33 0.33 0.33] bestK=0
+[948s] 90mm gen17 done: evals=623 grids=100 bestScreen=18.17 eliteFit=[7.4 7.1 6.8 6.8 6.8 6.3] pOrder=[0.33 0.45 0.22] bestK=0
+[978s] 90mm gen18 done: evals=647 grids=104 bestScreen=18.17 eliteFit=[8.4 8.4 7.7 7.5 7.5 7.4] pOrder=[0.33 0.45 0.22] bestK=0
+[1010s] 90mm RESTART #5 (3 stale generations)

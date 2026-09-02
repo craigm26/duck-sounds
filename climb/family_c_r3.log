@@ -1,0 +1,59 @@
+
+=== FAMILY C round 3 — rise 120 mm, seed 16838, budget 1010 s ===
+[1s 120mm] seed shaped=5.22 rew=1.00 peakZ=120.2 bothNear=228.2
+[1s 120mm] seed shaped=0.00 rew=0.00 peakZ=121.8 bothNear=230.0
+[1s 120mm] seed shaped=8.12 rew=2.09 peakZ=127.8 bothNear=179.1
+[4s 120mm] A improve shaped=4.77 k=0/9 obj=0.922 peakZ=125.5 bothNear=201mm seq=FHWPRKSE
+[8s 120mm] A improve shaped=7.16 k=0/9 obj=1.828 peakZ=149.0 bothNear=199mm seq=HFWRPKSE
+[12s 120mm] A improve shaped=7.60 k=0/9 obj=2.935 peakZ=125.7 bothNear=200mm seq=WFHPRKSE
+[15s 120mm] A improve shaped=7.85 k=0/9 obj=0.703 peakZ=137.5 bothNear=204mm seq=HFRPKSE
+[21s 120mm] A improve shaped=10.91 k=0/9 obj=0.869 peakZ=124.7 bothNear=181mm seq=HFRPKSE
+[158s 120mm] A improve shaped=17.14 k=0/9 obj=1.804 peakZ=158.9 bothNear=178mm seq=HFRPKSE
+[344s 120mm] phase A done: 1058 episodes, pool 1004, elite shaped 17.1 14.2 12.3 12.2 11.5 11.3 10.9 10.8 9.9 9.8 9.5 9.3 9.0 8.9
+[360s 120mm] B start shaped3=11.45 k=0/9 obj=1.804 peakZ=158.9
+[451s 120mm] B improve it=91 shaped3=12.80 k=0/9 obj=3.878 ADOPT peakZ=159.4 gainBoth=18.7mm head=0.02 riser=0.36 wall=0.11 fotMax=1 bothNear=156mm seq=FHRPKSE <-FOOT ON TREAD
+[497s 120mm] B improve it=135 shaped3=13.11 k=0/9 obj=3.351 keep  peakZ=160.1 gainBoth=12.0mm head=0.04 riser=0.24 wall=0.07 fotMax=1 bothNear=161mm seq=FHPRKSE <-FOOT ON TREAD
+[679s 120mm] B improve it=318 shaped3=13.52 k=0/9 obj=3.657 keep  peakZ=157.7 gainBoth=24.0mm head=0.03 riser=0.31 wall=0.02 fotMax=1 bothNear=150mm seq=FHPRKSE <-FOOT ON TREAD
+[759s 120mm] B improve it=400 shaped3=13.54 k=0/9 obj=3.529 keep  peakZ=158.6 gainBoth=22.4mm head=0.03 riser=0.42 wall=0.02 fotMax=1 bothNear=148mm seq=FHPRKSE <-FOOT ON TREAD
+[793s 120mm] B improve it=433 shaped3=14.94 k=0/9 obj=3.728 keep  peakZ=160.0 gainBoth=18.4mm head=0.03 riser=0.32 wall=0.02 fotMax=1 bothNear=157mm seq=FHPRKSE <-FOOT ON TREAD
+[869s 120mm] phase B done: 515 iterations, 2699 episodes total
+[872s 120mm] C k=0/9 obj=3.728 meanRew=3.728 peakZ=160.0 seq=FHPRKSE
+[875s 120mm] C k=0/9 obj=2.273 meanRew=2.273 peakZ=158.5 seq=HFRPKSE
+[878s 120mm] C k=0/9 obj=1.857 meanRew=1.857 peakZ=148.7 seq=FHWRPKSE
+[881s 120mm] C k=0/9 obj=1.792 meanRew=1.792 peakZ=158.4 seq=FHRPKSE
+[883s 120mm] C k=0/9 obj=2.818 meanRew=2.818 peakZ=159.2 seq=FHPRKSE
+[886s 120mm] C k=0/9 obj=1.885 meanRew=1.885 peakZ=147.1 seq=FHWRPKSE
+
+=== FAMILY C round 3 — rise 180 mm, seed 16839, budget 1010 s ===
+[886s 180mm] seed shaped=4.16 rew=0.00 peakZ=117.0 bothNear=252.7
+[887s 180mm] seed shaped=4.91 rew=1.00 peakZ=129.1 bothNear=225.0
+[887s 180mm] seed shaped=4.91 rew=1.00 peakZ=129.1 bothNear=225.0
+[890s 180mm] A improve shaped=2.37 k=0/9 obj=1.234 peakZ=122.8 bothNear=254mm seq=FHWRPKSE
+[893s 180mm] A improve shaped=5.95 k=0/9 obj=0.776 peakZ=133.2 bothNear=238mm seq=WFHPRKSE
+[896s 180mm] A improve shaped=6.18 k=0/9 obj=1.173 peakZ=122.9 bothNear=235mm seq=FWHPRKSE
+[900s 180mm] A improve shaped=7.22 k=0/9 obj=1.357 peakZ=149.2 bothNear=223mm seq=FWHRPKSE
+[964s 180mm] A improve shaped=8.30 k=0/9 obj=2.238 peakZ=146.4 bothNear=176mm seq=WHFRPKSE
+[1107s 180mm] A improve shaped=8.56 k=0/9 obj=1.227 peakZ=146.9 bothNear=235mm seq=HFRPKSE
+[1230s 180mm] phase A done: 1086 episodes, pool 1032, elite shaped 8.6 8.3 7.9 7.7 7.6 7.5 7.3 7.3 7.2 7.2 7.2 7.2 7.2 7.2
+[1245s 180mm] B start shaped3=7.92 k=0/9 obj=2.238 peakZ=146.4
+[1755s 180mm] phase B done: 546 iterations, 2775 episodes total
+[1758s 180mm] C k=0/9 obj=2.238 meanRew=2.238 peakZ=146.4 seq=WHFRPKSE
+[1761s 180mm] C k=0/9 obj=1.747 meanRew=1.747 peakZ=148.6 seq=FHPRKSE
+[1765s 180mm] C k=0/9 obj=1.821 meanRew=1.821 peakZ=138.3 seq=WFHPRKSE
+[1767s 180mm] C k=0/9 obj=1.368 meanRew=1.368 peakZ=120.0 seq=FHPRKSE
+[1770s 180mm] C k=0/9 obj=1.172 meanRew=1.172 peakZ=139.8 seq=HFWPRKSE
+[1773s 180mm] C k=0/9 obj=1.093 meanRew=1.093 peakZ=163.0 seq=FHWRPKSE
+
+SAVED ../climb/best_r3_cornerclimb_120mm.json  re-scored from the published file: k=0/9 obj=3.728 (search said k=0 obj=3.728)
+ladder 120: 40:SIM(above 92.8mm fot 1) 50:SIM(above 86.3mm fot 1) 60:SIM(above 86.9mm fot 1) 70:SIM(above 79.1mm fot 1) 80:SIM(above 68.8mm fot 1) 90:SIM(above 54.7mm fot 1) 100:SIM(above 44.3mm fot 1) 110:SIM(above 46.1mm fot 1) 120:SIM(above 37.2mm fot 1) 140:-(above -14.3mm fot 0) 160:-(above -34.4mm fot 0) 180:-(above -54.4mm fot 0)
+
+SAVED ../climb/best_r3_cornerclimb_180mm.json  re-scored from the published file: k=0/9 obj=2.238 (search said k=0 obj=2.238)
+ladder 180: 40:SIM(above 84.3mm fot 1) 50:SIM(above 80.5mm fot 1) 60:SIM(above 75.3mm fot 1) 70:SIM(above 74.6mm fot 1) 80:SIM(above 66.7mm fot 1) 90:SIM(above 59.5mm fot 1) 100:SIM(above 54.3mm fot 1) 110:SIM(above 46.1mm fot 1) 120:ep(above -5.6mm fot 0) 140:-(above -30.8mm fot 0) 160:-(above -44.7mm fot 0) 180:-(above -70.9mm fot 0)
+
+HOW FAR IS THE BAND — tallest rise with the trunk above the tread AND a foot resting on it:
+  simultaneous (one posture, at the scored instant): 120 mm  {"tunedMM":120,"cell":{"rise_mm":120,"drop":0.12,"fmul":1},"above_mm":35,"feetOnTread":1,"up":false,"honest":false}
+  over-episode (foot rested at some tick, trunk peaked above the tread at some tick): 130 mm
+
+wrote ../climb/r3_cornerclimb-results.json   total 1806 s
+  120 mm: k=0/9 objective=3.728 peakZ=160.0mm seq=FHPRKSE
+  180 mm: k=0/9 objective=2.238 peakZ=146.4mm seq=WHFRPKSE
