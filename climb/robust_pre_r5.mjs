@@ -40,8 +40,7 @@ import crypto from 'node:crypto';
 import { makeLoop } from '../site/duckloop.mjs';
 import { findStairJoints, layoutStairs, STAIR_Y, STAIR_HALF_WIDTH } from '../site/stairs.js';
 import { normEvent, eventFires, eventError, buildDynTrack } from '../climb/event.mjs';
-import { normServo, servoBase, servoTick } from '../climb/servo.mjs';
-import { criteria as rig3Criteria, reward as rig3Reward } from '../climb/rig3.mjs';
+import { criteria as rig3Criteria, reward as rig3Reward } from '../climb/rig3_pre_r5.mjs';
 
 const C = JSON.parse(fs.readFileSync('duckkit-constants.json', 'utf8'));
 export const { HOME, LO, HI, buildObs, projectedGravity, command, findDuckJoints } = makeLoop(C);
@@ -122,34 +121,6 @@ function footResting(g, h) {
   if (!(z > h - 0.005 && z < h + 0.045 && x > RISER_X && Math.abs(y - STAIR_Y) <= LATERAL)) return false;
   for (const sg of STEPG) if (dist(g, sg) < 0.003) return true;
   return false;
-}
-
-/**
- * ROUND 5, THE NEW HOLE. rig3.mjs makePenTracker(), verbatim: the same query
- * run at EVERY control tick and kept as a running minimum, so a cell record
- * carries the deepest the duck was ever inside the flight, not the deepest it
- * was inside it at the one instant the cell was scored. The bounding-sphere
- * test is a LOWER BOUND on mj_geomDistance, so the skip is exact.
- */
-const RBOUND = model.geom_rbound;
-function makePenTracker() {
-  let best = 1e9, pair = null, ticks = 0, tickAt = -1;
-  return {
-    scan(tick) {
-      ticks++;
-      for (const g of DUCKG) {
-        const gx = data.geom_xpos[g * 3], gy = data.geom_xpos[g * 3 + 1], gz = data.geom_xpos[g * 3 + 2];
-        for (const sg of STEPG) {
-          const dx = gx - data.geom_xpos[sg * 3], dy = gy - data.geom_xpos[sg * 3 + 1], dz = gz - data.geom_xpos[sg * 3 + 2];
-          const lb = Math.sqrt(dx * dx + dy * dy + dz * dz) - RBOUND[g] - RBOUND[sg];
-          if (lb >= best) continue;
-          const d = dist(g, sg);
-          if (d < best) { best = d; pair = `${model.geom(g).name || 'g' + g}<->${model.geom(sg).name}`; tickAt = tick; }
-        }
-      }
-    },
-    get() { return { min: best === 1e9 ? null : best, pair, tick: tickAt, ticksScanned: ticks }; },
-  };
 }
 
 /** rig3.mjs penetrationNow(), verbatim. Read-only: mj_geomDistance is a query. */
@@ -248,8 +219,6 @@ async function go(track, o, h, { drop = 0.120, fmul = 1.0, isolate = true, stepC
               wallGain: -1e9, maxTreadDriftX_mm: 0, minStepGap_mm: 1e9, maxTq: 0,
               footNear: 1e9, bothNear: 1e9 };
   let Z0 = 0;
-  let gtick = 0;
-  const PEN = makePenTracker();          // ROUND 5: whole-episode penetration
   // A LANDING SPOT on the first tread: mid-tread, one foot-thickness up.
   // footNear / bothNear are how close a foot (and the worse of the two feet)
   // ever came to it. Graded, so a search has a gradient toward landing instead
@@ -311,11 +280,7 @@ async function go(track, o, h, { drop = 0.120, fmul = 1.0, isolate = true, stepC
     }
   };
 
-  // ROUND 5: `sv` is the servoed-landing target vector for this tick (a number
-  // for every LEG slot the law owns, null elsewhere). undefined on every tick
-  // of every file with no `servo` block, so the added condition is false and
-  // not one number moves.
-  const step = async (off, rec, sv) => {
+  const step = async (off, rec) => {
     layoutStairs(data, ADDR, cfg);
     const q = quat(); const jp = [], jv = [];
     for (let k = 0; k < 14; k++) { jp.push(data.qpos[D.qpos[k]]); jv.push(data.qvel[D.dof[k]]); }
@@ -323,14 +288,12 @@ async function go(track, o, h, { drop = 0.120, fmul = 1.0, isolate = true, stepC
     const r = await stand.run({ obs: new ort.Tensor('float32', obs, [1, 61]) });
     la = Array.from(r.actions.data);
     for (let k = 0; k < 14; k++) {
-      const v = (sv && sv[k] !== null) ? sv[k]
-              : HOME[k] + la[k] + (off ? (off[k] - HOME[k]) * o.blend : 0);
+      const v = HOME[k] + la[k] + (off ? (off[k] - HOME[k]) * o.blend : 0);
       const c = Math.min(Math.max(v, LO[k]), HI[k]);
       data.ctrl[k] = c;
       if (rec) { R.ctrls++; if (c <= LO[k] + 1e-9 || c >= HI[k] - 1e-9) R.sat++; }
     }
     for (let s = 0; s < 4; s++) mj.mj_step(model, data);
-    PEN.scan(gtick); gtick++;
     if (rec) {
       for (let a = 0; a < model.nu; a++) { const f = Math.abs(data.actuator_force[a]); if (f > R.maxTq) R.maxTq = f; }
       const dx = Math.abs(data.geom_xpos[STEP0 * 3] - (0.12 + 0.17)) * 1000;
@@ -362,11 +325,6 @@ async function go(track, o, h, { drop = 0.120, fmul = 1.0, isolate = true, stepC
     for (const g of JAW) for (const sg of STEPG) { const v = dist(g, sg); if (v < d) d = v; }
     return d === 1e9 ? null : d;
   };
-  // ================================================== ROUND 5, THE SERVO
-  // The optional per-tick feedback law for the LEG slots (climb/servo.mjs),
-  // identical to rig3.mjs's. null for every pre-round-5 file.
-  const SV = normServo(o.servo);
-  let svArmed = false, svT = null, svBase = null, svTicks = 0;
   for (let t = 0; t * DT < total; t++) {
     const time = t * DT;
     if (EV && !evFired && time >= EV.arm) {
@@ -382,26 +340,7 @@ async function go(track, o, h, { drop = 0.120, fmul = 1.0, isolate = true, stepC
         total = TR[TR.length - 1].t + 0.8;
       }
     }
-    let svTargets;
-    if (SV) {
-      if (!svArmed && ((SV.at !== null && time >= SV.at) || (SV.onEvent && evFired))) {
-        svArmed = true; svT = time; svBase = servoBase(SV, poseAt(TR, time));
-      }
-      if (svArmed) {
-        const prev = []; for (let k = 0; k < 14; k++) prev.push(data.ctrl[k]);
-        svTargets = servoTick(SV, svBase, {
-          above: data.qpos[D.freeQpos + 2] - h,
-          pitch: projectedGravity(quat())[0],
-          dxTrunk: data.qpos[D.freeQpos] - RISER_X,
-          feet: [LFOOT, RFOOT].map(g => ({
-            dx: data.geom_xpos[g * 3] - RISER_X,
-            dz: data.geom_xpos[g * 3 + 2] - h,
-          })),
-        }, prev, LO, HI);
-        svTicks++;
-      }
-    }
-    await step(poseAt(TR, time), true, svTargets);
+    await step(poseAt(TR, time), true);
   }
   const atTrackEnd = snapshot(h, R.maxAbsDY);
   // ROUND 4, FAMILY B: the beat-1 -> beat-2 handoff state, at the instant a
@@ -418,11 +357,6 @@ async function go(track, o, h, { drop = 0.120, fmul = 1.0, isolate = true, stepC
     rise: h, x0, scored, atTrackEnd,
     event: EV ? { type: EV.type, fired: evFired, tFire: evT, trunkXAtFire: evTrunkX, e_mm: evE === null ? null : +(evE * 1000).toFixed(2) } : null,
     penetrationAtScore: scored.penetrationAtScore, penetrationPair: scored.penetrationPair,
-    // ROUND 5, THE NEW HOLE: whole-episode penetration (settle + track + tail).
-    minPenetrationEpisode: PEN.get().min, minPenetrationPair: PEN.get().pair,
-    minPenetrationTick: PEN.get().tick, penetrationTicksScanned: PEN.get().ticksScanned,
-    // ROUND 5, THE SERVOED LANDING. null for a file with no `servo` block.
-    servo: SV ? { armed: svArmed, tArm: svT, ticks: svTicks, at: SV.at, onEvent: SV.onEvent } : null,
     uprightTailTicks, tailTicks, uprightTailFrac: uprightTailTicks / Math.max(tailTicks, 1),
     terminal,          // ROUND 4, FAMILY B: the beat-1 -> beat-2 handoff state
     crit: rig3Criteria(h, scored), critAtTrackEnd: rig3Criteria(h, atTrackEnd),
@@ -529,8 +463,6 @@ const optsOf = j => ({ blend: j.blend, approach: j.approach || 0, gap: j.gap || 
                        spawn: j.spawn || null,
                        // ROUND 4, FAMILY A: the optional event-triggered tail.
                        event: j.event || null,
-                       // ROUND 5: the optional servoed landing (climb/servo.mjs).
-                       servo: j.servo || null,
                        // ROUND 4, FAMILY B handoff fields; null for every older file
                        spawnQuat: j.spawnQuat || null, spawnPose: j.spawnPose || null,
                        spawnVel: j.spawnVel || null, spawnLastAction: j.spawnLastAction || null,
@@ -556,10 +488,7 @@ export function intentHash(j) {
   // ROUND 4, FAMILY A adds 'event' to the same present-only list, for the same
   // reason: an older file has none of these keys and hashes to exactly what
   // climb/r4_audit-results.json published (PHASE H in famA_r4.mjs re-checks it).
-  // ROUND 5 adds 'servo' to the same PRESENT-ONLY list, for the same reason: a
-  // file written before round 5 has no such key and hashes to exactly the value
-  // climb/r4_judge-results.json published.
-  for (const k of ['event', 'servo', 'spawnQuat', 'spawnPose', 'spawnVel', 'spawnLastAction', 'settleTicks']) {
+  for (const k of ['event', 'spawnQuat', 'spawnPose', 'spawnVel', 'spawnLastAction', 'settleTicks']) {
     if (j[k] !== undefined && j[k] !== null) h[k] = j[k];
   }
   return crypto.createHash('sha256').update(JSON.stringify(h)).digest('hex');
@@ -683,8 +612,6 @@ export async function scoreRobust(path, { rise, isolate, stepCount, onCell, skip
     cells,
     agg: {
       minPenetrationAtScore_mm: Math.min(...cells.map(c => c.penetrationAtScore === null ? 0 : c.penetrationAtScore)) * 1000,
-      // ROUND 5: the worst penetration at ANY tick of ANY cell.
-      minPenetrationEpisode_mm: Math.min(...cells.map(c => c.minPenetrationEpisode === null ? 0 : c.minPenetrationEpisode)) * 1000,
       meanUprightTailTicks: mean(c => c.uprightTailTicks),
       minUprightTailTicks: Math.min(...cells.map(c => c.uprightTailTicks)),
       lateralEscapeCells: cells.filter(c => c.maxAbsDY > LATERAL).length,
@@ -719,9 +646,6 @@ export async function scoreRobust(path, { rise, isolate, stepCount, onCell, skip
       uprightTailTicks: c.uprightTailTicks, tailTicks: c.tailTicks,
       penetrationAtScore_mm: c.penetrationAtScore === null ? null : +(c.penetrationAtScore * 1000).toFixed(2),
       penetrationPair: c.penetrationPair,
-      minPenetrationEpisode_mm: c.minPenetrationEpisode === null ? null : +(c.minPenetrationEpisode * 1000).toFixed(2),
-      minPenetrationPair: c.minPenetrationPair, minPenetrationTick: c.minPenetrationTick,
-      servoArmed: c.servo ? c.servo.armed : null, servoTicks: c.servo ? c.servo.ticks : null,
       maxAbsDY_mm: +(c.maxAbsDY * 1000).toFixed(1), lateralEpisode: c.crit.lateralEpisode,
       reward: +c.reward.toFixed(3),
       x_mm: +(c.scored.x * 1000).toFixed(1), z_mm: +(c.scored.z * 1000).toFixed(1),
@@ -736,7 +660,7 @@ export async function scoreRobust(path, { rise, isolate, stepCount, onCell, skip
 export function saveIntent(obj, path) { fs.writeFileSync(path, JSON.stringify(obj, null, 2)); return path; }
 
 // ================================================================== PHASE P
-const isMain = process.argv[1] && process.argv[1].endsWith('robust.mjs');
+const isMain = process.argv[1] && process.argv[1].endsWith('robust_pre_r5.mjs');
 if (isMain) {
   const { scoreSaved } = await import('../climb/rig3.mjs');
   console.log('=== robust.mjs PHASE P — is cell 0 (drop 0.120, x1.0, isolate on) rig3? ===');

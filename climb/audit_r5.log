@@ -1,0 +1,195 @@
+================================================================
+ROUND 5 — THE JUDGE. Every number measured here, from saved JSON, now.
+   lateral gate 170 mm | duck geoms 11 | riser 120 mm
+   CONTROL TICK measured from duckkit-constants.json: tickHz=50 -> 20.00 ms
+   (the round-5 search report and climb/r5_servoland.mjs say "5.66 ms control tick"; the tick is 20.00 ms)
+
+PHASE P — PARITY, in two halves.
+   P1: CURRENT rig3.mjs vs climb/rig3_pre_r4.mjs on the round-4 judge's own 86 rows
+       and its own field lists. This reproduces r4_judge-results.json phaseP.
+   P2: CURRENT rig3.mjs vs climb/rig3_pre_r5.mjs (the round-4 instrument) on the SAME
+       86 rows, DEEP recursive walk over every leaf. That is the comparison that
+       isolates ROUND 5, because rig3_pre_r4 predates the round-4 fields too.
+   climb/rig3_pre_r5.mjs IS climb/rig3.mjs at e00e1e4, character for character apart from its isMain guard string
+   86 rows (43 pre-round-4 files x tails policy+hold)
+   P1 vs rig3_pre_r4 — PHYSICAL STATE identical   : 86/86
+   P1 vs rig3_pre_r4 — reward() identical         : 86/86
+   P1 vs rig3_pre_r4 — rows where a CRITERION moved: 0
+   P2 vs rig3_pre_r5 — DEEP walk, every leaf, Object.is : 86/86  (round-5-only keys excluded: minPenetrationEpisode, minPenetrationPair, minPenetrationTick, penetrationTicksScanned, servo)
+   minPenetrationEpisode <= penetrationAtScore    : 86/86
+   reproduces r4_judge-results.json phaseP (43 files / 86 rows / 86 / 86 / 0): true
+   VERDICT: ADMISSIBLE — the round-5 edits moved nothing   [98s]
+
+PHASE R — rig3.scoreSaved vs robust.scoreCell (cell 0), INCLUDING servoed files
+   best_r3_vault_60mm.json            EXACT=true  servo=none  x=0.3342751251273466 z=0.17613474586397462 rew=12.000000 minPenEp=-8.575mm ticks=237
+   best_r4_famA_60mm.json             EXACT=true  servo=none  x=0.3342751251273466 z=0.17613474586397462 rew=12.000000 minPenEp=-8.575mm ticks=237
+   ctrl_do_nothing.json               EXACT=true  servo=none  x=0.0019814926726257733 z=0.11623081135898501 rew=4.597335 minPenEp=50mm ticks=260
+   r5_servo_never_60mm.json           EXACT=true  servo=present, never armed  x=0.3342751251273466 z=0.17613474586397462 rew=12.000000 minPenEp=-8.575mm ticks=237
+   r5_servo_armed_60mm.json           EXACT=true  servo=ARMED 104 ticks  x=-0.15142394388232427 z=0.0659471551775518 rew=0.250407 minPenEp=-8.575mm ticks=237
+   best_r5_servo_60mm.json            EXACT=true  servo=ARMED 85 ticks  x=0.18202093555452417 z=0.1760163721045542 rew=12.000000 minPenEp=-8.575mm ticks=237
+   best_r5_servoland_kcore_60mm.json  EXACT=true  servo=ARMED 101 ticks  x=0.2984152505410222 z=0.1774535981320455 rew=12.000000 minPenEp=-7.271mm ticks=236
+   best_r5_servoland_60mm.json        EXACT=true  servo=ARMED 115 ticks  x=0.09804269949848789 z=0.11655906404033488 rew=6.052075 minPenEp=-6.324mm ticks=242
+   allExact = true   [105s]
+
+PHASE H / B / S — identity, declared bounds, and how the duck STARTED
+   best_r5_servo_60mm.json            e0434c2c90da  blend=2.1572 side=0.0078 gap=0.0187  bounds={"blend":[0.7,2.4],"side":[-0.02,0.09]} viol=0  servo=at 1.53352  [floor spawn — a climb]
+   best_r5_servoland_60mm.json        e6e8ff144695  blend=2.1878 side=0.02 gap=0.0106  bounds={"blend":[0.7,2.4],"side":[-0.02,0.09]} viol=0  servo=at 1.022 (authored base)  [floor spawn — a climb]
+   best_r5_servoland_kcore_60mm.json  880a120ef649  blend=2.1782 side=0.0082 gap=0.0249  bounds={"blend":[0.7,2.4],"side":[-0.02,0.09]} viol=0  servo=at 1.1838 (authored base)  [floor spawn — a climb]
+   r5_servo_armed_60mm.json           a0d78907bedb  blend=2.1572 side=0.0078 gap=0.0187  bounds={"blend":[0.7,2.4],"side":[-0.02,0.09]} viol=0  servo=at 1.1484  [floor spawn — a climb]
+   r5_servo_never_60mm.json           6a306e009a64  blend=2.1572 side=0.0078 gap=0.0187  bounds={"blend":[0.7,2.4],"side":[-0.02,0.09]} viol=0  servo=at 99  [floor spawn — a climb]
+   best_r3_vault_60mm.json            4b9110c448ec  blend=2.1572 side=0.0078 gap=0.0187  bounds={"blend":[0.7,2.4],"side":[-0.02,0.09]} viol=0  servo=no  [floor spawn — a climb]
+   best_r3_vault_40mm.json            dff01b0a1906  blend=1.676 side=0.0546 gap=0.0337  bounds={"blend":[0.7,2.4],"side":[-0.02,0.09]} viol=0  servo=no  [floor spawn — a climb]
+   best_r3_vault_50mm.json            7904bf3363c5  blend=1.6068 side=0.0514 gap=0.032  bounds={"blend":[0.7,2.4],"side":[-0.02,0.09]} viol=0  servo=no  [floor spawn — a climb]
+   best_r2_vault_40mm.json            86813f9c1ad4  blend=1.5517 side=0.0541 gap=0.0338  bounds={"blend":[0.7,2.4],"side":[-0.02,0.09]} viol=0  servo=no  [floor spawn — a climb]
+   best_r2_vault_60mm.json            74d35b21ac80  blend=2.0949 side=0.0085 gap=0.018  bounds={"blend":[0.7,2.4],"side":[-0.02,0.09]} viol=0  servo=no  [floor spawn — a climb]
+   best_r4_famA_60mm.json             7b790070b010  blend=2.1572 side=0.0078 gap=0.0187  bounds={"blend":[0.8,2.4],"side":[-0.02,0.09]} viol=0  servo=no  [floor spawn — a climb]
+   pre-round-5 hash best_r3_vault_60mm.json    published 4b9110c448ec  now 4b9110c448ec  UNCHANGED
+   pre-round-5 hash best_r2_vault_60mm.json    published 74d35b21ac80  now 74d35b21ac80  UNCHANGED
+   pre-round-5 hash best_r3_vault_40mm.json    published dff01b0a1906  now dff01b0a1906  UNCHANGED
+   pre-round-5 hash best_r3_vault_50mm.json    published 7904bf3363c5  now 7904bf3363c5  UNCHANGED
+   pre-round-5 hash best_r2_vault_40mm.json    published 86813f9c1ad4  now 86813f9c1ad4  UNCHANGED
+   round-5 hash    best_r5_servo_60mm.json            claimed e0434c2c90da  now e0434c2c90da  MATCHES
+   round-5 hash    best_r5_servoland_60mm.json        claimed e6e8ff144695  now e6e8ff144695  MATCHES
+   round-5 hash    best_r5_servoland_kcore_60mm.json  claimed 880a120ef649  now 880a120ef649  MATCHES
+   distinct vectors 11 | bound violations 0 | NOT-A-CLIMB 0
+
+PHASE G — every round-5 claim and every published clear, re-scored from disk, 14 cells
+   file                                   rise  kC  kCs kExt kEs   objective  objCore   objR3   maxTq  minPenEp  maxDY  upTail(min/mean)  servo
+   best_r3_vault_60mm.json                  60 4/9 4/9  4/14  4/14    25.610   27.415  23.788 0.6405   -13.67  275.7  8/44.2  0/14
+   r5_servo_never_60mm.json                 60 4/9 4/9  4/14  4/14    25.610   27.415  23.788 0.6405   -13.67  275.7  8/44.2  0/14
+   r5_servo_armed_60mm.json                 60 0/9 0/9  0/14  0/14     6.226    5.308   3.655 0.6405   -11.73  150.4  5/24.9  14/14
+   best_r5_servo_60mm.json                  60 4/9 0/9  5/14  0/14     9.526    9.232  23.019 0.6405   -13.67  200.3  0/28.1  14/14
+   best_r5_servoland_kcore_60mm.json        60 3/9 0/9  4/14  0/14     8.168    9.000  19.435 0.6405   -10.22  179.5  2/17.3  14/14
+   best_r5_servoland_60mm.json              60 0/9 0/9  0/14  0/14     9.297    9.653   5.990 0.6405   -15.38   77.1 29/43.5  14/14
+   audit_r5_shift_all_plus1tick.json        60 1/9 0/9  1/14  0/14     7.316    7.102   9.831 0.6405   -11.12  103.6  2/17.4  14/14
+   audit_r5_shift_all_minus1tick.json       60 3/9 0/9  3/14  0/14     7.368    8.379  18.690 0.6405   -11.72    171  3/19.5  14/14
+   audit_r5_shift_armonly_plus1tick.json    60 2/9 0/9  3/14  0/14     9.724    9.443  15.941 0.6405   -10.22   97.3  3/18.3  14/14
+   audit_r5_ablate_servoland_kcore_60mm.json   60 2/9 2/9  4/14  4/14    25.604   16.563  12.874 0.6405   -12.76  287.5 21/47.5  0/14
+   audit_r5_ablate_servoland_60mm.json      60 0/9 0/9  0/14  0/14     5.960    5.543   3.099 0.6405   -10.35  359.7  0/40.7  0/14
+   best_r2_vault_40mm.json                  40 1/9 1/9  1/14  1/14    10.778   10.722   9.646 0.6405   -11.71  153.3  0/12.2  0/14
+   best_r2_vault_60mm.json                  60 2/9 1/9  2/14  1/14    10.685   10.068  11.437 0.6405   -12.08  340.2  0/38.9  0/14
+   best_r3_vault_40mm.json                  40 2/9 1/9  2/14  1/14    12.262   13.685  15.472 0.6405   -12.13  192.6  0/27.2  0/14
+   best_r3_vault_50mm.json                  50 2/9 2/9  2/14  2/14    17.132   17.910  17.021 0.6405    -9.79  136.7  0/7.1  0/14
+   [204s]
+
+PHASE D — DEGENERACY: a servo that never arms must BE its base file, cell by cell
+   r5_servo_never_60mm (6a306e009a64) vs best_r3_vault_60mm (4b9110c448ec)
+   max |dx| = 0.000000000 mm  max |dz| = 0.000000000 mm  max |dreward| = 0.000000000  identical = true
+   servo cells armed: 0/14   -> THE MECHANISM IS INERT WHEN IT DOES NOT FIRE, in the scorer that decides the verdict.
+
+PHASE E — THE CEILING. `honest` needs the trunk above 95 mm at the scored instant,
+   so the count of CORE cells in which the trunk EVER exceeded 95 mm is an upper
+   bound on that move's kCore under ANY landing law whatsoever.
+   file                                   kCore  ceilingCore  peakAbove_mm over the 9 core cells
+   best_r3_vault_60mm.json                4/9      5/9      [71.1, 122.6, 120.2, 122.5, 130.4, 63.3, 53.8, 50.9, 119.3]
+   r5_servo_never_60mm.json               4/9      5/9      [71.1, 122.6, 120.2, 122.5, 130.4, 63.3, 53.8, 50.9, 119.3]
+   r5_servo_armed_60mm.json               0/9      0/9      [86.9, 83.2, 83, 77.4, 74.9, 67.5, 65.8, 59.2, 86.6]
+   best_r5_servo_60mm.json                4/9      4/9      [70.8, 118.6, 117.6, 116.4, 120.2, 60.1, 53.8, 50.9, 56.6]
+   best_r5_servoland_kcore_60mm.json      3/9      3/9      [82, 84, 83.1, 123.5, 122.1, 121.5, 60.9, 55.4, 61.5]
+   best_r5_servoland_60mm.json            0/9      0/9      [71, 76.1, 84, 66.9, 65.6, 72.2, 58.2, 57.4, 62.8]
+   audit_r5_shift_all_plus1tick.json      1/9      2/9      [83.2, 79.8, 83.8, 121.9, 72.5, 116.5, 66.6, 63.8, 59.9]
+   audit_r5_shift_all_minus1tick.json     3/9      3/9      [83.7, 80.6, 80.5, 112.9, 122.2, 115.1, 54.9, 71.6, 71.8]
+   audit_r5_shift_armonly_plus1tick.json  2/9      4/9      [103.1, 81, 84.7, 119.9, 115.3, 121.2, 64, 51, 74.7]
+   audit_r5_ablate_servoland_kcore_60mm.json 2/9      2/9      [78.7, 70.9, 71.1, 120.1, 116.5, 71, 52, 53.9, 54]
+   audit_r5_ablate_servoland_60mm.json    0/9      0/9      [75.7, 71.4, 78.8, 68.7, 61.4, 60.6, 52.4, 65.5, 52.4]
+   best_r2_vault_40mm.json                1/9      4/9      [116.7, 90.5, 97.1, 123, 126, 82.3, 74.4, 90.4, 74.2]
+   best_r2_vault_60mm.json                2/9      3/9      [118.1, 72.8, 94.7, 121.7, 62.7, 115.6, 59.3, 60.6, 62.2]
+   best_r3_vault_40mm.json                2/9      3/9      [117.7, 90.9, 86.4, 124.3, 89.8, 124, 80.5, 71.3, 71.4]
+   best_r3_vault_50mm.json                2/9      2/9      [118.7, 94.5, 118.8, 88.4, 89.6, 66.4, 84.4, 84.2, 83]
+   max ceilingCore over everything scored here: 5/9   (the search reports 5/9 as the max over all 235 of its moves)
+   kCore <= ceilingCore holds on every row: true
+   The kill gate needs 7. A landing law cannot manufacture trunk height it never had.
+
+PHASE N — the round-4 judge's hole, now closed: whole-episode penetration
+   file                                   clears  minPenEp of each clear (mm)                worst cell  deeper than -15 mm
+   best_r3_vault_60mm.json                 4/14   [-8.52, -9.27, -8.57, -8.88]                -13.67   clears 0 / cells 0
+   r5_servo_never_60mm.json                4/14   [-8.52, -9.27, -8.57, -8.88]                -13.67   clears 0 / cells 0
+   r5_servo_armed_60mm.json                0/14   []                                          -11.73   clears 0 / cells 0
+   best_r5_servo_60mm.json                 5/14   [-10.37, -9.27, -8.57, -8.85, -9.57]        -13.67   clears 0 / cells 0
+   best_r5_servoland_kcore_60mm.json       4/14   [-7.27, -7.59, -6.76, -8.09]                -10.22   clears 0 / cells 0
+   best_r5_servoland_60mm.json             0/14   []                                          -15.38   clears 0 / cells 1
+   audit_r5_shift_all_plus1tick.json       1/14   [-7.7]                                      -11.12   clears 0 / cells 0
+   audit_r5_shift_all_minus1tick.json      3/14   [-8.85, -7.37, -7.95]                       -11.72   clears 0 / cells 0
+   audit_r5_shift_armonly_plus1tick.json   3/14   [-7.27, -6.76, -6.28]                       -10.22   clears 0 / cells 0
+   audit_r5_ablate_servoland_kcore_60mm.json  4/14   [-7.27, -8.95, -8.62, -6.28]                -12.76   clears 0 / cells 0
+   audit_r5_ablate_servoland_60mm.json     0/14   []                                          -10.35   clears 0 / cells 0
+   best_r2_vault_40mm.json                 1/14   [-6.75]                                     -11.71   clears 0 / cells 0
+   best_r2_vault_60mm.json                 2/14   [-8.99, -8.67]                              -12.08   clears 0 / cells 0
+   best_r3_vault_40mm.json                 2/14   [-6.98, -6.37]                              -12.13   clears 0 / cells 0
+   best_r3_vault_50mm.json                 2/14   [-7.42, -5.37]                               -9.79   clears 0 / cells 0
+   invariant minPenEpisode <= penAtScore holds on every cell: true
+   any CLEAR deeper than -15 mm: false   any CELL: true   deepest here -15.38 mm
+
+PHASE F — FRAGILITY. Round 4: one control tick of shift took the round-3 vault
+   from 4 of 9 to 1 of 9. One control tick is 20.00 ms. Same probe on the
+   round-5 move whose clears line up along the PLANT axis.
+   best_r5_servoland_kcore_60mm.json (unshifted)  880a120ef649 kCore 3/9 stable 0/9 kExt 4/14 obj 8.1681  core pattern 000111000
+   shift_all_plus1tick (audit_r5_shift_all_plus1tick.json) 67a2a4ec06a8 kCore 1/9 stable 0/9 kExt 1/14 obj 7.3165  core pattern 000001000  max trunk-x move 163.8 mm
+   shift_all_minus1tick (audit_r5_shift_all_minus1tick.json) 1d74be48ab05 kCore 3/9 stable 0/9 kExt 3/14 obj 7.3679  core pattern 000111000  max trunk-x move 234.2 mm
+   shift_armonly_plus1tick (audit_r5_shift_armonly_plus1tick.json) 7f40d9768a6f kCore 2/9 stable 0/9 kExt 3/14 obj 9.7237  core pattern 000101000  max trunk-x move 115.6 mm
+
+PHASE A — ABLATION, re-derived. Same launch, `servo` block deleted, everything else identical.
+   The search report claims the law EARNS a clear. Here is the same comparison from
+   files this judge wrote, on the 14-cell grid.
+   best_r5_servoland_kcore_60mm.json
+      with servo   880a120ef649  kCore 3/9 stable 0/9 kExt 4/14  obj 8.1681  meanUpTail 17.3/50  ceiling 3/9  pattern 000111000
+      launch only  be5f462a37a5  kCore 2/9 stable 2/9 kExt 4/14  obj 25.6044  meanUpTail 47.5/50  ceiling 2/9  pattern 000110000
+      the law is worth  kCore +1  kCoreStable -2  objective -17.4363  upright tail -30.2 of 50  trunk-height ceiling +1 cells
+   best_r5_servoland_60mm.json
+      with servo   e6e8ff144695  kCore 0/9 stable 0/9 kExt 0/14  obj 9.297  meanUpTail 43.5/50  ceiling 0/9  pattern 000000000
+      launch only  5f877fad2d44  kCore 0/9 stable 0/9 kExt 0/14  obj 5.9598  meanUpTail 40.7/50  ceiling 0/9  pattern 000000000
+      the law is worth  kCore +0  kCoreStable +0  objective +3.3372  upright tail +2.8 of 50  trunk-height ceiling +0 cells
+
+ctrlJump — the round-4 handoff-discontinuity field, on servoed files
+   best_r3_vault_60mm.json            ctrlJump=0.725854  servoArmed=false
+   r5_servo_never_60mm.json           ctrlJump=0.725854  servoArmed=false
+   best_r5_servoland_kcore_60mm.json  ctrlJump=2.771424  servoArmed=true
+   best_r5_servo_60mm.json            ctrlJump=1.919896  servoArmed=true
+
+PHASE T — the search's UNMEASURED hypothesis, measured as far as this instrument allows.
+   The search says: every armed move loses tail uprightness, and it did not measure why.
+   The servo owns the legs only while the TRACK runs; the 50 policy tail ticks put them
+   back on HOME + policy action. The 'hold' tail does NOT: rig3 freezes the servo's LAST
+   COMMAND on the ten slots it owns. So policy-tail vs hold-tail uprightness on the same
+   file, at cell 0 (rise 60 mm, drop 0.120, friction x1.0), separates the two.
+   best_r3_vault_60mm.json            servoArmed=false  policy tail 50/50 honest=true  |  hold tail 13/50 honest=false  |  delta -37  stable(hold)=false
+   best_r5_servoland_kcore_60mm.json  servoArmed=true  policy tail 25/50 honest=true  |  hold tail 5/50 honest=false  |  delta -20  stable(hold)=false
+   best_r5_servo_60mm.json            servoArmed=true  policy tail 15/50 honest=true  |  hold tail 0/50 honest=false  |  delta -15  stable(hold)=false
+   freezing the servo's last command turns an unstable clear into a stable one: false
+
+PHASE C — the controls, under the CURRENT instrument
+   ctrl_do_nothing.json           @ 40mm  kCore 0/9  stable 0/9  kExt 0/14  obj 5.4524  minPenEp 50mm  servo rows 0
+   ctrl_do_nothing.json           @ 60mm  kCore 0/9  stable 0/9  kExt 0/14  obj 4.6103  minPenEp 50mm  servo rows 0
+   r4_ctrl_on_tread_60mm.json     @ 60mm  kCore 9/9  stable 9/9  kExt 14/14  obj 72  minPenEp -5.78mm  servo rows 0
+   do-nothing fails everywhere: true   placed duck clears 14/14: true
+
+================================================================
+PHASE K — THE KILL GATE
+   RULE: PASSED only if a DISTINCT move reaches kCoreStable >= 7 of 9 at 60 mm,
+   from a floor spawn, in declared bounds, under the actuator ceiling, with no cheat.
+   best_r3_vault_60mm.json                4b9110c448ec  kCoreStable 4/9  kCore 4/9  admissible=true  tqOver=false  lateralEscapes=1
+   r5_servo_never_60mm.json               6a306e009a64  kCoreStable 4/9  kCore 4/9  admissible=true  tqOver=false  lateralEscapes=1
+   audit_r5_ablate_servoland_kcore_60mm.json be5f462a37a5  kCoreStable 2/9  kCore 2/9  admissible=true  tqOver=false  lateralEscapes=3
+   best_r2_vault_60mm.json                74d35b21ac80  kCoreStable 1/9  kCore 2/9  admissible=true  tqOver=false  lateralEscapes=5
+   best_r5_servo_60mm.json                e0434c2c90da  kCoreStable 0/9  kCore 4/9  admissible=true  tqOver=false  lateralEscapes=1
+   best_r5_servoland_kcore_60mm.json      880a120ef649  kCoreStable 0/9  kCore 3/9  admissible=true  tqOver=false  lateralEscapes=1
+   audit_r5_shift_all_minus1tick.json     1d74be48ab05  kCoreStable 0/9  kCore 3/9  admissible=true  tqOver=false  lateralEscapes=1
+   audit_r5_shift_armonly_plus1tick.json  7f40d9768a6f  kCoreStable 0/9  kCore 2/9  admissible=true  tqOver=false  lateralEscapes=0
+   audit_r5_shift_all_plus1tick.json      67a2a4ec06a8  kCoreStable 0/9  kCore 1/9  admissible=true  tqOver=false  lateralEscapes=0
+   r5_servo_armed_60mm.json               a0d78907bedb  kCoreStable 0/9  kCore 0/9  admissible=true  tqOver=false  lateralEscapes=0
+   best_r5_servoland_60mm.json            e6e8ff144695  kCoreStable 0/9  kCore 0/9  admissible=true  tqOver=false  lateralEscapes=0
+   audit_r5_ablate_servoland_60mm.json    5f877fad2d44  kCoreStable 0/9  kCore 0/9  admissible=true  tqOver=false  lateralEscapes=3
+
+   BEST kCoreStable at 60 mm over everything scored here: 4/9  (best_r3_vault_60mm.json 4b9110c448ec)
+   BEST kCoreStable of any SERVOED move: 0/9
+   KILL GATE: FAILED
+   CONSEQUENCE: the 40-80 mm band is CLOSED. The negative is the result.
+
+WHAT THE LAW IS ALLOWED TO SEE
+   policy observation: 61 numbers, all proprioceptive (gyro 3 + projected gravity 3 + joint pos 14 + joint vel 14 + last action 14 + command 13)
+   servo law reads   : 7 numbers, 5 of them EXTEROCEPTIVE (trunk z - rise; projectedGravity[0]; trunk x - 0.12; left/right foot geom x - 0.12; left/right foot geom z - rise)
+   -> the servoed landing assumes perfect knowledge of the tread height and edge.
+      That makes round 5 an UPPER BOUND on a landing law, not a deployable move.
+
+   torque: any row above 0.6405 N.m? false   files that SATURATE it: 15/15
+   total wall 229s

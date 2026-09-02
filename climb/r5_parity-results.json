@@ -1,0 +1,26 @@
+{
+  "generated": "2026-09-02T11:24:23.370Z",
+  "script": "_r5_parity.mjs",
+  "newOnlyFields": [
+    "minPenetrationEpisode",
+    "minPenetrationPair",
+    "minPenetrationTick",
+    "penetrationTicksScanned",
+    "servo"
+  ],
+  "set1": {
+    "rows": 86,
+    "deepExact": 86,
+    "deepDiffs": [],
+    "judgeStateExact": 86,
+    "judgeRewardExact": 86,
+    "judgeCritRows": []
+  },
+  "set2": {
+    "files": 116,
+    "rows": 232,
+    "exact": 232,
+    "diffs": []
+  },
+  "verdict": "INERT — 318 rows identical to the round-4 instrument at full float digits"
+}

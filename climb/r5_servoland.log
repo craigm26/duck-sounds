@@ -1,0 +1,318 @@
+=== r5_servoland PHASE 0 — the builder, the warm start, the probes ===
+  warm start best_r3_vault_60mm.json sha256 4b9110c448ec
+  this file's builder at mu0, servo REMOVED, sha256 4b9110c448ec  REPRODUCES=true
+  WARM 4b9110c448ec obj=25.6099 objCore=27.4149 kCore=4/9 kCoreStable=4/9 kExt=4/14 minPenEpisode=-13.67mm
+  P1 the throw held: base = the round-3 landing pose through the same blend, ZERO gains, armed at the tuck
+     2cb661d36f9f obj=6.4457 objCore=7.0138 kCore=0/9 kCoreStable=0/9 kExt=0/14 meanRew=3.697 armed=true svTicks=104 minPenEp=-10.72mm
+  P2 no landing at all: base = the TUCK pose, ZERO gains, armed at the tuck
+     5f72b2122cbd obj=6.4475 objCore=6.7893 kCore=2/9 kCoreStable=0/9 kExt=2/14 meanRew=5.002 armed=true svTicks=104 minPenEp=-10.72mm
+  P3 the reasoned law around the landing pose (kHipX -2, kKneeFz -4, kAnkFz +1)
+     4776bb4e09e4 obj=7.3418 objCore=8.0896 kCore=0/9 kCoreStable=0/9 kExt=0/14 meanRew=4.405 armed=true svTicks=104 minPenEp=-10.72mm
+  P4 the reasoned law armed at the VAULT frame
+     0a5662a8c34c obj=8.4414 objCore=8.9688 kCore=0/9 kCoreStable=0/9 kExt=0/14 meanRew=5.264 armed=true svTicks=125 minPenEp=-13.02mm
+  P5 the reasoned law, doubled
+     2395eaeaacc8 obj=7.2618 objCore=6.5556 kCore=0/9 kCoreStable=0/9 kExt=0/14 meanRew=4.582 armed=true svTicks=104 minPenEp=-10.72mm
+  P6 trunk-height feedback only
+     896b04b1df57 obj=6.2232 objCore=5.6622 kCore=0/9 kCoreStable=0/9 kExt=0/14 meanRew=4.000 armed=true svTicks=104 minPenEp=-10.72mm
+  P7 the throw held, with the rate limit and span opened right up
+     74a8ed154dbc obj=7.8661 objCore=7.6462 kCore=0/9 kCoreStable=0/9 kExt=0/14 meanRew=4.569 armed=true svTicks=104 minPenEp=-10.72mm
+  P8 the reasoned law armed midway between the tuck and the landing keyframe
+     f9e321a9f2dd obj=7.5588 objCore=6.8615 kCore=0/9 kCoreStable=0/9 kExt=1/14 meanRew=4.753 armed=true svTicks=92 minPenEp=-13.67mm
+  P9 the servo as a LATE STABILISER: the whole throw runs, the law arms just after the landing keyframe
+     e6e9c362c090 obj=6.5779 objCore=6.7527 kCore=0/9 kCoreStable=0/9 kExt=0/14 meanRew=4.578 armed=true svTicks=71 minPenEp=-13.67mm
+  P10 late arming, ZERO gains: what the mechanism alone costs once the throw has already landed
+     91f1f3ae4860 obj=7.4269 objCore=7.3278 kCore=1/9 kCoreStable=0/9 kExt=1/14 meanRew=5.427 armed=true svTicks=71 minPenEp=-13.67mm
+  P11 late stabiliser with trunk-height and pitch feedback
+     84851a78edb9 obj=6.8913 objCore=6.7447 kCore=2/9 kCoreStable=0/9 kExt=2/14 meanRew=4.463 armed=true svTicks=71 minPenEp=-13.67mm
+  phase 0 done at 132 s
+[ 255s] gen  1  eliteBest obj=8.651 (78740e98dc81, kCore 0, kCoreStable 0)  eliteMean=8.261  best=25.610 kCoreStable=4  full=27 screened=22 rejected=6
+[ 423s] gen  2  eliteBest obj=9.297 (e6e8ff144695, kCore 0, kCoreStable 0)  eliteMean=8.589  best=25.610 kCoreStable=4  full=46 screened=44 rejected=9
+[ 561s] gen  3  eliteBest obj=9.045 (fff82595aaba, kCore 0, kCoreStable 0)  eliteMean=8.645  best=25.610 kCoreStable=4  full=63 screened=66 rejected=14
+[ 688s] gen  4  eliteBest obj=8.876 (932211951c14, kCore 0, kCoreStable 0)  eliteMean=8.404  best=25.610 kCoreStable=4  full=80 screened=88 rejected=19
+[ 790s] gen  5  eliteBest obj=9.128 (88842f1e8153, kCore 0, kCoreStable 0)  eliteMean=8.782  best=25.610 kCoreStable=4  full=93 screened=110 rejected=28
+[ 893s] gen  6  eliteBest obj=9.171 (b91dc9a460b6, kCore 0, kCoreStable 0)  eliteMean=8.778  best=25.610 kCoreStable=4  full=106 screened=132 rejected=37
+[ 986s] gen  7  eliteBest obj=9.099 (5072750ea445, kCore 0, kCoreStable 0)  eliteMean=8.821  best=25.610 kCoreStable=4  full=118 screened=154 rejected=47
+[1091s] gen  8  eliteBest obj=9.052 (24fc6f6aa483, kCore 0, kCoreStable 0)  eliteMean=8.727  best=25.610 kCoreStable=4  full=132 screened=176 rejected=55
+[1216s] gen  9  eliteBest obj=9.127 (04c372d1e336, kCore 0, kCoreStable 0)  eliteMean=8.978  best=25.610 kCoreStable=4  full=149 screened=198 rejected=60
+[1304s] gen 10  eliteBest obj=9.162 (083d14053d18, kCore 0, kCoreStable 0)  eliteMean=8.929  best=25.610 kCoreStable=4  full=160 screened=220 rejected=71
+[1436s] gen 11  eliteBest obj=8.940 (78c6999d4e14, kCore 0, kCoreStable 0)  eliteMean=8.730  best=25.610 kCoreStable=4  full=178 screened=242 rejected=75
+[1560s] gen 12  eliteBest obj=9.164 (c590a9fe4063, kCore 0, kCoreStable 0)  eliteMean=9.042  best=25.610 kCoreStable=4  full=195 screened=264 rejected=80
+[1680s] gen 13  eliteBest obj=9.276 (877ed4d19363, kCore 0, kCoreStable 0)  eliteMean=8.951  best=25.610 kCoreStable=4  full=211 screened=286 rejected=86
+[1799s] gen 14  eliteBest obj=9.141 (73900b1f0de6, kCore 0, kCoreStable 0)  eliteMean=8.855  best=25.610 kCoreStable=4  full=227 screened=308 rejected=92
+[1851s] gen 15  eliteBest obj=9.006 (d18e6cea3b85, kCore 0, kCoreStable 0)  eliteMean=8.490  best=25.610 kCoreStable=4  full=234 screened=317 rejected=94
+
+=== r5_servoland PHASE 2 — the table (235 distinct hashes on the full grid) ===
+  move          kCore kCoreStable kExt kExtStable objective objectiveCore meanReward minPenEp_mm label
+  4b9110c448ec   4/9       4/9   4/14       4/14   25.6099       27.4149     6.0727      -13.67  WARM START (round-3 vault, no servo)
+  e6e8ff144695   0/9       0/9   0/14       0/14    9.2970        9.6526     5.8170      -15.38  g2n21
+  877ed4d19363   0/9       0/9   0/14       0/14    9.2759        9.3848     5.6016      -10.43  g13n4
+  ccde1106c223   0/9       0/9   0/14       0/14    9.1992        9.3038     5.7192      -10.73  g13n9
+  c6e6ce7b1ba3   0/9       0/9   0/14       0/14    9.1935        9.1412     5.9878      -10.53  g13n20
+  b91dc9a460b6   0/9       0/9   0/14       0/14    9.1710        9.2828     5.4681      -11.65  g6n13
+  c590a9fe4063   0/9       0/9   0/14       0/14    9.1641        9.1477     5.4498      -13.20  g12n1
+  083d14053d18   0/9       0/9   0/14       0/14    9.1624        9.0178     5.6652      -11.27  g10n4
+  73900b1f0de6   0/9       0/9   0/14       0/14    9.1412        9.1541     5.6383      -10.99  g14n18
+  02aa706c3941   0/9       0/9   0/14       0/14    9.1391        9.5225     5.4991      -10.56  g12n20
+  88842f1e8153   0/9       0/9   0/14       0/14    9.1285        9.0111     5.5685      -13.99  g5n21
+  04c372d1e336   0/9       0/9   0/14       0/14    9.1270        9.3260     5.6298      -12.19  g9n5
+  5072750ea445   0/9       0/9   0/14       0/14    9.0993        9.0826     5.4993      -10.74  g7n6
+  445faef9c00e   0/9       0/9   0/14       0/14    9.0903        9.1076     5.5932      -11.98  g12n11
+  2ade626dc508   0/9       0/9   0/14       0/14    9.0769        9.2136     5.4598      -11.13  g5n20
+  1eecec281294   0/9       0/9   0/14       0/14    9.0600        9.0403     5.4772      -10.06  g10n5
+  b3ff10974c3b   0/9       0/9   0/14       0/14    9.0584        9.0948     5.4527      -11.69  g9n21
+  934a0fa2238d   0/9       0/9   0/14       0/14    9.0580        9.0263     5.5609      -10.76  g12n14
+  24fc6f6aa483   0/9       0/9   0/14       0/14    9.0523        9.0902     5.5266      -13.79  g8n21
+  fff82595aaba   0/9       0/9   0/14       0/14    9.0446        9.5302     5.4846      -15.31  g3n16
+  247be4c9ec04   0/9       0/9   0/14       0/14    9.0223        9.3279     5.5194       -9.90  g14n8
+  d18e6cea3b85   0/9       0/9   0/14       0/14    9.0064        8.9813     6.0464       -9.95  g15n4
+  62ac222be23c   0/9       0/9   0/14       0/14    8.9862        9.2394     5.3405      -15.05  g8n11
+  4175e0e99d5a   0/9       0/9   0/14       0/14    8.9684        9.0794     5.5856      -10.71  g9n9
+  24e02c81bd3a   0/9       0/9   0/14       0/14    8.9413        8.7903     5.6099       -9.33  g14n19
+  78c6999d4e14   0/9       0/9   0/14       0/14    8.9400        8.9376     5.4371      -12.19  g11n14
+  a243ee026cc8   0/9       0/9   0/14       0/14    8.9386        9.2413     5.4700      -10.65  g10n3
+  1da92a0ee41a   0/9       0/9   0/14       0/14    8.9374        8.9051     5.4803      -10.61  g10n12
+  9b9ec0a36dac   0/9       0/9   0/14       0/14    8.9189        9.1465     5.5018      -11.69  g9n1
+  7ef351a78618   0/9       0/9   0/14       0/14    8.9096        9.3283     5.5725       -9.86  g12n10
+  7d69950317f2   0/9       0/9   0/14       0/14    8.9060        8.7466     5.3917      -10.48  g9n3
+  6fba19bef47a   0/9       0/9   0/14       0/14    8.8937        9.2141     5.3737      -12.02  g12n19
+  d77f5f0bdb93   0/9       0/9   0/14       0/14    8.8878        8.8083     5.5449       -9.53  g9n8
+  654ed09f6148   0/9       0/9   0/14       0/14    8.8827        8.8087     5.5341       -9.80  g12n3
+  932211951c14   0/9       0/9   0/14       0/14    8.8755        9.1524     5.3155      -11.66  g4n5
+  95f6b366e965   0/9       0/9   0/14       0/14    8.8743        9.1915     5.3943      -12.63  g10n14
+  48beb3591a63   0/9       0/9   0/14       0/14    8.8704        9.4349     5.6475      -10.58  g7n4
+  22380110a5f5   0/9       0/9   0/14       0/14    8.8611        9.2012     5.5011      -11.88  g14n5
+  2b886af93e50   0/9       0/9   0/14       0/14    8.8609        8.9607     5.6380       -9.57  g12n12
+  8db0fd21de5f   0/9       0/9   0/14       0/14    8.8445        9.1302     5.6330      -10.91  g13n21
+  ddee2cc51175   0/9       0/9   0/14       0/14    8.8445        8.7282     5.4330      -12.41  g9n19
+  811f498bb127   0/9       0/9   0/14       0/14    8.8247        8.6910     5.4076      -12.95  g7n19
+  e278f5a9ea14   0/9       0/9   0/14       0/14    8.8186        8.5275     5.4186      -11.61  g11n2
+  6bec11f596c8   0/9       0/9   0/14       0/14    8.8030        9.3778     5.1859      -12.22  g5n3
+  d4ee807e4762   0/9       0/9   0/14       0/14    8.8025        9.0277     5.5625      -11.02  g7n9
+  1350f072a101   0/9       0/9   0/14       0/14    8.7918        9.2771     5.4718      -10.92  g2n14
+  b5de42ae8601   0/9       0/9   0/14       0/14    8.7753        9.0498     5.4267      -12.89  g6n21
+  d0ea8121de07   0/9       0/9   0/14       0/14    8.7696        8.2939     5.2839      -12.31  g8n5
+  e4ac0379a70d   0/9       0/9   0/14       0/14    8.7580        9.0720     5.4094       -9.85  g15n7
+  914c8bb43144   0/9       0/9   0/14       0/14    8.7510        8.9227     5.3967      -10.23  g12n6
+  bae75994685f   0/9       0/9   0/14       0/14    8.7467        8.9202     5.3810       -9.57  g9n0
+  528ae8845827   0/9       0/9   0/14       0/14    8.7438        9.0102     5.3952      -12.20  g11n5
+  cec1b6d0389f   0/9       0/9   0/14       0/14    8.7204        8.7919     5.2576      -11.32  g6n8
+  ce482b6719f6   0/9       0/9   0/14       0/14    8.7204        8.7053     5.4633      -14.80  g3n19
+  aca8b4cd2902   0/9       0/9   0/14       0/14    8.7052        8.6574     5.3737      -11.04  g6n7
+  21dc8b932823   0/9       0/9   0/14       0/14    8.6848        8.8065     5.4391      -12.14  g3n11
+  35550f4040f4   0/9       0/9   0/14       0/14    8.6796        8.6953     5.5196       -9.55  g14n17
+  334e2d63f6da   0/9       0/9   0/14       0/14    8.6721        8.9080     5.4092       -8.14  g6n10
+  63e2c0ec5a66   0/9       0/9   0/14       0/14    8.6690        8.9195     5.3375       -9.66  g7n20
+  961e329fa004   0/9       0/9   0/14       0/14    8.6680        9.2622     5.3423      -15.36  g3n9
+  e168ca8c6b00   0/9       0/9   0/14       0/14    8.6664        8.4162     5.3578      -11.16  g5n15
+  282a3c6f37ac   0/9       0/9   0/14       0/14    8.6636        8.7449     5.1265      -10.41  g8n4
+  f183f3429e6a   0/9       0/9   0/14       0/14    8.6610        8.3749     5.3124      -10.34  g7n8
+  0864a6fd1e87   0/9       0/9   0/14       0/14    8.6571        8.8207     5.2629      -10.69  g15n0
+  860b70cdca63   0/9       0/9   0/14       0/14    8.6550        8.7157     5.6322      -10.10  g12n16
+  b2c256362808   0/9       0/9   0/14       0/14    8.6548        8.9081     5.5691      -10.13  g11n3
+  78740e98dc81   0/9       0/9   0/14       0/14    8.6512        8.2780     5.1426      -12.27  g1n3
+  b1c3ad155c3a   0/9       0/9   0/14       0/14    8.6484        8.4792     5.3055      -10.38  g12n9
+  b86511babffa   0/9       0/9   0/14       0/14    8.6429        9.0802     5.2315      -12.26  g7n2
+  75d3b3f8ca1e   0/9       0/9   0/14       0/14    8.6408        9.1209     5.2694      -11.16  g13n5
+  58c118763683   0/9       0/9   0/14       0/14    8.6382        8.4195     5.5639      -11.36  g2n0
+  f16731a63fc5   0/9       0/9   0/14       0/14    8.6216        8.4393     5.1874      -12.46  g6n14
+  56947f7bb3f4   0/9       0/9   0/14       0/14    8.6131        8.9831     5.2302      -10.23  g11n9
+  36a36d6469a3   0/9       0/9   0/14       0/14    8.6077        8.8328     5.5105      -10.55  g11n13
+  78e8f30eec56   0/9       0/9   0/14       0/14    8.6072        8.8854     5.4187       -9.69  g1n13
+  209e26a5a1b7   0/9       0/9   0/14       0/14    8.6035        9.2767     5.4092      -12.56  g10n18
+  ecf8b1a0e361   0/9       0/9   0/14       0/14    8.5971        8.4191     5.4942       -9.12  g7n10
+  e2cea69d25a5   0/9       0/9   0/14       0/14    8.5736        8.6341     5.2364      -10.11  g9n18
+  4a47bb72f6d0   0/9       0/9   0/14       0/14    8.5713        8.4242     5.1484       -9.92  g11n1
+  eba7dc1e7572   0/9       0/9   0/14       0/14    8.5522        9.3754     5.5008      -11.16  g13n19
+  827fd66dc90b   0/9       0/9   0/14       0/14    8.5487        8.8293     5.5144      -12.17  g4n17
+  c6c174f05996   0/9       0/9   0/14       0/14    8.5416        8.5660     5.6102      -10.25  g4n10
+  c7b20070c96a   0/9       0/9   0/14       0/14    8.5288        8.3720     5.3288      -12.22  g5n14
+  c1da37c0e2a0   0/9       0/9   0/14       0/14    8.5237        8.2422     5.4723      -10.70  g12n2
+  baa923d92525   0/9       0/9   0/14       0/14    8.5197        8.5188     5.4168      -10.53  g10n0
+  db6dd3a1a485   0/9       0/9   0/14       0/14    8.5197        8.3851     5.3711       -9.30  g2n12
+  011d03931746   0/9       0/9   0/14       0/14    8.5150        8.9137     5.2235      -10.63  g13n6
+  04c1d75e64fb   0/9       0/9   0/14       0/14    8.5141        9.1390     5.1884       -9.45  g13n17
+  50c6b625ec86   0/9       0/9   0/14       0/14    8.5049        9.3997     5.0306       -9.85  g9n7
+  a5cc34af0440   0/9       0/9   0/14       0/14    8.5010        8.9227     5.1924      -11.88  g11n7
+  de9e42b55488   0/9       0/9   0/14       0/14    8.4940        9.2936     5.1111       -9.49  g9n4
+  472060d3cb0b   0/9       0/9   0/14       0/14    8.4938        8.7711     5.2595      -10.06  g8n9
+  6eadc05bfee0   0/9       0/9   0/14       0/14    8.4917        9.4439     5.6631      -14.40  g1n7
+  a33a3d007ab2   0/9       0/9   0/14       0/14    8.4913        8.9637     5.3142       -8.93  g5n18
+  28be285a6a82   0/9       0/9   0/14       0/14    8.4824        8.6397     5.3910      -11.69  g14n7
+  46210189b5ee   0/9       0/9   0/14       0/14    8.4815        8.3355     5.4872      -10.81  g15n3
+  460e17ec32c2   0/9       0/9   0/14       0/14    8.4758        8.9318     5.0300      -12.21  g3n5
+  a926d9a9c25d   0/9       0/9   0/14       0/14    8.4640        8.1863     5.4355      -10.81  g11n4
+  ae3a72a620dd   0/9       0/9   0/14       0/14    8.4499        8.8180     5.1185      -11.38  g11n20
+  0a5662a8c34c   0/9       0/9   0/14       0/14    8.4414        8.9688     5.2643      -13.02  P4 the reasoned law armed at the VAULT frame
+  f7c15adfeadd   0/9       0/9   0/14       0/14    8.4153        9.1567     5.4211      -10.97  g5n19
+  1fac045fb9f4   0/9       0/9   0/14       0/14    8.4106        8.1869     5.3648       -8.47  g13n10
+  357859d5a9f0   0/9       0/9   0/14       0/14    8.4018        8.5774     5.0818      -10.87  g5n12
+  7415624d00bf   0/9       0/9   0/14       0/14    8.3970        8.3916     5.1227      -14.03  g8n19
+  0eb2bf77c00a   0/9       0/9   0/14       0/14    8.3908        8.6290     5.1393       -9.79  g9n20
+  e4e23610ddac   1/9       0/9   1/14       0/14    8.3876        8.8881     5.8962      -11.93  g11n8
+  fc494dd7094f   0/9       0/9   0/14       0/14    8.3817        8.7729     5.0160      -11.44  g4n20
+  fdd227b6652a   0/9       0/9   0/14       0/14    8.3740        9.0314     5.2940      -11.36  g14n12
+  47af985e2138   0/9       0/9   0/14       0/14    8.3560        8.1481     5.2474      -12.27  g8n17
+  fe506c05d7cb   0/9       0/9   0/14       0/14    8.3527        9.1454     5.1241      -12.67  g5n10
+  d451e4eacbb9   0/9       0/9   0/14       0/14    8.3445        9.1878     5.4816      -11.25  g13n0
+  b733d6f1ccd3   0/9       0/9   0/14       0/14    8.3172        8.3792     5.3058      -11.13  g13n7
+  9f3b9ae312b0   0/9       0/9   0/14       0/14    8.2765        8.1763     5.0194      -12.03  g3n6
+  d3c350c1799a   0/9       0/9   0/14       0/14    8.2561        8.7402     5.1533      -11.21  g6n18
+  a0d335900654   0/9       0/9   0/14       0/14    8.2419        8.4316     4.9047      -13.80  g8n12
+  3365832cb466   0/9       0/9   0/14       0/14    8.2220        8.5046     5.2277      -10.04  g2n3
+  53a1fbf7e35e   0/9       0/9   0/14       0/14    8.2147        8.3278     5.0204      -15.23  g6n15
+  2d0ac7782397   0/9       0/9   0/14       0/14    8.1990        8.8722     4.7990      -10.68  g6n12
+  7dc60b6760a6   0/9       0/9   0/14       0/14    8.1896        8.7271     4.9610      -10.88  g9n2
+  880a120ef649   3/9       0/9   4/14       0/14    8.1681        8.9997     6.7852      -10.22  g14n13
+  a0d8717d50b3   0/9       0/9   0/14       0/14    8.1670        8.8361     5.3842      -10.09  g10n19
+  e29ef37c8e0d   0/9       0/9   0/14       0/14    8.1419        8.1727     5.4505      -13.32  g1n12
+  cf99cf8f40fa   0/9       0/9   0/14       0/14    8.1352        7.9632     5.0552       -9.34  g3n13
+  8996b8164871   0/9       0/9   0/14       0/14    8.1306        8.4746     5.0620      -10.63  g12n13
+  e0174a46f2c7   0/9       0/9   0/14       0/14    8.1182        8.1304     5.2839      -15.32  g15n6
+  8ffb29e1498f   0/9       0/9   0/14       0/14    8.1089        8.4212     5.3775       -9.35  g14n11
+  da8fbbef50fc   0/9       0/9   0/14       0/14    8.0970        7.7986     4.9370       -9.93  g9n17
+  b4643b92a247   0/9       0/9   0/14       0/14    8.0929        8.8471     5.2586      -11.10  g11n18
+  58f102d85e1f   0/9       0/9   0/14       0/14    8.0922        7.8030     4.9150      -10.65  g13n3
+  4a890288b88b   0/9       0/9   0/14       0/14    8.0850        8.1845     4.8564      -11.95  g12n15
+  dea12b109dcb   0/9       0/9   0/14       0/14    8.0762        8.7257     5.1505      -11.31  g5n2
+  0640a1375ef7   0/9       0/9   0/14       0/14    8.0682        7.5838     4.7825      -10.19  g2n5
+  e6047d3a8f12   0/9       0/9   0/14       0/14    8.0634        7.9051     4.9892      -13.49  g5n5
+  26c6bd9b0804   0/9       0/9   0/14       0/14    8.0521        8.1924     4.7721      -11.01  g2n15
+  7f1b0c80afc8   0/9       0/9   0/14       0/14    8.0465        7.3902     5.0065      -10.51  g4n8
+  9b73ccbc0dd1   0/9       0/9   0/14       0/14    8.0423        8.1984     5.1395      -10.63  g7n17
+  99599417e59e   0/9       0/9   0/14       0/14    8.0318        7.7611     5.2432       -8.02  g8n18
+  6dfe07d3cffb   0/9       0/9   0/14       0/14    8.0285        8.0202     4.8228      -13.13  g4n6
+  82569e6fe18f   0/9       0/9   0/14       0/14    8.0254        8.9297     5.0139      -10.46  g13n13
+  23aecc1ad4c8   0/9       0/9   0/14       0/14    7.9964        8.0660     4.7964      -10.56  g2n16
+  26a8b8481535   0/9       0/9   0/14       0/14    7.9914        8.2433     5.1343      -11.30  g8n7
+  53171f6c2cde   0/9       0/9   0/14       0/14    7.9794        7.5648     4.8194      -10.99  g12n4
+  76c18ebc012e   0/9       0/9   0/14       0/14    7.9589        8.2873     4.9989       -9.29  g2n19
+  c857d94a4cd8   0/9       0/9   0/14       0/14    7.9571        7.3875     4.9342      -11.82  g4n7
+  1bb32cba5a82   0/9       0/9   0/14       0/14    7.9515        7.3557     4.8829      -11.41  g12n17
+  efac52ca848f   0/9       0/9   0/14       0/14    7.9179        8.0670     4.7694      -10.56  g14n16
+  c22da5a01442   0/9       0/9   0/14       0/14    7.9175        7.4875     4.7060       -9.88  g9n13
+  5b43abf991bc   0/9       0/9   0/14       0/14    7.9164        7.7370     4.8535      -11.66  g15n1
+  de99d1f27c3a   0/9       0/9   0/14       0/14    7.9117        8.3021     5.1175       -9.83  g14n9
+  a8ea2c381182   0/9       0/9   0/14       0/14    7.9107        8.1245     5.5850       -9.04  g14n20
+  cd55df1bec9f   0/9       0/9   0/14       0/14    7.9022        8.4924     5.3080      -16.16  g7n1
+  74a8ed154dbc   0/9       0/9   0/14       0/14    7.8661        7.6462     4.5690      -10.72  P7 the throw held, with the rate limit and span opened right up
+  ccca982fa5a7   0/9       0/9   0/14       0/14    7.8582        7.3648     4.6982      -13.74  g10n11
+  bc09a3ddd7f4   0/9       0/9   0/14       0/14    7.8569        7.2869     4.6626      -11.37  g8n8
+  d3dce8ff634e   0/9       0/9   0/14       0/14    7.8467        6.9585     4.5096       -9.70  g1n14
+  f823817c43c5   0/9       0/9   0/14       0/14    7.8416        7.8855     5.3673      -13.70  g2n17
+  d547ef7c7cf9   0/9       0/9   0/14       0/14    7.8273        7.9899     5.0331      -15.99  g1n11
+  55e30976fba1   0/9       0/9   0/14       0/14    7.8247        8.6252     4.8818      -12.22  g11n16
+  ee70a2c2b0a5   0/9       0/9   0/14       0/14    7.7837        8.3402     4.5380      -11.00  g11n21
+  771710e65aef   0/9       0/9   0/14       0/14    7.7805        7.2723     4.9234      -10.63  g9n16
+  e424b44a0861   0/9       0/9   0/14       0/14    7.7728        7.4282     4.6757       -9.89  g4n0
+  808c6c76d621   0/9       0/9   0/14       0/14    7.7625        8.2178     4.8882      -12.36  g2n13
+  502eca861a5f   0/9       0/9   0/14       0/14    7.7413        8.2666     4.9641      -12.13  g2n9
+  cb98aed2d594   0/9       0/9   0/14       0/14    7.7234        7.9915     4.7519      -11.61  g2n18
+  363a97f684e8   0/9       0/9   0/14       0/14    7.6396        7.7154     4.5710      -12.54  g4n9
+  39a736f0c6bb   0/9       0/9   0/14       0/14    7.6346        7.8881     5.0003      -15.21  g5n7
+  d414b7741f72   1/9       0/9   1/14       0/14    7.6155        9.1107     5.7012      -14.33  g1n4
+  4f44497948b3   0/9       0/9   0/14       0/14    7.6124        7.4760     4.8295      -10.46  g11n6
+  0c86898115e4   0/9       0/9   0/14       0/14    7.6012        7.1378     4.7555      -13.54  g1n15
+  9384975e1e8a   0/9       0/9   0/14       0/14    7.5767        7.5652     4.6453      -12.97  g4n14
+  f9e321a9f2dd   0/9       0/9   1/14       0/14    7.5588        6.8615     4.7531      -13.67  P8 the reasoned law armed midway between the tuck and the landing keyframe
+  74aaca90ec4e   0/9       0/9   0/14       0/14    7.5508        8.6434     4.8765       -9.93  g14n4
+  7abaa9ed820e   0/9       0/9   0/14       0/14    7.4934        8.3150     4.6248      -12.09  g6n5
+  166b1cf5194b   0/9       0/9   0/14       0/14    7.4839        7.3351     5.6782      -11.79  g15n8
+  a982c42d3e67   0/9       0/9   0/14       0/14    7.4813        7.1274     4.7613      -10.40  g4n4
+  9aa35dec8db5   0/9       0/9   0/14       0/14    7.4804        9.0217     4.6119      -12.16  g3n15
+  929b2dd25366   0/9       0/9   0/14       0/14    7.4464        7.6967     5.5092      -12.91  g1n2
+  91f1f3ae4860   1/9       0/9   1/14       0/14    7.4269        7.3278     5.4269      -13.67  P10 late arming, ZERO gains: what the mechanism alone costs once the throw has already landed
+  1b74c9a5012d   0/9       0/9   0/14       0/14    7.4003        7.9927     4.6689      -14.35  g4n15
+  49c2fa906caa   0/9       0/9   0/14       0/14    7.3669        7.8412     4.9212      -12.12  g2n2
+  44a765476d3d   0/9       0/9   0/14       0/14    7.3497        6.9744     5.0240      -10.10  g1n19
+  4776bb4e09e4   0/9       0/9   0/14       0/14    7.3418        8.0896     4.4046      -10.72  P3 the reasoned law around the landing pose (kHipX -2, kKneeFz -4, kAnkFz +1)
+  24305bd399fc   0/9       0/9   0/14       0/14    7.3361        6.8339     4.6332      -13.65  g8n0
+  8bed62e06a18   0/9       0/9   0/14       0/14    7.2669        6.7918     4.8269      -12.62  g1n6
+  2395eaeaacc8   0/9       0/9   0/14       0/14    7.2618        6.5556     4.5818      -10.72  P5 the reasoned law, doubled
+  bdf817e8b9ec   1/9       0/9   1/14       0/14    7.1626        7.5012     5.5626      -11.85  g2n1
+  535c49317b62   0/9       0/9   0/14       0/14    7.0944        7.4012     4.3058      -10.30  g6n17
+  d868f3e6503f   0/9       0/9   0/14       0/14    7.0843        6.0978     4.5929      -12.42  g14n6
+  79ee971add01   0/9       0/9   0/14       0/14    7.0814        6.6186     4.2071      -11.53  g11n15
+  31b658a312da   0/9       0/9   0/14       0/14    7.0040        6.6441     4.4726       -9.97  g6n6
+  8b61d57a7d26   0/9       0/9   0/14       0/14    6.9717        6.7289     4.2860      -10.39  g12n0
+  0cea18e0c4b8   0/9       0/9   0/14       0/14    6.9650        7.2521     5.6507       -9.21  g1n0
+  84851a78edb9   2/9       0/9   2/14       0/14    6.8913        6.7447     4.4628      -13.67  P11 late stabiliser with trunk-height and pitch feedback
+  63e5a50d3007   0/9       0/9   0/14       0/14    6.8135        7.0405     5.6535      -18.12  g1n20
+  4a35a1c500c6   0/9       0/9   0/14       0/14    6.8064        7.3345     4.0750      -16.05  g3n7
+  ad40cc4b6251   0/9       0/9   0/14       0/14    6.7954        6.8976     4.3154      -10.04  g3n14
+  eacdcb982312   0/9       0/9   0/14       0/14    6.7854        7.5633     4.5282      -11.85  g4n19
+  ed9a93f5ef06   0/9       0/9   0/14       0/14    6.7584        6.5612     4.1526      -11.63  g14n15
+  cc029b494619   0/9       0/9   0/14       0/14    6.7545        6.9864     4.4116       -9.80  g2n8
+  e6e9c362c090   0/9       0/9   0/14       0/14    6.5779        6.7527     4.5779      -13.67  P9 the servo as a LATE STABILISER: the whole throw runs, the law arms just after the landing keyframe
+  536f6bf2b99e   0/9       0/9   0/14       0/14    6.5688        6.3912     5.2660      -15.00  g2n10
+  30a0f45d1051   0/9       0/9   0/14       0/14    6.5675        6.5460     5.0932      -11.80  g2n6
+  8362f2fc4cd0   0/9       0/9   0/14       0/14    6.5635        6.4651     4.5292      -11.44  g3n12
+  6c782793da43   0/9       0/9   0/14       0/14    6.5597        5.6841     4.0283      -13.17  g3n1
+  7033c1ac79f9   0/9       0/9   0/14       0/14    6.5552        6.6093     4.2467      -11.62  g1n1
+  40484aa8d858   0/9       0/9   0/14       0/14    6.5547        6.4215     4.1433      -14.35  g7n11
+  93fcf1b35031   0/9       0/9   0/14       0/14    6.5418        7.0005     4.1132      -12.42  g4n2
+  3cd970aadfe9   0/9       0/9   0/14       0/14    6.4900        7.4636     4.1814      -11.18  g13n18
+  5f72b2122cbd   2/9       0/9   2/14       0/14    6.4475        6.7893     5.0018      -10.72  P2 no landing at all: base = the TUCK pose, ZERO gains, armed at the tuck
+  2cb661d36f9f   0/9       0/9   0/14       0/14    6.4457        7.0138     3.6971      -10.72  P1 the throw held: base = the round-3 landing pose through the same blend, ZERO gains, armed at the tuck
+  d325277902f5   0/9       0/9   0/14       0/14    6.4178        5.4631     4.0235      -11.39  g3n2
+  d2e470491c60   0/9       0/9   0/14       0/14    6.4093        5.9698     4.0322      -10.29  g3n20
+  a33c7aee1354   0/9       0/9   0/14       0/14    6.3892        6.6235     4.0178      -13.27  g6n11
+  6ac003470131   0/9       0/9   0/14       0/14    6.3321        5.5936     4.0978      -11.44  g2n4
+  00afbf375df4   0/9       0/9   0/14       0/14    6.3159        6.3848     3.8759      -17.95  g1n21
+  b208a311f8de   0/9       0/9   0/14       0/14    6.3097        5.6165     4.1268      -13.70  g8n10
+  5b5ab2cce08f   0/9       0/9   0/14       0/14    6.2599        6.2980     4.5685      -11.03  g13n11
+  870c3ccb8465   0/9       0/9   0/14       0/14    6.2588        6.1896     4.1159      -11.19  g4n11
+  52e20875dd53   0/9       0/9   0/14       0/14    6.2529        6.5241     4.1786      -10.78  g9n6
+  896b04b1df57   0/9       0/9   0/14       0/14    6.2232        5.6622     4.0003      -10.72  P6 trunk-height feedback only
+  8a39ad7bfc1a   0/9       0/9   0/14       0/14    6.1495        6.7518     4.6466      -12.24  g11n19
+  5323eabe0aaf   0/9       0/9   0/14       0/14    6.0925        6.6196     4.4125      -11.12  g1n10
+  a184136982a6   0/9       0/9   0/14       0/14    5.9593        7.0605     4.1079      -11.71  g3n3
+  d8caa8220720   0/9       0/9   0/14       0/14    5.9017        5.2743     3.8160       -9.52  g13n1
+  dae62a03d6bf   0/9       0/9   0/14       0/14    5.8165        5.8512     4.0393       -9.92  g8n1
+  ec662c5f6bc1   0/9       0/9   0/14       0/14    5.6925        5.5821     3.3725      -10.99  g4n12
+  ffbe1d2488a0   0/9       0/9   0/14       0/14    5.6807        5.6717     3.8978      -12.91  g11n10
+  4c31d0999a2a   0/9       0/9   0/14       0/14    5.5696        5.5193     4.0039      -11.75  g4n21
+  fcd733bf16de   0/9       0/9   0/14       0/14    5.3977        6.4245     3.9405      -11.72  g10n8
+  25d7b77d521d   0/9       0/9   0/14       0/14    5.3739        6.8307     3.9682      -10.98  g14n2
+  23f38bcf9557   0/9       0/9   0/14       0/14    5.3602        6.0190     3.6459      -11.01  g3n8
+  15144a31afaa   0/9       0/9   0/14       0/14    5.1120        4.9625     3.7806       -9.95  g5n8
+  2fe501ac5e9d   0/9       0/9   0/14       0/14    5.0892        5.3651     3.6149      -10.19  g7n3
+  ad86d6647934   0/9       0/9   0/14       0/14    4.9322        4.7754     4.9322      -11.86  g3n0
+  fe58d89dce5c   0/9       0/9   0/14       0/14    4.1739        4.3588     3.9396      -11.89  g10n17
+
+  BEST BY OBJECTIVE  e6e8ff144695 obj=9.2970 kCore=0/9 kCoreStable=0/9
+  BEST BY kCoreStable e6e8ff144695 kCoreStable=0/9 obj=9.2970
+  BEST kCoreStable OVERALL (family + warm start) 4b9110c448ec = 4/9  <WARM START (round-3 vault, no servo)>
+  KILL GATE (kCoreStable >= 7 of 9 at 60 mm): FAILED
+  --- per-cell verdicts, e6e8ff144695 (g2n21) ---
+   [core] rise=50 drop=0.12 f=1 honest=false stable=false upTail=41/50 servoArmed=true svTicks=115 penScore=-4.09mm minPenEp=-6.14mm@t238 rew=6.672 x=119.1 above=63.8 fot=0/0 peakZ=121
+   [core] rise=50 drop=0.13 f=0.7 honest=false stable=false upTail=43/50 servoArmed=true svTicks=115 penScore=-0.81mm minPenEp=-6.87mm@t210 rew=7.098 x=112.9 above=76.1 fot=0/0 peakZ=126.1
+   [core] rise=50 drop=0.125 f=1.3 honest=false stable=false upTail=44/50 servoArmed=true svTicks=115 penScore=1.07mm minPenEp=-12.18mm@t199 rew=5.836 x=58.1 above=65.6 fot=0/0 peakZ=134
+   [core] rise=60 drop=0.12 f=1 honest=false stable=false upTail=37/50 servoArmed=true svTicks=115 penScore=-0.1mm minPenEp=-6.32mm@t71 rew=6.052 x=98 above=56.6 fot=0/0 peakZ=126.9
+   [core] rise=60 drop=0.13 f=0.7 honest=false stable=false upTail=47/50 servoArmed=true svTicks=115 penScore=26.97mm minPenEp=-5.35mm@t198 rew=5.386 x=54.9 above=56.1 fot=0/0 peakZ=125.6
+   [core] rise=60 drop=0.125 f=1.3 honest=false stable=false upTail=50/50 servoArmed=true svTicks=115 penScore=-0.17mm minPenEp=-8.61mm@t71 rew=5.925 x=86.1 above=57.8 fot=0/0 peakZ=132.2
+   [core] rise=70 drop=0.12 f=1 honest=false stable=false upTail=50/50 servoArmed=true svTicks=115 penScore=-0.69mm minPenEp=-5.96mm@t204 rew=5.648 x=99.8 above=46.4 fot=0/0 peakZ=128.2
+   [core] rise=70 drop=0.13 f=0.7 honest=false stable=false upTail=50/50 servoArmed=true svTicks=115 penScore=0mm minPenEp=-5.71mm@t218 rew=5.045 x=60.6 above=46 fot=0/0 peakZ=127.4
+   [core] rise=70 drop=0.125 f=1.3 honest=false stable=false upTail=50/50 servoArmed=true svTicks=115 penScore=-0.24mm minPenEp=-9.5mm@t199 rew=6.251 x=94.5 above=62.5 fot=0/0 peakZ=132.8
+   [ext] rise=55 drop=0.12 f=1 honest=false stable=false upTail=40/50 servoArmed=true svTicks=115 penScore=-0.94mm minPenEp=-5.95mm@t226 rew=5.896 x=118.5 above=69.3 fot=0/0 peakZ=124.3
+   [ext] rise=65 drop=0.12 f=1 honest=false stable=false upTail=29/50 servoArmed=true svTicks=115 penScore=7.33mm minPenEp=-8.16mm@t199 rew=5.46 x=77.6 above=49.8 fot=0/0 peakZ=128.7
+   [ext] rise=50 drop=0.14 f=0.5 honest=false stable=false upTail=37/50 servoArmed=true svTicks=115 penScore=29.69mm minPenEp=-5.7mm@t72 rew=5.792 x=50.7 above=67.2 fot=0/0 peakZ=121.8
+   [ext] rise=60 drop=0.14 f=0.5 honest=false stable=false upTail=42/50 servoArmed=true svTicks=115 penScore=14.25mm minPenEp=-15.38mm@t198 rew=5.453 x=58.2 above=56.5 fot=0/0 peakZ=123.6
+   [ext] rise=70 drop=0.14 f=0.5 honest=false stable=false upTail=49/50 servoArmed=true svTicks=115 penScore=6.24mm minPenEp=-4.4mm@t90 rew=4.922 x=46.8 above=48 fot=0/0 peakZ=127.6
+  --- per-cell verdicts, 4b9110c448ec (WARM START (round-3 vault, no servo)) ---
+   [core] rise=50 drop=0.12 f=1 honest=false stable=false upTail=50/50 servoArmed=null svTicks=null penScore=0mm minPenEp=-9.96mm@t69 rew=5.18 x=12.2 above=66.4 fot=0/1 peakZ=121.1
+   [core] rise=50 drop=0.13 f=0.7 honest=true  stable=true  upTail=50/50 servoArmed=null svTicks=null penScore=-0.52mm minPenEp=-8.52mm@t69 rew=12 x=328.5 above=116.1 fot=2/2 peakZ=172.6
+   [core] rise=50 drop=0.125 f=1.3 honest=true  stable=true  upTail=50/50 servoArmed=null svTicks=null penScore=-1.28mm minPenEp=-9.27mm@t68 rew=12 x=213 above=115.4 fot=2/2 peakZ=170.2
+   [core] rise=60 drop=0.12 f=1 honest=true  stable=true  upTail=50/50 servoArmed=null svTicks=null penScore=-0.74mm minPenEp=-8.57mm@t69 rew=12 x=334.3 above=116.1 fot=2/2 peakZ=182.5
+   [core] rise=60 drop=0.13 f=0.7 honest=false stable=false upTail= 8/50 servoArmed=null svTicks=null penScore=50mm minPenEp=-8.85mm@t94 rew=2.954 x=-6.9 above=44.1 fot=0/2 peakZ=190.4
+   [core] rise=60 drop=0.125 f=1.3 honest=false stable=false upTail=50/50 servoArmed=null svTicks=null penScore=50mm minPenEp=-10.72mm@t68 rew=3.353 x=-163.9 above=55.9 fot=0/1 peakZ=123.3
+   [core] rise=70 drop=0.12 f=1 honest=false stable=false upTail=50/50 servoArmed=null svTicks=null penScore=4.93mm minPenEp=-7.71mm@t95 rew=5.25 x=73.2 above=46.4 fot=0/0 peakZ=123.8
+   [core] rise=70 drop=0.13 f=0.7 honest=false stable=false upTail=50/50 servoArmed=null svTicks=null penScore=0mm minPenEp=-6.8mm@t97 rew=5.357 x=79.9 above=46.5 fot=0/0 peakZ=120.9
+   [core] rise=70 drop=0.125 f=1.3 honest=true  stable=true  upTail=50/50 servoArmed=null svTicks=null penScore=-1.21mm minPenEp=-8.88mm@t68 rew=12 x=255.5 above=115.6 fot=2/2 peakZ=189.3
+   [ext] rise=55 drop=0.12 f=1 honest=false stable=false upTail=48/50 servoArmed=null svTicks=null penScore=50mm minPenEp=-9.57mm@t69 rew=3.801 x=-65.2 above=61.2 fot=0/1 peakZ=125.6
+   [ext] rise=65 drop=0.12 f=1 honest=false stable=false upTail=50/50 servoArmed=null svTicks=null penScore=50mm minPenEp=-10.06mm@t96 rew=0 x=-148.9 above=51.3 fot=0/1 peakZ=122
+   [ext] rise=50 drop=0.14 f=0.5 honest=false stable=false upTail=13/50 servoArmed=null svTicks=null penScore=50mm minPenEp=-13.67mm@t92 rew=1.934 x=-156.3 above=45.9 fot=0/1 peakZ=121.2
+   [ext] rise=60 drop=0.14 f=0.5 honest=false stable=false upTail=50/50 servoArmed=null svTicks=null penScore=28.13mm minPenEp=-9.72mm@t91 rew=5.013 x=28.7 above=56.6 fot=0/0 peakZ=121.2
+   [ext] rise=70 drop=0.14 f=0.5 honest=false stable=false upTail=50/50 servoArmed=null svTicks=null penScore=50mm minPenEp=-10.35mm@t85 rew=4.176 x=1 above=46.6 fot=0/0 peakZ=121.2
+  saved best_r5_servoland_60mm.json  sha256 e6e8ff144695e682040c9f651f1d566fa35a29615b8682ab0334eb34f7cb3c7c  (hash unchanged by the stamp: true)
+
+  wrote climb/r5_servoland-results.json  (1851 s total)

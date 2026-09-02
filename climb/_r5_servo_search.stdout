@@ -1,0 +1,46 @@
+================================================================
+ROUND 5 SERVO SCREEN — base best_r3_vault_60mm.json (sha 4b9110c448ec), rise 60 mm, seed 0x5eed0005
+   16 genes; blend 2.1572 gap 0.0187 side 0.0078 approach 0.1663 and all six keyframes are the published round-3 vector, unchanged.
+   BASELINE (timed landing): kCore=4/9 kCoreStable=4/9 objectiveCore=27.4149 meanRewardCore=7.7882  [5s]
+
+STAGE 1 — one cell (60 mm, drop 0.120, friction x1.0), rank by rig3 reward
+   #   1 reward 1.849 honest=false feetOnTread=0 x=-9.9mm above=18.9mm minPenEp=-8.57mm at=1.5539  [5s]
+   #   3 reward 2.243 honest=false feetOnTread=0 x=-115.9mm above=53.3mm minPenEp=-8.57mm at=1.44795  [6s]
+   #   4 reward 5.107 honest=false feetOnTread=0 x=35.6mm above=56.4mm minPenEp=-7.45mm at=0.81778  [6s]
+   #   6 reward 5.314 honest=false feetOnTread=0 x=50.4mm above=56.0mm minPenEp=-8mm at=0.7343  [7s]
+   #   7 reward 6.272 honest=false feetOnTread=0 x=107.7mm above=58.3mm minPenEp=-6.89mm at=0.81407  [8s]
+   #  18 reward 6.294 honest=false feetOnTread=0 x=83.6mm above=91.2mm minPenEp=-7.83mm at=0.76208  [13s]
+   #  21 reward 6.361 honest=false feetOnTread=1 x=264.1mm above=32.3mm minPenEp=-10.87mm at=1.30819  [14s]
+   #  35 reward 12.000 honest=true feetOnTread=2 x=291.1mm above=118.6mm minPenEp=-8.57mm at=1.23512  [21s]
+   786 candidates screened; best single-cell reward 12.000 (baseline cell reward would be the vault's own)  [360s]
+
+STAGE 2 — survivors on the full 9-cell core grid. THE GATE: kCoreStable >= 7 of 9.
+   s2 #1 kCore=1/9 kCoreStable=0/9 objCore=6.3410 minPenEp=-10.72mm maxTq=0.6405 armedCells=9/9   <-- IMPROVEMENT  [364s]
+   s2 #2 kCore=3/9 kCoreStable=0/9 objCore=8.6370 minPenEp=-12.1mm maxTq=0.6405 armedCells=9/9   <-- IMPROVEMENT  [368s]
+   s2 #3 kCore=4/9 kCoreStable=0/9 objCore=9.2324 minPenEp=-10.72mm maxTq=0.6405 armedCells=9/9   <-- IMPROVEMENT  [372s]
+   s2 #4 kCore=1/9 kCoreStable=0/9 objCore=5.8216 minPenEp=-10.72mm maxTq=0.6405 armedCells=9/9  [376s]
+   s2 #5 kCore=2/9 kCoreStable=0/9 objCore=5.7626 minPenEp=-10.72mm maxTq=0.6405 armedCells=9/9  [381s]
+   s2 #6 kCore=2/9 kCoreStable=0/9 objCore=6.4011 minPenEp=-11.22mm maxTq=0.6405 armedCells=9/9  [385s]
+   s2 #7 kCore=2/9 kCoreStable=0/9 objCore=7.7363 minPenEp=-10.72mm maxTq=0.6405 armedCells=9/9  [389s]
+   s2 #8 kCore=3/9 kCoreStable=0/9 objCore=8.2480 minPenEp=-11.61mm maxTq=0.6405 armedCells=9/9  [393s]
+   s2 #9 kCore=1/9 kCoreStable=0/9 objCore=7.1439 minPenEp=-10.72mm maxTq=0.6405 armedCells=9/9  [397s]
+   s2 #10 kCore=1/9 kCoreStable=0/9 objCore=6.5210 minPenEp=-10.72mm maxTq=0.6405 armedCells=9/9  [401s]
+   s2 #11 kCore=1/9 kCoreStable=0/9 objCore=6.2553 minPenEp=-13.09mm maxTq=0.6405 armedCells=9/9  [405s]
+   s2 #12 kCore=1/9 kCoreStable=0/9 objCore=5.4966 minPenEp=-10.72mm maxTq=0.6405 armedCells=9/9  [409s]
+   s2 #13 kCore=2/9 kCoreStable=0/9 objCore=7.8435 minPenEp=-10.72mm maxTq=0.6405 armedCells=9/9  [413s]
+   s2 #14 kCore=1/9 kCoreStable=0/9 objCore=4.7308 minPenEp=-13.13mm maxTq=0.6405 armedCells=9/9  [417s]
+   s2 #15 kCore=3/9 kCoreStable=0/9 objCore=7.8684 minPenEp=-13.03mm maxTq=0.6405 armedCells=9/9  [421s]
+   s2 #16 kCore=1/9 kCoreStable=0/9 objCore=5.5371 minPenEp=-15.25mm maxTq=0.6405 armedCells=9/9  [425s]
+   s2 #17 kCore=1/9 kCoreStable=0/9 objCore=4.9860 minPenEp=-10.72mm maxTq=0.6405 armedCells=9/9  [429s]
+   s2 #18 kCore=1/9 kCoreStable=0/9 objCore=6.7189 minPenEp=-10.72mm maxTq=0.6405 armedCells=9/9  [433s]
+   s2 #19 kCore=2/9 kCoreStable=0/9 objCore=7.9043 minPenEp=-10.72mm maxTq=0.6405 armedCells=9/9  [438s]
+   s2 #20 kCore=1/9 kCoreStable=0/9 objCore=8.1494 minPenEp=-10.72mm maxTq=0.6405 armedCells=9/9  [442s]
+   s2 #21 kCore=2/9 kCoreStable=0/9 objCore=7.4913 minPenEp=-12.01mm maxTq=0.6405 armedCells=9/9  [446s]
+   s2 #22 kCore=2/9 kCoreStable=0/9 objCore=7.8856 minPenEp=-10.72mm maxTq=0.6405 armedCells=9/9  [450s]
+   s2 #23 kCore=2/9 kCoreStable=0/9 objCore=8.3231 minPenEp=-10.72mm maxTq=0.6405 armedCells=9/9  [454s]
+   s2 #24 kCore=1/9 kCoreStable=0/9 objCore=6.3757 minPenEp=-11.31mm maxTq=0.6405 armedCells=9/9  [458s]
+
+BEST SERVOED: kCoreStable=0/9 objectiveCore=9.2324   file ../climb/best_r5_servo_60mm.json   sha e0434c2c90da69e00c2ef5d06c301ba4a20542229e3155372a35c06f4e153d99
+BASELINE TIMED: kCoreStable=4/9 objectiveCore=27.4149  (sha 4b9110c448ec)
+KILL GATE (kCoreStable >= 7 of 9 at 60 mm): NOT REACHED — on this evidence the 40-80 mm band is CLOSED and the negative is the result
+wrote climb/r5_servo_search-results.json  [458s]

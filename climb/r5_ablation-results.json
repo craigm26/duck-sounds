@@ -1,0 +1,47 @@
+{
+  "note": "each round-5 best scored with, and without, its servo block; the launch and every other field identical",
+  "rows": [
+    {
+      "file": "best_r5_servoland_60mm.json",
+      "withServo": {
+        "move": "e6e8ff144695",
+        "kCore": 0,
+        "kCoreStable": 0,
+        "kExt": 0,
+        "objective": 9.297,
+        "meanUpTail": 43.5,
+        "minPenEp_mm": -15.38
+      },
+      "launchOnly": {
+        "move": "5f877fad2d44",
+        "kCore": 0,
+        "kCoreStable": 0,
+        "kExt": 0,
+        "objective": 5.9598,
+        "meanUpTail": 40.7,
+        "minPenEp_mm": -10.35
+      }
+    },
+    {
+      "file": "best_r5_servoland_kcore_60mm.json",
+      "withServo": {
+        "move": "880a120ef649",
+        "kCore": 3,
+        "kCoreStable": 0,
+        "kExt": 4,
+        "objective": 8.1681,
+        "meanUpTail": 17.3,
+        "minPenEp_mm": -10.22
+      },
+      "launchOnly": {
+        "move": "be5f462a37a5",
+        "kCore": 2,
+        "kCoreStable": 2,
+        "kExt": 4,
+        "objective": 25.6044,
+        "meanUpTail": 47.5,
+        "minPenEp_mm": -12.76
+      }
+    }
+  ]
+}
