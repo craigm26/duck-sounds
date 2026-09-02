@@ -18,3 +18,7 @@ sim/shots-*/
 .wrangler/
 sim/hailort.log
 sim/__pycache__/
+
+# wrangler caches carry the Cloudflare account id; never track them
+site/.wrangler/
+.wrangler/
