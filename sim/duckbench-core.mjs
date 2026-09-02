@@ -31,6 +31,23 @@ import { makeLoop } from './duckloop.mjs';
 // means holding the parameters and multiplying them here. Both shells can reach
 // this file — it is 60 lines of arithmetic with no machine in it.
 import { loadParameters, foldParameters, forward, FLOAT_COUNT } from './policyforward.mjs';
+// THE STAIRS, AND THE ONE EPISODE THAT SCORES A CLIMB ON THEM.
+//
+// `climb_score.mjs` is not a second opinion about anything: it IS the episode
+// climb/rig3.mjs's scoreSaved() runs and the one climb/robust.mjs's 14-cell
+// grid is decided on, imported rather than transcribed, so /climb answers the
+// number the audit published instead of a number that looks like it.
+// climb_score.mjs in turn imports `./stairs.js`, `./climb_event.mjs` and
+// `./climb_servo.mjs`, which are re-export shims in sim/ and the real files in
+// the phone bundle's flat assets/ — the same trick `./duckloop.mjs` uses, and
+// the reason both make_phonebench scripts had to learn four new filenames.
+import { makeClimbRig, criteria as climbCriteria, checkBounds as climbCheckBounds,
+         checkIntent as climbCheckIntent, optsOf as climbOptsOf,
+         intentHashPayload, intentIsolate, intentStepCount, gridCells,
+         reachedFlight as climbReachedFlight,
+         CRITERION_SENTENCE, UPRIGHT_TAIL_MIN, CLEAR_BONUS, CEILING_ABOVE,
+         RISER_X as CLIMB_RISER_X, LATERAL as CLIMB_LATERAL,
+         DECLARED_BOUNDS as CLIMB_BOUNDS } from './climb_score.mjs';
 
 /**
  * A bench, over the machine `env` describes.
@@ -923,7 +940,72 @@ export async function makeBench(env) {
       return run;
     };
   }
-  const liveLane = lane(), batchLane = lane();
+  const liveLane = lane(), batchLane = lane(), climbLane = lane();
+
+  /**
+   * A /climb cell TAKES BOTH OTHER LANES, and this is the one place in the file
+   * where that is true.
+   *
+   * Every other endpoint borrows an mjData. A climb cell borrows the MODEL: the
+   * plant axis of the grid multiplies the foot geoms' friction, and laying a
+   * flight out at all means zeroing the step blocks' conaffinity so fourteen
+   * overlapping 200 kg boxes do not shove each other apart. Both are written
+   * back in a `finally` inside the shared episode, so nothing survives the
+   * request — but WHILE it runs, a /intent stepping the live world or a
+   * /measure stepping the batch world would be stepping a duck with different
+   * feet. Serialising against both is a second of latency for a steering loop
+   * that happens to overlap a scoring run, and the alternative is a number
+   * nobody can explain.
+   */
+  const climbJob = job => climbLane(() => liveLane(() => batchLane(job)));
+
+  /**
+   * THE CLIMB RIG, BUILT ON FIRST ASK AND NOT AT BOOT.
+   *
+   * It costs an mjData and a policy load, and a bench that is only ever asked
+   * to /record should not pay for a staircase it never lays out. `CLIMB` is
+   * `undefined` until something asks, then either the rig or `null` — and null
+   * is an answer, not a failure: it means this plant cannot be asked, and
+   * /climb says which of the three things is missing rather than throwing.
+   *
+   * ITS OWN mjData. The live world is the one a steering loop is keeping and
+   * the batch world is the one /record resets; a climb episode resets its world
+   * fourteen times per grid and must not be either of them.
+   *
+   * WHY THE ACTUATOR CHECK. The shared episode writes `data.ctrl[k]` for
+   * k = 0..13, which is what rig3.mjs and robust.mjs have always written and
+   * therefore what every audited number was measured through. In the canon
+   * one-duck scene actuator k IS joint k; in a multi-duck scene it is not, and
+   * a climb scored there would be driving the first duck's legs. So it is
+   * checked, and a scene where it does not hold is refused by name.
+   */
+  let CLIMB, CLIMB_WHY = null;
+  async function climbRig() {
+    if (CLIMB !== undefined) return CLIMB;
+    CLIMB = null;
+    const duck = DUCKS.find(d => d.prefix === '');
+    if (!duck) { CLIMB_WHY = `this scene's ducks are all prefixed (${DUCK_NAMES.join(', ')}); `
+      + 'the climb episode drives the unprefixed duck the audits were measured on'; return CLIMB; }
+    if (!duck.ctrl.every((a, k) => a === k)) {
+      CLIMB_WHY = 'this scene\'s actuators are not in joint order, so the shared climb episode '
+        + 'would drive the wrong joints'; return CLIMB;
+    }
+    const loaded = await policy(STAND);
+    const rig = makeClimbRig({
+      mj, model, data: new mj.MjData(model),
+      D: duck.joints, HOME, LO, HI, buildObs, projectedGravity, command,
+      tickHz: C.tickHz, reference: loaded.reference,
+      // THE FORWARD PASS IS THE SHELL'S, exactly as it is for every other
+      // endpoint: onnxruntime on the desk, policyforward.mjs in a browser. They
+      // agree to 3.5e-6 per action and not exactly (sim/policy_parity.mjs), so
+      // a phone's cell is the phone's own measurement — which is why the answer
+      // carries the plant digest and /health carries the engine.
+      run: obs => loaded.net.run(obs),
+    });
+    if (!rig) { CLIMB_WHY = `${PLANT} has no stair bank: its bodies step0..step13 are not in it`; return CLIMB; }
+    CLIMB = rig;
+    return CLIMB;
+  }
 
   /**
    * THE LIVE WORLD: the ducks that keep standing between requests.
@@ -1996,6 +2078,136 @@ export async function makeBench(env) {
         criterion: 'ends standing, trunk at least 100 mm up',
         randomised: 'drop height 0.12-0.13 m (Pollen’s range)',
         medianHeight: r4(heights[heights.length >> 1]), worstHeight: r4(heights[0]),
+      };
+    }
+
+    /**
+     * GET /climb/grid — THE FOURTEEN CELLS, SO A CLIENT NEVER RETYPES THEM.
+     *
+     * The grid is not a preference. It is the axis set the round-4 judge scored
+     * every published move on: three rises (h-10, h, h+10 mm) crossed with three
+     * plants (nominal; a 10 mm higher fall on friction x0.7; a 5 mm higher fall
+     * on friction x1.3) for the CORE nine, plus five more that round 3's grid
+     * could not see — +/-5 mm on the nominal plant, and a slippery plant
+     * (friction x0.5, drop 0.140) crossed with the three core rises. A client
+     * that hard-codes fourteen numbers is a client that will one day be scoring
+     * a different grid and reporting it under the same name, so the bench that
+     * runs them is the one that lists them.
+     */
+    if (url.pathname === '/climb/grid') {
+      const rig = await climbRig();
+      return {
+        cells: gridCells(),
+        nCore: 9, nExt: 14,
+        bar: 7,
+        barWhy: 'the round-4 judge\'s bar: 7 of the 9 core cells cleared STABLY. '
+              + 'The best move in the published corpus reaches 5.',
+        uprightTailMin: UPRIGHT_TAIL_MIN,
+        clearBonus: CLEAR_BONUS,
+        riserX_m: CLIMB_RISER_X, lateral_m: CLIMB_LATERAL, ceilingAbove_m: CEILING_ABOVE,
+        stairs: { count: 4, run_m: 0.28, start_m: 0.12 },
+        declaredBounds: CLIMB_BOUNDS,
+        criterion: CRITERION_SENTENCE,
+        climbable: !!rig,
+        ...(rig ? {} : { why: CLIMB_WHY }),
+        plantName: PLANT, plantDigest: PLANT_DIGEST,
+      };
+    }
+
+    /**
+     * POST /climb — ONE CELL OF THE GRID, FOR ONE MOVE, IN THE REQUEST BODY.
+     *
+     * WHY ONE CELL AND NOT THE GRID. A cell is 0.5 s of settle, up to 4.1 s of
+     * track and 1.0 s of tail — call it five and a half seconds of simulated
+     * duck, measured at 0.57 s of wall clock on a Raspberry Pi 5 and 0.58 s in
+     * that Pi's own browser shell. Fourteen of them is eight seconds here and
+     * an unknown number on a phone that has never been timed, and a request
+     * that runs that long is a request that times out somewhere between the app
+     * and here with nothing at all to show for it. One cell answers in about a
+     * second, the client asks fourteen times, and it can draw a progress row
+     * and stop halfway.
+     *
+     * WHAT IT IS NOT. It is not a training signal and it is not a robot. It
+     * scores a move against a staircase in this plant, and the answer says
+     * which plant by digest, because a number from a phone and a number from
+     * the desk are comparable only when the world and the criterion are.
+     *
+     *   body { intent: <the harness intent JSON>, rise: metres,
+     *          cell: { dh, drop, fmul }, tail: "policy" }
+     *
+     * The intent is the file format climb/*.json uses — keyframes, blend, gap,
+     * side, approach, and the optional event/servo/spawn blocks — and it is
+     * scored EXACTLY as climb/rig3.mjs scoreSaved() would score the same JSON
+     * saved to disk, because it is the same function. sim/climb_parity.mjs is
+     * the acceptance test: every cell of the fourteen, five published files,
+     * against climb/robust.mjs scoreRobust, at full float digits.
+     */
+    if (url.pathname === '/climb') {
+      const started = (typeof performance === 'object' ? performance.now() : Date.now());
+      const rig = await climbRig();
+      if (!rig) {
+        return { error: `no /climb here: ${CLIMB_WHY}`, climbable: false, why: CLIMB_WHY,
+                 plantName: PLANT, plantDigest: PLANT_DIGEST };
+      }
+      let intent;
+      try { intent = climbCheckIntent(body.intent, 'the request body'); }
+      catch (e) { return { error: String(e.message || e) }; }
+      const rise = +body.rise;
+      if (!(rise > 0 && rise < 1)) return { error: 'climb needs a rise in METRES, 0 < rise < 1' };
+      const cell = body.cell || {};
+      const dh = cell.dh === undefined ? 0 : +cell.dh;
+      const drop = cell.drop === undefined ? 0.120 : +cell.drop;
+      const fmul = cell.fmul === undefined ? 1.0 : +cell.fmul;
+      if (![dh, drop, fmul].every(Number.isFinite)) return { error: 'climb needs a cell of finite dh, drop and fmul' };
+      const tail = body.tail === undefined ? 'policy' : String(body.tail);
+      if (tail !== 'policy') {
+        return { error: `this bench scores the grid, and the grid is tail "policy": ${tail} is not one of its cells` };
+      }
+      const hash = await env.sha256(new TextEncoder().encode(intentHashPayload(intent)));
+      const answered = {
+        hash, move: hash.slice(0, 12), rise, cell: { dh, drop, fmul }, tail,
+        plantName: PLANT, plantDigest: PLANT_DIGEST,
+        criterion: CRITERION_SENTENCE,
+      };
+      // ROUND 4, HOLE 4: bounds are enforced HERE, at scoring time, and not
+      // only declared in a comment. A file outside the box it declared is not a
+      // result, so it is not scored: it comes back invalid, with the parameter,
+      // the value and the box named.
+      const B = climbCheckBounds(intent);
+      if (B.violations.length) {
+        return { ...answered, invalid: true, bounds: B.bounds, boundViolations: B.violations,
+          why: 'out of declared bounds: '
+             + B.violations.map(v => `${v.param} = ${v.value} is outside [${v.lo}, ${v.hi}]`).join('; ')
+             + '. A search that left its own declared box is not a result, so this cell is not scored.',
+          seconds: ((typeof performance === 'object' ? performance.now() : Date.now()) - started) / 1000 };
+      }
+      const E = await climbJob(() => rig.runEpisode(
+        intent.keyframes, climbOptsOf(intent), rise + dh, 'policy',
+        { drop, fmul, isolate: intentIsolate(intent), stepCount: intentStepCount(intent) }));
+      const s = E.afterTail;                        // the grid scores after the 50-tick policy tail
+      const crit = climbCriteria(rise + dh, s);
+      const honest = crit.honest;
+      const stable = honest && E.uprightTailTicks >= UPRIGHT_TAIL_MIN;
+      // FULL FLOAT DIGITS, in millimetres. Not rounded: sim/climb_parity.mjs
+      // compares these against robust.mjs's own numbers with Object.is, and a
+      // toFixed here would make that gate unable to tell a moved trajectory
+      // from a rounded one.
+      const mm = v => v * 1000;
+      return {
+        ...answered, invalid: false, why: null,
+        honest, stable,
+        uprightTailTicks: E.uprightTailTicks, tailTicks: E.tailTicks,
+        above_mm: mm(s.above), x_mm: mm(s.x), dy_mm: mm(s.dy),
+        feetOnTread: s.feetOnTread, feetOnTreadMax: E.feetOnTreadMax,
+        peakAboveTread_mm: mm(E.maxZ - (rise + dh)),
+        maxTq: E.maxTq,
+        penetrationAtScore_mm: s.penetrationAtScore === null ? null : mm(s.penetrationAtScore),
+        minPenetrationEpisode_mm: E.penetration.min === null ? null : mm(E.penetration.min),
+        maxAbsDY_mm: mm(E.maxAbsDY),
+        // ROUND 4, HOLE 2: a cell pays its upright credit only if the duck got
+        // somewhere in it. Do-nothing never crosses x = 120 mm and so earns 0.
+        reachedFlight: climbReachedFlight({ maxX: E.maxX, feetOnTreadMax: E.feetOnTreadMax }),
+        seconds: ((typeof performance === 'object' ? performance.now() : Date.now()) - started) / 1000,
       };
     }
     return null;

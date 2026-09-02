@@ -24,6 +24,20 @@ cp "$HERE/sim/policyforward.mjs"      "$OUT/assets/"
 # no `../site` to reach into.
 cp "$HERE/site/duckloop.mjs"          "$OUT/assets/duckloop.mjs"
 cp "$HERE/sim/duckkit-constants.json" "$OUT/assets/"
+# THE CLIMB SCORER AND THE THREE FILES IT IMPORTS, under the names the core
+# imports them by. `duckbench-core.mjs` answers /climb out of
+# `sim/climb_score.mjs`, which is the SAME episode climb/rig3.mjs and
+# climb/robust.mjs run — the loop every audited number was measured through —
+# and it reaches its staircase, its event block and its servo law through
+# `./stairs.js`, `./climb_event.mjs` and `./climb_servo.mjs`. In sim/ those
+# three names are re-export shims pointing at site/ and climb/; a browser has no
+# `../site` or `../climb` to reach into, so here they ARE the files, exactly as
+# duckloop.mjs is. Leave one of them out and the probe boots, answers /health,
+# and dies on the first /climb with a module-not-found nobody can read.
+cp "$HERE/sim/climb_score.mjs"        "$OUT/assets/"
+cp "$HERE/site/stairs.js"             "$OUT/assets/stairs.js"
+cp "$HERE/climb/event.mjs"            "$OUT/assets/climb_event.mjs"
+cp "$HERE/climb/servo.mjs"            "$OUT/assets/climb_servo.mjs"
 # THE PLANT, FROM sim/. `site/scene.mjb` and `sim/scene.mjb` share a name and
 # differ in bytes (PLANT.md), and it is sim/'s that every measurement in duckkit
 # is stamped with. Copying the wrong one is the failure this whole script exists

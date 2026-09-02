@@ -1,5 +1,5 @@
 ---
-license: other
+license: cc-by-4.0
 pretty_name: "Microduck Stairs Challenge"
 tags:
   - mujoco
@@ -359,6 +359,44 @@ computes it exactly that way.
 One cell costs about 0.712 s of wall clock (`results/r4_famB-results.json` → `secPerCell`), so
 the 9-cell core grid is roughly 6.4 s and the 14-cell grid roughly 10.0 s per intent.
 
+## Reproduce in the app
+
+From Microduck Studio build 45 or later (TestFlight: <https://testflight.apple.com/join/S36AnsKr>;
+source: github.com/craigm26/duck-studio):
+
+1. **Studio → Measure → Stairs Challenge** (or Behaviours → the discover section → Stairs
+   Challenge). The leaderboard is bundled: the same nineteen intent files as `intents/`, byte for
+   byte, plus the two controls.
+2. Pick a bench. **This iPhone** is always there — the phone's own bench carries the same
+   `climb_score.mjs`, `stairs.js` and plant as the harness — or a Pi bench running the current
+   duck-sounds. The screen asks the bench for its grid first; a bench without `/climb` says so
+   and what to update.
+3. Open a row, choose the rise (60 mm is the default) and tap **Score on this bench**. The app
+   sends the fourteen cells one request each and draws the kit's verdict: `k of 9 stable`,
+   the ceiling, and whether that matches, beats or misses the published row. The number is the
+   audit's number: `sim/climb_parity.mjs` holds `/climb` exact against `robust.scoreRobust` on
+   every cell, and the app only aggregates.
+4. **Open in the editor** turns the move into a Studio motion. Change any keyframe's servo
+   values there, come back, and tap **Score your edited version**. The screen says whether the
+   edit scored better, the same or worse than what it started from. Keep what helps, put back
+   what does not. There is no reward model in that loop: you are the judge and the bench is the
+   measurement.
+5. **Submit** appears once a comparable score exists: it writes one file (the intent, all
+   fourteen per-cell answers unrounded, the plant digest, the date, and how to re-score it),
+   opens the pre-filled GitHub issue, and can commit the file to a dataset under your own
+   Hugging Face account as an archive.
+
+Scoring on the phone needs no account, no secret and no Pi.
+
+## On a real Microduck
+
+The app can play a challenge move on a bench, in physics. Playing a harness move on a physical
+Microduck is not wired in build 45, there is no score off a bench, and nothing in this package
+has been run on hardware. If you put one of these moves on a robot, do it with the same care as
+any untested motion: several entries drive every actuator to its torque ceiling for over a
+second, and the record plants the beak on the step and pivots the body over the head. Report
+what happened in the GitHub issue; a real staircase is your measurement, not the harness's.
+
 ## How to submit
 
 Open an issue on <https://github.com/craigm26/duck-sounds> titled **`Stairs challenge: <rise> mm`**
@@ -588,11 +626,11 @@ pinned throughout (`results/r6_judge-results.json` → `phaseT`;
 
 ## License
 
-**No license has been granted yet.** The YAML front matter says `license: other` because that is
-the honest value: the author has not chosen a license for this data, the intent files, the
-harness snapshot or the card. Until he does, treat this as all-rights-reserved and ask before
-redistributing or building on it. The author will set a license; this section will say which one
-when he does.
-
-The MuJoCo model, the Microduck itself and the `.onnx` policies are Pollen Robotics' work and
-carry their own terms, which are not granted here.
+The data in this package — every intent under `intents/`, every results file under
+`results/`, `leaderboard.md`, `MANIFEST.json` and this card — is published under
+**CC BY 4.0** (https://creativecommons.org/licenses/by/4.0/). Use it, remix it, redistribute
+it; credit "Microduck Stairs Challenge, craigm26" and link back here. The harness that
+scores it — `harness/` here, and the runnable copy at github.com/craigm26/duck-sounds — is
+**Apache-2.0**, as are duck-studio (Microduck Studio) and duckkit. Pollen Robotics' policies
+(`alpha_*.onnx`, `ball_kick_*.onnx`) and plant come from their repositories under their own
+terms, which this package does not grant.

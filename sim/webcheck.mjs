@@ -90,6 +90,46 @@ const worst = Math.max(...state.position.map((v, i) => Math.abs(v - EXPECTED[i])
 console.log(`worst |Δ|   ${worst.toExponential(2)} m   (bench rounds to 1e-4)`);
 console.log(`wall clock  ${wall.toFixed(2)} s for ${TICKS} ticks `
           + `= ${((TICKS / health.tickHz) / wall).toFixed(1)}× real time`);
+// ── THE STAIRS CELL, THROUGH THE BROWSER SHELL ───────────────────────────
+//
+// WHY IT IS HERE AND WHAT IT IS FOR. /climb pulled four new files into the
+// bundle — climb_score.mjs and the three it imports under the names the core
+// imports them by — and a missing one of those is invisible until something
+// asks: the page boots, /health answers, and the Stairs Challenge dies on its
+// first cell. So a cell is actually scored, out of the SHIPPED copies, over
+// real HTTP.
+//
+// IT IS NOT A PARITY CHECK AND MUST NOT BE READ AS ONE. This shell runs
+// policyforward.mjs where the desk runs onnxruntime, they agree to 3.5e-6 per
+// action (policy_parity.mjs), and 350-odd closed-loop ticks is a chaotic
+// amplifier — the trajectory above already measures 32 mm apart by tick 250. A
+// cell scored here is THIS MACHINE'S measurement of this move, which is exactly
+// what a phone's answer is, and it carries its own plant digest to say so. What
+// is checked is that it answers, that it answers about the right move, and that
+// the grid it publishes is the fourteen cells.
+const grid = JSON.parse(await duckbench('/climb/grid'));
+console.log(`\nclimb grid  ${grid.cells.length} cells, bar ${grid.bar} of 9 stable, `
+          + `upright-tail minimum ${grid.uprightTailMin}, climbable ${grid.climbable}`);
+const intent = JSON.parse(fs.readFileSync(path.join(HERE, '..', 'climb', 'best_r3_vault_60mm.json'), 'utf8'));
+const cellT0 = Date.now();
+const cell = JSON.parse(await duckbench('/climb', JSON.stringify({
+  intent, rise: 0.060, cell: grid.cells[3], tail: 'policy' })));   // cells[3] = 60 mm on the nominal plant
+const cellWall = (Date.now() - cellT0) / 1000;
+if (cell.error) { console.log(`CLIMB FAILED — ${cell.error}`); process.exitCode = 1; }
+else {
+  console.log(`climb cell  move ${cell.move} at ${grid.cells[3].dh * 1000 + 60} mm, drop ${grid.cells[3].drop}, `
+            + `friction x${grid.cells[3].fmul}`);
+  console.log(`            honest ${cell.honest}  stable ${cell.stable}  upright tail ${cell.uprightTailTicks}/50  `
+            + `above ${cell.above_mm.toFixed(1)} mm  peak ${cell.peakAboveTread_mm.toFixed(1)} mm  `
+            + `feet on tread ${cell.feetOnTread}`);
+  console.log(`            ${cellWall.toFixed(2)} s of wall clock for one cell — fourteen of them is a grid`);
+  console.log('            the desk answers this same cell honest=true stable=true upright tail 50/50 '
+            + 'above=116.1 mm peak=122.5 mm feet on tread 2 (climb/r6_judge-results.json phaseG,\n'
+            + '            and sim/climb_parity.mjs re-measures it); a difference here is the forward\n'
+            + '            pass, not the physics.');
+  if (cell.move !== '4b9110c448ec') { console.log('CLIMB FAILED — wrong move hash'); process.exitCode = 1; }
+}
+
 server.close();
 if (worst > 1e-4 + 1e-9) { console.log('WEB PARITY FAILED'); process.exitCode = 1; }
 else console.log('WEB PARITY OK — the browser shell reproduces the desk trajectory');
