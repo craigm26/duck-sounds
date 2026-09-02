@@ -1,0 +1,40 @@
+[40mm] warm start from search_1-results_a1.json (dir 1) + vx probes
+[40mm] e1 NEW 3.687 dir+ onTop=false x=-111 z=118 peakX=167 peakZ=135 head=0.08 riser=0.00 foot=1.00 feetUpMax=2 yaw=3.07 vx=0.00 gap=35
+[40mm] e3 NEW 3.690 dir+ onTop=false x=-94 z=102 peakX=138 peakZ=131 head=0.13 riser=0.01 foot=1.00 feetUpMax=2 yaw=2.81 vx=0.25 gap=35
+[40mm] e4 NEW 5.960 dir+ onTop=false x=-78 z=112 peakX=153 peakZ=133 head=0.07 riser=0.02 foot=1.00 feetUpMax=2 yaw=2.72 vx=0.40 gap=35
+[40mm] e51 NEW 6.944 dir+ onTop=false x=35 z=116 peakX=115 peakZ=124 head=0.03 riser=0.12 foot=0.49 feetUpMax=0 yaw=0.38 vx=0.12 gap=35
+[40mm] e104 NEW 7.438 dir+ onTop=false x=45 z=116 peakX=108 peakZ=132 head=0.07 riser=0.13 foot=0.48 feetUpMax=1 yaw=0.82 vx=0.00 gap=34
+[40mm] e106 NEW 9.075 dir+ onTop=false x=59 z=117 peakX=121 peakZ=129 head=0.09 riser=0.12 foot=1.00 feetUpMax=2 yaw=0.69 vx=0.23 gap=35
+[40mm] e276 NEW 9.542 dir+ onTop=false x=55 z=117 peakX=111 peakZ=132 head=0.07 riser=0.18 foot=0.70 feetUpMax=1 yaw=0.46 vx=0.26 gap=34
+[40mm] e288 NEW 9.613 dir- onTop=false x=214 z=110 peakX=242 peakZ=149 head=0.09 riser=0.03 foot=0.90 feetUpMax=1 yaw=1.42 vx=0.18 gap=17
+[40mm] e357 NEW 11.165 dir+ onTop=false x=129 z=116 peakX=190 peakZ=147 head=0.11 riser=0.05 foot=1.00 feetUpMax=2 yaw=1.26 vx=0.30 gap=33
+
+[40mm] DONE 464 evals in 262s best=11.165 stalled (trunk past the riser, feet never on the tread) cleared 0/3
+
+WROTE search_2-results_a1.json
+[20mm] e1 NEW -5.691 dir+ onTop=false x=-179 z=119 peakX=23 peakZ=119 head=0.00 riser=0.00 foot=0.00 feetUpMax=0 yaw=0.00 vx=0.21 gap=30
+[20mm] e2 NEW -0.575 dir+ onTop=false x=-37 z=117 peakX=35 peakZ=121 head=0.00 riser=0.00 foot=0.49 feetUpMax=2 yaw=0.00 vx=0.44 gap=17
+[20mm] e3 NEW 0.250 dir+ onTop=false x=-157 z=116 peakX=37 peakZ=118 head=0.00 riser=0.00 foot=1.00 feetUpMax=2 yaw=0.00 vx=0.01 gap=25
+[20mm] e8 NEW 0.394 dir- onTop=false x=-91 z=60 peakX=96 peakZ=120 head=0.03 riser=0.00 foot=0.12 feetUpMax=2 yaw=1.26 vx=0.45 gap=32
+[20mm] e15 NEW 1.363 dir+ onTop=false x=26 z=117 peakX=96 peakZ=126 head=0.03 riser=0.02 foot=0.06 feetUpMax=1 yaw=1.51 vx=0.36 gap=22
+[20mm] e19 NEW 6.071 dir+ onTop=false x=-40 z=116 peakX=98 peakZ=131 head=0.03 riser=0.02 foot=1.00 feetUpMax=2 yaw=1.29 vx=0.03 gap=27
+[20mm] e46 NEW 6.228 dir+ onTop=false x=44 z=97 peakX=88 peakZ=134 head=0.04 riser=0.00 foot=1.00 feetUpMax=2 yaw=1.70 vx=0.01 gap=29
+[20mm] e56 NEW 11.018 dir- onTop=false x=129 z=85 peakX=129 peakZ=138 head=0.04 riser=0.03 foot=1.00 feetUpMax=2 yaw=2.08 vx=0.39 gap=19
+[20mm] e207 NEW 13.442 dir- onTop=false x=105 z=116 peakX=172 peakZ=132 head=0.10 riser=0.04 foot=1.00 feetUpMax=2 yaw=2.92 vx=0.41 gap=19
+
+[20mm] DONE 277 evals in 162s best=13.442 stalled (trunk past the riser, feet never on the tread) cleared 0/3
+
+WROTE search_2-results_a2.json
+[120mm] warm start from search_1-results_b2.json (dir -1) + vx probes
+[120mm] e1 NEW -0.548 dir- onTop=false x=-17 z=62 peakX=79 peakZ=129 head=0.26 riser=0.02 foot=0.65 feetUpMax=1 yaw=2.93 vx=0.00 gap=35
+[120mm] e2 NEW -0.149 dir- onTop=false x=47 z=116 peakX=53 peakZ=129 head=0.08 riser=0.32 foot=0.00 feetUpMax=0 yaw=1.47 vx=0.12 gap=35
+[120mm] e17 NEW 1.068 dir+ onTop=false x=-45 z=60 peakX=54 peakZ=117 head=0.14 riser=0.06 foot=0.75 feetUpMax=2 yaw=3.10 vx=0.28 gap=30
+[120mm] e59 NEW 1.623 dir- onTop=false x=13 z=42 peakX=63 peakZ=125 head=0.18 riser=0.03 foot=0.75 feetUpMax=1 yaw=1.35 vx=0.00 gap=35
+[120mm] e175 NEW 3.307 dir- onTop=false x=1 z=117 peakX=110 peakZ=124 head=0.04 riser=0.15 foot=0.90 feetUpMax=1 yaw=0.67 vx=0.00 gap=35
+[120mm] e203 NEW 6.564 dir- onTop=false x=107 z=85 peakX=107 peakZ=126 head=0.04 riser=0.08 foot=1.00 feetUpMax=1 yaw=1.95 vx=0.00 gap=35
+[120mm] e230 NEW 7.070 dir- onTop=false x=123 z=120 peakX=134 peakZ=131 head=0.04 riser=0.03 foot=1.00 feetUpMax=1 yaw=2.00 vx=0.00 gap=32
+
+[120mm] DONE 248 evals in 163s best=7.070 stalled (trunk past the riser, feet never on the tread) cleared 0/3
+
+WROTE search_2-results_a3.json
+PROC2_A_DONE

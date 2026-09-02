@@ -15,7 +15,16 @@ rm -rf "$OUT"; mkdir -p "$OUT/sim" "$OUT/site"
 # duckkit-constants.json is read at startup by name and appears in no import
 # list, so a bundle built from the imports alone starts and dies on
 # ENOENT. Found by starting the bundle rather than by reading the copy list.
-cp "$HERE/sim/duckbench.mjs" "$HERE/sim/onnx_meta.mjs" \
+#
+# AND THE IMPORT LIST GREW WHEN THE BENCH WAS SPLIT. duckbench.mjs is now the
+# door only: the physics is in duckbench-core.mjs, this machine's description is
+# in duckbench-node.mjs, and the core imports the control loop as
+# `./duckloop.mjs` — which in sim/ is a one-line re-export of site/duckloop.mjs
+# and is therefore load-bearing despite containing no code. Leaving any of the
+# four out produces a bundle that installs cleanly and dies on its first import.
+cp "$HERE/sim/duckbench.mjs" "$HERE/sim/duckbench-core.mjs" \
+   "$HERE/sim/duckbench-node.mjs" "$HERE/sim/duckloop.mjs" \
+   "$HERE/sim/policyforward.mjs" "$HERE/sim/onnx_meta.mjs" \
    "$HERE/sim/duckkit-constants.json" "$OUT/sim/"
 cp "$HERE/site/duckloop.mjs" "$OUT/site/"
 cp "$HERE/sim/scene.mjb" "$OUT/sim/"
@@ -76,9 +85,14 @@ sed -e "s/__DIGEST__/$DIGEST/" > "$OUT/README.txt" <<'TXT'
 The duck bench
 ==============
 
-This is the physics your phone does not have. Duck Studio can read a policy,
-fingerprint it and blend it; it cannot run one, because an iPhone has no
-MuJoCo. This does, and the phone talks to it over your Tailscale network.
+This is a machine with room to run the duck properly. Duck Studio can read a
+policy, fingerprint it and blend it; it can now also RUN one, in a browser, on
+the phone itself — MuJoCo compiles to WebAssembly and the network is four matrix
+multiplies. What a desk gives you is headroom: sixteen rollouts of a measurement
+finish while a phone is still on its fourth, and this bench carries every policy
+in the repo rather than the two the app bundles.
+
+The phone talks to it over your Tailscale network.
 
 WHAT YOU NEED
   - Node.js (LTS) from https://nodejs.org

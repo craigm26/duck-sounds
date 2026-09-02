@@ -1,0 +1,191 @@
+{
+ "what": "authored stair motions vs step height, strict criterion from sim/climb_lib.mjs",
+ "criterion": "upright, trunk past the first riser, both feet at or above the first tread, trunk 95 mm above that tread, still there one second after the track ends",
+ "flight": {
+  "count": 4,
+  "run": 0.28,
+  "start": 0.12,
+  "note": "four steps, 280 mm run, flush to the north wall"
+ },
+ "repeats": "start-position offsets of -10, 0, +10 mm on gap (attempt() is otherwise deterministic)",
+ "plant": "sim/scene.mjb",
+ "policy": "BEST_alpha_stand.onnx",
+ "when": "2026-09-02T03:36:07.473Z",
+ "rows": [
+  {
+   "move": "step_up",
+   "riseMm": 0,
+   "cleared": 0,
+   "of": 3,
+   "bestAboveMm": 116
+  },
+  {
+   "move": "step_up",
+   "riseMm": 1,
+   "cleared": 0,
+   "of": 3,
+   "bestAboveMm": 115
+  },
+  {
+   "move": "step_up",
+   "riseMm": 2,
+   "cleared": 0,
+   "of": 3,
+   "bestAboveMm": 114
+  },
+  {
+   "move": "step_up",
+   "riseMm": 3,
+   "cleared": 0,
+   "of": 3,
+   "bestAboveMm": 113
+  },
+  {
+   "move": "step_up",
+   "riseMm": 5,
+   "cleared": 0,
+   "of": 3,
+   "bestAboveMm": 111
+  },
+  {
+   "move": "step_up",
+   "riseMm": 8,
+   "cleared": 0,
+   "of": 3,
+   "bestAboveMm": 108
+  },
+  {
+   "move": "step_up",
+   "riseMm": 10,
+   "cleared": 0,
+   "of": 3,
+   "bestAboveMm": 110
+  },
+  {
+   "move": "lever_up",
+   "riseMm": 0,
+   "cleared": 0,
+   "of": 3,
+   "bestAboveMm": 104
+  },
+  {
+   "move": "lever_up",
+   "riseMm": 1,
+   "cleared": 0,
+   "of": 3,
+   "bestAboveMm": 88
+  },
+  {
+   "move": "lever_up",
+   "riseMm": 2,
+   "cleared": 0,
+   "of": 3,
+   "bestAboveMm": 115
+  },
+  {
+   "move": "lever_up",
+   "riseMm": 3,
+   "cleared": 0,
+   "of": 3,
+   "bestAboveMm": 114
+  },
+  {
+   "move": "lever_up",
+   "riseMm": 5,
+   "cleared": 0,
+   "of": 3,
+   "bestAboveMm": 114
+  },
+  {
+   "move": "lever_up",
+   "riseMm": 8,
+   "cleared": 0,
+   "of": 3,
+   "bestAboveMm": 109
+  },
+  {
+   "move": "lever_up",
+   "riseMm": 10,
+   "cleared": 0,
+   "of": 3,
+   "bestAboveMm": 109
+  },
+  {
+   "move": "riser_up",
+   "riseMm": 0,
+   "cleared": 0,
+   "of": 3,
+   "bestAboveMm": 116
+  },
+  {
+   "move": "riser_up",
+   "riseMm": 1,
+   "cleared": 0,
+   "of": 3,
+   "bestAboveMm": 115
+  },
+  {
+   "move": "riser_up",
+   "riseMm": 2,
+   "cleared": 0,
+   "of": 3,
+   "bestAboveMm": 114
+  },
+  {
+   "move": "riser_up",
+   "riseMm": 3,
+   "cleared": 0,
+   "of": 3,
+   "bestAboveMm": 113
+  },
+  {
+   "move": "riser_up",
+   "riseMm": 5,
+   "cleared": 0,
+   "of": 3,
+   "bestAboveMm": 111
+  },
+  {
+   "move": "riser_up",
+   "riseMm": 8,
+   "cleared": 0,
+   "of": 3,
+   "bestAboveMm": 108
+  },
+  {
+   "move": "riser_up",
+   "riseMm": 10,
+   "cleared": 0,
+   "of": 3,
+   "bestAboveMm": 106
+  },
+  {
+   "move": "climb",
+   "riseMm": 0,
+   "cleared": 0,
+   "of": 3,
+   "bestAboveMm": 117
+  },
+  {
+   "move": "climb",
+   "riseMm": 1,
+   "cleared": 3,
+   "of": 3,
+   "bestAboveMm": 116
+  },
+  {
+   "move": "climb",
+   "riseMm": 2,
+   "cleared": 3,
+   "of": 3,
+   "bestAboveMm": 115
+  },
+  {
+   "move": "climb",
+   "riseMm": 3,
+   "cleared": 0,
+   "of": 3,
+   "bestAboveMm": 114
+  }
+ ]
+}

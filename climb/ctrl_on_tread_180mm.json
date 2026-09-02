@@ -1,0 +1,53 @@
+{
+  "name": "control_on_tread_180mm",
+  "keyframes": [
+    {
+      "t": 1,
+      "pose": [
+        0,
+        -0.0873,
+        -0.4579,
+        -0.0049,
+        0.453,
+        0.3491,
+        0.3491,
+        0,
+        0,
+        0,
+        0.0873,
+        0.4579,
+        0.0049,
+        -0.453
+      ]
+    },
+    {
+      "t": 2.9,
+      "pose": [
+        0,
+        -0.0873,
+        -0.4579,
+        -0.0049,
+        0.453,
+        0.3491,
+        0.3491,
+        0,
+        0,
+        0,
+        0.0873,
+        0.4579,
+        0.0049,
+        -0.453
+      ]
+    }
+  ],
+  "blend": 1,
+  "gap": 0.05,
+  "side": 0,
+  "approach": 0,
+  "spawn": {
+    "x": 0.25,
+    "y": 1.3050000000000002,
+    "z": 0.3
+  },
+  "note": "ON-TREAD CONTROL. Duck spawned standing on the first tread of a 180 mm flight (x=0.25, mid-tread; 0.12 m drop above the tread, the same drop attempt() uses above the floor). HOME pose, vx=0. A criterion that this row FAILS cannot express success at all."
+}

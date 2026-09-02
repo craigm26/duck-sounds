@@ -1,0 +1,26 @@
+# Cloudflare Pages response headers for duck-sounds.
+#
+# SCOPED TO /phonebench/, DELIBERATELY. The first draft of this file put
+# `Cross-Origin-Embedder-Policy: require-corp` on `/*`, which would have changed
+# the headers the live walk demo is served under — and COEP is not a cosmetic
+# header: under require-corp every subresource that does not opt in stops
+# loading, with no error the page can show. The probe needs isolation; the demo
+# did not ask for it and is not part of this change.
+#
+# WHY THE PROBE WANTS ISOLATION AT ALL. The single-threaded MuJoCo build this
+# runs needs none of it. The probe MEASURES whether `SharedArrayBuffer` exists
+# and whether `crossOriginIsolated` is true, and a page that never sent these
+# headers would be measuring its own omission rather than the browser. With
+# them set, a `false` reading on an iPhone is Safari's answer and not ours.
+
+/phonebench/*
+  Cross-Origin-Opener-Policy: same-origin
+  Cross-Origin-Embedder-Policy: require-corp
+  Cross-Origin-Resource-Policy: same-origin
+
+# Pages serves an unknown extension as application/octet-stream, and
+# `WebAssembly.instantiateStreaming` refuses anything that is not
+# `application/wasm`. The symptom is one console line about an incorrect
+# response MIME type and an otherwise blank page.
+/phonebench/assets/*.wasm
+  Content-Type: application/wasm

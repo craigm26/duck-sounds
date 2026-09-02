@@ -1,0 +1,201 @@
+<!doctype html>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>duck bench — phone probe</title>
+<!--
+  WHY THIS PAGE EXISTS.
+
+  Every design in this project rests on one sentence: "an iPhone has no physics
+  engine, so the phone cannot run a policy." That sentence has been repeated in
+  comments, in docs and in shipped UI copy until it reads like a fact about
+  hardware. It is a fact about a BUILD. This page is the experiment that settles
+  it, and it is deliberately a page rather than a test: the only Safari that
+  matters is the one on the operator's phone, and nothing on this Pi can
+  simulate it.
+
+  It prints what it measured, including the things that would make it fail.
+  A probe that reports success and hides the SharedArrayBuffer row is a probe
+  that gets believed and then contradicted by a shipped app.
+-->
+<style>
+  :root { color-scheme: light dark; --ink: #17181c; --paper: #fbfaf7; --dim: #6b6f76;
+          --ok: #1a7f43; --bad: #b3261e; --rule: #d9d5cc; }
+  @media (prefers-color-scheme: dark) {
+    :root { --ink: #e8e6e1; --paper: #16171a; --dim: #999ea6; --ok: #58c98a;
+            --bad: #ff8b80; --rule: #2c2e33; }
+  }
+  body { margin: 0; padding: 20px 16px 64px; background: var(--paper); color: var(--ink);
+         font: 15px/1.5 ui-monospace, SFMono-Regular, Menlo, monospace; }
+  h1 { font: 600 19px/1.3 -apple-system, system-ui, sans-serif; margin: 0 0 2px; }
+  p.sub { color: var(--dim); margin: 0 0 20px; font: 13px/1.45 -apple-system, system-ui, sans-serif; }
+  h2 { font: 600 13px/1.3 -apple-system, system-ui, sans-serif; letter-spacing: .06em;
+       text-transform: uppercase; color: var(--dim); margin: 26px 0 8px;
+       border-bottom: 1px solid var(--rule); padding-bottom: 6px; }
+  .row { display: flex; gap: 10px; align-items: baseline; padding: 3px 0; }
+  .row .k { flex: 0 0 auto; min-width: 13.5em; color: var(--dim); }
+  .row .v { flex: 1 1 auto; word-break: break-word; }
+  .ok { color: var(--ok); } .bad { color: var(--bad); }
+  pre { background: color-mix(in srgb, var(--ink) 5%, transparent); padding: 10px;
+        border-radius: 6px; overflow-x: auto; font-size: 12px; margin: 6px 0 0; }
+  .note { color: var(--dim); font: 12.5px/1.5 -apple-system, system-ui, sans-serif;
+          margin: 8px 0 0; }
+</style>
+
+<h1>duck bench — phone probe</h1>
+<p class="sub">Does this phone run MuJoCo and a trained policy? Everything below was measured
+in this browser just now. Nothing is claimed that is not printed.</p>
+
+<h2>this browser</h2>
+<div id="env"></div>
+
+<h2>physics</h2>
+<div id="phys"></div>
+
+<h2>policy</h2>
+<div id="pol"></div>
+
+<h2>physics parity — the number the desk measured</h2>
+<div id="par"></div>
+<p class="note">The desk bench (Raspberry Pi 5, Node, the same MuJoCo 3.1.16 WASM, the same
+<code>policyforward.mjs</code>) ran <code>/reset</code>, swapped to <code>alpha_walking.onnx</code>
+and held vx&nbsp;0.5 / vyaw&nbsp;0.8 for 250&nbsp;ticks. Its trunk ended where the EXPECTED row says.
+The bench rounds every answer to 1e-4, so the last two decimals are structurally zero — the
+claim is agreement to a tenth of a millimetre after 0.84&nbsp;m of walking, not to the bit.</p>
+
+<h2>/health</h2>
+<pre id="health">…</pre>
+
+<script type="module">
+import load from './assets/mujoco.js';
+import { makeWebBench, install } from './assets/duckbench-web.mjs';
+import { loadParameters, forward } from './assets/policyforward.mjs';
+
+// WHAT THE DESK MEASURED, BAKED IN. A parity gate whose expected value is
+// fetched from the thing it is testing is not a gate; this number was produced
+// by `node sim/physics_parity.mjs --engine policyforward` on the Pi and is
+// pasted here by hand, along with the script that produced it.
+const EXPECTED = [0.360500, 0.725400, 0.113500];
+const SCRIPT = { policy: 'alpha_walking.onnx', vx: 0.5, vy: 0, vyaw: 0.8, ticks: 250, hold: 0.1 };
+
+const put = (where, key, value, verdict) => {
+  const row = document.createElement('div');
+  row.className = 'row';
+  const k = document.createElement('div'); k.className = 'k'; k.textContent = key;
+  const v = document.createElement('div');
+  v.className = 'v' + (verdict === true ? ' ok' : verdict === false ? ' bad' : '');
+  v.textContent = value;
+  row.append(k, v);
+  document.getElementById(where).append(row);
+};
+const ms = n => `${n.toFixed(3)} ms`;
+
+// ── what this browser will admit to ──────────────────────────────────────
+put('env', 'user agent', navigator.userAgent);
+put('env', 'hardwareConcurrency', String(navigator.hardwareConcurrency ?? 'not reported'));
+put('env', 'typeof SharedArrayBuffer', typeof SharedArrayBuffer,
+    typeof SharedArrayBuffer !== 'undefined');
+put('env', 'crossOriginIsolated', String(globalThis.crossOriginIsolated),
+    globalThis.crossOriginIsolated === true);
+// The single-threaded MuJoCo build needs none of this. It is measured because
+// the THREADED build does, and because "the headers are set" and "shared memory
+// actually works" are two different sentences on iOS.
+let sharedMemory = 'no';
+try {
+  const m = new WebAssembly.Memory({ initial: 1, maximum: 2, shared: true });
+  sharedMemory = m.buffer instanceof SharedArrayBuffer ? 'yes' : 'allocated, not shared';
+} catch (e) { sharedMemory = `refused: ${e.message}`; }
+put('env', 'WebAssembly shared memory', sharedMemory, sharedMemory === 'yes');
+put('env', 'WebAssembly.validate', String(typeof WebAssembly?.validate === 'function'));
+
+const started = performance.now();
+try {
+  // ── the plant ─────────────────────────────────────────────────────────
+  const mujoco = await load();
+  put('phys', 'mujoco.js loaded', `${ms(performance.now() - started)}`);
+
+  const bench = await makeWebBench({ mujoco });
+  install(bench);
+  put('phys', 'bench built', ms(performance.now() - started), true);
+  put('phys', 'plant', `${bench.plant.name} ${bench.plant.digest.slice(0, 16)}…`);
+  put('phys', 'timestep / substeps', `${bench.timestep} s × ${bench.substeps} per ${bench.tickHz} Hz tick`);
+
+  const health = JSON.parse(await duckbench('/health'));
+  put('phys', 'one control tick', ms(health.host.tickMillis),
+      health.host.tickMillis < 1000 / bench.tickHz);
+  put('phys', 'real time budget', `${(1000 / bench.tickHz).toFixed(0)} ms a tick at ${bench.tickHz} Hz`);
+
+  // RAW mj_step, IN A WORLD OF ITS OWN. "One step" and "one tick" get quoted
+  // interchangeably and differ by the substep count, so both are measured, and
+  // the raw one is measured outside the bench — on a second copy of the same
+  // plant — so that nothing about the bench's own bookkeeping is in the number.
+  mujoco.FS.writeFile('/probe.mjb', await (await fetch('./assets/scene.mjb'))
+    .arrayBuffer().then(b => new Uint8Array(b)));
+  const probeModel = mujoco.MjModel.mj_loadBinary('/probe.mjb', new mujoco.MjVFS());
+  const probeData = new mujoco.MjData(probeModel);
+  for (let i = 0; i < 200; i++) mujoco.mj_step(probeModel, probeData);   // warm
+  let t0 = performance.now();
+  mujoco.mj_step(probeModel, probeData);
+  put('phys', 'one mj_step', ms(performance.now() - t0));
+  t0 = performance.now();
+  const steps = 1000;
+  for (let i = 0; i < steps; i++) mujoco.mj_step(probeModel, probeData);
+  const total = performance.now() - t0;
+  put('phys', `${steps} mj_step`, `${ms(total)} total, ${ms(total / steps)} each`);
+  put('phys', 'one control tick (measured)', `${ms(total / steps * bench.substeps)} `
+            + `= ${bench.substeps} × mj_step`);
+
+  // WARM FIRST. The first request through the bench also settles the world and
+  // fetches, parses and normalises the 791,584-byte standing policy; timed cold
+  // it reported 131 ms a tick and looked like a phone that cannot keep up.
+  await duckbench('/state');
+  t0 = performance.now();
+  await duckbench('/intent', JSON.stringify({ vx: 0, hold: 1 / bench.tickHz }));
+  put('phys', 'one tick, end to end', ms(performance.now() - t0));
+
+  // ── the network ───────────────────────────────────────────────────────
+  const bytes = new Uint8Array(await (await fetch('./assets/policies/alpha_walking.bin')).arrayBuffer());
+  const params = loadParameters(bytes);
+  const obs = new Float32Array(61);
+  for (let i = 0; i < 61; i++) obs[i] = params.mean[i];
+  forward(params, obs);                              // warm the JIT
+  t0 = performance.now();
+  const runs = 200;
+  for (let i = 0; i < runs; i++) forward(params, obs);
+  const each = (performance.now() - t0) / runs;
+  put('pol', 'parameters', `${bytes.length} bytes, ${bytes.length / 4} float32`);
+  put('pol', 'one policyforward', ms(each), each < 1000 / bench.tickHz);
+  put('pol', 'policy + physics a tick', ms(each + health.host.tickMillis),
+      each + health.host.tickMillis < 1000 / bench.tickHz);
+  put('pol', 'headroom vs real time', `${((1000 / bench.tickHz) / (each + health.host.tickMillis)).toFixed(1)}×`);
+
+  // ── the parity run ────────────────────────────────────────────────────
+  put('par', 'script', `/reset, /policy ${SCRIPT.policy}, ${SCRIPT.ticks} ticks at `
+                     + `vx ${SCRIPT.vx} vy ${SCRIPT.vy} vyaw ${SCRIPT.vyaw}`);
+  t0 = performance.now();
+  await duckbench('/reset', '{}');
+  await duckbench('/policy', JSON.stringify({ policy: SCRIPT.policy }));
+  let state;
+  const calls = SCRIPT.ticks / (SCRIPT.hold * bench.tickHz);
+  for (let i = 0; i < calls; i++) {
+    state = JSON.parse(await duckbench('/intent', JSON.stringify({
+      vx: SCRIPT.vx, vy: SCRIPT.vy, vyaw: SCRIPT.vyaw, hold: SCRIPT.hold })));
+  }
+  const wall = performance.now() - t0;
+  const six = n => n.toFixed(6);
+  put('par', 'EXPECTED (desk)', EXPECTED.map(six).join('  '));
+  put('par', 'this phone', state.position.map(six).join('  '));
+  const worst = Math.max(...state.position.map((v, i) => Math.abs(v - EXPECTED[i])));
+  const same = worst <= 1e-4 + 1e-9;
+  put('par', 'worst |Δ|', `${worst.toExponential(2)} m`, same);
+  put('par', 'verdict', same ? 'SAME PHYSICS' : 'DIFFERENT — this phone did not reproduce the desk',
+      same);
+  put('par', 'wall clock', `${(wall / 1000).toFixed(2)} s for ${SCRIPT.ticks} ticks `
+            + `(${(SCRIPT.ticks / bench.tickHz).toFixed(1)} s of duck) — `
+            + `${((SCRIPT.ticks / bench.tickHz) / (wall / 1000)).toFixed(1)}× real time`);
+
+  document.getElementById('health').textContent = JSON.stringify(health, null, 2);
+} catch (error) {
+  put('phys', 'FAILED', String(error?.stack || error), false);
+  document.getElementById('health').textContent = String(error?.stack || error);
+}
+</script>

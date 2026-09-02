@@ -40,9 +40,21 @@ function* fields(b, start = 0, end = b.length) {
   }
 }
 
-/** ModelProto.metadata_props (field 14) as a plain object. */
+/** ModelProto.metadata_props (field 14) as a plain object, from a path. */
 export function metadata(path) {
-  const b = fs.readFileSync(path);
+  return metadataOf(fs.readFileSync(path));
+}
+
+/**
+ * The same, from BYTES.
+ *
+ * SPLIT OUT BECAUSE THE BENCH NO LONGER HOLDS PATHS. `duckbench-core.mjs` is
+ * given policies as bytes by whichever shell it is running under — a file on
+ * the Pi, a fetch in a browser — and the neutral pose a policy declares is the
+ * shell's to read, because the shell is the half that has the file.
+ */
+export function metadataOf(bytes) {
+  const b = bytes;
   const out = {};
   for (const [f, wt, p] of fields(b)) {
     if (f !== 14 || wt !== 2) continue;
@@ -66,7 +78,12 @@ export function metadata(path) {
  * one policy. Only a real difference is honoured.
  */
 export function declaredDefaultPose(path, home, tolerance = 1e-3) {
-  const raw = metadata(path).default_joint_pos;
+  return declaredDefaultPoseOf(fs.readFileSync(path), home, tolerance);
+}
+
+/** The same, from bytes. */
+export function declaredDefaultPoseOf(bytes, home, tolerance = 1e-3) {
+  const raw = metadataOf(bytes).default_joint_pos;
   if (!raw) return null;
   const pose = raw.split(',').map(Number);
   if (pose.length !== home.length || pose.some(v => !Number.isFinite(v))) return null;

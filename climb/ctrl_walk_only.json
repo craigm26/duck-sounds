@@ -1,0 +1,48 @@
+{
+  "name": "control_walk_only",
+  "keyframes": [
+    {
+      "t": 1,
+      "pose": [
+        0,
+        -0.0873,
+        -0.4579,
+        -0.0049,
+        0.453,
+        0.3491,
+        0.3491,
+        0,
+        0,
+        0,
+        0.0873,
+        0.4579,
+        0.0049,
+        -0.453
+      ]
+    },
+    {
+      "t": 2.9,
+      "pose": [
+        0,
+        -0.0873,
+        -0.4579,
+        -0.0049,
+        0.453,
+        0.3491,
+        0.3491,
+        0,
+        0,
+        0,
+        0.0873,
+        0.4579,
+        0.0049,
+        -0.453
+      ]
+    }
+  ],
+  "blend": 1,
+  "gap": 0.05,
+  "side": 0,
+  "approach": 0.3,
+  "note": "WALK-ONLY CONTROL. HOME pose, vx=0.30 — the stand policy walks at the flight with no authored motion at all."
+}

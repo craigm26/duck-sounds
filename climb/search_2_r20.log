@@ -1,0 +1,12 @@
+[20mm] warm start from search_2-results_a2.json (dir -1) + vx probes
+[20mm] e1 NEW 2.811 dir- onTop=false x=257 z=116 peakX=259 peakZ=134 head=0.06 riser=0.00 foot=1.00 feetUpMax=2 yaw=1.68 vx=0.00 gap=19
+[20mm] e71 NEW 2.884 dir+ onTop=false x=-83 z=119 peakX=26 peakZ=127 head=0.00 riser=0.01 foot=1.00 feetUpMax=2 yaw=0.00 vx=0.05 gap=34
+[20mm] e103 NEW 3.160 dir+ onTop=false x=28 z=122 peakX=34 peakZ=125 head=0.00 riser=0.01 foot=0.62 feetUpMax=2 yaw=0.00 vx=0.15 gap=35
+[20mm] e105 NEW 3.785 dir+ onTop=false x=-85 z=53 peakX=72 peakZ=120 head=0.00 riser=0.00 foot=1.00 feetUpMax=2 yaw=0.00 vx=0.27 gap=33
+[20mm] e174 NEW 4.496 dir- onTop=false x=42 z=116 peakX=76 peakZ=122 head=0.02 riser=0.03 foot=1.00 feetUpMax=2 yaw=1.42 vx=0.03 gap=3
+[20mm] e386 NEW 4.937 dir+ onTop=false x=52 z=117 peakX=54 peakZ=118 head=0.03 riser=0.01 foot=0.80 feetUpMax=2 yaw=0.86 vx=0.42 gap=30
+[20mm] e443 NEW 5.856 dir+ onTop=false x=155 z=104 peakX=157 peakZ=139 head=0.00 riser=0.00 foot=0.57 feetUpMax=2 yaw=0.00 vx=0.32 gap=34
+
+[20mm] DONE 587 evals in 548s best=5.856 toppled cleared 0/3
+
+WROTE search_2-results_r20.json

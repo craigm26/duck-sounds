@@ -1,0 +1,53 @@
+{
+  "name": "control_on_tread_60mm_x26_med",
+  "keyframes": [
+    {
+      "t": 1,
+      "pose": [
+        0,
+        -0.0873,
+        -0.4579,
+        -0.0049,
+        0.453,
+        0.3491,
+        0.3491,
+        0,
+        0,
+        0,
+        0.0873,
+        0.4579,
+        0.0049,
+        -0.453
+      ]
+    },
+    {
+      "t": 2.9,
+      "pose": [
+        0,
+        -0.0873,
+        -0.4579,
+        -0.0049,
+        0.453,
+        0.3491,
+        0.3491,
+        0,
+        0,
+        0,
+        0.0873,
+        0.4579,
+        0.0049,
+        -0.453
+      ]
+    }
+  ],
+  "blend": 1,
+  "gap": 0.05,
+  "side": 0,
+  "approach": 0,
+  "spawn": {
+    "x": 0.26,
+    "y": 1.3050000000000002,
+    "z": 0.18
+  },
+  "note": "ON-TREAD CONTROL. Duck spawned standing on the first tread of a 60 mm flight at x=0.26 (exposed tread is x in [0.12, 0.40]); trunk 0.12 m above the tread, the same spawn height attempt() uses above the floor. HOME pose, vx=0, med episode. A criterion that NO placement of this row passes cannot express success at all."
+}

@@ -1,0 +1,304 @@
+{
+ "question": "does anything clear the 10 mm rise DuckScene.measuredStepCeiling asserts?",
+ "criterion": "sim/climb_lib.mjs:150 — upright, x > 0.12 m past the first riser, both feet at or above the first tread, trunk > 95 mm above that tread",
+ "flight": {
+  "count": 4,
+  "rise": 0.01,
+  "run": 0.28,
+  "start": 0.12
+ },
+ "varied": "start offset on `gap`, -30..+30 mm around each json's own value",
+ "plant": "sim/scene.mjb",
+ "policy": "BEST_alpha_stand.onnx",
+ "when": "2026-09-02T03:45:26.677Z",
+ "rows": [
+  {
+   "move": "step_up",
+   "riseMm": 10,
+   "cleared": 0,
+   "of": 9,
+   "gap": 0.06,
+   "detail": [
+    {
+     "offsetMm": -30,
+     "onTop": false,
+     "aboveMm": 106,
+     "feetUp": 0,
+     "upright": true
+    },
+    {
+     "offsetMm": -20,
+     "onTop": false,
+     "aboveMm": 106,
+     "feetUp": 0,
+     "upright": true
+    },
+    {
+     "offsetMm": -10,
+     "onTop": false,
+     "aboveMm": 110,
+     "feetUp": 0,
+     "upright": true
+    },
+    {
+     "offsetMm": -5,
+     "onTop": false,
+     "aboveMm": 106,
+     "feetUp": 0,
+     "upright": true
+    },
+    {
+     "offsetMm": 0,
+     "onTop": false,
+     "aboveMm": 106,
+     "feetUp": 2,
+     "upright": true
+    },
+    {
+     "offsetMm": 5,
+     "onTop": false,
+     "aboveMm": 106,
+     "feetUp": 2,
+     "upright": true
+    },
+    {
+     "offsetMm": 10,
+     "onTop": false,
+     "aboveMm": 106,
+     "feetUp": 0,
+     "upright": true
+    },
+    {
+     "offsetMm": 20,
+     "onTop": false,
+     "aboveMm": 106,
+     "feetUp": 1,
+     "upright": true
+    },
+    {
+     "offsetMm": 30,
+     "onTop": false,
+     "aboveMm": 106,
+     "feetUp": 1,
+     "upright": true
+    }
+   ]
+  },
+  {
+   "move": "lever_up",
+   "riseMm": 10,
+   "cleared": 0,
+   "of": 9,
+   "gap": 0.06,
+   "detail": [
+    {
+     "offsetMm": -30,
+     "onTop": false,
+     "aboveMm": 97,
+     "feetUp": 0,
+     "upright": false
+    },
+    {
+     "offsetMm": -20,
+     "onTop": false,
+     "aboveMm": 55,
+     "feetUp": 0,
+     "upright": false
+    },
+    {
+     "offsetMm": -10,
+     "onTop": false,
+     "aboveMm": 109,
+     "feetUp": 0,
+     "upright": true
+    },
+    {
+     "offsetMm": -5,
+     "onTop": false,
+     "aboveMm": 106,
+     "feetUp": 0,
+     "upright": true
+    },
+    {
+     "offsetMm": 0,
+     "onTop": false,
+     "aboveMm": 107,
+     "feetUp": 0,
+     "upright": true
+    },
+    {
+     "offsetMm": 5,
+     "onTop": false,
+     "aboveMm": 63,
+     "feetUp": 0,
+     "upright": false
+    },
+    {
+     "offsetMm": 10,
+     "onTop": false,
+     "aboveMm": 106,
+     "feetUp": 0,
+     "upright": true
+    },
+    {
+     "offsetMm": 20,
+     "onTop": false,
+     "aboveMm": 58,
+     "feetUp": 0,
+     "upright": false
+    },
+    {
+     "offsetMm": 30,
+     "onTop": false,
+     "aboveMm": 107,
+     "feetUp": 0,
+     "upright": true
+    }
+   ]
+  },
+  {
+   "move": "riser_up",
+   "riseMm": 10,
+   "cleared": 0,
+   "of": 9,
+   "gap": 0.1266188045283446,
+   "detail": [
+    {
+     "offsetMm": -30,
+     "onTop": false,
+     "aboveMm": 106,
+     "feetUp": 0,
+     "upright": true
+    },
+    {
+     "offsetMm": -20,
+     "onTop": false,
+     "aboveMm": 106,
+     "feetUp": 0,
+     "upright": true
+    },
+    {
+     "offsetMm": -10,
+     "onTop": false,
+     "aboveMm": 106,
+     "feetUp": 0,
+     "upright": true
+    },
+    {
+     "offsetMm": -5,
+     "onTop": false,
+     "aboveMm": 106,
+     "feetUp": 0,
+     "upright": true
+    },
+    {
+     "offsetMm": 0,
+     "onTop": false,
+     "aboveMm": 106,
+     "feetUp": 0,
+     "upright": true
+    },
+    {
+     "offsetMm": 5,
+     "onTop": false,
+     "aboveMm": 106,
+     "feetUp": 0,
+     "upright": true
+    },
+    {
+     "offsetMm": 10,
+     "onTop": false,
+     "aboveMm": 106,
+     "feetUp": 0,
+     "upright": true
+    },
+    {
+     "offsetMm": 20,
+     "onTop": false,
+     "aboveMm": 106,
+     "feetUp": 0,
+     "upright": true
+    },
+    {
+     "offsetMm": 30,
+     "onTop": false,
+     "aboveMm": 106,
+     "feetUp": 0,
+     "upright": true
+    }
+   ]
+  },
+  {
+   "move": "climb",
+   "riseMm": 10,
+   "cleared": 0,
+   "of": 9,
+   "gap": 0.0480646892950318,
+   "detail": [
+    {
+     "offsetMm": -30,
+     "onTop": false,
+     "aboveMm": 106,
+     "feetUp": 0,
+     "upright": true
+    },
+    {
+     "offsetMm": -20,
+     "onTop": false,
+     "aboveMm": 106,
+     "feetUp": 0,
+     "upright": true
+    },
+    {
+     "offsetMm": -10,
+     "onTop": false,
+     "aboveMm": 102,
+     "feetUp": 1,
+     "upright": true
+    },
+    {
+     "offsetMm": -5,
+     "onTop": false,
+     "aboveMm": 106,
+     "feetUp": 0,
+     "upright": true
+    },
+    {
+     "offsetMm": 0,
+     "onTop": false,
+     "aboveMm": 47,
+     "feetUp": 0,
+     "upright": false
+    },
+    {
+     "offsetMm": 5,
+     "onTop": false,
+     "aboveMm": 95,
+     "feetUp": 0,
+     "upright": false
+    },
+    {
+     "offsetMm": 10,
+     "onTop": false,
+     "aboveMm": 106,
+     "feetUp": 0,
+     "upright": true
+    },
+    {
+     "offsetMm": 20,
+     "onTop": false,
+     "aboveMm": 105,
+     "feetUp": 0,
+     "upright": true
+    },
+    {
+     "offsetMm": 30,
+     "onTop": false,
+     "aboveMm": 97,
+     "feetUp": 2,
+     "upright": false
+    }
+   ]
+  }
+ ]
+}

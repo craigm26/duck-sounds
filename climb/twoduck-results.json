@@ -1,0 +1,389 @@
+{
+ "plant": "sim/scene_multiduck.mjb",
+ "ducks": [
+  "huey",
+  "dewey"
+ ],
+ "note": "duck 0 placed at the origin, duck 1 dropped directly above it; both under their own policy, one integrator, 4 s",
+ "when": "2026-09-02T03:42:04.508Z",
+ "rows": [
+  {
+   "label": "both standing, dewey dropped 118 mm onto huey",
+   "policies": [
+    "BEST_alpha_stand.onnx",
+    "BEST_alpha_stand.onnx"
+   ],
+   "stackMm": 118,
+   "result": [
+    {
+     "name": "huey",
+     "footMm": 6,
+     "x": 111,
+     "y": -54,
+     "z": 116,
+     "up": true
+    },
+    {
+     "name": "dewey",
+     "footMm": 6,
+     "x": 25,
+     "y": 3,
+     "z": 116,
+     "up": true
+    },
+    {
+     "trace": [
+      [
+       122,
+       231
+      ],
+      [
+       113,
+       210
+      ],
+      [
+       115,
+       169
+      ],
+      [
+       116,
+       114
+      ],
+      [
+       116,
+       79
+      ],
+      [
+       116,
+       53
+      ]
+     ]
+    }
+   ]
+  },
+  {
+   "label": "both standing, dewey dropped 119 mm onto huey",
+   "policies": [
+    "BEST_alpha_stand.onnx",
+    "BEST_alpha_stand.onnx"
+   ],
+   "stackMm": 119,
+   "result": [
+    {
+     "name": "huey",
+     "footMm": 32,
+     "x": -176,
+     "y": 58,
+     "z": 43,
+     "up": false
+    },
+    {
+     "name": "dewey",
+     "footMm": 30,
+     "x": -168,
+     "y": 99,
+     "z": 59,
+     "up": false
+    },
+    {
+     "trace": [
+      [
+       122,
+       232
+      ],
+      [
+       113,
+       214
+      ],
+      [
+       115,
+       173
+      ],
+      [
+       111,
+       133
+      ],
+      [
+       108,
+       85
+      ],
+      [
+       58,
+       54
+      ]
+     ]
+    }
+   ]
+  },
+  {
+   "label": "both standing, dewey dropped 120 mm onto huey",
+   "policies": [
+    "BEST_alpha_stand.onnx",
+    "BEST_alpha_stand.onnx"
+   ],
+   "stackMm": 120,
+   "result": [
+    {
+     "name": "huey",
+     "footMm": 5,
+     "x": 0,
+     "y": 5,
+     "z": 115,
+     "up": true
+    },
+    {
+     "name": "dewey",
+     "footMm": 76,
+     "x": -5,
+     "y": -7,
+     "z": 186,
+     "up": true
+    },
+    {
+     "trace": [
+      [
+       122,
+       233
+      ],
+      [
+       113,
+       215
+      ],
+      [
+       114,
+       210
+      ],
+      [
+       115,
+       186
+      ],
+      [
+       115,
+       186
+      ],
+      [
+       114,
+       186
+      ]
+     ]
+    }
+   ]
+  },
+  {
+   "label": "both standing, dewey dropped 121 mm onto huey",
+   "policies": [
+    "BEST_alpha_stand.onnx",
+    "BEST_alpha_stand.onnx"
+   ],
+   "stackMm": 121,
+   "result": [
+    {
+     "name": "huey",
+     "footMm": 5,
+     "x": 4,
+     "y": 193,
+     "z": 116,
+     "up": true
+    },
+    {
+     "name": "dewey",
+     "footMm": 13,
+     "x": -52,
+     "y": 161,
+     "z": 105,
+     "up": false
+    },
+    {
+     "trace": [
+      [
+       122,
+       234
+      ],
+      [
+       113,
+       200
+      ],
+      [
+       113,
+       184
+      ],
+      [
+       114,
+       165
+      ],
+      [
+       120,
+       122
+      ],
+      [
+       109,
+       89
+      ]
+     ]
+    }
+   ]
+  },
+  {
+   "label": "both standing, dewey dropped 122 mm onto huey",
+   "policies": [
+    "BEST_alpha_stand.onnx",
+    "BEST_alpha_stand.onnx"
+   ],
+   "stackMm": 122,
+   "result": [
+    {
+     "name": "huey",
+     "footMm": 6,
+     "x": 10,
+     "y": 3,
+     "z": 116,
+     "up": true
+    },
+    {
+     "name": "dewey",
+     "footMm": 6,
+     "x": -216,
+     "y": -148,
+     "z": 116,
+     "up": true
+    },
+    {
+     "trace": [
+      [
+       121,
+       236
+      ],
+      [
+       114,
+       196
+      ],
+      [
+       115,
+       77
+      ],
+      [
+       116,
+       62
+      ],
+      [
+       116,
+       63
+      ],
+      [
+       116,
+       114
+      ]
+     ]
+    }
+   ]
+  },
+  {
+   "label": "huey on the sit policy, dewey dropped 100 mm",
+   "policies": [
+    "BEST_alpha_sitstand.onnx",
+    "BEST_alpha_stand.onnx"
+   ],
+   "stackMm": 100,
+   "result": [
+    {
+     "name": "huey",
+     "footMm": 5,
+     "x": 2,
+     "y": 3,
+     "z": 116,
+     "up": true
+    },
+    {
+     "name": "dewey",
+     "footMm": 6,
+     "x": -194,
+     "y": 143,
+     "z": 116,
+     "up": true
+    },
+    {
+     "trace": [
+      [
+       117,
+       218
+      ],
+      [
+       113,
+       197
+      ],
+      [
+       115,
+       124
+      ],
+      [
+       116,
+       36
+      ],
+      [
+       116,
+       69
+      ],
+      [
+       116,
+       120
+      ]
+     ]
+    }
+   ]
+  },
+  {
+   "label": "huey on the sit policy, dewey dropped 130 mm",
+   "policies": [
+    "BEST_alpha_sitstand.onnx",
+    "BEST_alpha_stand.onnx"
+   ],
+   "stackMm": 130,
+   "result": [
+    {
+     "name": "huey",
+     "footMm": 27,
+     "x": 44,
+     "y": 242,
+     "z": 44,
+     "up": false
+    },
+    {
+     "name": "dewey",
+     "footMm": 10,
+     "x": 9,
+     "y": 204,
+     "z": 107,
+     "up": false
+    },
+    {
+     "trace": [
+      [
+       116,
+       248
+      ],
+      [
+       112,
+       231
+      ],
+      [
+       112,
+       194
+      ],
+      [
+       107,
+       93
+      ],
+      [
+       111,
+       97
+      ],
+      [
+       73,
+       66
+      ]
+     ]
+    }
+   ]
+  }
+ ]
+}
