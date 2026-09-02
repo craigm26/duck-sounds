@@ -13,9 +13,15 @@ export const STAIR_COUNT = 14;
  * Where the staircase sits across the room.
  *
  * Stairs go against a wall — that is what stairs do, and it also gives the duck
- * a vertical surface beside the steps to brace on. The arena's north wall is at
- * y = 1.5 with a half-thickness of 0.025, and a tread is 0.17 half-wide, so
- * flush against it is 1.5 - 0.025 - 0.17.
+ * a vertical surface beside the steps to brace on. This value was derived as
+ * 1.5 - 0.025 - 0.17 on the belief that the north wall is 25 mm half-thick.
+ * IT IS NOT: sim/scene_physics.xml gives wall_n a half-thickness of 0.05, so
+ * its inner face is at y = 1.45 and the outer 25 mm of every tread sits INSIDE
+ * the wall (measured 2026-09-02, climb/audit_r2). The number stays because
+ * the step bodies are COMPILED at this y with x and z slides only — there is
+ * no y joint to move them — so this is where the blocks actually are, and the
+ * lateral gate has to be measured from where they are, not from where they
+ * should be. Moving them means recompiling the scene with body y = 1.28.
  */
 export const STAIR_HALF_WIDTH = 0.17;
 export const STAIR_Y = 1.5 - 0.025 - STAIR_HALF_WIDTH;
@@ -49,7 +55,8 @@ export const STEP_HALF_HEIGHT = 0.10;
  * its velocity leaves the solver believing it is travelling. It then behaves
  * like a catapult — measured, it threw the duck half a metre into the air.
  */
-export function findStairJoints(model) {
+export function findStairJoints(model, { isolate = true } = {}) {
+  if (isolate) isolateSteps(model);
   const addr = [];
   for (let i = 0; i < STAIR_COUNT; i++) {
     let x = -1, z = -1, dx = -1, dz = -1;
@@ -62,6 +69,37 @@ export function findStairJoints(model) {
     addr.push({ x, z, dx, dz });
   }
   return addr;
+}
+
+/**
+ * Stop the step blocks colliding with EACH OTHER. They still meet the duck,
+ * the walls and any prop.
+ *
+ * THE FLIGHT USED TO SHOVE ITSELF APART. Each block is 200 mm tall with its
+ * top at the tread, so at any rise under 200 mm adjacent blocks interpenetrate
+ * by (200 - rise) mm in z — and by 60 mm in x by design, since a 340 mm-deep
+ * block on a 280 mm run is what makes a solid flight. They shipped on the same
+ * collision bit (contype 4, conaffinity 4), so they collided, and being 200 kg
+ * bodies on frictionless slides the solver pushed them apart: up to 20 mm of
+ * tread drift and 16 mm of sag inside ONE control tick, teleported back by
+ * `layoutStairs` fifty times a second. Below about 150 mm of rise a duck simply
+ * STANDING on the first tread was thrown to the floor within ten ticks, and
+ * every stair result measured before 2026-09-02 was measured on that
+ * (climb/rig3.log, Phases D and E). Zeroing each step geom's conaffinity is the
+ * surgical repair: step-step becomes (4 & 0) = 0, while step-duck (4 & 5),
+ * step-wall (4 & 5) and step-prop keep colliding exactly as before, because
+ * contype is untouched. No mass, friction, gain or timestep moves. Runs from
+ * `findStairJoints` so every consumer of the bank — the browser sim, the climb
+ * harness, the audits — gets the same flight; pass `{ isolate: false }` to see
+ * the broken one on purpose.
+ */
+export function isolateSteps(model) {
+  let n = 0;
+  for (let g = 0; g < model.ngeom; g++) {
+    const name = model.geom(g).name || '';
+    if (/^step\d+_geom$/.test(name)) { model.geom_conaffinity[g] = 0; n++; }
+  }
+  return n;
 }
 
 /** Hold every step still. Call after any qpos write, and every tick. */

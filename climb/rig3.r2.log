@@ -1,0 +1,459 @@
+=== PHASE P — parity against sim/climb_lib.mjs (tail=policy, criterion=orig) ===
+  synthetic (climb/parity.mjs track) rise  40  climb_lib x=0.016995330875893284 z=0.056041836705604885 feetUp=0
+                                          rig3      x=0.016995330875893284 z=0.056041836705604885 feetUp=0   EXACT=true
+  best_0_40mm.json                   rise  40  climb_lib x=-0.08293496414878636 z=0.11623766616979637 feetUp=0
+                                          rig3      x=-0.08293496414878636 z=0.11623766616979637 feetUp=0   EXACT=true
+  best_1_90mm.json                   rise  90  climb_lib x=0.011071379107275991 z=0.11620600267601994 feetUp=0
+                                          rig3      x=0.011071379107275991 z=0.11620600267601994 feetUp=0   EXACT=true
+  best_2_180mm.json                  rise 180  climb_lib x=0.06545704919281363 z=0.11646924243073545 feetUp=0
+                                          rig3      x=0.06545704919281363 z=0.11646924243073545 feetUp=0   EXACT=true
+  PARITY PASS — rig3 is climb_lib (4 cases, full float digits)
+
+=== PHASE R — export rounding sensitivity (score the file, never the candidate) ===
+  best_0_40mm.json     saved x=   -82.9 z=  116.2  | pose re-rounded to 3 dp x=   -63.4 z=  115.3  | moved 19.5 mm in x, 0.9 mm in z
+  best_2_40mm.json     saved x=    40.4 z=  116.6  | pose re-rounded to 3 dp x=   -49.8 z=  116.6  | moved 90.1 mm in x, 0.0 mm in z
+  best_2_180mm.json    saved x=    65.5 z=  116.5  | pose re-rounded to 3 dp x=    84.0 z=  116.4  | moved 18.6 mm in x, 0.0 mm in z
+
+=== PHASE A — the do-nothing control. A criterion this row passes is not a climbing test. ===
+row                         rise  tail    x_mm     y-Y_mm    z_mm  above_mm  feetRaw feetLat feetTread up  ORIG  LAT  HONEST  H60
+do-nothing (HOME, vx=0)      20  policy     1.9     -0.1   116.2     96.2       0      0        0  Y   .     .     .      . 
+do-nothing (HOME, vx=0)      20  hold     105.3      2.0    57.3     37.3       0      0        0  n   .     .     .      . 
+do-nothing (HOME, vx=0)      20  none       1.9     -0.1   116.2     96.2       0      0        0  Y   .     .     .      . 
+do-nothing (HOME, vx=0)      40  policy     2.0     -0.2   116.2     76.2       0      0        0  Y   .     .     .      . 
+do-nothing (HOME, vx=0)      40  hold     108.8     -2.0    76.9     36.9       0      0        0  n   .     .     .      . 
+do-nothing (HOME, vx=0)      40  none       2.0     -0.1   116.2     76.2       0      0        0  Y   .     .     .      . 
+do-nothing (HOME, vx=0)      60  policy     2.0     -0.2   116.2     56.2       0      0        0  Y   .     .     .      . 
+do-nothing (HOME, vx=0)      60  hold      83.7      7.4    88.2     28.2       0      0        0  n   .     .     .      . 
+do-nothing (HOME, vx=0)      60  none       2.0     -0.1   116.2     56.2       0      0        0  Y   .     .     .      . 
+do-nothing (HOME, vx=0)      90  policy     2.0     -0.2   116.2     26.2       0      0        0  Y   .     .     .      . 
+do-nothing (HOME, vx=0)      90  hold      82.8     -2.8    96.4      6.4       0      0        0  n   .     .     .      . 
+do-nothing (HOME, vx=0)      90  none       2.0     -0.1   116.2     26.2       0      0        0  Y   .     .     .      . 
+do-nothing (HOME, vx=0)     120  policy     2.0     -0.1   116.2     -3.8       0      0        0  Y   .     .     .      . 
+do-nothing (HOME, vx=0)     120  hold      62.4     -0.2   104.0    -16.0       0      0        0  n   .     .     .      . 
+do-nothing (HOME, vx=0)     120  none       2.0     -0.1   116.2     -3.8       0      0        0  Y   .     .     .      . 
+do-nothing (HOME, vx=0)     180  policy     1.9     -0.1   116.2    -63.8       0      0        0  Y   .     .     .      . 
+do-nothing (HOME, vx=0)     180  hold      16.2     -0.1   111.3    -68.7       0      0        0  Y   .     .     .      . 
+do-nothing (HOME, vx=0)     180  none       1.9     -0.1   116.2    -63.8       0      0        0  Y   .     .     .      . 
+
+--- walk-only control: same HOME pose, but vx=0.30 (no authored motion at all) ---
+row                         rise  tail    x_mm     y-Y_mm    z_mm  above_mm  feetRaw feetLat feetTread up  ORIG  LAT  HONEST  H60
+walk-only (HOME, vx=0.30)    20  policy     2.5     -0.2   116.6     96.6       0      0        0  Y   .     .     .      . 
+walk-only (HOME, vx=0.30)    20  hold      97.4      4.0    57.1     37.1       0      0        0  n   .     .     .      . 
+walk-only (HOME, vx=0.30)    20  none       2.5     -0.2   116.6     96.6       0      0        0  Y   .     .     .      . 
+walk-only (HOME, vx=0.30)    40  policy     2.6     -0.3   116.6     76.6       0      0        0  Y   .     .     .      . 
+walk-only (HOME, vx=0.30)    40  hold     109.5     -3.0    76.7     36.7       0      0        0  n   .     .     .      . 
+walk-only (HOME, vx=0.30)    40  none       2.6     -0.3   116.6     76.6       0      0        0  Y   .     .     .      . 
+walk-only (HOME, vx=0.30)    60  policy     2.6     -0.3   116.6     56.6       0      0        0  Y   .     .     .      . 
+walk-only (HOME, vx=0.30)    60  hold      93.4      0.9    87.6     27.6       0      0        0  n   .     .     .      . 
+walk-only (HOME, vx=0.30)    60  none       2.6     -0.3   116.6     56.6       0      0        0  Y   .     .     .      . 
+walk-only (HOME, vx=0.30)    90  policy     2.6     -0.3   116.6     26.6       0      0        0  Y   .     .     .      . 
+walk-only (HOME, vx=0.30)    90  hold      78.7     -6.2    98.0      8.0       0      0        0  n   .     .     .      . 
+walk-only (HOME, vx=0.30)    90  none       2.6     -0.3   116.6     26.6       0      0        0  Y   .     .     .      . 
+walk-only (HOME, vx=0.30)   120  policy     2.5     -0.2   116.6     -3.4       0      0        0  Y   .     .     .      . 
+walk-only (HOME, vx=0.30)   120  hold      62.9      1.3   103.8    -16.2       0      0        0  n   .     .     .      . 
+walk-only (HOME, vx=0.30)   120  none       2.5     -0.2   116.6     -3.4       0      0        0  Y   .     .     .      . 
+walk-only (HOME, vx=0.30)   180  policy     2.5     -0.2   116.6    -63.4       0      0        0  Y   .     .     .      . 
+walk-only (HOME, vx=0.30)   180  hold      16.2     -0.0   111.4    -68.6       0      0        0  Y   .     .     .      . 
+walk-only (HOME, vx=0.30)   180  none       2.5     -0.2   116.6    -63.4       0      0        0  Y   .     .     .      . 
+
+=== PHASE C — spawned ON the first tread, HOME pose. A criterion NO placement passes cannot express success. ===
+--- length-matched do-nothing (short episode) ---
+row                         rise  tail    x_mm     y-Y_mm    z_mm  above_mm  feetRaw feetLat feetTread up  ORIG  LAT  HONEST  H60
+do-nothing short             20  policy     2.0     -0.1   116.2     96.2       0      0        0  Y   .     .     .      . 
+do-nothing short             20  hold     105.1      3.0    57.5     37.5       0      0        0  n   .     .     .      . 
+do-nothing short             20  none       2.0     -0.1   116.2     96.2       0      0        0  Y   .     .     .      . 
+do-nothing short             40  policy     1.9     -0.1   116.2     76.2       0      0        0  Y   .     .     .      . 
+do-nothing short             40  hold     104.9     -7.2    77.7     37.7       0      0        0  n   .     .     .      . 
+do-nothing short             40  none       2.0     -0.1   116.2     76.2       0      0        0  Y   .     .     .      . 
+do-nothing short             60  policy     1.9     -0.1   116.2     56.2       0      0        0  Y   .     .     .      . 
+do-nothing short             60  hold      93.0      1.8    86.8     26.8       0      0        0  n   .     .     .      . 
+do-nothing short             60  none       2.0     -0.1   116.2     56.2       0      0        0  Y   .     .     .      . 
+do-nothing short             90  policy     1.9     -0.1   116.2     26.2       0      0        0  Y   .     .     .      . 
+do-nothing short             90  hold      78.6     -5.9    97.4      7.4       0      0        0  n   .     .     .      . 
+do-nothing short             90  none       2.0     -0.1   116.2     26.2       0      0        0  Y   .     .     .      . 
+do-nothing short            120  policy     1.9     -0.1   116.2     -3.8       0      0        0  Y   .     .     .      . 
+do-nothing short            120  hold      60.9      0.4   104.0    -16.0       0      0        0  n   .     .     .      . 
+do-nothing short            120  none       2.0     -0.1   116.2     -3.8       0      0        0  Y   .     .     .      . 
+do-nothing short            180  policy     2.0     -0.1   116.2    -63.8       0      0        0  Y   .     .     .      . 
+do-nothing short            180  hold      16.2     -0.1   111.3    -68.7       0      0        0  Y   .     .     .      . 
+do-nothing short            180  none       2.0     -0.1   116.2    -63.8       0      0        0  Y   .     .     .      . 
+
+row                         rise  tail    x_mm     y-Y_mm    z_mm  above_mm  feetRaw feetLat feetTread up  ORIG  LAT  HONEST  H60
+on-tread x=0.20 short        20  policy  -228.6    -36.7    65.0     45.0       0      0        0  n   .     .     .      . 
+on-tread x=0.20 short        20  hold    -181.7    -58.4    36.5     16.5       0      0        0  n   .     .     .      . 
+on-tread x=0.20 short        20  none    -217.6    -12.6    77.1     57.1       0      0        0  n   .     .     .      . 
+on-tread x=0.20 med          20  policy  -139.2     -4.2   116.2     96.2       0      0        0  Y   .     .     .      . 
+on-tread x=0.20 med          20  hold    -261.4     48.7    47.2     27.2       0      0        0  n   .     .     .      . 
+on-tread x=0.20 med          20  none    -140.0     -3.8   115.9     95.9       0      0        0  Y   .     .     .      . 
+on-tread x=0.26 short        20  policy    46.6    -21.5   116.2     96.2       0      0        0  Y   .     .     .      . 
+on-tread x=0.26 short        20  hold      64.2   -110.8    48.9     28.9       0      0        0  n   .     .     .      . 
+on-tread x=0.26 short        20  none      47.0    -21.6   116.1     96.1       0      0        0  Y   .     .     .      . 
+on-tread x=0.26 med          20  policy    46.5    -21.3   116.2     96.2       0      0        0  Y   .     .     .      . 
+on-tread x=0.26 med          20  hold      56.4   -114.2    47.1     27.1       0      0        0  n   .     .     .      . 
+on-tread x=0.26 med          20  none      46.6    -21.4   116.2     96.2       0      0        0  Y   .     .     .      . 
+on-tread x=0.32 short        20  policy    31.2     23.0   116.2     96.2       0      0        0  Y   .     .     .      . 
+on-tread x=0.32 short        20  hold      -6.9   -104.3    47.9     27.9       1      1        0  n   .     .     .      . 
+on-tread x=0.32 short        20  none      31.2     22.8   115.9     95.9       0      0        0  Y   .     .     .      . 
+on-tread x=0.32 med          20  policy    31.2     22.9   116.3     96.3       0      0        0  Y   .     .     .      . 
+on-tread x=0.32 med          20  hold      -5.5   -104.7    47.9     27.9       1      1        0  n   .     .     .      . 
+on-tread x=0.32 med          20  none      31.1     22.9   116.3     96.3       0      0        0  Y   .     .     .      . 
+on-tread x=0.20 short        40  policy  -183.6     70.3   105.8     65.8       0      0        0  n   .     .     .      . 
+on-tread x=0.20 short        40  hold    -154.8    -45.1    36.5     -3.5       0      0        0  n   .     .     .      . 
+on-tread x=0.20 short        40  none    -150.2    -70.1    40.0      0.0       0      0        0  n   .     .     .      . 
+on-tread x=0.20 med          40  policy  -213.1    -77.2   116.1     76.1       0      0        0  Y   .     .     .      . 
+on-tread x=0.20 med          40  hold    -232.7    -93.0    45.8      5.8       0      0        0  n   .     .     .      . 
+on-tread x=0.20 med          40  none    -232.5     30.1   118.3     78.3       0      0        0  Y   .     .     .      . 
+on-tread x=0.26 short        40  policy   -60.3     87.3   116.2     76.2       0      0        0  Y   .     .     .      . 
+on-tread x=0.26 short        40  hold     -41.1    -42.1    48.3      8.3       0      0        0  n   .     .     .      . 
+on-tread x=0.26 short        40  none     -60.2     77.2   117.0     77.0       0      0        0  Y   .     .     .      . 
+on-tread x=0.26 med          40  policy   -60.5     87.4   116.2     76.2       0      0        0  Y   .     .     .      . 
+on-tread x=0.26 med          40  hold     -41.2    -43.9    48.2      8.2       0      0        0  n   .     .     .      . 
+on-tread x=0.26 med          40  none     -60.4     87.4   116.2     76.2       0      0        0  Y   .     .     .      . 
+on-tread x=0.32 short        40  policy  -216.1   -120.3   116.2     76.2       0      0        0  Y   .     .     .      . 
+on-tread x=0.32 short        40  hold    -133.4    -14.5    47.4      7.4       0      0        0  n   .     .     .      . 
+on-tread x=0.32 short        40  none    -216.1   -120.2   115.8     75.8       0      0        0  Y   .     .     .      . 
+on-tread x=0.32 med          40  policy  -216.2   -120.4   116.3     76.3       0      0        0  Y   .     .     .      . 
+on-tread x=0.32 med          40  hold    -133.2    -13.6    47.2      7.2       0      0        0  n   .     .     .      . 
+on-tread x=0.32 med          40  none    -216.1   -120.3   116.3     76.3       0      0        0  Y   .     .     .      . 
+on-tread x=0.20 short        60  policy  -178.9     62.5   105.6     45.6       0      0        0  n   .     .     .      . 
+on-tread x=0.20 short        60  hold    -184.4    -61.1    48.2    -11.8       0      0        0  n   .     .     .      . 
+on-tread x=0.20 short        60  none    -209.1    -31.5    48.7    -11.3       0      0        0  n   .     .     .      . 
+on-tread x=0.20 med          60  policy  -236.4    -35.6   120.6     60.6       0      0        0  Y   .     .     .      . 
+on-tread x=0.20 med          60  hold    -225.2    -17.7    37.4    -22.6       0      0        0  n   .     .     .      . 
+on-tread x=0.20 med          60  none    -198.0    -36.7    59.3     -0.7       0      0        0  n   .     .     .      . 
+on-tread x=0.26 short        60  policy   -23.8     90.8   116.2     56.2       0      0        0  Y   .     .     .      . 
+on-tread x=0.26 short        60  hold     -24.3     82.7   114.9     54.9       0      0        0  Y   .     .     .      . 
+on-tread x=0.26 short        60  none     -15.0     84.7   116.7     56.7       0      0        0  Y   .     .     .      . 
+on-tread x=0.26 med          60  policy   -23.8     90.8   116.3     56.3       0      0        0  Y   .     .     .      . 
+on-tread x=0.26 med          60  hold     -48.9    -39.2    48.1    -11.9       0      0        0  n   .     .     .      . 
+on-tread x=0.26 med          60  none     -23.8     90.8   116.3     56.3       0      0        0  Y   .     .     .      . 
+on-tread x=0.32 short        60  policy   -65.2    -17.9   116.3     56.3       0      0        0  Y   .     .     .      . 
+on-tread x=0.32 short        60  hold     -57.4      5.2   108.2     48.2       0      0        0  n   .     .     .      . 
+on-tread x=0.32 short        60  none     -65.3    -18.0   116.0     56.0       0      0        0  Y   .     .     .      . 
+on-tread x=0.32 med          60  policy   -65.2    -17.9   116.3     56.3       0      0        0  Y   .     .     .      . 
+on-tread x=0.32 med          60  hold     -57.6      5.0   108.2     48.2       0      0        0  n   .     .     .      . 
+on-tread x=0.32 med          60  none     -65.2    -17.9   116.3     56.3       0      0        0  Y   .     .     .      . 
+on-tread x=0.20 short        90  policy    36.2    -63.4   113.5     23.5       0      0        0  Y   .     .     .      . 
+on-tread x=0.20 short        90  hold    -129.0    -70.7    36.5    -53.5       0      0        0  n   .     .     .      . 
+on-tread x=0.20 short        90  none    -120.8    -52.4    47.2    -42.8       0      0        0  n   .     .     .      . 
+on-tread x=0.20 med          90  policy    33.7    -63.2   116.3     26.3       0      0        0  Y   .     .     .      . 
+on-tread x=0.20 med          90  hold     -96.4    -61.7    48.4    -41.6       0      0        0  n   .     .     .      . 
+on-tread x=0.20 med          90  none      34.2    -63.3   115.9     25.9       0      0        0  Y   .     .     .      . 
+on-tread x=0.26 short        90  policy  -122.7     93.7   116.1     26.1       0      0        0  Y   .     .     .      . 
+on-tread x=0.26 short        90  hold    -166.9    -31.2    47.7    -42.3       0      0        0  n   .     .     .      . 
+on-tread x=0.26 short        90  none    -122.9     94.8   115.6     25.6       0      0        0  Y   .     .     .      . 
+on-tread x=0.26 med          90  policy  -122.7     93.7   116.3     26.3       0      0        0  Y   .     .     .      . 
+on-tread x=0.26 med          90  hold    -164.1    -32.6    48.0    -42.0       0      0        0  n   .     .     .      . 
+on-tread x=0.26 med          90  none    -122.7     93.7   116.3     26.3       0      0        0  Y   .     .     .      . 
+on-tread x=0.32 short        90  policy  -288.2     36.8    63.9    -26.1       0      0        0  n   .     .     .      . 
+on-tread x=0.32 short        90  hold    -223.0    -20.5    36.7    -53.3       0      0        0  n   .     .     .      . 
+on-tread x=0.32 short        90  none    -247.5     10.4    76.4    -13.6       0      0        0  n   .     .     .      . 
+on-tread x=0.32 med          90  policy   -65.6     36.6   116.0     26.0       0      0        0  Y   .     .     .      . 
+on-tread x=0.32 med          90  hold    -185.2     16.6    45.4    -44.6       0      0        0  n   .     .     .      . 
+on-tread x=0.32 med          90  none     -50.6     46.5   118.7     28.7       0      0        0  Y   .     .     .      . 
+on-tread x=0.20 short       120  policy   -68.4    -21.3   116.3     -3.7       0      0        0  Y   .     .     .      . 
+on-tread x=0.20 short       120  hold       4.6   -119.2    57.1    -62.9       0      0        0  n   .     .     .      . 
+on-tread x=0.20 short       120  none     -68.4    -21.3   116.1     -3.9       0      0        0  Y   .     .     .      . 
+on-tread x=0.20 med         120  policy   -68.4    -21.3   116.3     -3.7       0      0        0  Y   .     .     .      . 
+on-tread x=0.20 med         120  hold       2.6   -121.6    59.6    -60.4       0      0        0  n   .     .     .      . 
+on-tread x=0.20 med         120  none     -68.4    -21.3   116.3     -3.7       0      0        0  Y   .     .     .      . 
+on-tread x=0.26 short       120  policy  -232.0     28.4    72.2    -47.8       0      0        0  n   .     .     .      . 
+on-tread x=0.26 short       120  hold    -178.4    -20.4    37.1    -82.9       0      0        0  n   .     .     .      . 
+on-tread x=0.26 short       120  none    -207.9     12.2    98.3    -21.7       0      0        0  n   .     .     .      . 
+on-tread x=0.26 med         120  policy  -262.6     89.3   116.0     -4.0       0      0        0  Y   .     .     .      . 
+on-tread x=0.26 med         120  hold    -188.1     21.6    38.5    -81.5       0      0        0  n   .     .     .      . 
+on-tread x=0.26 med         120  none    -223.8    -29.0    72.6    -47.4       0      0        0  n   .     .     .      . 
+on-tread x=0.32 short       120  policy  -157.9    -31.6    76.4    -43.6       0      0        0  n   .     .     .      . 
+on-tread x=0.32 short       120  hold    -152.0    -26.7    36.5    -83.5       0      0        0  n   .     .     .      . 
+on-tread x=0.32 short       120  none    -154.9    -37.1    32.9    -87.1       0      0        0  n   .     .     .      . 
+on-tread x=0.32 med         120  policy  -100.7     24.8    74.5    -45.5       0      0        0  n   .     .     .      . 
+on-tread x=0.32 med         120  hold    -113.0     -4.7    36.5    -83.5       0      0        0  n   .     .     .      . 
+on-tread x=0.32 med         120  none    -113.6    -43.1    53.6    -66.4       0      0        0  n   .     .     .      . 
+on-tread x=0.20 short       180  policy   202.3     -0.3   288.8    108.8       2      2        2  Y  PASS  PASS   PASS   PASS
+on-tread x=0.20 short       180  hold     256.5     -0.1   278.7     98.7       2      2        2  n   .     .     .      . 
+on-tread x=0.20 short       180  none     202.3     -0.2   288.8    108.8       2      2        2  Y  PASS  PASS   PASS   PASS
+on-tread x=0.20 med         180  policy   202.3     -0.4   288.8    108.8       2      2        2  Y  PASS  PASS   PASS   PASS
+on-tread x=0.20 med         180  hold     256.3     -1.1   278.7     98.7       2      2        2  n   .     .     .      . 
+on-tread x=0.20 med         180  none     202.3     -0.4   288.7    108.7       2      2        2  Y  PASS  PASS   PASS   PASS
+on-tread x=0.26 short       180  policy   262.3     -0.3   288.8    108.8       2      2        2  Y  PASS  PASS   PASS   PASS
+on-tread x=0.26 short       180  hold     285.0     -0.1   282.1    102.1       2      2        2  Y  PASS  PASS   PASS   PASS
+on-tread x=0.26 short       180  none     262.3     -0.2   288.8    108.8       2      2        2  Y  PASS  PASS   PASS   PASS
+on-tread x=0.26 med         180  policy   262.2     -0.4   288.7    108.7       2      2        2  Y  PASS  PASS   PASS   PASS
+on-tread x=0.26 med         180  hold     285.0     -0.6   282.0    102.0       2      2        2  Y  PASS  PASS   PASS   PASS
+on-tread x=0.26 med         180  none     262.2     -0.4   288.7    108.7       2      2        2  Y  PASS  PASS   PASS   PASS
+on-tread x=0.32 short       180  policy   322.3     -0.3   288.7    108.7       2      2        2  Y  PASS  PASS   PASS   PASS
+on-tread x=0.32 short       180  hold     337.2     -0.2   284.9    104.9       2      2        2  Y  PASS  PASS   PASS   PASS
+on-tread x=0.32 short       180  none     322.3     -0.3   288.8    108.8       2      2        2  Y  PASS  PASS   PASS   PASS
+on-tread x=0.32 med         180  policy   322.4     -0.4   288.8    108.8       2      2        2  Y  PASS  PASS   PASS   PASS
+on-tread x=0.32 med         180  hold     337.3     -0.4   284.9    104.9       2      2        2  Y  PASS  PASS   PASS   PASS
+on-tread x=0.32 med         180  none     322.4     -0.4   288.8    108.8       2      2        2  Y  PASS  PASS   PASS   PASS
+
+  best on-tread placement per rise (does ANY placement read as success?)
+  rise  tail    passes HONEST   best row
+    20  policy   0/6          x=0.32 med   x_mm=   31.2 z_mm= 116.3 above=   96.3 feetTread=0 up=Y
+    20  hold     0/6          x=0.26 short x_mm=   64.2 z_mm=  48.9 above=   28.9 feetTread=0 up=n
+    20  none     0/6          x=0.32 med   x_mm=   31.1 z_mm= 116.3 above=   96.3 feetTread=0 up=Y
+    40  policy   0/6          x=0.32 med   x_mm= -216.2 z_mm= 116.3 above=   76.3 feetTread=0 up=Y
+    40  hold     0/6          x=0.26 short x_mm=  -41.1 z_mm=  48.3 above=    8.3 feetTread=0 up=n
+    40  none     0/6          x=0.20 med   x_mm= -232.5 z_mm= 118.3 above=   78.3 feetTread=0 up=Y
+    60  policy   0/6          x=0.20 med   x_mm= -236.4 z_mm= 120.6 above=   60.6 feetTread=0 up=Y
+    60  hold     0/6          x=0.26 short x_mm=  -24.3 z_mm= 114.9 above=   54.9 feetTread=0 up=Y
+    60  none     0/6          x=0.26 short x_mm=  -15.0 z_mm= 116.7 above=   56.7 feetTread=0 up=Y
+    90  policy   0/6          x=0.20 med   x_mm=   33.7 z_mm= 116.3 above=   26.3 feetTread=0 up=Y
+    90  hold     0/6          x=0.20 med   x_mm=  -96.4 z_mm=  48.4 above=  -41.6 feetTread=0 up=n
+    90  none     0/6          x=0.32 med   x_mm=  -50.6 z_mm= 118.7 above=   28.7 feetTread=0 up=Y
+   120  policy   0/6          x=0.20 short x_mm=  -68.4 z_mm= 116.3 above=   -3.7 feetTread=0 up=Y
+   120  hold     0/6          x=0.20 med   x_mm=    2.6 z_mm=  59.6 above=  -60.4 feetTread=0 up=n
+   120  none     0/6          x=0.20 med   x_mm=  -68.4 z_mm= 116.3 above=   -3.7 feetTread=0 up=Y
+   180  policy   6/6          x=0.20 short x_mm=  202.3 z_mm= 288.8 above=  108.8 feetTread=2 up=Y
+   180  hold     4/6          x=0.26 short x_mm=  285.0 z_mm= 282.1 above=  102.1 feetTread=2 up=Y
+   180  none     6/6          x=0.20 short x_mm=  202.3 z_mm= 288.8 above=  108.8 feetTread=2 up=Y
+
+=== PHASE B — the 18 published bests, re-scored from the SAVED file, under each tail, at -10/0/+10 mm ===
+file                     rise off  tail    x_mm     y-Y_mm    z_mm  above_mm  feetRaw feetTread  up  ORIG  LAT  HONEST  H60   peakX  maxDY
+best_0_120mm.json       120 -10  policy     6.4    -41.3    55.1    -64.9       1        0   n   .     .     .      .      37.6   94.6
+best_0_120mm.json       120 -10  hold     -47.1     56.1    47.9    -72.1       0        0   n   .     .     .      .      33.7   94.6
+best_0_120mm.json       120 -10  none     -35.5     24.3    69.6    -50.4       0        0   n   .     .     .      .      33.7   94.6
+best_0_120mm.json       120   0  policy    -9.6     67.5   116.3     -3.7       0        0   Y   .     .     .      .      23.7   93.3
+best_0_120mm.json       120   0  hold     -36.7    -62.2    48.0    -72.0       0        0   n   .     .     .      .      23.7   93.3
+best_0_120mm.json       120   0  none      -9.5     67.6   116.0     -4.0       0        0   Y   .     .     .      .      23.7   93.3
+best_0_120mm.json       120  10  policy  -165.9   -150.0    89.3    -30.7       0        0   n   .     .     .      .      24.6  186.4
+best_0_120mm.json       120  10  hold     -62.9   -187.0    43.8    -76.2       0        0   n   .     .     .      .      24.6  189.6
+best_0_120mm.json       120  10  none      -9.2   -140.3    81.3    -38.7       0        0   n   .     .     .      .      24.6  189.6
+best_0_180mm.json       180 -10  policy   -48.9   -165.1    61.8   -118.2       0        0   n   .     .     .      .      35.9  165.8
+best_0_180mm.json       180 -10  hold     -81.9    -41.5    49.1   -130.9       0        0   n   .     .     .      .      35.9   64.7
+best_0_180mm.json       180 -10  none     -58.8    -48.5    51.7   -128.3       0        0   n   .     .     .      .      35.9   64.7
+best_0_180mm.json       180   0  policy    20.6     -6.0    44.0   -136.0       0        0   n   .     .     .      .      34.6   89.3
+best_0_180mm.json       180   0  hold     -16.6     23.5    46.6   -133.4       0        0   n   .     .     .      .      34.1   89.3
+best_0_180mm.json       180   0  none      -2.9     37.4    50.2   -129.8       0        0   n   .     .     .      .      34.1   89.3
+best_0_180mm.json       180  10  policy   -57.1    -79.9    69.6   -110.4       0        0   n   .     .     .      .      28.1   89.3
+best_0_180mm.json       180  10  hold      29.5    -47.4    37.7   -142.3       0        0   n   .     .     .      .      46.5   89.3
+best_0_180mm.json       180  10  none      -3.9    -36.4    83.7    -96.3       0        0   n   .     .     .      .      46.5   89.3
+best_0_20mm.json         20 -10  policy  -108.4   -212.6   116.2     96.2       0        0   Y   .     .     .      .      46.4  222.0
+best_0_20mm.json         20 -10  hold    -148.0   -338.4    49.3     29.3       0        0   n   .     .     .      .      46.4  338.4
+best_0_20mm.json         20 -10  none    -109.7   -214.4   116.0     96.0       0        0   Y   .     .     .      .      46.4  338.4
+best_0_20mm.json         20   0  policy  -210.3    -44.7   116.2     96.2       0        0   Y   .     .     .      .     131.4   82.7
+best_0_20mm.json         20   0  hold     -81.3    -27.2    48.3     28.3       0        0   n   .     .     .      .     131.4   82.7
+best_0_20mm.json         20   0  none    -210.1    -45.0   115.7     95.7       0        0   Y   .     .     .      .     131.4   82.7
+best_0_20mm.json         20  10  policy  -338.8   -339.6   116.0     96.0       0        0   Y   .     .     .      .      50.0  348.2
+best_0_20mm.json         20  10  hold    -365.6   -379.7    45.8     25.8       0        0   n   .     .     .      .      50.0  380.1
+best_0_20mm.json         20  10  none    -351.3   -266.4   119.3     99.3       0        0   Y   .     .     .      .      50.0  380.1
+best_0_40mm.json         40 -10  policy     4.4     20.5   116.2     76.2       0        0   Y   .     .     .      .      68.7   67.7
+best_0_40mm.json         40 -10  hold      17.0     32.5   110.5     70.5       0        0   Y   .     .     .      .      68.7   67.7
+best_0_40mm.json         40 -10  none       4.6     20.7   116.0     76.0       0        0   Y   .     .     .      .      68.7   67.7
+best_0_40mm.json         40   0  policy   -82.9     81.8   116.2     76.2       0        0   Y   .     .     .      .     122.2   88.2
+best_0_40mm.json         40   0  hold     -35.7     75.7    95.0     55.0       0        0   n   .     .     .      .     122.2   76.1
+best_0_40mm.json         40   0  none      -2.1     63.9   108.2     68.2       0        0   Y   .     .     .      .     122.2   76.1
+best_0_40mm.json         40  10  policy  -130.3     81.0   115.3     75.3       0        0   Y   .     .     .      .     147.0   83.2
+best_0_40mm.json         40  10  hold      26.5     35.8    99.0     59.0       0        0   n   .     .     .      .     147.0   49.7
+best_0_40mm.json         40  10  none      68.2     12.9   106.3     66.3       0        0   Y   .     .     .      .     147.0   49.7
+best_0_60mm.json         60 -10  policy   -21.7     31.0    41.1    -18.9       0        0   n   .     .     .      .      84.9   93.5
+best_0_60mm.json         60 -10  hold     -33.6     29.1    39.3    -20.7       1        0   n   .     .     .      .      84.9   93.5
+best_0_60mm.json         60 -10  none     -21.7     32.2    40.0    -20.0       0        0   n   .     .     .      .      84.9   93.5
+best_0_60mm.json         60   0  policy   -20.8     27.3    41.5    -18.5       0        0   n   .     .     .      .     112.3   88.5
+best_0_60mm.json         60   0  hold     -15.7      3.2    37.8    -22.2       1        0   n   .     .     .      .     112.3   88.5
+best_0_60mm.json         60   0  none      -3.8     83.6    82.1     22.1       0        0   n   .     .     .      .     112.3   88.5
+best_0_60mm.json         60  10  policy  -110.7     26.1   118.1     58.1       0        0   Y   .     .     .      .      77.7   73.2
+best_0_60mm.json         60  10  hold     -14.4    -38.8    37.5    -22.5       0        0   n   .     .     .      .      81.0   73.2
+best_0_60mm.json         60  10  none      77.3    -16.0    95.1     35.1       2        2   n   .     .     .      .      81.0   73.2
+best_0_90mm.json         90 -10  policy    60.4     28.7   116.2     26.2       0        0   Y   .     .     .      .      74.4   32.3
+best_0_90mm.json         90 -10  hold      79.3     32.7   100.1     10.1       0        0   n   .     .     .      .      99.2   35.0
+best_0_90mm.json         90 -10  none      73.4     26.5   117.3     27.3       0        0   Y   .     .     .      .      99.2   35.0
+best_0_90mm.json         90   0  policy    50.4     28.7   116.2     26.2       0        0   Y   .     .     .      .      64.4   32.3
+best_0_90mm.json         90   0  hold      68.9     45.7    99.7      9.7       0        0   n   .     .     .      .      96.7   47.2
+best_0_90mm.json         90   0  none      63.4     26.5   117.3     27.3       0        0   Y   .     .     .      .      96.7   47.2
+best_0_90mm.json         90  10  policy    40.4     28.7   116.2     26.2       0        0   Y   .     .     .      .      54.4   32.3
+best_0_90mm.json         90  10  hold      80.9     26.4    99.9      9.9       0        0   n   .     .     .      .     101.9   32.3
+best_0_90mm.json         90  10  none      53.4     26.5   117.3     27.3       0        0   Y   .     .     .      .     101.9   32.3
+best_1_120mm.json       120 -10  policy    46.7   -109.3   116.2     -3.8       0        0   Y   .     .     .      .      57.4  115.0
+best_1_120mm.json       120 -10  hold      81.5   -149.1    99.1    -20.9       0        0   n   .     .     .      .      84.0  149.1
+best_1_120mm.json       120 -10  none      50.0   -114.3   116.5     -3.5       0        0   Y   .     .     .      .      84.0  149.1
+best_1_120mm.json       120   0  policy    19.0   -109.8   116.2     -3.8       0        0   Y   .     .     .      .      78.4  144.2
+best_1_120mm.json       120   0  hold     -22.5   -237.0    47.7    -72.3       0        0   n   .     .     .      .      78.4  237.0
+best_1_120mm.json       120   0  none      18.8   -110.3   116.0     -4.0       0        0   Y   .     .     .      .      78.4  237.0
+best_1_120mm.json       120  10  policy     9.6    -48.3   116.2     -3.8       0        0   Y   .     .     .      .      33.5   88.0
+best_1_120mm.json       120  10  hold      41.8   -175.7    50.4    -69.6       0        0   n   .     .     .      .      41.8  175.7
+best_1_120mm.json       120  10  none       9.4    -48.7   116.3     -3.7       0        0   Y   .     .     .      .      41.8  175.7
+best_1_180mm.json       180 -10  policy    59.3     94.6   116.2    -63.8       0        0   Y   .     .     .      .      63.3  100.7
+best_1_180mm.json       180 -10  hold     -17.3    -17.8    48.0   -132.0       0        0   n   .     .     .      .      63.3  100.7
+best_1_180mm.json       180 -10  none      59.3     95.0   116.3    -63.7       0        0   Y   .     .     .      .      63.3  100.7
+best_1_180mm.json       180   0  policy     7.5     83.8   116.3    -63.7       0        0   Y   .     .     .      .      29.3  104.1
+best_1_180mm.json       180   0  hold     -25.0    -45.7    47.8   -132.2       0        0   n   .     .     .      .      29.3  104.1
+best_1_180mm.json       180   0  none       7.5     83.8   116.0    -64.0       0        0   Y   .     .     .      .      29.3  104.1
+best_1_180mm.json       180  10  policy    42.4   -192.6   116.2    -63.8       0        0   Y   .     .     .      .      75.7  245.1
+best_1_180mm.json       180  10  hold     -88.8   -134.5    36.5   -143.5       0        0   n   .     .     .      .      16.7  143.6
+best_1_180mm.json       180  10  none     -70.7   -143.6    45.5   -134.5       0        0   n   .     .     .      .      16.7  143.6
+best_1_20mm.json         20 -10  policy  -208.0     -8.7   116.3     96.3       0        0   Y   .     .     .      .      83.0   84.7
+best_1_20mm.json         20 -10  hold    -118.3   -101.0    55.1     35.1       0        0   n   .     .     .      .      83.0  101.0
+best_1_20mm.json         20 -10  none    -207.5     -9.9   116.4     96.4       0        0   Y   .     .     .      .      83.0  101.0
+best_1_20mm.json         20   0  policy  -111.9   -148.7   116.2     96.2       0        0   Y   .     .     .      .     101.4  156.7
+best_1_20mm.json         20   0  hold    -193.8   -253.1    46.9     26.9       0        0   n   .     .     .      .     101.4  253.3
+best_1_20mm.json         20   0  none    -116.6   -154.1   116.6     96.6       0        0   Y   .     .     .      .     101.4  253.3
+best_1_20mm.json         20  10  policy   -47.9   -464.0   100.2     80.2       0        0   n   .     .     .      .     170.8  476.5
+best_1_20mm.json         20  10  hold     -28.6   -327.4    46.0     26.0       0        0   n   .     .     .      .     170.8  328.6
+best_1_20mm.json         20  10  none      11.0   -208.8   119.4     99.4       1        0   Y   .     .     .      .     170.8  328.6
+best_1_40mm.json         40 -10  policy  -214.2   -389.6   116.6     76.6       0        0   Y   .     .     .      .      75.2  442.2
+best_1_40mm.json         40 -10  hold    -248.3   -458.3    39.5     -0.5       0        0   n   .     .     .      .      75.2  468.6
+best_1_40mm.json         40 -10  none    -237.2   -331.2    59.7     19.7       0        0   n   .     .     .      .      75.2  468.6
+best_1_40mm.json         40   0  policy  -247.2   -106.0   116.0     76.0       0        0   Y   .     .     .      .     160.6  107.7
+best_1_40mm.json         40   0  hold    -253.1   -114.9    44.2      4.2       0        0   n   .     .     .      .     160.6  114.9
+best_1_40mm.json         40   0  none    -171.7    -49.7    60.6     20.6       0        0   n   .     .     .      .     160.6  114.9
+best_1_40mm.json         40  10  policy   -56.5     73.9   100.7     60.7       0        0   n   .     .     .      .     168.0   83.9
+best_1_40mm.json         40  10  hold     -16.0     -3.2    50.9     10.9       0        0   n   .     .     .      .     168.0   83.9
+best_1_40mm.json         40  10  none       1.1     11.6    65.2     25.2       0        0   n   .     .     .      .     168.0   83.9
+best_1_60mm.json         60 -10  policy    17.3     42.6   116.2     56.2       0        0   Y   .     .     .      .      81.7   81.8
+best_1_60mm.json         60 -10  hold      69.2     74.9    91.0     31.0       0        0   n   .     .     .      .     102.6   81.8
+best_1_60mm.json         60 -10  none      17.3     42.6   116.0     56.0       0        0   Y   .     .     .      .     102.6   81.8
+best_1_60mm.json         60   0  policy    -5.8     30.8   116.2     56.2       0        0   Y   .     .     .      .      74.3   84.0
+best_1_60mm.json         60   0  hold       4.1     39.7   111.7     51.7       0        0   Y   .     .     .      .      74.3   84.0
+best_1_60mm.json         60   0  none      -5.7     30.9   115.9     55.9       0        0   Y   .     .     .      .      74.3   84.0
+best_1_60mm.json         60  10  policy   -51.9     19.9   116.1     56.1       0        0   Y   .     .     .      .      91.5   81.8
+best_1_60mm.json         60  10  hold      31.3     57.0    88.6     28.6       0        0   n   .     .     .      .      91.5   81.8
+best_1_60mm.json         60  10  none     -48.6     21.5   115.8     55.8       0        0   Y   .     .     .      .      91.5   81.8
+best_1_90mm.json         90 -10  policy  -146.4    -40.4    42.5    -47.5       0        0   n   .     .     .      .      72.9  108.3
+best_1_90mm.json         90 -10  hold     -87.5    -45.2    38.1    -51.9       0        0   n   .     .     .      .      82.2  108.3
+best_1_90mm.json         90 -10  none      49.0     35.2   120.4     30.4       1        0   n   .     .     .      .      82.2  108.3
+best_1_90mm.json         90   0  policy    11.1    -41.6   116.2     26.2       0        0   Y   .     .     .      .      65.2   77.2
+best_1_90mm.json         90   0  hold      69.1    -82.3    99.1      9.1       0        0   n   .     .     .      .      89.1   82.3
+best_1_90mm.json         90   0  none      11.4    -41.7   116.1     26.1       0        0   Y   .     .     .      .      89.1   82.3
+best_1_90mm.json         90  10  policy   -19.3     26.0   116.3     26.3       0        0   Y   .     .     .      .      51.9   98.8
+best_1_90mm.json         90  10  hold     -13.8    -93.9    47.7    -42.3       0        0   n   .     .     .      .      51.9   98.8
+best_1_90mm.json         90  10  none     -19.3     26.0   116.1     26.1       0        0   Y   .     .     .      .      51.9   98.8
+best_2_120mm.json       120 -10  policy   206.7   -252.2   115.9     -4.1       0        0   Y   .     .     .      .     231.1  313.0
+best_2_120mm.json       120 -10  hold     247.0   -463.5    43.8    -76.2       0        0   n   .     .     .      .     258.0  463.5
+best_2_120mm.json       120 -10  none     155.7   -307.5   108.6    -11.4       0        0   n   .     .     .      .     258.0  463.5
+best_2_120mm.json       120   0  policy   185.3   -425.6   116.0     -4.0       0        0   Y   .     .     .      .     185.5  428.2
+best_2_120mm.json       120   0  hold      -7.1   -351.6    36.9    -83.1       0        0   n   .     .     .      .     111.1  359.3
+best_2_120mm.json       120   0  none      22.6   -347.7    55.6    -64.4       0        0   n   .     .     .      .     111.1  359.3
+best_2_120mm.json       120  10  policy   -73.9   -224.0    53.3    -66.7       0        0   n   .     .     .      .      64.8  232.9
+best_2_120mm.json       120  10  hold       8.6   -211.0    36.5    -83.5       0        0   n   .     .     .      .      64.8  217.5
+best_2_120mm.json       120  10  none      15.3   -151.7    69.9    -50.1       0        0   n   .     .     .      .      64.8  217.5
+best_2_180mm.json       180 -10  policy    84.5     63.9   116.5    -63.5       0        0   Y   .     .     .      .      91.2   70.7
+best_2_180mm.json       180 -10  hold      98.1     63.8   109.7    -70.3       0        0   Y   .     .     .      .      98.3   70.7
+best_2_180mm.json       180 -10  none      84.6     64.0   116.3    -63.7       0        0   Y   .     .     .      .      98.3   70.7
+best_2_180mm.json       180   0  policy    65.5     50.4   116.5    -63.5       0        0   Y   .     .     .      .      83.8   64.8
+best_2_180mm.json       180   0  hold      81.8     58.0   110.7    -69.3       0        0   Y   .     .     .      .      83.8   64.8
+best_2_180mm.json       180   0  none      65.4     50.4   116.3    -63.7       0        0   Y   .     .     .      .      83.8   64.8
+best_2_180mm.json       180  10  policy  -148.5     -6.0    74.3   -105.7       0        0   n   .     .     .      .      45.5   53.7
+best_2_180mm.json       180  10  hold     -61.1     -7.1    40.6   -139.4       0        0   n   .     .     .      .      45.5   53.7
+best_2_180mm.json       180  10  none     -93.4     14.9    53.6   -126.4       0        0   n   .     .     .      .      45.5   53.7
+best_2_20mm.json         20 -10  policy  -108.8   -105.1   117.2     97.2       0        0   Y   .     .     .      .      31.1  113.0
+best_2_20mm.json         20 -10  hold    -151.4     33.7    36.5     16.5       0        0   n   .     .     .      .      31.1  102.5
+best_2_20mm.json         20 -10  none    -162.0     53.4    45.8     25.8       0        0   n   .     .     .      .      31.1  102.5
+best_2_20mm.json         20   0  policy   -38.5     -1.0   116.4     96.4       0        0   Y   .     .     .      .      25.6  102.5
+best_2_20mm.json         20   0  hold    -123.1    -85.4    44.6     24.6       0        0   n   .     .     .      .      66.6  102.5
+best_2_20mm.json         20   0  none     -35.8      1.5   116.2     96.2       0        0   Y   .     .     .      .      66.6  102.5
+best_2_20mm.json         20  10  policy  -160.7     36.4   116.5     96.5       0        0   Y   .     .     .      .      41.1  102.5
+best_2_20mm.json         20  10  hold    -272.6    -38.4    47.3     27.3       0        0   n   .     .     .      .      41.1  102.5
+best_2_20mm.json         20  10  none    -154.2     37.4   115.4     95.4       0        0   Y   .     .     .      .      41.1  102.5
+best_2_40mm.json         40 -10  policy   -47.7     12.4   116.6     76.6       0        0   Y   .     .     .      .     106.7   61.3
+best_2_40mm.json         40 -10  hold     -46.2     26.1   111.7     71.7       0        0   Y   .     .     .      .     106.7   61.3
+best_2_40mm.json         40 -10  none     -47.7     12.5   116.4     76.4       0        0   Y   .     .     .      .     106.7   61.3
+best_2_40mm.json         40   0  policy    40.4     66.0   116.6     76.6       0        0   Y   .     .     .      .      96.7   67.0
+best_2_40mm.json         40   0  hold     117.5     63.9    77.9     37.9       0        0   n   .     .     .      .     153.0   69.2
+best_2_40mm.json         40   0  none      40.6     66.1   116.5     76.5       0        0   Y   .     .     .      .     153.0   69.2
+best_2_40mm.json         40  10  policy    11.6     50.9   116.4     76.4       0        0   Y   .     .     .      .     132.5   80.8
+best_2_40mm.json         40  10  hold      94.5     71.5    77.0     37.0       0        0   n   .     .     .      .     132.5   80.8
+best_2_40mm.json         40  10  none      14.5     48.6   115.9     75.9       0        0   Y   .     .     .      .     132.5   80.8
+best_2_60mm.json         60 -10  policy     8.2     27.4   116.6     56.6       0        0   Y   .     .     .      .     117.9   89.7
+best_2_60mm.json         60 -10  hold      30.2   -120.4    47.0    -13.0       0        0   n   .     .     .      .     117.9  120.5
+best_2_60mm.json         60 -10  none       5.4     25.9   114.8     54.8       0        0   Y   .     .     .      .     117.9  120.5
+best_2_60mm.json         60   0  policy   -22.5     21.2   116.6     56.6       0        0   Y   .     .     .      .     131.7   88.7
+best_2_60mm.json         60   0  hold      36.7     97.8    99.7     39.7       0        0   n   .     .     .      .     131.7   97.8
+best_2_60mm.json         60   0  none     122.5     64.2   120.4     60.4       0        0   n   .     .     .      .     131.7   97.8
+best_2_60mm.json         60  10  policy   -78.6      6.9   103.7     43.7       0        0   n   .     .     .      .     140.0   77.8
+best_2_60mm.json         60  10  hold    -234.0     27.0    46.7    -13.3       0        0   n   .     .     .      .     140.0   77.8
+best_2_60mm.json         60  10  none     -79.0      6.3   103.2     43.2       0        0   n   .     .     .      .     140.0   77.8
+best_2_90mm.json         90 -10  policy   -32.9    -18.3   116.6     26.6       0        0   Y   .     .     .      .      82.5   73.8
+best_2_90mm.json         90 -10  hold      25.5   -145.4    47.8    -42.2       0        0   n   .     .     .      .      82.5  145.7
+best_2_90mm.json         90 -10  none     -32.4    -18.6   116.4     26.4       0        0   Y   .     .     .      .      82.5  145.7
+best_2_90mm.json         90   0  policy   -19.4   -165.4   116.6     26.6       0        0   Y   .     .     .      .      80.9  166.4
+best_2_90mm.json         90   0  hold      55.4   -165.2    98.8      8.8       0        0   n   .     .     .      .      80.9  166.4
+best_2_90mm.json         90   0  none     -19.4   -165.4   116.4     26.4       0        0   Y   .     .     .      .      80.9  166.4
+best_2_90mm.json         90  10  policy    44.5   -288.3   116.6     26.6       0        0   Y   .     .     .      .      81.5  304.8
+best_2_90mm.json         90  10  hold      62.9   -210.7    92.0      2.0       0        0   n   .     .     .      .     111.2  304.8
+best_2_90mm.json         90  10  none      44.7   -288.0   116.5     26.5       0        0   Y   .     .     .      .     111.2  304.8
+
+  18 bests x 3 offsets x 3 tails = 162 scored rows.
+  cleared: ORIG 0   LAT 0   HONEST 0   HONEST60 0
+=== PHASE D — is the tread standing still? (stairs are 200 kg boxes on frictionless slides) ===
+rise  variant             tail    maxTreadSag_mm maxTreadDriftX_mm   x_mm    dy_mm   z_mm  feetTread  up  HONEST
+  20  plant (pin per ctrl tick)  policy      16.26          19.63      46.5   -21.3  116.2        0   Y   . 
+  20  plant (pin per ctrl tick)  none        16.26          19.63      46.6   -21.4  116.2        0   Y   . 
+  20  pinned per mj_step         policy       0.00           0.00      28.7    18.0  116.3        0   Y   . 
+  20  pinned per mj_step         none         0.00           0.00      28.7    18.0  116.3        0   Y   . 
+  40  plant (pin per ctrl tick)  policy       0.03           9.94     -60.5    87.4  116.2        0   Y   . 
+  40  plant (pin per ctrl tick)  none         0.03           9.94     -60.4    87.4  116.2        0   Y   . 
+  40  pinned per mj_step         policy       0.00           0.00    -265.4   -71.5  116.2        0   Y   . 
+  40  pinned per mj_step         none         0.00           0.00    -249.3   -26.2  117.7        0   Y   . 
+  90  plant (pin per ctrl tick)  policy       0.03           9.94    -122.7    93.7  116.3        0   Y   . 
+  90  plant (pin per ctrl tick)  none         0.03           9.94    -122.7    93.7  116.3        0   Y   . 
+  90  pinned per mj_step         policy       0.00           0.00     -44.6   -57.8  116.3        0   Y   . 
+  90  pinned per mj_step         none         0.00           0.00     -44.7   -57.9  116.3        0   Y   . 
+ 120  plant (pin per ctrl tick)  policy       0.03           8.35    -262.6    89.3  116.0        0   Y   . 
+ 120  plant (pin per ctrl tick)  none         0.03           8.35    -223.8   -29.0   72.6        0   n   . 
+ 120  pinned per mj_step         policy       0.00           0.00    -396.9    -2.8  116.3        0   Y   . 
+ 120  pinned per mj_step         none         0.00           0.00    -396.9    -2.8  116.3        0   Y   . 
+ 180  plant (pin per ctrl tick)  policy       1.89           0.00     262.2    -0.4  288.7        2   Y  PASS
+ 180  plant (pin per ctrl tick)  none         1.89           0.00     262.2    -0.4  288.7        2   Y  PASS
+ 180  pinned per mj_step         policy       0.00           0.00     262.4    -0.4  288.8        2   Y  PASS
+ 180  pinned per mj_step         none         0.00           0.00     262.3    -0.4  288.8        2   Y  PASS
+
+=== PHASE E — does the flight throw the duck off because the steps collide with each other? ===
+rise  steps  minStepGap_mm  maxTreadDriftX_mm  maxTreadSag_mm    x_mm    dy_mm   z_mm  feetTread  up  HONEST
+  20      4         -45.57              19.63           16.26      46.5   -21.3  116.2        0   Y   . 
+  20      1            n/a               0.00            5.23     263.4    -1.9  116.3        0   Y   . 
+  40      4         -52.57               9.94            0.03     -60.5    87.4  116.2        0   Y   . 
+  40      1            n/a               0.00            0.03     262.4    -0.6  155.9        2   Y  PASS
+  60      4         -52.57               9.94            0.03     -23.8    90.8  116.3        0   Y   . 
+  60      1            n/a               0.00            0.03     262.4    -0.6  175.9        2   Y  PASS
+  90      4         -52.57               9.94            0.03    -122.7    93.7  116.3        0   Y   . 
+  90      1            n/a               0.00            0.03     262.4    -0.6  205.9        2   Y  PASS
+ 120      4         -51.80               8.35            0.03    -262.6    89.3  116.0        0   Y   . 
+ 120      1            n/a               0.00            0.03     262.4    -0.6  235.9        2   Y  PASS
+ 180      4         -16.62               0.00            1.89     262.2    -0.4  288.7        2   Y  PASS
+ 180      1            n/a               0.00            0.03     262.4    -0.6  295.9        2   Y  PASS
+
+  threshold sweep — the rise at which a duck can stand on its own tread (4 steps, plant as-is)
+  rise steps z-ovl  minStepGap  driftX   sag     x_mm   z_mm  above  lfootZ-h  rfootZ-h  feetTread up HONEST
+    20     4   180      -45.57   19.63 16.26     46.5  116.2   96.2     -14.5     -14.4         0  Y   . 
+    20     1   180         n/a    0.00  5.23    263.4  116.3   96.3     -14.4     -14.3         0  Y   . 
+    40     4   160      -52.57    9.94  0.03    -60.5  116.2   76.2     -34.5     -34.4         0  Y   . 
+    40     1   160         n/a    0.00  0.03    262.4  155.9  115.9       5.2       5.3         2  Y  PASS
+    60     4   140      -52.57    9.94  0.03    -23.8  116.3   56.3     -54.5     -54.4         0  Y   . 
+    60     1   140         n/a    0.00  0.03    262.4  175.9  115.9       5.2       5.3         2  Y  PASS
+    90     4   110      -52.57    9.94  0.03   -122.7  116.3   26.3     -84.5     -84.4         0  Y   . 
+    90     1   110         n/a    0.00  0.03    262.4  205.9  115.9       5.2       5.3         2  Y  PASS
+   100     4   100      -52.51    9.83  0.03   -280.3  120.3   20.3     -85.1     -89.1         0  Y   . 
+   100     1   100         n/a    0.00  0.03    262.4  215.9  115.9       5.2       5.3         2  Y  PASS
+   110     4    90      -52.16    9.09  0.00   -366.9  116.2    6.2    -104.5    -104.4         0  Y   . 
+   110     1    90         n/a    0.00  0.03    262.4  225.9  115.9       5.2       5.3         2  Y  PASS
+   120     4    80      -51.80    8.35  0.03   -262.6  116.0   -4.0    -114.5    -114.5         0  Y   . 
+   120     1    80         n/a    0.00  0.03    262.4  235.9  115.9       5.2       5.3         2  Y  PASS
+   130     4    70      -51.80    8.35  0.03    -53.3  116.3  -13.7    -124.2    -123.9         0  Y   . 
+   130     1    70         n/a    0.00  0.03    262.4  245.9  115.9       5.2       5.3         2  Y  PASS
+   140     4    60      -50.01    5.74  1.45   -263.3  116.2  -23.8    -134.5    -134.4         0  Y   . 
+   140     1    60         n/a    0.00  0.03    262.4  255.9  115.9       5.2       5.3         2  Y  PASS
+   150     4    50      -41.52    0.00  4.65    262.6  247.9   97.9     -12.8     -12.8         0  Y   . 
+   150     1    50         n/a    0.00  0.03    262.5  266.0  116.0       5.2       5.3         2  Y  PASS
+   160     4    40      -33.22    0.00  3.73    262.4  261.5  101.5      -9.2      -9.2         0  Y   . 
+   160     1    40         n/a    0.00  0.03    262.4  275.9  115.9       5.2       5.3         2  Y  PASS
+   170     4    30      -24.92    0.00  2.81    262.3  275.1  105.1      -5.6      -5.6         0  Y   . 
+   170     1    30         n/a    0.00  0.03    262.4  285.9  115.9       5.2       5.3         2  Y  PASS
+   180     4    20      -16.62    0.00  1.89    262.2  288.7  108.7      -2.0      -1.9         2  Y  PASS
+   180     1    20         n/a    0.00  0.03    262.4  295.9  115.9       5.2       5.3         2  Y  PASS
+
+
+=== TAIL VERDICT (does the tail let a real climb read as success?) ===
+  tail=policy  on-tread HONEST   6/36  upright  29/36  | do-nothing HONEST 0/12 upright 12/12  | walk-only HONEST 0/6  -> CAN EXPRESS SUCCESS: true
+             rises where a real on-tread stance reads as PASS (mm): [180]
+  tail=hold    on-tread HONEST   4/36  upright   5/36  | do-nothing HONEST 0/12 upright 2/12  | walk-only HONEST 0/6  -> CAN EXPRESS SUCCESS: true
+             rises where a real on-tread stance reads as PASS (mm): [180]
+  tail=none    on-tread HONEST   6/36  upright  26/36  | do-nothing HONEST 0/12 upright 12/12  | walk-only HONEST 0/6  -> CAN EXPRESS SUCCESS: true
+             rises where a real on-tread stance reads as PASS (mm): [180]
+
+=== LATERAL CONFOUND ===
+  34/162 scored rows leave the 340 mm flight (|y-STAIR_Y| > 170 mm at some tick); worst excursion 476.5 mm.
+  files that ever leave the flight: best_0_120mm.json, best_0_20mm.json, best_1_120mm.json, best_1_180mm.json, best_1_20mm.json, best_1_40mm.json, best_2_120mm.json, best_2_90mm.json
+
+WROTE ../climb/rig3-results.json  (102.8s)

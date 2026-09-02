@@ -79,7 +79,11 @@ export const RISER_X = 0.12;                      // cfg.start — the first ris
 const bodyId = n => { for (let b = 0; b < model.nbody; b++) if (model.body(b).name === n) return b; return -1; };
 const JAWB = bodyId('jaw_soft');
 const JAW = []; for (let g = 0; g < model.ngeom; g++) if (model.geom_bodyid[g] === JAWB && !(model.geom_contype[g] === 0 && model.geom_conaffinity[g] === 0)) JAW.push(g);
-let STEP0 = -1; for (let g = 0; g < model.ngeom; g++) if (model.geom(g).name === 'step0_geom') STEP0 = g;
+let STEP0 = -1, STEP1 = -1;
+for (let g = 0; g < model.ngeom; g++) {
+  if (model.geom(g).name === 'step0_geom') STEP0 = g;
+  if (model.geom(g).name === 'step1_geom') STEP1 = g;
+}
 let LFOOT = -1, RFOOT = -1;
 for (let g = 0; g < model.ngeom; g++) {
   const n = model.geom(g).name || '';
@@ -88,6 +92,24 @@ for (let g = 0; g < model.ngeom; g++) {
 }
 // the exact geom set climb_lib line 141-145 walks
 const FEET = []; for (let g = 0; g < model.ngeom; g++) if (/foot_collision|sole/.test(model.geom(g).name || '')) FEET.push(g);
+// Every step geom, for the contact half of the foot clause below.
+const STEPG = []; for (let g = 0; g < model.ngeom; g++) if (/^step\d+_geom$/.test(model.geom(g).name || '')) STEPG.push(g);
+
+/**
+ * A foot RESTING on the tread: past the riser line, inside the flight, within
+ * 5 mm below to 45 mm above the tread's height, AND within 3 mm of a step geom.
+ *
+ * The clause used to have no ceiling and no contact test, so a foot in mid-air
+ * above the step counted (audit_r2 found it; across its 64 rows the tightened
+ * clause never disagreed with the loose one, so no verdict moves — it is
+ * closed before a future search learns to exploit it).
+ */
+function footResting(g, h) {
+  const x = data.geom_xpos[g * 3], y = data.geom_xpos[g * 3 + 1], z = data.geom_xpos[g * 3 + 2];
+  if (!(z > h - 0.005 && z < h + 0.045 && x > RISER_X && Math.abs(y - STAIR_Y) <= LATERAL)) return false;
+  for (const sg of STEPG) if (mj.mj_geomDistance(model, data, g, sg, 0.05, null) < 0.003) return true;
+  return false;
+}
 
 const quat = () => [data.qpos[D.freeQpos + 3], data.qpos[D.freeQpos + 4], data.qpos[D.freeQpos + 5], data.qpos[D.freeQpos + 6]];
 
@@ -120,8 +142,7 @@ function snapshot(h) {
     && Math.abs(data.geom_xpos[g * 3 + 1] - STAIR_Y) <= LATERAL) feetUpLat++;
   // and with the foot-x bug fixed: a foot on the tread is PAST the riser
   let feetOnTread = 0;
-  for (const g of FEET) if (data.geom_xpos[g * 3 + 2] > h - 0.005 && data.geom_xpos[g * 3] > RISER_X
-    && Math.abs(data.geom_xpos[g * 3 + 1] - STAIR_Y) <= LATERAL) feetOnTread++;
+  for (const g of FEET) if (footResting(g, h)) feetOnTread++;
   const foot = g => ({ x: data.geom_xpos[g * 3], y: data.geom_xpos[g * 3 + 1], z: data.geom_xpos[g * 3 + 2] });
   return {
     x, y, z, dy: y - STAIR_Y, above: z - h, up,
@@ -177,7 +198,7 @@ export function reward(rec) {
  * scoreSaved().
  */
 async function runEpisodeRaw(track, opts, h, tail) {
-  const cfg = { count: 4, rise: h, run: 0.28, start: 0.12 };
+  const cfg = { count: opts.stepCount || 4, rise: h, run: 0.28, start: 0.12 };
   mj.mj_resetData(model, data);
   layoutStairs(data, ADDR, cfg);
   if (opts.spawn) {
@@ -197,7 +218,59 @@ async function runEpisodeRaw(track, opts, h, tail) {
   const cmd = command({ vx: opts.approach });
 
   const R = { ticks: 0, headTicks: 0, riserTicks: 0, upTicks: 0, sat: 0, ctrls: 0,
-              maxX: -1e9, maxZ: -1e9, maxAbsDY: 0, feetOnTreadMax: 0, feetUpRawMax: 0 };
+              maxX: -1e9, maxZ: -1e9, maxAbsDY: 0, feetOnTreadMax: 0, feetUpRawMax: 0,
+              maxTreadSag_mm: 0, maxTreadDriftX_mm: 0, minStepGap_mm: 1e9, trace: [],
+              // --- ADDITIVE INSTRUMENTATION (round 2, family C). Read-only:
+              // it records, it never touches ctrl, qpos, the criterion or any
+              // pre-existing field, so parity and every published number are
+              // unchanged. It exists because "sustained LOAD TRANSFER" — trunk
+              // z gain while the head AND a foot are both bearing — is the
+              // reward round 2 needs, and contact fractions cannot express it.
+              bothTicks: 0, maxGainBoth: -1e9, sustainTicks: 0, liftIntegral: 0 };
+  let gtick = 0;
+  let Z0 = 0;                       // trunk z at the end of the 25-tick settle
+  /**
+   * How far the tread has moved by the end of a control tick.
+   *
+   * site/stairs.js says of pin(): "Call after any qpos write, AND EVERY TICK."
+   * climb_lib.mjs:132 calls layoutStairs once and then takes FOUR mj_steps.
+   * A step is a 200 kg box (sim/scene_physics.xml:91) on two frictionless,
+   * undamped slide joints with no gravity compensation, so between pins it is
+   * in free fall: 0.02 s of it is 1.96 mm of drop and 0.196 m/s of downward
+   * surface velocity, re-teleported to nominal at the next control tick.
+   */
+  const treadDrift = () => {
+    const topNow = data.geom_xpos[STEP0 * 3 + 2] + 0.10;
+    const sag = (h - topNow) * 1000;
+    if (sag > R.maxTreadSag_mm) R.maxTreadSag_mm = sag;
+    const dx = Math.abs(data.geom_xpos[STEP0 * 3] - (0.12 + 0.17)) * 1000;
+    if (dx > R.maxTreadDriftX_mm) R.maxTreadDriftX_mm = dx;
+    // Consecutive steps OVERLAP by design (STEP_HALF_DEPTH 0.17 > run/2 = 0.14,
+    // "so steps overlap into one solid flight" — site/stairs.js:38) and they
+    // share contype/conaffinity 4 (sim/scene_physics.xml:89,96), so they
+    // COLLIDE WITH EACH OTHER. Box-box normals point along the axis of least
+    // penetration: x-overlap is 60 mm, z-overlap is (0.2 - rise), so below a
+    // rise of 140 mm the flight shoves itself apart HORIZONTALLY.
+    if (STEP1 >= 0 && cfg.count > 1) {
+      const g = mj.mj_geomDistance(model, data, STEP0, STEP1, 0.4, null) * 1000;
+      if (g < R.minStepGap_mm) R.minStepGap_mm = g;
+    }
+    return sag;
+  };
+  const traceSample = (phase) => {
+    if (!opts.trace) return;
+    if (gtick % 10) return;
+    R.trace.push({ tick: gtick, phase,
+      x_mm: +(data.qpos[D.freeQpos] * 1000).toFixed(1),
+      dy_mm: +((data.qpos[D.freeQpos + 1] - STAIR_Y) * 1000).toFixed(1),
+      z_mm: +(data.qpos[D.freeQpos + 2] * 1000).toFixed(1),
+      lfootZ_mm: +(data.geom_xpos[LFOOT * 3 + 2] * 1000).toFixed(1),
+      rfootZ_mm: +(data.geom_xpos[RFOOT * 3 + 2] * 1000).toFixed(1),
+      lfootX_mm: +(data.geom_xpos[LFOOT * 3] * 1000).toFixed(1),
+      rfootX_mm: +(data.geom_xpos[RFOOT * 3] * 1000).toFixed(1),
+      treadSag_mm: +treadDrift().toFixed(2),
+      up: projectedGravity(quat())[2] < -0.90 });
+  };
 
   const record = () => {
     R.ticks++;
@@ -218,11 +291,18 @@ async function runEpisodeRaw(track, opts, h, tail) {
     let fot = 0, fur = 0;
     for (const g of FEET) {
       if (data.geom_xpos[g * 3 + 2] > h - 0.005 && data.geom_xpos[g * 3] > 0.05) fur++;
-      if (data.geom_xpos[g * 3 + 2] > h - 0.005 && data.geom_xpos[g * 3] > RISER_X
-        && Math.abs(data.geom_xpos[g * 3 + 1] - STAIR_Y) <= LATERAL) fot++;
+      if (footResting(g, h)) fot++;
     }
     if (fot > R.feetOnTreadMax) R.feetOnTreadMax = fot;
     if (fur > R.feetUpRawMax) R.feetUpRawMax = fur;
+    // load transfer: is the duck rising while the head and a foot both bear?
+    if (head && (footRiser || fot > 0)) {
+      R.bothTicks++;
+      const g = z - Z0;
+      if (g > R.maxGainBoth) R.maxGainBoth = g;
+      if (g > 0.02) R.sustainTicks++;
+      if (g > 0) R.liftIntegral += g;
+    }
   };
 
   // climb_lib.mjs:121-133, verbatim
@@ -239,7 +319,8 @@ async function runEpisodeRaw(track, opts, h, tail) {
       data.ctrl[k] = c;
       if (rec) { R.ctrls++; if (c <= LO[k] + 1e-9 || c >= HI[k] - 1e-9) R.sat++; }
     }
-    for (let s = 0; s < 4; s++) mj.mj_step(model, data);
+    for (let s = 0; s < 4; s++) { if (opts.pinEverySubstep) layoutStairs(data, ADDR, cfg); mj.mj_step(model, data); }
+    treadDrift(); traceSample(rec ? 'track' : 'settle'); gtick++;
     if (rec) record();
   };
 
@@ -247,12 +328,14 @@ async function runEpisodeRaw(track, opts, h, tail) {
   const holdStep = (targets) => {
     layoutStairs(data, ADDR, cfg);
     for (let k = 0; k < 14; k++) data.ctrl[k] = targets[k];
-    for (let s = 0; s < 4; s++) mj.mj_step(model, data);
+    for (let s = 0; s < 4; s++) { if (opts.pinEverySubstep) layoutStairs(data, ADDR, cfg); mj.mj_step(model, data); }
+    treadDrift(); traceSample('tail'); gtick++;
     record();
   };
 
   for (let t = 0; t < 25; t++) await step(null, false);
   const x0 = data.qpos[D.freeQpos];
+  Z0 = data.qpos[D.freeQpos + 2];
   const total = tr[tr.length - 1].t + 0.8;
   for (let t = 0; t * DT < total; t++) await step(poseAt(tr, t * DT), true);
 
@@ -281,10 +364,18 @@ async function runEpisodeRaw(track, opts, h, tail) {
     critAfterTail: criteria(h, afterTail),
     maxX: R.maxX, maxZ: R.maxZ, maxAbsDY: R.maxAbsDY,
     feetOnTreadMax: R.feetOnTreadMax, feetUpRawMax: R.feetUpRawMax,
+    maxTreadSag_mm: R.maxTreadSag_mm, maxTreadDriftX_mm: R.maxTreadDriftX_mm,
+    minStepGap_mm: R.minStepGap_mm === 1e9 ? null : R.minStepGap_mm, trace: R.trace,
     headFrac: R.headTicks / Math.max(R.ticks, 1),
     riserFrac: R.riserTicks / Math.max(R.ticks, 1),
     upFrac: R.upTicks / Math.max(R.ticks, 1),
     satFrac: R.sat / Math.max(R.ctrls, 1),
+    // additive instrumentation, see R above
+    z0Settle: Z0,
+    bothFrac: R.bothTicks / Math.max(R.ticks, 1),
+    maxGainBoth: R.maxGainBoth === -1e9 ? null : R.maxGainBoth,
+    sustainFrac: R.sustainTicks / Math.max(R.ticks, 1),
+    liftIntegral: R.liftIntegral,
   };
   // climb_lib's own return, for the parity check
   rec.legacy = { onTop: rec.crit.orig, x: scored.x, z: scored.z, above: scored.above,
@@ -539,6 +630,102 @@ results.bestsCleared = anyClear;
 results.bestsRows = results.bests.length;
 console.log(`\n  18 bests x 3 offsets x 3 tails = ${results.bests.length} scored rows.`);
 console.log(`  cleared: ORIG ${anyClear.orig}   LAT ${anyClear.lat}   HONEST ${anyClear.honest}   HONEST60 ${anyClear.honest60}`);
+
+// ---------------------------------------------------------------- PHASE D
+// WHY does the on-tread control get thrown off at 20-120 mm but stand still at
+// 180 mm? Two candidates: (i) the tread is in free fall between pins, so a
+// duck standing on it rides a 50 Hz vibrating platform; (ii) something about
+// the low-rise geometry. Measure the tread's motion, then re-run with the
+// stairs pinned before EVERY mj_step — site/stairs.js's own stated contract
+// ("call after any qpos write, and every tick"), which climb_lib.mjs:132 does
+// not honour. The pinned variant is a DIAGNOSTIC, not the plant: it changes no
+// physics constant, only how often the harness re-writes the stair joints.
+console.log('=== PHASE D — is the tread standing still? (stairs are 200 kg boxes on frictionless slides) ===');
+results.treadMotion = [];
+console.log('rise  variant             tail    maxTreadSag_mm maxTreadDriftX_mm   x_mm    dy_mm   z_mm  feetTread  up  HONEST');
+for (const h of [0.020, 0.040, 0.090, 0.120, 0.180]) {
+  const rmm = Math.round(h * 1000);
+  const path = `../climb/ctrl_on_tread_${rmm}mm_x26_med.json`;
+  for (const [vlabel, ov] of [['plant (pin per ctrl tick)', {}], ['pinned per mj_step', { pinEverySubstep: true }]]) {
+    for (const k of ['policy', 'none']) {
+      const r = await scoreSaved(path, { rise: h, tail: k === 'none' ? 'hold' : 'policy',
+        overrides: { ...ov, trace: true } });
+      const rr = (k === 'none') ? { ...r, scored: r.atTrackEnd, crit: r.critAtTrackEnd } : r;
+      const s = rr.scored, c = rr.crit;
+      results.treadMotion.push({ rise_mm: rmm, variant: vlabel, tail: k,
+        maxTreadSag_mm: +r.maxTreadSag_mm.toFixed(2), maxTreadDriftX_mm: +r.maxTreadDriftX_mm.toFixed(2),
+        x_mm: +mm(s.x), dy_mm: +mm(s.dy), z_mm: +mm(s.z), above_mm: +mm(s.above),
+        feetOnTread: s.feetOnTread, up: s.up, crit: c,
+        trace: (vlabel.startsWith('plant') && k === 'none') ? r.trace.slice(0, 30) : undefined });
+      console.log(`${rmm.toString().padStart(4)}  ${vlabel.padEnd(26)} ${k.padEnd(6)} ` +
+        `${r.maxTreadSag_mm.toFixed(2).padStart(10)} ${r.maxTreadDriftX_mm.toFixed(2).padStart(14)}   ` +
+        `${mm(s.x).padStart(7)} ${mm(s.dy).padStart(7)} ${mm(s.z).padStart(6)} ${String(s.feetOnTread).padStart(8)}   ` +
+        `${s.up ? 'Y' : 'n'}  ${c.honest ? 'PASS' : ' . '}`);
+    }
+  }
+}
+console.log();
+
+// ---------------------------------------------------------------- PHASE E
+// The flight collides with itself. Consecutive step blocks overlap by 60 mm in
+// x (STEP_HALF_DEPTH 0.17 vs run/2 = 0.14) and by (200 - rise) mm in z, and
+// they share collision bits. A box-box normal points along the axis of LEAST
+// penetration, so for rise < 140 mm the z-overlap is the larger one and the
+// blocks push each other APART ALONG X — the tread lurches, is teleported back
+// by the next layoutStairs, and lurches again, 50 times a second.
+// Test: lay out ONE step instead of four (nothing to collide with) and see
+// whether the on-tread control then stands. Diagnostic only — a 1-step flight
+// is not the 4-step flight attempt() scores.
+console.log('=== PHASE E — does the flight throw the duck off because the steps collide with each other? ===');
+results.stepSelfCollision = [];
+console.log('rise  steps  minStepGap_mm  maxTreadDriftX_mm  maxTreadSag_mm    x_mm    dy_mm   z_mm  feetTread  up  HONEST');
+for (const h of RISES) {
+  const rmm = Math.round(h * 1000);
+  const path = `../climb/ctrl_on_tread_${rmm}mm_x26_med.json`;
+  for (const n of [4, 1]) {
+    const r = await scoreSaved(path, { rise: h, tail: 'policy', overrides: { stepCount: n } });
+    const s = r.scored, c = r.crit;
+    results.stepSelfCollision.push({ rise_mm: rmm, stepCount: n,
+      minStepGap_mm: r.minStepGap_mm === null ? null : +r.minStepGap_mm.toFixed(2),
+      maxTreadDriftX_mm: +r.maxTreadDriftX_mm.toFixed(2), maxTreadSag_mm: +r.maxTreadSag_mm.toFixed(2),
+      x_mm: +mm(s.x), dy_mm: +mm(s.dy), z_mm: +mm(s.z), above_mm: +mm(s.above),
+      feetOnTread: s.feetOnTread, up: s.up, crit: c });
+    console.log(`${rmm.toString().padStart(4)}  ${String(n).padStart(5)}  ` +
+      `${(r.minStepGap_mm === null ? 'n/a' : r.minStepGap_mm.toFixed(2)).padStart(13)}  ` +
+      `${r.maxTreadDriftX_mm.toFixed(2).padStart(17)}  ${r.maxTreadSag_mm.toFixed(2).padStart(14)}   ` +
+      `${mm(s.x).padStart(7)} ${mm(s.dy).padStart(7)} ${mm(s.z).padStart(6)} ${String(s.feetOnTread).padStart(8)}   ` +
+      `${s.up ? 'Y' : 'n'}  ${c.honest ? 'PASS' : ' . '}`);
+  }
+}
+// Where is the threshold? Predicted at rise = 200 - 60 = 140 mm, the rise at
+// which the z-overlap between consecutive blocks stops being the deeper one.
+console.log('\n  threshold sweep — the rise at which a duck can stand on its own tread (4 steps, plant as-is)');
+console.log('  rise steps z-ovl  minStepGap  driftX   sag     x_mm   z_mm  above  lfootZ-h  rfootZ-h  feetTread up HONEST');
+results.thresholdSweep = [];
+for (const rmm of [20, 40, 60, 90, 100, 110, 120, 130, 140, 150, 160, 170, 180]) {
+  const h = rmm / 1000;
+  const p = saveTrack({ name: `control_on_tread_${rmm}mm_sweep`, keyframes: HOLD_TRACK(HOME),
+    blend: 1, gap: 0.05, side: 0, approach: 0, spawn: { x: 0.26, y: STAIR_Y, z: h + 0.12 },
+    note: `ON-TREAD CONTROL for the step-self-collision threshold sweep, rise ${rmm} mm.` },
+    `/tmp/rig3_sweep_${rmm}.json`);
+  for (const n of [4, 1]) {
+    const r = await scoreSaved(p, { rise: h, tail: 'policy', overrides: { stepCount: n } });
+    const s = r.scored, c = r.crit;
+    const lz = (s.lfoot.z - h) * 1000, rz = (s.rfoot.z - h) * 1000;
+    results.thresholdSweep.push({ rise_mm: rmm, stepCount: n, zOverlap_mm: 200 - rmm,
+      minStepGap_mm: r.minStepGap_mm === null ? null : +r.minStepGap_mm.toFixed(2),
+      maxTreadDriftX_mm: +r.maxTreadDriftX_mm.toFixed(2), maxTreadSag_mm: +r.maxTreadSag_mm.toFixed(2),
+      x_mm: +mm(s.x), z_mm: +mm(s.z), above_mm: +mm(s.above),
+      lfootZminusRise_mm: +lz.toFixed(1), rfootZminusRise_mm: +rz.toFixed(1),
+      feetOnTread: s.feetOnTread, up: s.up, crit: c });
+    console.log(`  ${rmm.toString().padStart(4)} ${String(n).padStart(5)} ${(200 - rmm).toString().padStart(5)}  ` +
+      `${(r.minStepGap_mm === null ? 'n/a' : r.minStepGap_mm.toFixed(2)).padStart(10)}  ` +
+      `${r.maxTreadDriftX_mm.toFixed(2).padStart(6)} ${r.maxTreadSag_mm.toFixed(2).padStart(5)} ` +
+      `${mm(s.x).padStart(8)} ${mm(s.z).padStart(6)} ${mm(s.above).padStart(6)} ` +
+      `${lz.toFixed(1).padStart(9)} ${rz.toFixed(1).padStart(9)} ${String(s.feetOnTread).padStart(9)}  ${s.up?'Y':'n'}  ${c.honest?'PASS':' . '}`);
+  }
+}
+console.log();
 
 // ---------------------------------------------------------------- summary
 const tailVerdict = {};
