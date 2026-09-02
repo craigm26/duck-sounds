@@ -1,0 +1,255 @@
+{
+  "generated": "2026-09-02T10:58:11.607Z",
+  "r4_famA_60mm": {
+    "sha256": "7b790070b010f8242db981547207987386eede2c6d21a86f25d0931723ee0a59",
+    "move": "7b790070b010",
+    "kCore": 4,
+    "kCoreStable": 4,
+    "kExt": 4,
+    "kExtStable": 4,
+    "objective": 25.6099,
+    "objectiveCore": 27.4149,
+    "objectiveR3": 23.7882,
+    "meanReward": 6.0727,
+    "minPen_mm": -1.28,
+    "maxAbsDY_mm": 275.7,
+    "lateralEscapeCells": 1,
+    "minUprightTailTicks": 8,
+    "bounds": {
+      "bounds": {
+        "blend": [
+          0.8,
+          2.4
+        ],
+        "side": [
+          -0.02,
+          0.09
+        ]
+      },
+      "violations": []
+    }
+  },
+  "r3_vault_60mm": {
+    "sha256": "4b9110c448ec45b7e9aa9e25e8720ab6e149562dbba2c00dda73f5c86aee8f15",
+    "move": "4b9110c448ec",
+    "kCore": 4,
+    "kCoreStable": 4,
+    "kExt": 4,
+    "kExtStable": 4,
+    "objective": 25.6099,
+    "objectiveCore": 27.4149,
+    "objectiveR3": 23.7882,
+    "meanReward": 6.0727,
+    "minPen_mm": -1.28,
+    "maxAbsDY_mm": 275.7,
+    "lateralEscapeCells": 1,
+    "minUprightTailTicks": 8,
+    "bounds": {
+      "bounds": {
+        "blend": [
+          0.7,
+          2.4
+        ],
+        "side": [
+          -0.02,
+          0.09
+        ]
+      },
+      "violations": []
+    }
+  },
+  "sameTrajectory": {
+    "maxAbsDx_mm": 0,
+    "maxAbsDz_mm": 0,
+    "sameHonestPattern": true,
+    "verdict": "IDENTICAL physics — the round-4 file is the round-3 vector re-expressed as an event, a distinct hash but NOT a new move"
+  },
+  "cells": [
+    {
+      "cell": "50mm d0.12 f1 [core]",
+      "r4Honest": false,
+      "r3Honest": false,
+      "dx_mm": 0,
+      "dz_mm": 0,
+      "eventFired": true,
+      "eventT": 0.74,
+      "eventE_mm": 102.5,
+      "upTail": "50/50",
+      "pen_mm": 0,
+      "maxDY_mm": 55.9
+    },
+    {
+      "cell": "50mm d0.13 f0.7 [core]",
+      "r4Honest": true,
+      "r3Honest": true,
+      "dx_mm": 0,
+      "dz_mm": 0,
+      "eventFired": true,
+      "eventT": 0.74,
+      "eventE_mm": 100.97,
+      "upTail": "50/50",
+      "pen_mm": -0.52,
+      "maxDY_mm": 66.3
+    },
+    {
+      "cell": "50mm d0.125 f1.3 [core]",
+      "r4Honest": true,
+      "r3Honest": true,
+      "dx_mm": 0,
+      "dz_mm": 0,
+      "eventFired": true,
+      "eventT": 0.74,
+      "eventE_mm": 102.64,
+      "upTail": "50/50",
+      "pen_mm": -1.28,
+      "maxDY_mm": 47.2
+    },
+    {
+      "cell": "60mm d0.12 f1 [core]",
+      "r4Honest": true,
+      "r3Honest": true,
+      "dx_mm": 0,
+      "dz_mm": 0,
+      "eventFired": true,
+      "eventT": 0.74,
+      "eventE_mm": 102.5,
+      "upTail": "50/50",
+      "pen_mm": -0.74,
+      "maxDY_mm": 75.6
+    },
+    {
+      "cell": "60mm d0.13 f0.7 [core]",
+      "r4Honest": false,
+      "r3Honest": false,
+      "dx_mm": 0,
+      "dz_mm": 0,
+      "eventFired": true,
+      "eventT": 0.74,
+      "eventE_mm": 100.97,
+      "upTail": "8/50",
+      "pen_mm": 50,
+      "maxDY_mm": 121.3
+    },
+    {
+      "cell": "60mm d0.125 f1.3 [core]",
+      "r4Honest": false,
+      "r3Honest": false,
+      "dx_mm": 0,
+      "dz_mm": 0,
+      "eventFired": true,
+      "eventT": 0.74,
+      "eventE_mm": 102.64,
+      "upTail": "50/50",
+      "pen_mm": 50,
+      "maxDY_mm": 59.4
+    },
+    {
+      "cell": "70mm d0.12 f1 [core]",
+      "r4Honest": false,
+      "r3Honest": false,
+      "dx_mm": 0,
+      "dz_mm": 0,
+      "eventFired": true,
+      "eventT": 0.74,
+      "eventE_mm": 102.5,
+      "upTail": "50/50",
+      "pen_mm": 4.93,
+      "maxDY_mm": 33.8
+    },
+    {
+      "cell": "70mm d0.13 f0.7 [core]",
+      "r4Honest": false,
+      "r3Honest": false,
+      "dx_mm": 0,
+      "dz_mm": 0,
+      "eventFired": true,
+      "eventT": 0.74,
+      "eventE_mm": 100.97,
+      "upTail": "50/50",
+      "pen_mm": 0,
+      "maxDY_mm": 34.8
+    },
+    {
+      "cell": "70mm d0.125 f1.3 [core]",
+      "r4Honest": true,
+      "r3Honest": true,
+      "dx_mm": 0,
+      "dz_mm": 0,
+      "eventFired": true,
+      "eventT": 0.74,
+      "eventE_mm": 102.64,
+      "upTail": "50/50",
+      "pen_mm": -1.21,
+      "maxDY_mm": 52.5
+    },
+    {
+      "cell": "55mm d0.12 f1 [ext]",
+      "r4Honest": false,
+      "r3Honest": false,
+      "dx_mm": 0,
+      "dz_mm": 0,
+      "eventFired": true,
+      "eventT": 0.74,
+      "eventE_mm": 102.5,
+      "upTail": "48/50",
+      "pen_mm": 50,
+      "maxDY_mm": 142
+    },
+    {
+      "cell": "65mm d0.12 f1 [ext]",
+      "r4Honest": false,
+      "r3Honest": false,
+      "dx_mm": 0,
+      "dz_mm": 0,
+      "eventFired": true,
+      "eventT": 0.74,
+      "eventE_mm": 102.5,
+      "upTail": "50/50",
+      "pen_mm": 50,
+      "maxDY_mm": 275.7
+    },
+    {
+      "cell": "50mm d0.14 f0.5 [ext]",
+      "r4Honest": false,
+      "r3Honest": false,
+      "dx_mm": 0,
+      "dz_mm": 0,
+      "eventFired": true,
+      "eventT": 0.74,
+      "eventE_mm": 97.98,
+      "upTail": "13/50",
+      "pen_mm": 50,
+      "maxDY_mm": 56.6
+    },
+    {
+      "cell": "60mm d0.14 f0.5 [ext]",
+      "r4Honest": false,
+      "r3Honest": false,
+      "dx_mm": 0,
+      "dz_mm": 0,
+      "eventFired": true,
+      "eventT": 0.74,
+      "eventE_mm": 97.98,
+      "upTail": "50/50",
+      "pen_mm": 28.13,
+      "maxDY_mm": 47
+    },
+    {
+      "cell": "70mm d0.14 f0.5 [ext]",
+      "r4Honest": false,
+      "r3Honest": false,
+      "dx_mm": 0,
+      "dz_mm": 0,
+      "eventFired": true,
+      "eventT": 0.74,
+      "eventE_mm": 97.98,
+      "upTail": "50/50",
+      "pen_mm": 50,
+      "maxDY_mm": 33.5
+    }
+  ],
+  "hashes": {
+    "r4": "7b790070b010f8242db981547207987386eede2c6d21a86f25d0931723ee0a59",
+    "r3": "4b9110c448ec45b7e9aa9e25e8720ab6e149562dbba2c00dda73f5c86aee8f15"
+  }
+}

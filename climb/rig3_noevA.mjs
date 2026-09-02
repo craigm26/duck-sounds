@@ -59,7 +59,6 @@ import * as ort from 'onnxruntime-node';
 import fs from 'node:fs';
 import { makeLoop } from '../site/duckloop.mjs';
 import { findStairJoints, layoutStairs, STAIR_Y, STAIR_HALF_WIDTH } from '../site/stairs.js';
-import { normEvent, eventFires, eventError, buildDynTrack } from '../climb/event.mjs';
 
 const C = JSON.parse(fs.readFileSync('duckkit-constants.json', 'utf8'));
 export const { HOME, LO, HI, buildObs, projectedGravity, command, findDuckJoints } = makeLoop(C);
@@ -453,38 +452,8 @@ async function runEpisodeRaw(track, opts, h, tail) {
   for (let t = 0; t < SETTLE; t++) await step(null, false);
   const x0 = data.qpos[D.freeQpos];
   Z0 = data.qpos[D.freeQpos + 2];
-  // ================================================== ROUND 4, FAMILY A
-  // AN OPTIONAL EVENT-TRIGGERED TAIL. `opts.event` is absent in every file
-  // written before round 4, and normEvent(undefined) is null, in which case
-  // TR === tr, `total` never changes, and the two lines below are the
-  // pre-round-4 loop verbatim: same tick count, same poses, same ONNX calls.
-  // climb/famA_r4.mjs PHASE P proves that on every existing best_* file.
-  const EV = normEvent(opts.event);
-  let TR = tr;
-  let total = TR[TR.length - 1].t + 0.8;
-  let evFired = false, evT = null, evE = null, evTrunkX = null;
-  const beakDistNow = () => {
-    let d = 1e9;
-    for (const g of JAW) for (const sg of STEPG) { const v = mj.mj_geomDistance(model, data, g, sg, 0.05, null); if (v < d) d = v; }
-    return d === 1e9 ? null : d;
-  };
-  for (let t = 0; t * DT < total; t++) {
-    const time = t * DT;
-    if (EV && !evFired && time >= EV.arm) {
-      const fire = time >= EV.fallback || eventFires(EV, {
-        beakDist: EV.type === 'beak' ? beakDistNow() : null,
-        pitch: projectedGravity(quat())[0],
-        above: data.qpos[D.freeQpos + 2] - h,
-      });
-      if (fire) {
-        evFired = true; evT = time; evTrunkX = data.qpos[D.freeQpos];
-        evE = eventError(EV, evTrunkX);
-        TR = buildDynTrack(tr, EV, time, poseAt(TR, time), evE);
-        total = TR[TR.length - 1].t + 0.8;
-      }
-    }
-    await step(poseAt(TR, time), true);
-  }
+  const total = tr[tr.length - 1].t + 0.8;
+  for (let t = 0; t * DT < total; t++) await step(poseAt(tr, t * DT), true);
 
   const atTrackEnd = snapshot(h, R.maxAbsDY);
   // ROUND 4, FAMILY B: the handoff point. This instant IS where a beat-2 track
@@ -493,7 +462,7 @@ async function runEpisodeRaw(track, opts, h, tail) {
   const terminal = handoffNow(h); terminal.spawnLastAction = la.slice();
   // what the servos were last told, and what 'hold' will freeze them at
   const ctrlAtHandoff = []; for (let k = 0; k < 14; k++) ctrlAtHandoff.push(data.ctrl[k]);
-  const finalPose = poseAt(TR, total);   // TR === tr when the file has no event
+  const finalPose = poseAt(tr, total);
   const held = finalPose.map((v, k) => Math.min(Math.max(v, LO[k]), HI[k]));
   let ctrlJump = 0; for (let k = 0; k < 14; k++) ctrlJump = Math.max(ctrlJump, Math.abs(held[k] - ctrlAtHandoff[k]));
 
@@ -516,7 +485,6 @@ async function runEpisodeRaw(track, opts, h, tail) {
   const scored = (tail === 'none') ? atTrackEnd : afterTail;
   const rec = {
     tail, rise: h, x0, ctrlJump,
-    event: EV ? { type: EV.type, fired: evFired, tFire: evT, trunkXAtFire: evTrunkX, e_mm: evE === null ? null : +(evE * 1000).toFixed(2) } : null,
     scored, atTrackEnd, afterTail,
     // ROUND 4 first-class fields of every scored row
     penetrationAtScore: scored.penetrationAtScore,
@@ -567,8 +535,6 @@ export async function scoreSaved(path, { rise, tail = 'policy', gapOffset = 0, o
     blend: j.blend, approach: j.approach || 0,
     gap: (j.gap || 0) + gapOffset, side: j.side || 0,
     spawn: j.spawn || null,
-    // ROUND 4, FAMILY A: the optional event-triggered tail (climb/event.mjs).
-    event: j.event || null,
     // ROUND 4, FAMILY B handoff fields — null/undefined for every older file
     spawnQuat: j.spawnQuat || null, spawnPose: j.spawnPose || null,
     spawnVel: j.spawnVel || null, spawnLastAction: j.spawnLastAction || null,
@@ -591,7 +557,7 @@ export async function __parityEpisode(track, opts, h, tail) { return runEpisodeR
 
 // ================================================================== EXPERIMENT
 
-const isMain = process.argv[1] && process.argv[1].endsWith('rig3.mjs');
+const isMain = process.argv[1] && process.argv[1].endsWith('__noevA_never__');
 if (!isMain) { /* imported as a library */ } else {
 
 const OUT = '../climb/rig3-results.json';

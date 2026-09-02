@@ -1,0 +1,41 @@
+
+================ famB PHASE P — parity of the handoff extension ================
+2026-09-02T10:19:22.897Z  smoke=true
+  best_r3_vault_60mm.json        rig3 EXACT=true  robust EXACT=true  hash EXACT=true (4b9110c4)  x=0.3342751251273466 z=0.17613474586397462 rew=12
+  best_r2_vault_40mm.json        rig3 EXACT=true  robust EXACT=true  hash EXACT=true (86813f9c)  x=0.1422605779184436 z=0.15633799589438296 rew=12
+  best_r3_landvault_90mm.json    rig3 EXACT=true  robust EXACT=true  hash EXACT=true (0f3619fb)  x=0.08048745834377286 z=0.11661964099145021 rew=4.528138864270286
+  ctrl_do_nothing.json           rig3 EXACT=true  robust EXACT=true  hash EXACT=true (c703ee6f)  x=0.0019814926726257733 z=0.11623081135898501 rew=3.3341776052045455
+  best_0_40mm.json               rig3 EXACT=true  robust EXACT=true  hash EXACT=true (52517952)  x=0.07811400354777807 z=0.11618076012237266 rew=6.579321005737626
+  best_1_90mm.json               rig3 EXACT=true  robust EXACT=true  hash EXACT=true (1146b2d6)  x=-0.010006817856656636 z=0.11625067997589499 rew=3.155189520608887
+  parityAll = true
+  one nominal cell = 0.37 s
+
+================ RISE 90 mm ================
+  [b1 90] eval 1 NEW BEST J=65.536  zEnd=72.3 xEnd=-35.3 head=false riser=false fot=0 up=false peakZ=118.6 maxDY=54.2 pen=48.7 (mm)
+  [b1 90] eval 2 NEW BEST J=81.638  zEnd=61.1 xEnd=-13.2 head=false riser=false fot=0 up=false peakZ=121.3 maxDY=82.9 pen=50.0 (mm)
+  [b1 90] eval 4 NEW BEST J=114.706  zEnd=48.0 xEnd=-14.1 head=false riser=true fot=0 up=false peakZ=119.1 maxDY=98.4 pen=0.0 (mm)
+  [b1 90] eval 7 NEW BEST J=156.973  zEnd=58.7 xEnd=-4.8 head=true riser=false fot=0 up=true peakZ=116.3 maxDY=74.9 pen=-0.1 (mm)
+  [b1 90] eval 15 NEW BEST J=160.311  zEnd=56.9 xEnd=17.6 head=true riser=false fot=0 up=false peakZ=116.3 maxDY=73.1 pen=-0.2 (mm)
+  [b1 90] eval 27 NEW BEST J=208.098  zEnd=58.0 xEnd=32.9 head=true riser=false fot=0 up=true peakZ=119.4 maxDY=84.7 pen=-0.1 (mm)
+  [b1 90] eval 28 NEW BEST J=267.011  zEnd=58.2 xEnd=66.1 head=true riser=true fot=0 up=false peakZ=116.3 maxDY=77.4 pen=-0.4 (mm)
+  [b1 90] eval 38 NEW BEST J=267.081  zEnd=60.7 xEnd=44.5 head=true riser=true fot=0 up=true peakZ=116.9 maxDY=67.7 pen=-0.3 (mm)
+  beat 1 @90mm: 73 evaluations in 25s, best J = 267.081
+  beat-1 TERMINAL @90mm: trunk z=60.7mm x=44.5mm dy=26.4mm | beak on tread=true foot on riser=true feet resting on tread=0 upright=true | penetration=-0.3mm peakZ=116.9mm maxDY=67.7mm maxTq=0.640Nm
+  [b2 90] eval 1 NEW BEST J=3.565  honest=false rew=3.56 x=10.0 above=28.9 fot=0 fotMax=0 upTail=16/50
+  [b2 90] eval 3 NEW BEST J=3.747  honest=false rew=3.75 x=30.3 above=25.9 fot=0 fotMax=0 upTail=46/50
+  [b2 90] eval 6 NEW BEST J=3.749  honest=false rew=3.75 x=30.4 above=26.0 fot=0 fotMax=0 upTail=23/50
+  [b2 90] eval 7 NEW BEST J=4.400  honest=false rew=4.40 x=72.3 above=26.5 fot=0 fotMax=0 upTail=42/50
+  [b2 90] eval 34 NEW BEST J=4.524  honest=false rew=4.52 x=77.7 above=27.5 fot=0 fotMax=0 upTail=38/50
+  [b2 90] eval 41 NEW BEST J=4.533  honest=false rew=4.53 x=86.6 above=24.5 fot=0 fotMax=0 upTail=39/50
+  [b2 90] eval 72 NEW BEST J=4.807  honest=false rew=4.81 x=93.8 above=28.5 fot=0 fotMax=0 upTail=40/50
+  beat 2 @90mm: 110 evaluations, best single-cell J = 4.807
+  BEAT-2-FROM-HANDOFF @90mm (NOT a climb): kCore=0/9 kCoreStable=0/9 objectiveR3=4.114 objectiveCore=4.114 meanReward=4.114 minUpTail=27/50 minPen=-0.34mm maxDY=68.6mm meanAbove=26.5mm meanX=53.1mm
+  [b3 90] eval 1 NEW BEST J=4.760  honest=false rew=4.76 x=93.6 above=27.4 fot=0 fotMax=0 peakZ=122.0 upTail=41/50
+  [b3 90] eval 5 NEW BEST J=5.010  honest=false rew=5.01 x=95.7 above=32.6 fot=0 fotMax=0 peakZ=123.0 upTail=38/50
+  [b3 90] eval 23 NEW BEST J=5.074  honest=false rew=5.07 x=101.7 above=32.0 fot=0 fotMax=0 peakZ=123.7 upTail=38/50
+  beat 3 @90mm: 33 evaluations re-tuning beat 2 on the concatenated file, best single-cell J = 5.074
+  CONCATENATED (ONE file, from the floor — this is the climb) @90mm: kCore=0/9 kCoreStable=0/9 kExt=0/14 kExtStable=0/14 objective=2.961 objectiveCore=3.222 objectiveR3=3.222 meanReward=2.961 maxZ=123.7mm meanAbove=6.8mm meanX=18.4mm feetOnTreadMax=0 minUpTail=0/50 maxDY=86.9mm minPen=-2.34mm
+  beat 1 alone @90mm on the shared grid: kCore=0/9 kExt=0/14 objective=1.906 objectiveR3=2.239
+
+wrote ../climb/r4_famB-results.smoke.json
+done 2026-09-02T10:21:01.056Z

@@ -59,7 +59,6 @@ import * as ort from 'onnxruntime-node';
 import fs from 'node:fs';
 import { makeLoop } from '../site/duckloop.mjs';
 import { findStairJoints, layoutStairs, STAIR_Y, STAIR_HALF_WIDTH } from '../site/stairs.js';
-import { normEvent, eventFires, eventError, buildDynTrack } from '../climb/event.mjs';
 
 const C = JSON.parse(fs.readFileSync('duckkit-constants.json', 'utf8'));
 export const { HOME, LO, HI, buildObs, projectedGravity, command, findDuckJoints } = makeLoop(C);
@@ -141,57 +140,6 @@ export function poseAt(tr, time) {
     pt = f.t; pp = f.pose;
   }
   return tr[tr.length - 1].pose.slice();
-}
-
-
-/**
- * ROUND 4, FAMILY B — THE HANDOFF FIELDS (additive, and off unless asked for).
- *
- * Family B splits the 80-120 mm band into two beats and has to start beat 2
- * from the state beat 1 ended in. `spawn:{x,y,z}` carries only the trunk's
- * position, so four optional fields carry the rest:
- *
- *   spawnQuat        [4]   trunk orientation (default: the identity rig3 sets)
- *   spawnPose        [14]  joint qpos AND the initial ctrl (default: HOME)
- *   spawnVel  {free:[6], joint:[14]}  the velocities (default: zero)
- *   spawnLastAction  [14]  the policy's own last-action term in the
- *                          observation (default: zeros, as before)
- *   settleTicks      int   ticks of the stand policy run BEFORE the track
- *                          (default 25 — climb_lib's own settle). Beat 2 uses
- *                          0, because a settle would erase the handoff.
- *
- * EVERY ONE of them is absent from every file written before this round, and
- * when a field is absent not one line of it executes, so the episode is the
- * episode rig3 already ran. climb/famB_parity.log proves that at full float
- * digits against climb/rig3_prefamB.mjs (a byte copy of this file as it stood,
- * differing only in its isMain guard string).
- *
- * A spawn handoff is NOT a climb. It reproduces qpos, qvel and the last-action
- * term; it does not reproduce the fact that the duck GOT there. Any result
- * that only works from a handoff spawn is reported as a beat-2 result.
- */
-
-/** The complete state a beat-2 spawn needs, read off the live sim. Read-only. */
-function handoffNow(h) {
-  const jp = [], jv = [], free = [];
-  for (let k = 0; k < 14; k++) { jp.push(data.qpos[D.qpos[k]]); jv.push(data.qvel[D.dof[k]]); }
-  for (let k = 0; k < 6; k++) free.push(data.qvel[D.freeDof + k]);
-  let head = false;
-  for (const g of JAW) if (mj.mj_geomDistance(model, data, g, STEP0, 0.05, null) < 0.003) { head = true; break; }
-  let footRiser = false, feetOnTread = 0;
-  for (const g of [LFOOT, RFOOT]) {
-    if (data.geom_xpos[g * 3 + 2] < h - 0.005 && mj.mj_geomDistance(model, data, g, STEP0, 0.05, null) < 0.003) footRiser = true;
-  }
-  for (const g of FEET) if (footResting(g, h)) feetOnTread++;
-  const P = penetrationNow();
-  return {
-    penetration: P.pen, penetrationPair: P.pair,
-    spawn: { x: data.qpos[D.freeQpos], y: data.qpos[D.freeQpos + 1], z: data.qpos[D.freeQpos + 2] },
-    spawnQuat: [data.qpos[D.freeQpos + 3], data.qpos[D.freeQpos + 4], data.qpos[D.freeQpos + 5], data.qpos[D.freeQpos + 6]],
-    spawnPose: jp, spawnVel: { free, joint: jv },
-    head, footRiser, feetOnTread,
-    up: projectedGravity(quat())[2] < -0.90,
-  };
 }
 
 // ---------------------------------------------------------------- snapshots
@@ -318,19 +266,9 @@ async function runEpisodeRaw(track, opts, h, tail) {
   }
   data.qpos[D.freeQpos + 3] = 1;
   for (let i = 0; i < 14; i++) { data.qpos[D.qpos[i]] = HOME[i]; data.ctrl[i] = HOME[i]; }
-  // ROUND 4, FAMILY B: the optional handoff state. Absent -> nothing runs.
-  if (opts.spawnQuat) for (let k = 0; k < 4; k++) data.qpos[D.freeQpos + 3 + k] = opts.spawnQuat[k];
-  if (opts.spawnPose) for (let i = 0; i < 14; i++) {
-    data.qpos[D.qpos[i]] = opts.spawnPose[i];
-    data.ctrl[i] = Math.min(Math.max(opts.spawnPose[i], LO[i]), HI[i]);
-  }
-  if (opts.spawnVel) {
-    if (opts.spawnVel.free) for (let k = 0; k < 6; k++) data.qvel[D.freeDof + k] = opts.spawnVel.free[k];
-    if (opts.spawnVel.joint) for (let i = 0; i < 14; i++) data.qvel[D.dof[i]] = opts.spawnVel.joint[i];
-  }
   mj.mj_forward(model, data);
   const tr = track.map(f => ({ t: f.t, pose: f.pose.slice() }));
-  let la = opts.spawnLastAction ? opts.spawnLastAction.slice() : new Array(14).fill(0);
+  let la = new Array(14).fill(0);
   const cmd = command({ vx: opts.approach });
 
   const R = { ticks: 0, headTicks: 0, riserTicks: 0, upTicks: 0, sat: 0, ctrls: 0,
@@ -449,51 +387,16 @@ async function runEpisodeRaw(track, opts, h, tail) {
     record();
   };
 
-  const SETTLE = (opts.settleTicks === undefined || opts.settleTicks === null) ? 25 : opts.settleTicks;
-  for (let t = 0; t < SETTLE; t++) await step(null, false);
+  for (let t = 0; t < 25; t++) await step(null, false);
   const x0 = data.qpos[D.freeQpos];
   Z0 = data.qpos[D.freeQpos + 2];
-  // ================================================== ROUND 4, FAMILY A
-  // AN OPTIONAL EVENT-TRIGGERED TAIL. `opts.event` is absent in every file
-  // written before round 4, and normEvent(undefined) is null, in which case
-  // TR === tr, `total` never changes, and the two lines below are the
-  // pre-round-4 loop verbatim: same tick count, same poses, same ONNX calls.
-  // climb/famA_r4.mjs PHASE P proves that on every existing best_* file.
-  const EV = normEvent(opts.event);
-  let TR = tr;
-  let total = TR[TR.length - 1].t + 0.8;
-  let evFired = false, evT = null, evE = null, evTrunkX = null;
-  const beakDistNow = () => {
-    let d = 1e9;
-    for (const g of JAW) for (const sg of STEPG) { const v = mj.mj_geomDistance(model, data, g, sg, 0.05, null); if (v < d) d = v; }
-    return d === 1e9 ? null : d;
-  };
-  for (let t = 0; t * DT < total; t++) {
-    const time = t * DT;
-    if (EV && !evFired && time >= EV.arm) {
-      const fire = time >= EV.fallback || eventFires(EV, {
-        beakDist: EV.type === 'beak' ? beakDistNow() : null,
-        pitch: projectedGravity(quat())[0],
-        above: data.qpos[D.freeQpos + 2] - h,
-      });
-      if (fire) {
-        evFired = true; evT = time; evTrunkX = data.qpos[D.freeQpos];
-        evE = eventError(EV, evTrunkX);
-        TR = buildDynTrack(tr, EV, time, poseAt(TR, time), evE);
-        total = TR[TR.length - 1].t + 0.8;
-      }
-    }
-    await step(poseAt(TR, time), true);
-  }
+  const total = tr[tr.length - 1].t + 0.8;
+  for (let t = 0; t * DT < total; t++) await step(poseAt(tr, t * DT), true);
 
   const atTrackEnd = snapshot(h, R.maxAbsDY);
-  // ROUND 4, FAMILY B: the handoff point. This instant IS where a beat-2 track
-  // is concatenated (beat 1's last keyframe + 0.8 s), so terminal is exactly the
-  // state a two-beat concatenation would hand over.
-  const terminal = handoffNow(h); terminal.spawnLastAction = la.slice();
   // what the servos were last told, and what 'hold' will freeze them at
   const ctrlAtHandoff = []; for (let k = 0; k < 14; k++) ctrlAtHandoff.push(data.ctrl[k]);
-  const finalPose = poseAt(TR, total);   // TR === tr when the file has no event
+  const finalPose = poseAt(tr, total);
   const held = finalPose.map((v, k) => Math.min(Math.max(v, LO[k]), HI[k]));
   let ctrlJump = 0; for (let k = 0; k < 14; k++) ctrlJump = Math.max(ctrlJump, Math.abs(held[k] - ctrlAtHandoff[k]));
 
@@ -516,14 +419,12 @@ async function runEpisodeRaw(track, opts, h, tail) {
   const scored = (tail === 'none') ? atTrackEnd : afterTail;
   const rec = {
     tail, rise: h, x0, ctrlJump,
-    event: EV ? { type: EV.type, fired: evFired, tFire: evT, trunkXAtFire: evTrunkX, e_mm: evE === null ? null : +(evE * 1000).toFixed(2) } : null,
     scored, atTrackEnd, afterTail,
     // ROUND 4 first-class fields of every scored row
     penetrationAtScore: scored.penetrationAtScore,
     penetrationPair: scored.penetrationPair,
     uprightTailTicks, tailTicks,
     uprightTailFrac: uprightTailTicks / Math.max(tailTicks, 1),
-    terminal,          // ROUND 4, FAMILY B: the beat-1 -> beat-2 handoff state
     crit: criteria(h, scored),
     critAtTrackEnd: criteria(h, atTrackEnd),
     critAfterTail: criteria(h, afterTail),
@@ -566,14 +467,7 @@ export async function scoreSaved(path, { rise, tail = 'policy', gapOffset = 0, o
   const opts = {
     blend: j.blend, approach: j.approach || 0,
     gap: (j.gap || 0) + gapOffset, side: j.side || 0,
-    spawn: j.spawn || null,
-    // ROUND 4, FAMILY A: the optional event-triggered tail (climb/event.mjs).
-    event: j.event || null,
-    // ROUND 4, FAMILY B handoff fields — null/undefined for every older file
-    spawnQuat: j.spawnQuat || null, spawnPose: j.spawnPose || null,
-    spawnVel: j.spawnVel || null, spawnLastAction: j.spawnLastAction || null,
-    settleTicks: j.settleTicks === undefined ? undefined : j.settleTicks,
-    ...overrides,
+    spawn: j.spawn || null, ...overrides,
   };
   const rec = await runEpisodeRaw(j.keyframes, opts, rise, tail);
   rec.source = path; rec.opts = { ...opts, gapOffset };
@@ -591,7 +485,7 @@ export async function __parityEpisode(track, opts, h, tail) { return runEpisodeR
 
 // ================================================================== EXPERIMENT
 
-const isMain = process.argv[1] && process.argv[1].endsWith('rig3.mjs');
+const isMain = process.argv[1] && process.argv[1].endsWith('rig3_prefamB.mjs');
 if (!isMain) { /* imported as a library */ } else {
 
 const OUT = '../climb/rig3-results.json';

@@ -1,0 +1,24 @@
+=== robust.mjs PHASE P — is cell 0 (drop 0.120, x1.0, isolate on) rig3? ===
+duck leg/trunk geoms for the wall test: 7  wall_n geom 1  jaw geoms 3
+  best_r2_vault_40mm.json        rig3 x=0.1422605779184436 z=0.15633799589438296 rew=12.0000 | robust x=0.1422605779184436 z=0.15633799589438296 rew=12.0000 EXACT=true
+  best_r2_vault_60mm.json        rig3 x=0.3805401176680053 z=0.17976822581803467 rew=12.0000 | robust x=0.3805401176680053 z=0.17976822581803467 rew=12.0000 EXACT=true
+  best_r2_vault_90mm.json        rig3 x=0.11473662194247528 z=0.13462525585082294 rew=5.8000 | robust x=0.11473662194247528 z=0.13462525585082294 rew=5.8000 EXACT=true
+  ctrl_on_tread_90mm.json        rig3 x=0.2523539597728589 z=0.20593235946297223 rew=12.0000 | robust x=0.2523539597728589 z=0.20593235946297223 rew=12.0000 EXACT=true
+  ctrl_do_nothing.json           rig3 x=0.0019814926726257733 z=0.11623081135898501 rew=3.3342 | robust x=0.0019814926726257733 z=0.11623081135898501 rew=3.3342 EXACT=true
+  parityAll = true
+=== extended grid on best_r2_vault_60mm @60mm: kCore=2/9 kExt=2/14 kExtStable=1/14 meanReward=3.577 objective=10.685 objectiveR3=11.437  (5.2 s, 0.37 s/cell) ===
+   [core] rise=50 drop=0.12 f=1 honest=false stable=false upTail=0/50 pen=39.86mm maxDY=59.3mm rew=0.209 x=-66 above=-14.2 fot=0
+   [core] rise=50 drop=0.13 f=0.7 honest=false stable=false upTail=30/50 pen=50mm maxDY=340.2mm rew=0 x=-70.4 above=68.1 fot=0
+   [core] rise=50 drop=0.125 f=1.3 honest=false stable=false upTail=50/50 pen=50mm maxDY=121.4mm rew=3.773 x=-82.9 above=65.9 fot=0
+   [core] rise=60 drop=0.12 f=1 honest=true stable=false upTail=37/50 pen=-2.15mm maxDY=91.9mm rew=12 x=380.5 above=119.8 fot=2
+   [core] rise=60 drop=0.13 f=0.7 honest=false stable=false upTail=0/50 pen=14.1mm maxDY=204.8mm rew=0 x=69.8 above=-10.2 fot=0
+   [core] rise=60 drop=0.125 f=1.3 honest=true stable=true upTail=50/50 pen=-1.22mm maxDY=30.5mm rew=12 x=177.9 above=115.6 fot=2
+   [core] rise=70 drop=0.12 f=1 honest=false stable=false upTail=50/50 pen=50mm maxDY=89.8mm rew=2.948 x=-148.8 above=46.3 fot=0
+   [core] rise=70 drop=0.13 f=0.7 honest=false stable=false upTail=36/50 pen=50mm maxDY=268.8mm rew=0 x=-110.9 above=48.3 fot=0
+   [core] rise=70 drop=0.125 f=1.3 honest=false stable=false upTail=43/50 pen=50mm maxDY=202.2mm rew=0 x=-146 above=45.8 fot=0
+   [ext] rise=55 drop=0.12 f=1 honest=false stable=false upTail=50/50 pen=50mm maxDY=48.8mm rew=3.579 x=-128.2 above=61.3 fot=0
+   [ext] rise=65 drop=0.12 f=1 honest=false stable=false upTail=50/50 pen=50mm maxDY=313mm rew=0 x=-92.8 above=51.2 fot=0
+   [ext] rise=50 drop=0.14 f=0.5 honest=false stable=false upTail=50/50 pen=27.8mm maxDY=24.5mm rew=5.521 x=34.4 above=66.6 fot=0
+   [ext] rise=60 drop=0.14 f=0.5 honest=false stable=false upTail=48/50 pen=24.74mm maxDY=60.7mm rew=5.483 x=60.5 above=56.4 fot=0
+   [ext] rise=70 drop=0.14 f=0.5 honest=false stable=false upTail=50/50 pen=0mm maxDY=43.8mm rew=4.563 x=26.7 above=46.6 fot=0
+=== extended grid on best_r2_vault_90mm @90mm: kCore=0/9 kExt=0/14 meanReward=4.174 objective=7.974 minUpTail=15/50 minPen=-0.80mm ===

@@ -1,0 +1,111 @@
+=== PHASE P — new rig3 vs climb/rig3_pre_r4.mjs (byte copy of the old one) ===
+    duck collidable geoms 11 | lateral gate 170 mm
+    225 scored rows through both harnesses (9 round-2 + 10 round-3 bests x 3 offsets x 3 tails, 18 round-1 bests x 1 offset x 3 tails)
+    physics/geometry/reward EXACT on 225/225 rows (PARITY PASS)
+    rows whose VERDICT the whole-episode lateral gate changes: 2
+      file                          rise off tail    maxAbsDY_mm  changed
+      best_r2_cornerstem_180mm.json   180   0 policy       289.2  crit.lateral true->false
+      best_0_180mm.json               180   0 policy       197.1  crit.lateral true->false
+    worst whole-episode excursion over all 225 rows: 324.8 mm (gate 170 mm); rows that leave the flight at some tick: 11
+
+=== PHASE F — the three new first-class fields, on every scored row ===
+    penetrationAtScore present on 225/225 rows; uprightTailTicks (of 50) on 225/225; maxAbsDY on 225/225
+    penetrationAtScore range over those rows: -14.81 mm to 50.00 mm
+    uprightTailTicks range: 0 to 50 of 50
+
+=== PHASE H — hole 4: intent hashes. One vector, one move, however it is labelled. ===
+    19 published round-2/round-3 files -> 17 DISTINCT moves
+      ONE VECTOR, 3 LABELS  sha256 4b9110c448ec45b7...  best_r3_vault_60mm.json, best_r3_vault_70mm.json, best_r3_vault_80mm.json
+
+=== PHASE B — bounds enforced AT SCORING TIME, not declared in a comment ===
+    declared bounds: {"blend":[0.7,2.4],"side":[-0.02,0.09]}
+    OUT OF BOUNDS  best_r3_cornerclimb2_120mm.json    side=-0.0558 not in [-0.02,0.09]
+    OUT OF BOUNDS  best_r3_cornerclimb_120mm.json     side=-0.06 not in [-0.02,0.09]
+    2 of 20 published files are outside the declared box.
+    scoring best_r3_cornerclimb2_120mm.json through scoreRobust — expect a refusal, not a number:
+    -> invalid=true objective=-Infinity cells simulated=0
+
+=== PHASE G — THE GRID every family and the judge now use ===
+    core 9 : rise {h-10, h, h+10} x plant {(0.120, x1.0), (0.130, x0.7), (0.125, x1.3)}   [round 3, unchanged]
+    +2     : rise {h-5, h+5} at the nominal plant (0.120, x1.0)
+    +3     : rise {h-10, h, h+10} at the slippery plant (drop 0.14, friction x0.5)
+    N = 14. objective = meanReward(N) + 4*kStable(N) + 4*meanUprightTailFrac(N)
+    a clear counts toward kStable only at >= 45 of 50 tail ticks upright.
+
+=== PHASE R — the seven round-3 claims and the controls, re-scored ===
+    scored best_r3_vault_40mm.json        kCore 2/9  kExt 2/14
+    scored best_r3_vault_50mm.json        kCore 2/9  kExt 2/14
+    scored best_r3_vault_60mm.json        kCore 4/9  kExt 4/14
+    scored best_r2_vault_40mm.json        kCore 1/9  kExt 1/14
+    scored best_r2_vault_60mm.json        kCore 2/9  kExt 2/14
+    scored best_r3_landvault_80mm.json    kCore 0/9  kExt 0/14
+    scored best_r3_landvault_90mm.json    kCore 0/9  kExt 0/14
+    scored do-nothing @40                 kCore 0/9  kExt 0/14
+    scored do-nothing @50                 kCore 0/9  kExt 0/14
+    scored do-nothing @60                 kCore 0/9  kExt 0/14
+    scored do-nothing @80                 kCore 0/9  kExt 0/14
+    scored do-nothing @90                 kCore 0/9  kExt 0/14
+    scored placed duck @40                kCore 9/9  kExt 14/14
+    scored placed duck @50                kCore 9/9  kExt 14/14
+    scored placed duck @60                kCore 9/9  kExt 14/14
+    scored placed duck @80                kCore 9/9  kExt 14/14
+    scored placed duck @90                kCore 9/9  kExt 14/14
+
+  === THE RE-BASELINE TABLE ===
+  move (sha256[0:8])  file                          rise  r3 k/9  k/9(core)  kStable/9  k/14(ext)  kStable/14   objR3    objCore   objective   upTail(min/mean of 50)  penAtScore_mm  maxDY_mm
+  dff01b0a            best_r3_vault_40mm.json        40     2/9        2/9        1/9       2/14        1/14   15.472    13.685     12.262         0/27.2             -1.22     192.6
+  7904bf33            best_r3_vault_50mm.json        50     2/9        2/9        2/9       2/14        2/14   17.021    17.910     17.132          0/7.1             -1.43     136.7
+  4b9110c4            best_r3_vault_60mm.json        60     4/9        4/9        4/9       4/14        4/14   23.788    27.415     25.610         8/44.2             -1.28     275.7
+  86813f9c            best_r2_vault_40mm.json        40     1/9        1/9        1/9       1/14        1/14    9.646    10.722     10.778         0/12.2             -1.40     153.3
+  74d35b21            best_r2_vault_60mm.json        60     2/9        2/9        1/9       2/14        1/14   11.437    10.068     10.685         0/38.9             -2.15     340.2
+  fc074d80            best_r3_landvault_80mm.json    80       -        0/9        0/9       0/14        0/14    4.071     4.071      4.154          0/2.9             -2.55     114.2
+  0f3619fb            best_r3_landvault_90mm.json    90       -        0/9        0/9       0/14        0/14    4.473     8.259      8.370        26/48.3             -1.57      96.3
+  --- controls ---
+  c703ee6f            ctrl_do_nothing.json           40       -        0/9        0/9       0/14        0/14    5.451     9.451      9.452          50/50             50.00       0.1
+  c703ee6f            ctrl_do_nothing.json           50       -        0/9        0/9       0/14        0/14    5.029     9.030      9.031          50/50             50.00       0.1
+  c703ee6f            ctrl_do_nothing.json           60       -        0/9        0/9       0/14        0/14    4.609     8.608      8.610          50/50             50.00       0.1
+  c703ee6f            ctrl_do_nothing.json           80       -        0/9        0/9       0/14        0/14    3.766     7.766      7.768          50/50             50.00       0.1
+  c703ee6f            ctrl_do_nothing.json           90       -        0/9        0/9       0/14        0/14    3.345     7.345      7.347          50/50             50.00       0.1
+  917b2269            r4_ctrl_on_tread_40mm.json     40       -        9/9        9/9      14/14       14/14   48.000    52.000     72.000          50/50             -1.23       0.8
+  8a2bcffa            r4_ctrl_on_tread_50mm.json     50       -        9/9        9/9      14/14       14/14   48.000    52.000     72.000          50/50             -1.23       0.8
+  d9958939            r4_ctrl_on_tread_60mm.json     60       -        9/9        9/9      14/14       14/14   48.000    52.000     72.000          50/50             -1.23       0.7
+  65efc29d            r4_ctrl_on_tread_80mm.json     80       -        9/9        9/9      14/14       14/14   48.000    52.000     72.000          50/50             -1.24       0.7
+  f5bb2f04            r4_ctrl_on_tread_90mm.json     90       -        9/9        9/9      14/14       14/14   48.000    52.000     72.000          50/50             -1.25       0.7
+
+  per-claim detail: which cells clear, and which clears topple inside the tail
+   best_r3_vault_40mm.json @40 mm  [A beak-strut vault r3]  move dff01b0a1906
+      core clears  : 30/0.12/x1  40/0.125/x1.3
+      ext-only     : none
+      toppling     : 30/0.12/x1 up38/50
+   best_r3_vault_50mm.json @50 mm  [A beak-strut vault r3]  move 7904bf3363c5
+      core clears  : 40/0.12/x1  40/0.125/x1.3
+      ext-only     : none
+      toppling     : none (every clear held >= 45/50)
+   best_r3_vault_60mm.json @60 mm  [A beak-strut vault r3]  move 4b9110c448ec
+      core clears  : 50/0.13/x0.7  50/0.125/x1.3  60/0.12/x1  70/0.125/x1.3
+      ext-only     : none
+      toppling     : none (every clear held >= 45/50)
+   best_r2_vault_40mm.json @40 mm  [C beak-strut vault r2]  move 86813f9c1ad4
+      core clears  : 40/0.12/x1
+      ext-only     : none
+      toppling     : none (every clear held >= 45/50)
+   best_r2_vault_60mm.json @60 mm  [C beak-strut vault r2]  move 74d35b21ac80
+      core clears  : 60/0.12/x1  60/0.125/x1.3
+      ext-only     : none
+      toppling     : 60/0.12/x1 up37/50
+   best_r3_landvault_80mm.json @80 mm  [B land-the-vault]  move fc074d800905
+      core clears  : none
+      ext-only     : none
+      toppling     : none (every clear held >= 45/50)
+   best_r3_landvault_90mm.json @90 mm  [B land-the-vault]  move 0f3619fb30c2
+      core clears  : none
+      ext-only     : none
+      toppling     : none (every clear held >= 45/50)
+
+=== VERDICT ===
+  parity: 225 rows through both harnesses, physics EXACT on all but 0; 2 verdict rows moved by the whole-episode gate
+  published round-2/3 files 19 -> distinct moves 17; out of declared bounds 2
+  best claim: kCore 4/9, kExt 4/14, kExtStable 4/14
+  do-nothing control: 40mm:0/14 50mm:0/14 60mm:0/14 80mm:0/14 90mm:0/14
+  placed-duck control: 40mm:14/14 50mm:14/14 60mm:14/14 80mm:14/14 90mm:14/14  (stable: 40mm:14/14 50mm:14/14 60mm:14/14 80mm:14/14 90mm:14/14)
+  penetration at the scored instant: claims worst -2.55 mm, placed duck worst -1.25 mm

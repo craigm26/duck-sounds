@@ -39,8 +39,7 @@ import fs from 'node:fs';
 import crypto from 'node:crypto';
 import { makeLoop } from '../site/duckloop.mjs';
 import { findStairJoints, layoutStairs, STAIR_Y, STAIR_HALF_WIDTH } from '../site/stairs.js';
-import { normEvent, eventFires, eventError, buildDynTrack } from '../climb/event.mjs';
-import { criteria as rig3Criteria, reward as rig3Reward } from '../climb/rig3.mjs';
+import { criteria as rig3Criteria, reward as rig3Reward } from '../climb/rig3_prefamB.mjs';
 
 const C = JSON.parse(fs.readFileSync('duckkit-constants.json', 'utf8'));
 export const { HOME, LO, HI, buildObs, projectedGravity, command, findDuckJoints } = makeLoop(C);
@@ -151,27 +150,6 @@ function snapshot(h, maxAbsDY) {
            maxAbsDY, penetrationAtScore: P.pen, penetrationPair: P.pair };
 }
 
-/** rig3.mjs handoffNow(), verbatim: the state a beat-2 spawn needs. Read-only. */
-function handoffNow(h) {
-  const jp = [], jv = [], free = [];
-  for (let k = 0; k < 14; k++) { jp.push(data.qpos[D.qpos[k]]); jv.push(data.qvel[D.dof[k]]); }
-  for (let k = 0; k < 6; k++) free.push(data.qvel[D.freeDof + k]);
-  let head = false;
-  for (const g of JAW) if (dist(g, STEP0) < 0.003) { head = true; break; }
-  let footRiser = false, feetOnTread = 0;
-  for (const g of [LFOOT, RFOOT]) if (data.geom_xpos[g * 3 + 2] < h - 0.005 && dist(g, STEP0) < 0.003) footRiser = true;
-  for (const g of FEET) if (footResting(g, h)) feetOnTread++;
-  const P = penetrationNow();
-  return {
-    penetration: P.pen, penetrationPair: P.pair,
-    spawn: { x: data.qpos[D.freeQpos], y: data.qpos[D.freeQpos + 1], z: data.qpos[D.freeQpos + 2] },
-    spawnQuat: [data.qpos[D.freeQpos + 3], data.qpos[D.freeQpos + 4], data.qpos[D.freeQpos + 5], data.qpos[D.freeQpos + 6]],
-    spawnPose: jp, spawnVel: { free, joint: jv },
-    head, footRiser, feetOnTread,
-    up: projectedGravity(quat())[2] < -0.90,
-  };
-}
-
 // ---------------------------------------------------------------- the episode
 /**
  * One episode. audit_r2.mjs go(), with the round-3 instrumentation added.
@@ -194,22 +172,9 @@ async function go(track, o, h, { drop = 0.120, fmul = 1.0, isolate = true, stepC
   }
   data.qpos[D.freeQpos + 3] = 1;
   for (let i = 0; i < 14; i++) { data.qpos[D.qpos[i]] = HOME[i]; data.ctrl[i] = HOME[i]; }
-  // ROUND 4, FAMILY B: the optional handoff state (see rig3.mjs for the
-  // documentation). Absent -> not one line of it runs, so every pre-round-4
-  // file scores exactly as it did; climb/famB_parity.log proves that against
-  // climb/robust_prefamB.mjs at full float digits.
-  if (o.spawnQuat) for (let k = 0; k < 4; k++) data.qpos[D.freeQpos + 3 + k] = o.spawnQuat[k];
-  if (o.spawnPose) for (let i = 0; i < 14; i++) {
-    data.qpos[D.qpos[i]] = o.spawnPose[i];
-    data.ctrl[i] = Math.min(Math.max(o.spawnPose[i], LO[i]), HI[i]);
-  }
-  if (o.spawnVel) {
-    if (o.spawnVel.free) for (let k = 0; k < 6; k++) data.qvel[D.freeDof + k] = o.spawnVel.free[k];
-    if (o.spawnVel.joint) for (let i = 0; i < 14; i++) data.qvel[D.dof[i]] = o.spawnVel.joint[i];
-  }
   mj.mj_forward(model, data);
   const tr = track.map(f => ({ t: f.t, pose: f.pose.slice() }));
-  let la = o.spawnLastAction ? o.spawnLastAction.slice() : new Array(14).fill(0);
+  let la = new Array(14).fill(0);
   const cmd = command({ vx: o.approach || 0 });
 
   const R = { ticks: 0, headTicks: 0, riserTicks: 0, wallTicks: 0, wallBearTicks: 0,
@@ -306,46 +271,12 @@ async function go(track, o, h, { drop = 0.120, fmul = 1.0, isolate = true, stepC
     }
   };
 
-  const SETTLE = (o.settleTicks === undefined || o.settleTicks === null) ? 25 : o.settleTicks;
-  for (let t = 0; t < SETTLE; t++) await step(null, false);
+  for (let t = 0; t < 25; t++) await step(null, false);
   const x0 = data.qpos[D.freeQpos];
   Z0 = data.qpos[D.freeQpos + 2];
-  // ================================================== ROUND 4, FAMILY A
-  // AN OPTIONAL EVENT-TRIGGERED TAIL. `opts.event` is absent in every file
-  // written before round 4, and normEvent(undefined) is null, in which case
-  // TR === tr, `total` never changes, and the two lines below are the
-  // pre-round-4 loop verbatim: same tick count, same poses, same ONNX calls.
-  // climb/famA_r4.mjs PHASE P proves that on every existing best_* file.
-  const EV = normEvent(o.event);          // (famB: go()'s options object is `o`, not `opts`)
-  let TR = tr;
-  let total = TR[TR.length - 1].t + 0.8;
-  let evFired = false, evT = null, evE = null, evTrunkX = null;
-  const beakDistNow = () => {
-    let d = 1e9;
-    for (const g of JAW) for (const sg of STEPG) { const v = dist(g, sg); if (v < d) d = v; }
-    return d === 1e9 ? null : d;
-  };
-  for (let t = 0; t * DT < total; t++) {
-    const time = t * DT;
-    if (EV && !evFired && time >= EV.arm) {
-      const fire = time >= EV.fallback || eventFires(EV, {
-        beakDist: EV.type === 'beak' ? beakDistNow() : null,
-        pitch: projectedGravity(quat())[0],
-        above: data.qpos[D.freeQpos + 2] - h,
-      });
-      if (fire) {
-        evFired = true; evT = time; evTrunkX = data.qpos[D.freeQpos];
-        evE = eventError(EV, evTrunkX);
-        TR = buildDynTrack(tr, EV, time, poseAt(TR, time), evE);
-        total = TR[TR.length - 1].t + 0.8;
-      }
-    }
-    await step(poseAt(TR, time), true);
-  }
+  const total = tr[tr.length - 1].t + 0.8;
+  for (let t = 0; t * DT < total; t++) await step(poseAt(tr, t * DT), true);
   const atTrackEnd = snapshot(h, R.maxAbsDY);
-  // ROUND 4, FAMILY B: the beat-1 -> beat-2 handoff state, at the instant a
-  // concatenated beat 2 would begin (beat 1's last keyframe + 0.8 s).
-  const terminal = handoffNow(h); terminal.spawnLastAction = la.slice();
   // ROUND 4, HOLE 2: how much of the 50-tick tail was the duck upright?
   const upBeforeTail = R.upTicks, ticksBeforeTail = R.ticks;
   for (let t = 0; t < 50; t++) await step(null, true);   // tail 'policy' — climb_lib's own
@@ -355,10 +286,8 @@ async function go(track, o, h, { drop = 0.120, fmul = 1.0, isolate = true, stepC
 
   const rec = {
     rise: h, x0, scored, atTrackEnd,
-    event: EV ? { type: EV.type, fired: evFired, tFire: evT, trunkXAtFire: evTrunkX, e_mm: evE === null ? null : +(evE * 1000).toFixed(2) } : null,
     penetrationAtScore: scored.penetrationAtScore, penetrationPair: scored.penetrationPair,
     uprightTailTicks, tailTicks, uprightTailFrac: uprightTailTicks / Math.max(tailTicks, 1),
-    terminal,          // ROUND 4, FAMILY B: the beat-1 -> beat-2 handoff state
     crit: rig3Criteria(h, scored), critAtTrackEnd: rig3Criteria(h, atTrackEnd),
     maxX: R.maxX, maxZ: R.maxZ, maxAbsDY: R.maxAbsDY, maxTq: R.maxTq,
     feetOnTreadMax: R.feetOnTreadMax, feetHighMax: R.feetHighMax,
@@ -460,13 +389,7 @@ const readIntent = path => {
   return j;
 };
 const optsOf = j => ({ blend: j.blend, approach: j.approach || 0, gap: j.gap || 0, side: j.side || 0,
-                       spawn: j.spawn || null,
-                       // ROUND 4, FAMILY A: the optional event-triggered tail.
-                       event: j.event || null,
-                       // ROUND 4, FAMILY B handoff fields; null for every older file
-                       spawnQuat: j.spawnQuat || null, spawnPose: j.spawnPose || null,
-                       spawnVel: j.spawnVel || null, spawnLastAction: j.spawnLastAction || null,
-                       settleTicks: j.settleTicks === undefined ? undefined : j.settleTicks });
+                       spawn: j.spawn || null });
 const isoOf = j => (j.isolate === undefined ? true : j.isolate !== false);
 const scOf = j => j.stepCount || 4;
 
@@ -477,21 +400,10 @@ const scOf = j => j.stepCount || 4;
  * cannot quietly count it three times.
  */
 export function intentHash(j) {
-  const h = {
+  return crypto.createHash('sha256').update(JSON.stringify({
     keyframes: j.keyframes, blend: j.blend, gap: j.gap || 0, side: j.side || 0,
     approach: j.approach || 0, spawn: j.spawn || null, isolate: isoOf(j), stepCount: scOf(j),
-  };
-  // ROUND 4, FAMILY B. The hash must cover everything the episode reads, so the
-  // handoff fields go in — but ONLY when the file actually has them. A file
-  // written before this round has none of them and therefore hashes to exactly
-  // the value climb/r4_audit-results.json published (checked in famB_parity).
-  // ROUND 4, FAMILY A adds 'event' to the same present-only list, for the same
-  // reason: an older file has none of these keys and hashes to exactly what
-  // climb/r4_audit-results.json published (PHASE H in famA_r4.mjs re-checks it).
-  for (const k of ['event', 'spawnQuat', 'spawnPose', 'spawnVel', 'spawnLastAction', 'settleTicks']) {
-    if (j[k] !== undefined && j[k] !== null) h[k] = j[k];
-  }
-  return crypto.createHash('sha256').update(JSON.stringify(h)).digest('hex');
+  })).digest('hex');
 }
 export function intentHashOfFile(path) { return intentHash(readIntent(path)); }
 
@@ -641,8 +553,6 @@ export async function scoreRobust(path, { rise, isolate, stepCount, onCell, skip
     verdicts: cells.map(c => ({ rise_mm: c.cell.rise_mm, drop: c.cell.drop, fmul: c.cell.fmul,
       tier: c.cell.tier, sha256: sha, move: sha.slice(0, 12),
       honest: c.crit.honest, stableClear: c.stableClear,
-      eventFired: c.event ? c.event.fired : null, eventT: c.event ? c.event.tFire : null,
-      eventE_mm: c.event ? c.event.e_mm : null,
       uprightTailTicks: c.uprightTailTicks, tailTicks: c.tailTicks,
       penetrationAtScore_mm: c.penetrationAtScore === null ? null : +(c.penetrationAtScore * 1000).toFixed(2),
       penetrationPair: c.penetrationPair,
@@ -660,7 +570,7 @@ export async function scoreRobust(path, { rise, isolate, stepCount, onCell, skip
 export function saveIntent(obj, path) { fs.writeFileSync(path, JSON.stringify(obj, null, 2)); return path; }
 
 // ================================================================== PHASE P
-const isMain = process.argv[1] && process.argv[1].endsWith('robust.mjs');
+const isMain = process.argv[1] && process.argv[1].endsWith('robust_prefamB.mjs');
 if (isMain) {
   const { scoreSaved } = await import('../climb/rig3.mjs');
   console.log('=== robust.mjs PHASE P — is cell 0 (drop 0.120, x1.0, isolate on) rig3? ===');

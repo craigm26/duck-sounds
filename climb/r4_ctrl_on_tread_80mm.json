@@ -1,0 +1,53 @@
+{
+  "name": "r4_control_on_tread_80mm",
+  "keyframes": [
+    {
+      "t": 1,
+      "pose": [
+        0,
+        -0.0873,
+        -0.4579,
+        -0.0049,
+        0.453,
+        0.3491,
+        0.3491,
+        0,
+        0,
+        0,
+        0.0873,
+        0.4579,
+        0.0049,
+        -0.453
+      ]
+    },
+    {
+      "t": 2.9,
+      "pose": [
+        0,
+        -0.0873,
+        -0.4579,
+        -0.0049,
+        0.453,
+        0.3491,
+        0.3491,
+        0,
+        0,
+        0,
+        0.0873,
+        0.4579,
+        0.0049,
+        -0.453
+      ]
+    }
+  ],
+  "blend": 1,
+  "gap": 0.05,
+  "side": 0,
+  "approach": 0,
+  "spawn": {
+    "x": 0.25,
+    "y": 1.3050000000000002,
+    "z": 0.2
+  },
+  "note": "PLACED-DUCK CONTROL, rise 80 mm. Recipe copied from climb/ctrl_on_tread_60mm.json (x 0.25 mid-tread, y STAIR_Y, z rise+0.12). A criterion this row fails cannot express success."
+}

@@ -39,7 +39,6 @@ import fs from 'node:fs';
 import crypto from 'node:crypto';
 import { makeLoop } from '../site/duckloop.mjs';
 import { findStairJoints, layoutStairs, STAIR_Y, STAIR_HALF_WIDTH } from '../site/stairs.js';
-import { normEvent, eventFires, eventError, buildDynTrack } from '../climb/event.mjs';
 import { criteria as rig3Criteria, reward as rig3Reward } from '../climb/rig3.mjs';
 
 const C = JSON.parse(fs.readFileSync('duckkit-constants.json', 'utf8'));
@@ -310,38 +309,8 @@ async function go(track, o, h, { drop = 0.120, fmul = 1.0, isolate = true, stepC
   for (let t = 0; t < SETTLE; t++) await step(null, false);
   const x0 = data.qpos[D.freeQpos];
   Z0 = data.qpos[D.freeQpos + 2];
-  // ================================================== ROUND 4, FAMILY A
-  // AN OPTIONAL EVENT-TRIGGERED TAIL. `opts.event` is absent in every file
-  // written before round 4, and normEvent(undefined) is null, in which case
-  // TR === tr, `total` never changes, and the two lines below are the
-  // pre-round-4 loop verbatim: same tick count, same poses, same ONNX calls.
-  // climb/famA_r4.mjs PHASE P proves that on every existing best_* file.
-  const EV = normEvent(o.event);          // (famB: go()'s options object is `o`, not `opts`)
-  let TR = tr;
-  let total = TR[TR.length - 1].t + 0.8;
-  let evFired = false, evT = null, evE = null, evTrunkX = null;
-  const beakDistNow = () => {
-    let d = 1e9;
-    for (const g of JAW) for (const sg of STEPG) { const v = dist(g, sg); if (v < d) d = v; }
-    return d === 1e9 ? null : d;
-  };
-  for (let t = 0; t * DT < total; t++) {
-    const time = t * DT;
-    if (EV && !evFired && time >= EV.arm) {
-      const fire = time >= EV.fallback || eventFires(EV, {
-        beakDist: EV.type === 'beak' ? beakDistNow() : null,
-        pitch: projectedGravity(quat())[0],
-        above: data.qpos[D.freeQpos + 2] - h,
-      });
-      if (fire) {
-        evFired = true; evT = time; evTrunkX = data.qpos[D.freeQpos];
-        evE = eventError(EV, evTrunkX);
-        TR = buildDynTrack(tr, EV, time, poseAt(TR, time), evE);
-        total = TR[TR.length - 1].t + 0.8;
-      }
-    }
-    await step(poseAt(TR, time), true);
-  }
+  const total = tr[tr.length - 1].t + 0.8;
+  for (let t = 0; t * DT < total; t++) await step(poseAt(tr, t * DT), true);
   const atTrackEnd = snapshot(h, R.maxAbsDY);
   // ROUND 4, FAMILY B: the beat-1 -> beat-2 handoff state, at the instant a
   // concatenated beat 2 would begin (beat 1's last keyframe + 0.8 s).
@@ -355,7 +324,6 @@ async function go(track, o, h, { drop = 0.120, fmul = 1.0, isolate = true, stepC
 
   const rec = {
     rise: h, x0, scored, atTrackEnd,
-    event: EV ? { type: EV.type, fired: evFired, tFire: evT, trunkXAtFire: evTrunkX, e_mm: evE === null ? null : +(evE * 1000).toFixed(2) } : null,
     penetrationAtScore: scored.penetrationAtScore, penetrationPair: scored.penetrationPair,
     uprightTailTicks, tailTicks, uprightTailFrac: uprightTailTicks / Math.max(tailTicks, 1),
     terminal,          // ROUND 4, FAMILY B: the beat-1 -> beat-2 handoff state
@@ -461,8 +429,6 @@ const readIntent = path => {
 };
 const optsOf = j => ({ blend: j.blend, approach: j.approach || 0, gap: j.gap || 0, side: j.side || 0,
                        spawn: j.spawn || null,
-                       // ROUND 4, FAMILY A: the optional event-triggered tail.
-                       event: j.event || null,
                        // ROUND 4, FAMILY B handoff fields; null for every older file
                        spawnQuat: j.spawnQuat || null, spawnPose: j.spawnPose || null,
                        spawnVel: j.spawnVel || null, spawnLastAction: j.spawnLastAction || null,
@@ -488,7 +454,7 @@ export function intentHash(j) {
   // ROUND 4, FAMILY A adds 'event' to the same present-only list, for the same
   // reason: an older file has none of these keys and hashes to exactly what
   // climb/r4_audit-results.json published (PHASE H in famA_r4.mjs re-checks it).
-  for (const k of ['event', 'spawnQuat', 'spawnPose', 'spawnVel', 'spawnLastAction', 'settleTicks']) {
+  for (const k of ['spawnQuat', 'spawnPose', 'spawnVel', 'spawnLastAction', 'settleTicks']) {
     if (j[k] !== undefined && j[k] !== null) h[k] = j[k];
   }
   return crypto.createHash('sha256').update(JSON.stringify(h)).digest('hex');
@@ -641,8 +607,6 @@ export async function scoreRobust(path, { rise, isolate, stepCount, onCell, skip
     verdicts: cells.map(c => ({ rise_mm: c.cell.rise_mm, drop: c.cell.drop, fmul: c.cell.fmul,
       tier: c.cell.tier, sha256: sha, move: sha.slice(0, 12),
       honest: c.crit.honest, stableClear: c.stableClear,
-      eventFired: c.event ? c.event.fired : null, eventT: c.event ? c.event.tFire : null,
-      eventE_mm: c.event ? c.event.e_mm : null,
       uprightTailTicks: c.uprightTailTicks, tailTicks: c.tailTicks,
       penetrationAtScore_mm: c.penetrationAtScore === null ? null : +(c.penetrationAtScore * 1000).toFixed(2),
       penetrationPair: c.penetrationPair,
@@ -660,7 +624,7 @@ export async function scoreRobust(path, { rise, isolate, stepCount, onCell, skip
 export function saveIntent(obj, path) { fs.writeFileSync(path, JSON.stringify(obj, null, 2)); return path; }
 
 // ================================================================== PHASE P
-const isMain = process.argv[1] && process.argv[1].endsWith('robust.mjs');
+const isMain = process.argv[1] && process.argv[1].endsWith('__noevA_never__');
 if (isMain) {
   const { scoreSaved } = await import('../climb/rig3.mjs');
   console.log('=== robust.mjs PHASE P — is cell 0 (drop 0.120, x1.0, isolate on) rig3? ===');

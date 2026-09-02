@@ -1,0 +1,72 @@
+[    0s] === PHASE P — the event code is INERT on every file that carries no event ===
+[    0s]     reference: climb/rig3_noevA.mjs + climb/robust_noevA.mjs (mk_noevA_ref.py:
+[    0s]     the current shared files with EXACTLY the event code reverted)
+[    8s]   best_r3_vault_40mm.json          3 tails + cell0 : EXACT  (x=0.152567 rew=11.0000)
+[   12s]   best_r3_vault_50mm.json          3 tails + cell0 : EXACT  (x=0.104356 rew=10.1872)
+[   17s]   best_r3_vault_60mm.json          3 tails + cell0 : EXACT  (x=0.334275 rew=12.0000)
+[   20s]   best_r3_vault_70mm.json          3 tails + cell0 : EXACT  (x=0.073156 rew=5.2497)
+[   24s]   best_r2_vault_40mm.json          3 tails + cell0 : EXACT  (x=0.142261 rew=12.0000)
+[   27s]   best_r2_vault_60mm.json          3 tails + cell0 : EXACT  (x=0.380540 rew=12.0000)
+[   31s]   best_r3_landvault_80mm.json      3 tails + cell0 : EXACT  (x=0.059228 rew=3.4346)
+[   35s]   best_r3_landvault_90mm.json      3 tails + cell0 : EXACT  (x=0.080487 rew=4.5281)
+[   39s]   ctrl_do_nothing.json             3 tails + cell0 : EXACT  (x=0.001981 rew=4.5973)
+[   42s]   r4_ctrl_on_tread_60mm.json       3 tails + cell0 : EXACT  (x=0.252354 rew=12.0000)
+[   42s]   PARITY PASS — 40 rows, full float digits, 10 files x (3 tails + cell 0)
+[   42s] === PHASE H — adding `event` to intentHash() changes NO existing move id ===
+[   42s]   19 published move ids re-hashed: ALL UNCHANGED
+[   42s] === PHASE E — the round-3 move re-expressed as an event (degenerate) ===
+[   52s]   timed            kCore=4/9 objCore=27.415 honest=011100001
+[   52s]   event ALIGNED    kCore=4/9 objCore=27.415 honest=011100001 max|dx|=0.00mm max|dz|=0.00mm  fires at 0.74s
+[   52s]   event UNALIGNED  kCore=1/9 objCore=8.152 honest=000010000 max|dx|=303.80mm max|dz|=72.30mm  (every post keyframe 5.7 ms late)
+[   52s] === PHASE W — warm-start ensemble, 11 event parametrisations of the round-3 60 mm vector ===
+[   55s]   clock, tuck aligned to the fallback tick   k=4/9 (stable 4) objCore=27.415 fires@0.74s honest=011100001
+[   58s]   clock, round-3 tuck (one tick late)        k=1/9 (stable 0) objCore=8.152 fires@0.74s honest=000010000
+[   61s]   clock, fallback +1 tick                    k=2/9 (stable 2) objCore=16.286 fires@0.74s honest=000110000
+[   64s]   clock, fallback +2 ticks                   k=1/9 (stable 1) objCore=10.721 fires@0.74s honest=000010000
+[   68s]   beak contact < 3 mm                        k=4/9 (stable 4) objCore=27.415 fires@0.74s honest=011100001
+[   71s]   beak contact < 10 mm                       k=4/9 (stable 4) objCore=27.415 fires@0.74s honest=011100001
+[   75s]   beak contact < 20 mm                       k=4/9 (stable 4) objCore=27.415 fires@0.74s honest=011100001
+[   79s]   trunk pitch >= 0.30                        k=4/9 (stable 4) objCore=27.415 fires@0.74s honest=011100001
+[   84s]   trunk pitch >= 0.60                        k=4/9 (stable 4) objCore=27.415 fires@0.74s honest=011100001
+[   88s]   trunk z >= h + 50 mm                       k=0/9 (stable 0) objCore=6.166 fires@0.46s honest=000000000
+[   93s]   trunk z >= h + 80 mm                       k=4/9 (stable 4) objCore=27.415 fires@0.74s honest=011100001
+[   93s]   seeding the CEM from: clock, tuck aligned to the fallback tick (objCore 27.415, k=4/9)
+[   93s] === PHASE S — CEM at 60 mm, pop 24, elite 5, sig0 0.055, floor 0.02, budget 2100s ===
+[   98s] 60mm warm-start: k=4/9 (stable 4) objCore=27.415 meanR=7.788 | rise[-10:2/3 +0:1/3 +10:1/3] plant[d0.120/f1.0:1/3 d0.130/f0.7:1/3 d0.125/f1.3:2/3] evFired 9/9
+[  215s] 60mm gen1 done: 24 cand (15 full, 9 screened) best k=4/9 objCore=27.415  [36 evals, 27 full]
+[  304s] 60mm gen2 done: 24 cand (15 full, 9 screened) best k=4/9 objCore=27.415  [60 evals, 42 full]
+[  476s] 60mm gen3 done: 24 cand (23 full, 1 screened) best k=4/9 objCore=27.415  [84 evals, 65 full]
+[  647s] 60mm gen4 done: 24 cand (20 full, 4 screened) best k=4/9 objCore=27.415  [108 evals, 85 full]
+[  858s] 60mm gen5 done: 24 cand (21 full, 3 screened) best k=4/9 objCore=27.415  [132 evals, 106 full]
+[  998s] 60mm gen6 done: 24 cand (18 full, 6 screened) best k=4/9 objCore=27.415  [156 evals, 124 full]
+[ 1148s] 60mm gen7 done: 24 cand (18 full, 6 screened) best k=4/9 objCore=27.415  [180 evals, 142 full]
+[ 1284s] 60mm gen8 done: 24 cand (22 full, 2 screened) best k=4/9 objCore=27.415  [204 evals, 164 full]
+[ 1407s] 60mm gen9 done: 24 cand (19 full, 5 screened) best k=4/9 objCore=27.415  [228 evals, 183 full]
+[ 1526s] 60mm gen10 done: 24 cand (21 full, 3 screened) best k=4/9 objCore=27.415  [252 evals, 204 full]
+[ 1635s] 60mm gen11 done: 24 cand (20 full, 4 screened) best k=4/9 objCore=27.415  [276 evals, 224 full]
+[ 1737s] 60mm gen12 done: 24 cand (18 full, 6 screened) best k=4/9 objCore=27.415  [300 evals, 242 full]
+[ 1872s] 60mm gen13 done: 24 cand (21 full, 3 screened) best k=4/9 objCore=27.415  [324 evals, 263 full]
+[ 1977s] 60mm gen14 done: 24 cand (19 full, 5 screened) best k=4/9 objCore=27.415  [348 evals, 282 full]
+[ 2057s] 60mm gen15 done: 24 cand (19 full, 5 screened) best k=4/9 objCore=27.415  [372 evals, 301 full]
+[ 2133s] 60mm gen16 done: 24 cand (19 full, 5 screened) best k=4/9 objCore=27.415  [396 evals, 320 full]
+[ 2193s] 60mm gen17 done: 20 cand (16 full, 4 screened) best k=4/9 objCore=27.415  [416 evals, 336 full]
+[ 2193s] === PHASE F — the winner on the FULL 14-cell extended grid ===
+[ 2203s]   best_r4_famA_60mm: kCore 4/9 (stable 4) kExt 4/14 (stable 4)
+[ 2203s]      objective 25.610  objectiveCore 27.415  objectiveR3 23.788  move 7b790070b010
+[ 2203s]   incumbent r3 : kCore 4/9 (stable 4) kExt 4/14  objective 25.610  move 4b9110c448ec
+[ 2203s]    [core] rise=50 drop=0.12 f=1 honest=false stable=false upTail=50/50 evFired=true@0.74 e=102.5mm pen=0mm maxDY=55.9mm rew=5.18 x=12.2 above=66.4 fot=0
+[ 2203s]    [core] rise=50 drop=0.13 f=0.7 honest=true stable=true upTail=50/50 evFired=true@0.74 e=100.97mm pen=-0.52mm maxDY=66.3mm rew=12 x=328.5 above=116.1 fot=2
+[ 2203s]    [core] rise=50 drop=0.125 f=1.3 honest=true stable=true upTail=50/50 evFired=true@0.74 e=102.64mm pen=-1.28mm maxDY=47.2mm rew=12 x=213 above=115.4 fot=2
+[ 2203s]    [core] rise=60 drop=0.12 f=1 honest=true stable=true upTail=50/50 evFired=true@0.74 e=102.5mm pen=-0.74mm maxDY=75.6mm rew=12 x=334.3 above=116.1 fot=2
+[ 2203s]    [core] rise=60 drop=0.13 f=0.7 honest=false stable=false upTail=8/50 evFired=true@0.74 e=100.97mm pen=50mm maxDY=121.3mm rew=2.954 x=-6.9 above=44.1 fot=0
+[ 2203s]    [core] rise=60 drop=0.125 f=1.3 honest=false stable=false upTail=50/50 evFired=true@0.74 e=102.64mm pen=50mm maxDY=59.4mm rew=3.353 x=-163.9 above=55.9 fot=0
+[ 2203s]    [core] rise=70 drop=0.12 f=1 honest=false stable=false upTail=50/50 evFired=true@0.74 e=102.5mm pen=4.93mm maxDY=33.8mm rew=5.25 x=73.2 above=46.4 fot=0
+[ 2203s]    [core] rise=70 drop=0.13 f=0.7 honest=false stable=false upTail=50/50 evFired=true@0.74 e=100.97mm pen=0mm maxDY=34.8mm rew=5.357 x=79.9 above=46.5 fot=0
+[ 2203s]    [core] rise=70 drop=0.125 f=1.3 honest=true stable=true upTail=50/50 evFired=true@0.74 e=102.64mm pen=-1.21mm maxDY=52.5mm rew=12 x=255.5 above=115.6 fot=2
+[ 2203s]    [ext] rise=55 drop=0.12 f=1 honest=false stable=false upTail=48/50 evFired=true@0.74 e=102.5mm pen=50mm maxDY=142mm rew=3.801 x=-65.2 above=61.2 fot=0
+[ 2203s]    [ext] rise=65 drop=0.12 f=1 honest=false stable=false upTail=50/50 evFired=true@0.74 e=102.5mm pen=50mm maxDY=275.7mm rew=0 x=-148.9 above=51.3 fot=0
+[ 2203s]    [ext] rise=50 drop=0.14 f=0.5 honest=false stable=false upTail=13/50 evFired=true@0.74 e=97.98mm pen=50mm maxDY=56.6mm rew=1.934 x=-156.3 above=45.9 fot=0
+[ 2203s]    [ext] rise=60 drop=0.14 f=0.5 honest=false stable=false upTail=50/50 evFired=true@0.74 e=97.98mm pen=28.13mm maxDY=47mm rew=5.013 x=28.7 above=56.6 fot=0
+[ 2203s]    [ext] rise=70 drop=0.14 f=0.5 honest=false stable=false upTail=50/50 evFired=true@0.74 e=97.98mm pen=50mm maxDY=33.5mm rew=4.176 x=1 above=46.6 fot=0
+[ 2203s]   axis breakdown: rise-10 2/4  plant d0.12/f1 1/5  plant d0.13/f0.7 1/3  plant d0.125/f1.3 2/3  rise+0 1/4  rise+10 1/4  rise-5 0/1  rise+5 0/1  plant d0.14/f0.5 0/3
+[ 2203s] wrote ../climb/r4_famA-results.json and ../climb/famA_r4.log

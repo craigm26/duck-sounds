@@ -1,0 +1,112 @@
+
+================ famB PHASE P — parity of the handoff extension ================
+2026-09-02T10:21:56.630Z  smoke=false
+  best_r3_vault_60mm.json        rig3 EXACT=true  robust EXACT=true  hash EXACT=true (4b9110c4)  x=0.3342751251273466 z=0.17613474586397462 rew=12
+  best_r2_vault_40mm.json        rig3 EXACT=true  robust EXACT=true  hash EXACT=true (86813f9c)  x=0.1422605779184436 z=0.15633799589438296 rew=12
+  best_r3_landvault_90mm.json    rig3 EXACT=true  robust EXACT=true  hash EXACT=true (0f3619fb)  x=0.08048745834377286 z=0.11661964099145021 rew=4.528138864270286
+  ctrl_do_nothing.json           rig3 EXACT=true  robust EXACT=true  hash EXACT=true (c703ee6f)  x=0.0019814926726257733 z=0.11623081135898501 rew=3.3341776052045455
+  best_0_40mm.json               rig3 EXACT=true  robust EXACT=true  hash EXACT=true (52517952)  x=0.07811400354777807 z=0.11618076012237266 rew=6.579321005737626
+  best_1_90mm.json               rig3 EXACT=true  robust EXACT=true  hash EXACT=true (1146b2d6)  x=-0.010006817856656636 z=0.11625067997589499 rew=3.155189520608887
+  parityAll = true
+  one nominal cell = 0.71 s
+
+================ RISE 90 mm ================
+  [b1 90] eval 1 NEW BEST J=-301.173  zEnd=72.3 xEnd=-35.3 dx=155.3 dz=112.7 head=false riser=false fot=0 up=false peakZ=118.6 maxDY=54.2 pen=48.7 (mm)
+  [b1 90] eval 2 NEW BEST J=-288.955  zEnd=61.1 xEnd=-13.2 dx=133.2 dz=123.9 head=false riser=false fot=0 up=false peakZ=121.3 maxDY=82.9 pen=50.0 (mm)
+  [b1 90] eval 4 NEW BEST J=-257.736  zEnd=48.0 xEnd=-14.1 dx=134.1 dz=137.0 head=false riser=true fot=0 up=false peakZ=119.1 maxDY=98.4 pen=0.0 (mm)
+  [b1 90] eval 10 NEW BEST J=-194.857  zEnd=65.7 xEnd=6.8 dx=113.2 dz=119.3 head=true riser=false fot=0 up=true peakZ=116.4 maxDY=39.6 pen=-0.3 (mm)
+  [b1 90] eval 13 NEW BEST J=-88.264  zEnd=89.5 xEnd=81.0 dx=39.0 dz=95.5 head=true riser=false fot=0 up=true peakZ=128.4 maxDY=91.6 pen=-0.3 (mm)
+  [b1 90] eval 56 NEW BEST J=19.092  zEnd=119.5 xEnd=111.4 dx=8.6 dz=65.5 head=true riser=true fot=0 up=true peakZ=134.4 maxDY=85.0 pen=-1.6 (mm)
+  [b1 90] eval 191 NEW BEST J=22.728  zEnd=134.9 xEnd=99.2 dx=20.8 dz=50.1 head=true riser=true fot=0 up=true peakZ=134.9 maxDY=86.0 pen=-2.7 (mm)
+  [b1 90] eval 211 NEW BEST J=28.997  zEnd=123.9 xEnd=122.5 dx=0.0 dz=61.1 head=true riser=true fot=0 up=true peakZ=130.1 maxDY=92.6 pen=-5.5 (mm)
+  [b1 90] eval 235 NEW BEST J=34.079  zEnd=128.4 xEnd=113.8 dx=6.2 dz=56.6 head=true riser=true fot=0 up=true peakZ=140.9 maxDY=85.9 pen=0.0 (mm)
+  [b1 90] eval 298 NEW BEST J=35.576  zEnd=129.2 xEnd=136.2 dx=0.0 dz=55.8 head=true riser=true fot=0 up=true peakZ=132.4 maxDY=87.4 pen=-2.5 (mm)
+  [b1 90] eval 311 NEW BEST J=37.444  zEnd=129.7 xEnd=126.9 dx=0.0 dz=55.3 head=true riser=true fot=0 up=true peakZ=138.8 maxDY=86.3 pen=0.0 (mm)
+  [b1 90] eval 435 NEW BEST J=39.952  zEnd=130.5 xEnd=132.6 dx=0.0 dz=54.5 head=true riser=true fot=0 up=true peakZ=138.0 maxDY=89.1 pen=-0.5 (mm)
+  [b1 90] eval 501 NEW BEST J=45.800  zEnd=136.9 xEnd=130.7 dx=0.0 dz=48.1 head=true riser=true fot=0 up=true peakZ=136.9 maxDY=87.0 pen=-0.1 (mm)
+  beat 1 @90mm: 699 evaluations in 330s, best J = 45.800
+  beat-1 TERMINAL @90mm: trunk z=136.9mm x=130.7mm dy=61.3mm | beak on tread=true foot on riser=true feet resting on tread=0 upright=true | penetration=-0.1mm peakZ=136.9mm maxDY=87.0mm maxTq=0.640Nm
+  [b2 90] eval 1 NEW BEST J=7.924  honest=false rew=3.92 x=41.6 above=26.1 fot=0 fotMax=0 upTail=50/50
+  [b2 90] eval 8 NEW BEST J=8.482  honest=false rew=4.48 x=78.6 above=26.2 fot=0 fotMax=0 upTail=50/50
+  [b2 90] eval 12 NEW BEST J=8.529  honest=false rew=4.53 x=81.4 above=26.3 fot=0 fotMax=0 upTail=50/50
+  [b2 90] eval 15 NEW BEST J=9.016  honest=false rew=5.02 x=104.3 above=29.7 fot=0 fotMax=0 upTail=50/50
+  [b2 90] eval 22 NEW BEST J=9.390  honest=false rew=5.39 x=118.9 above=33.4 fot=0 fotMax=0 upTail=50/50
+  [b2 90] eval 42 NEW BEST J=9.431  honest=false rew=5.43 x=111.2 above=37.1 fot=0 fotMax=0 upTail=50/50
+  [b2 90] eval 134 NEW BEST J=9.588  honest=false rew=5.59 x=122.4 above=37.7 fot=0 fotMax=0 upTail=50/50
+  [b2 90] eval 142 NEW BEST J=9.694  honest=false rew=5.69 x=109.3 above=44.1 fot=0 fotMax=0 upTail=50/50
+  [b2 90] eval 258 NEW BEST J=10.174  honest=false rew=6.17 x=113.6 above=53.9 fot=0 fotMax=0 upTail=50/50
+  beat 2 @90mm: 372 evaluations, best single-cell J = 10.174
+  BEAT-2-FROM-HANDOFF @90mm (NOT a climb): kCore=0/9 kCoreStable=0/9 objectiveR3=3.952 objectiveCore=7.712 meanReward=3.952 minUpTail=23/50 minPen=-5.25mm maxDY=69.0mm meanAbove=23.6mm meanX=45.8mm
+  [b3 90] eval 1 NEW BEST J=3.985  nom honest=false rew=3.97 x=45.6 above=25.8 fot=0 fotMax=0 peakZ=136.9 upTail=50/50 | slip honest=false rew=0.00
+  [b3 90] eval 4 NEW BEST J=4.601  nom honest=false rew=5.20 x=117.5 above=29.4 fot=0 fotMax=0 peakZ=136.9 upTail=50/50 | slip honest=false rew=0.00
+  [b3 90] eval 8 NEW BEST J=6.792  nom honest=false rew=5.04 x=102.1 above=31.1 fot=0 fotMax=0 peakZ=136.9 upTail=50/50 | slip honest=false rew=4.54
+  [b3 90] eval 45 NEW BEST J=6.798  nom honest=false rew=5.06 x=102.8 above=31.4 fot=0 fotMax=0 peakZ=136.9 upTail=50/50 | slip honest=false rew=4.53
+  [b3 90] eval 53 NEW BEST J=8.857  nom honest=false rew=3.71 x=28.2 above=25.9 fot=0 fotMax=0 peakZ=136.9 upTail=50/50 | slip honest=false rew=6.00
+  [b3 90] eval 89 NEW BEST J=8.869  nom honest=false rew=4.55 x=84.2 above=25.9 fot=0 fotMax=0 peakZ=136.9 upTail=50/50 | slip honest=false rew=5.19
+  [b3 90] eval 97 NEW BEST J=9.249  nom honest=false rew=5.57 x=114.0 above=39.4 fot=0 fotMax=0 peakZ=136.9 upTail=50/50 | slip honest=false rew=4.93
+  beat 3 @90mm: 109 evaluations re-tuning beat 2 on the concatenated file, best single-cell J = 9.249
+  CONCATENATED (ONE file, from the floor — this is the climb) @90mm: kCore=0/9 kCoreStable=0/9 kExt=0/14 kExtStable=0/14 objective=6.105 objectiveCore=6.534 objectiveR3=3.743 meanReward=3.739 maxZ=153.8mm meanAbove=21.7mm meanX=62.1mm feetOnTreadMax=0 minUpTail=9/50 maxDY=187.2mm minPen=-3.00mm
+  beat 1 alone @90mm on the shared grid: kCore=0/9 kExt=0/14 objective=6.581 objectiveR3=4.664
+
+================ RISE 80 mm ================
+  [b1 80] eval 1 NEW BEST J=37.765  zEnd=117.8 xEnd=128.7 dx=0.0 dz=57.2 head=true riser=true fot=0 up=true peakZ=125.6 maxDY=87.0 pen=-2.2 (mm)
+  [b1 80] eval 2 NEW BEST J=47.051  zEnd=126.9 xEnd=122.9 dx=0.0 dz=48.1 head=true riser=true fot=0 up=true peakZ=127.9 maxDY=89.3 pen=-5.7 (mm)
+  [b1 80] eval 127 NEW BEST J=48.453  zEnd=126.0 xEnd=133.7 dx=0.0 dz=49.0 head=true riser=true fot=0 up=true peakZ=134.2 maxDY=85.6 pen=0.0 (mm)
+  [b1 80] eval 137 NEW BEST J=51.126  zEnd=130.6 xEnd=122.4 dx=0.0 dz=44.4 head=true riser=true fot=0 up=true peakZ=131.7 maxDY=87.5 pen=-3.3 (mm)
+  beat 1 @80mm: 217 evaluations in 130s, best J = 51.126
+  beat-1 TERMINAL @80mm: trunk z=130.6mm x=122.4mm dy=3.5mm | beak on tread=true foot on riser=true feet resting on tread=0 upright=true | penetration=-3.3mm peakZ=131.7mm maxDY=87.5mm maxTq=0.640Nm
+  [b2 80] eval 1 NEW BEST J=8.977  honest=false rew=4.98 x=84.9 above=35.7 fot=0 fotMax=0 upTail=50/50
+  [b2 80] eval 2 NEW BEST J=9.439  honest=false rew=5.44 x=111.2 above=37.3 fot=0 fotMax=0 upTail=50/50
+  [b2 80] eval 75 NEW BEST J=9.508  honest=false rew=5.51 x=116.9 above=36.9 fot=0 fotMax=0 upTail=50/50
+  [b2 80] eval 137 NEW BEST J=9.651  honest=false rew=5.65 x=113.7 above=41.5 fot=0 fotMax=0 upTail=50/50
+  [b2 80] eval 166 NEW BEST J=9.830  honest=false rew=5.83 x=121.5 above=43.5 fot=0 fotMax=0 upTail=50/50
+  beat 2 @80mm: 425 evaluations, best single-cell J = 9.830
+  BEAT-2-FROM-HANDOFF @80mm (NOT a climb): kCore=0/9 kCoreStable=0/9 objectiveR3=5.231 objectiveCore=9.231 meanReward=5.231 minUpTail=50/50 minPen=-4.55mm maxDY=87.6mm meanAbove=38.1mm meanX=97.0mm
+  [b3 80] eval 1 NEW BEST J=8.714  nom honest=false rew=4.52 x=53.2 above=36.1 fot=0 fotMax=0 peakZ=142.4 upTail=50/50 | slip honest=false rew=4.91
+  [b3 80] eval 2 NEW BEST J=9.138  nom honest=false rew=5.29 x=95.3 above=39.4 fot=0 fotMax=0 peakZ=140.9 upTail=50/50 | slip honest=false rew=4.99
+  [b3 80] eval 38 NEW BEST J=9.243  nom honest=false rew=5.00 x=85.7 above=36.1 fot=0 fotMax=0 peakZ=131.7 upTail=50/50 | slip honest=false rew=5.48
+  [b3 80] eval 51 NEW BEST J=9.353  nom honest=false rew=5.62 x=135.8 above=38.5 fot=0 fotMax=0 peakZ=131.7 upTail=50/50 | slip honest=false rew=5.08
+  [b3 80] eval 66 NEW BEST J=9.371  nom honest=false rew=5.75 x=133.3 above=41.5 fot=0 fotMax=0 peakZ=131.7 upTail=50/50 | slip honest=false rew=4.99
+  [b3 80] eval 132 NEW BEST J=9.511  nom honest=false rew=5.60 x=121.9 above=38.0 fot=0 fotMax=0 peakZ=131.7 upTail=50/50 | slip honest=false rew=5.42
+  beat 3 @80mm: 174 evaluations re-tuning beat 2 on the concatenated file, best single-cell J = 9.511
+  CONCATENATED (ONE file, from the floor — this is the climb) @80mm: kCore=0/9 kCoreStable=0/9 kExt=0/14 kExtStable=0/14 objective=7.628 objectiveCore=8.174 objectiveR3=5.063 meanReward=5.057 maxZ=150.5mm meanAbove=39.2mm meanX=90.9mm feetOnTreadMax=0 minUpTail=0/50 maxDY=87.5mm minPen=-3.29mm
+  beat 1 alone @80mm on the shared grid: kCore=0/9 kExt=0/14 objective=6.652 objectiveR3=4.422
+
+================ RISE 120 mm ================
+  [b1 120] eval 1 NEW BEST J=-55.673  zEnd=115.2 xEnd=94.2 dx=25.8 dz=99.8 head=true riser=true fot=0 up=true peakZ=123.8 maxDY=87.0 pen=-1.6 (mm)
+  [b1 120] eval 125 NEW BEST J=-46.735  zEnd=125.2 xEnd=91.2 dx=28.8 dz=89.8 head=true riser=true fot=0 up=true peakZ=128.3 maxDY=81.2 pen=0.0 (mm)
+  [b1 120] eval 222 NEW BEST J=-43.832  zEnd=121.0 xEnd=97.2 dx=22.8 dz=94.0 head=true riser=true fot=0 up=true peakZ=129.1 maxDY=84.1 pen=-3.2 (mm)
+  [b1 120] eval 332 NEW BEST J=-43.726  zEnd=121.4 xEnd=96.2 dx=23.8 dz=93.6 head=true riser=true fot=0 up=true peakZ=128.7 maxDY=86.1 pen=-3.2 (mm)
+  [b1 120] eval 339 NEW BEST J=-42.710  zEnd=123.8 xEnd=97.3 dx=22.7 dz=91.2 head=true riser=true fot=0 up=true peakZ=131.0 maxDY=84.9 pen=-1.2 (mm)
+  beat 1 @120mm: 364 evaluations in 130s, best J = -42.710
+  beat-1 TERMINAL @120mm: trunk z=123.8mm x=97.3mm dy=66.9mm | beak on tread=true foot on riser=true feet resting on tread=0 upright=true | penetration=-1.2mm peakZ=131.0mm maxDY=84.9mm maxTq=0.640Nm
+  [b2 120] eval 1 NEW BEST J=2.331  honest=false rew=2.33 x=8.8 above=-4.2 fot=0 fotMax=0 upTail=50/50
+  [b2 120] eval 2 NEW BEST J=2.959  honest=false rew=2.96 x=50.6 above=-4.0 fot=0 fotMax=0 upTail=50/50
+  [b2 120] eval 5 NEW BEST J=3.435  honest=false rew=3.43 x=82.3 above=-4.2 fot=0 fotMax=0 upTail=50/50
+  [b2 120] eval 6 NEW BEST J=3.446  honest=false rew=3.45 x=83.1 above=-3.9 fot=0 fotMax=0 upTail=50/50
+  [b2 120] eval 12 NEW BEST J=3.476  honest=false rew=3.48 x=85.0 above=-4.0 fot=0 fotMax=0 upTail=50/50
+  [b2 120] eval 58 NEW BEST J=3.481  honest=false rew=3.48 x=85.4 above=-4.0 fot=0 fotMax=0 upTail=50/50
+  [b2 120] eval 59 NEW BEST J=3.497  honest=false rew=3.50 x=86.5 above=-3.9 fot=0 fotMax=0 upTail=50/50
+  [b2 120] eval 71 NEW BEST J=3.901  honest=false rew=3.90 x=46.7 above=-31.7 fot=1 fotMax=1 upTail=0/50
+  [b2 120] eval 100 NEW BEST J=4.457  honest=false rew=3.34 x=9.1 above=-3.0 fot=1 fotMax=1 upTail=14/50
+  beat 2 @120mm: 662 evaluations, best single-cell J = 4.457
+  BEAT-2-FROM-HANDOFF @120mm (NOT a climb): kCore=0/9 kCoreStable=0/9 objectiveR3=2.261 objectiveCore=2.510 meanReward=2.261 minUpTail=14/50 minPen=-2.74mm maxDY=94.4mm meanAbove=-16.4mm meanX=-16.8mm
+  [b3 120] eval 1 NEW BEST J=2.106  nom honest=false rew=1.95 x=50.2 above=-17.2 fot=0 fotMax=0 peakZ=131.0 upTail=15/50 | slip honest=false rew=2.26
+  [b3 120] eval 2 NEW BEST J=2.169  nom honest=false rew=0.89 x=-20.5 above=-70.5 fot=0 fotMax=0 peakZ=131.0 upTail=0/50 | slip honest=false rew=3.44
+  [b3 120] eval 5 NEW BEST J=3.365  nom honest=false rew=3.32 x=74.7 above=-3.8 fot=0 fotMax=0 peakZ=131.0 upTail=50/50 | slip honest=false rew=3.41
+  [b3 120] eval 12 NEW BEST J=3.455  nom honest=false rew=3.44 x=82.8 above=-4.0 fot=0 fotMax=0 peakZ=131.0 upTail=50/50 | slip honest=false rew=3.47
+  [b3 120] eval 25 NEW BEST J=3.463  nom honest=false rew=3.45 x=83.3 above=-4.0 fot=0 fotMax=0 peakZ=131.0 upTail=50/50 | slip honest=false rew=3.48
+  [b3 120] eval 29 NEW BEST J=3.467  nom honest=false rew=3.49 x=85.9 above=-4.2 fot=0 fotMax=0 peakZ=131.0 upTail=50/50 | slip honest=false rew=3.45
+  [b3 120] eval 107 NEW BEST J=3.470  nom honest=false rew=3.48 x=85.4 above=-4.0 fot=0 fotMax=0 peakZ=131.0 upTail=50/50 | slip honest=false rew=3.46
+  [b3 120] eval 116 NEW BEST J=3.483  nom honest=false rew=3.49 x=85.8 above=-3.9 fot=0 fotMax=0 peakZ=131.0 upTail=50/50 | slip honest=false rew=3.48
+  [b3 120] eval 126 NEW BEST J=3.486  nom honest=false rew=3.51 x=87.3 above=-3.9 fot=0 fotMax=0 peakZ=131.0 upTail=50/50 | slip honest=false rew=3.46
+  [b3 120] eval 134 NEW BEST J=3.497  nom honest=false rew=3.50 x=86.7 above=-3.9 fot=0 fotMax=0 peakZ=131.0 upTail=50/50 | slip honest=false rew=3.49
+  [b3 120] eval 141 NEW BEST J=3.501  nom honest=false rew=3.51 x=87.1 above=-3.9 fot=0 fotMax=0 peakZ=131.0 upTail=50/50 | slip honest=false rew=3.49
+  [b3 120] eval 153 NEW BEST J=3.506  nom honest=false rew=3.51 x=87.3 above=-3.9 fot=0 fotMax=0 peakZ=131.0 upTail=50/50 | slip honest=false rew=3.50
+  [b3 120] eval 161 NEW BEST J=3.506  nom honest=false rew=3.51 x=87.4 above=-3.9 fot=0 fotMax=0 peakZ=131.0 upTail=50/50 | slip honest=false rew=3.50
+  beat 3 @120mm: 164 evaluations re-tuning beat 2 on the concatenated file, best single-cell J = 3.506
+  CONCATENATED (ONE file, from the floor — this is the climb) @120mm: kCore=0/9 kCoreStable=0/9 kExt=0/14 kExtStable=0/14 objective=3.211 objectiveCore=3.271 objectiveR3=3.271 meanReward=3.211 maxZ=132.8mm meanAbove=-13.6mm meanX=73.2mm feetOnTreadMax=0 minUpTail=0/50 maxDY=93.1mm minPen=-0.01mm
+  beat 1 alone @120mm on the shared grid: kCore=0/9 kExt=0/14 objective=3.461 objectiveR3=3.485
+
+wrote ../climb/r4_famB-results.json
+done 2026-09-02T10:53:18.559Z

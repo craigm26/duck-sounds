@@ -1,0 +1,94 @@
+================================================================
+PHASE P — CURRENT rig3.mjs vs climb/rig3_pre_r4.mjs, full float digits
+   duck collidable geoms 11 | lateral gate 170 mm | riser line 120 mm
+   Three agents have edited rig3.mjs since that byte copy was taken.
+   86 rows (43 pre-round-4 files x tails policy+hold)
+   PHYSICAL STATE identical at full float digits: 86/86
+   reward() identical                           : 86/86
+   rows where a CRITERION changed               : 0
+   VERDICT: ADMISSIBLE — no physical state changed   [58s]
+
+PHASE R — robust.mjs cell 0 (drop 0.120, x1.0, isolate) vs rig3.scoreSaved
+   best_r3_vault_60mm.json          EXACT=true  x=0.3342751251273466 z=0.17613474586397462 rew=12.000000 upTail=50
+   best_r3_vault_40mm.json          EXACT=true  x=0.15256673832897624 z=0.1438750247756981 rew=11.000000 upTail=0
+   best_r2_vault_90mm.json          EXACT=true  x=0.11473662194247528 z=0.13462525585082294 rew=5.800007 upTail=50
+   best_r3_landvault_90mm.json      EXACT=true  x=0.08048745834377286 z=0.11661964099145021 rew=4.528139 upTail=50
+   ctrl_do_nothing.json             EXACT=true  x=0.0019814926726257733 z=0.11623081135898501 rew=4.597335 upTail=50
+   best_r4_famA_60mm.json           EXACT=true  x=0.3342751251273466 z=0.17613474586397462 rew=12.000000 upTail=50
+   best_r4_famB_concat_90mm.json    EXACT=true  x=0.11403196557139453 z=0.12936062592892272 rew=5.567769 upTail=50
+   r4_ctrl_on_tread_60mm.json       EXACT=true  x=0.25235392706381016 z=0.17593235458753445 rew=12.000000 upTail=50
+   allExact = true   [63s]
+
+PHASE H / B / S — identity, bounds, and how the duck STARTED
+   35 files, 33 DISTINCT vectors
+   ONE VECTOR, 3 LABELS  4b9110c448ec  best_r3_vault_60mm.json  best_r3_vault_70mm.json  best_r3_vault_80mm.json
+   bound violations: 2 file(s)
+      best_r3_cornerclimb2_120mm.json  side=-0.0558 outside [-0.02,0.09]
+      best_r3_cornerclimb_120mm.json  side=-0.06 outside [-0.02,0.09]
+   NOT-A-CLIMB files (did not start standing on the floor): 9
+      best_r2_blockdrag.json             PLACED SPAWN — NOT A CLIMB
+      best_r4_famB_beat2_120mm.json      HANDOFF SPAWN — NOT A CLIMB
+      best_r4_famB_beat2_80mm.json       HANDOFF SPAWN — NOT A CLIMB
+      best_r4_famB_beat2_90mm.json       HANDOFF SPAWN — NOT A CLIMB
+      r4_ctrl_on_tread_40mm.json         PLACED SPAWN — NOT A CLIMB
+      r4_ctrl_on_tread_50mm.json         PLACED SPAWN — NOT A CLIMB
+      r4_ctrl_on_tread_60mm.json         PLACED SPAWN — NOT A CLIMB
+      r4_ctrl_on_tread_80mm.json         PLACED SPAWN — NOT A CLIMB
+      r4_ctrl_on_tread_90mm.json         PLACED SPAWN — NOT A CLIMB
+
+PHASE G — every claimed clear + every round-4 best, re-scored from disk on the 14-cell grid
+   file                                 rise  kCore kCoreStable kExt kExtStable  objective objCore  objR3  maxTq  minPen  maxDY  upTail(min/mean)  start
+   best_r3_vault_40mm.json                40  2/9   1/9      2/14  1/14       12.262   13.685  15.472  0.6405   -1.22  192.6   0/27.2
+   best_r3_vault_50mm.json                50  2/9   2/9      2/14  2/14       17.132   17.910  17.021  0.6405   -1.43  136.7   0/7.1
+   best_r3_vault_60mm.json                60  4/9   4/9      4/14  4/14       25.610   27.415  23.788  0.6405   -1.28  275.7   8/44.2
+   best_r3_vault_70mm.json                70  2/9   2/9      2/14  2/14       16.314   17.042  13.478  0.6405   -1.21  275.7   6/46.5
+   best_r3_vault_80mm.json                80  1/9   1/9      1/14  1/14       11.829   12.430   8.919  0.6405   -1.21    227  45/49.6
+   best_r2_vault_40mm.json                40  1/9   1/9      1/14  1/14       10.778   10.722   9.646  0.6405    -1.4  153.3   0/12.2
+   best_r2_vault_60mm.json                60  2/9   1/9      2/14  1/14       10.685   10.068  11.437  0.6405   -2.15  340.2   0/38.9
+   best_r2_vault_90mm.json                90  0/9   0/9      0/14  0/14        5.689    5.530   4.063  0.6405    -0.8  169.7  15/47.5
+   best_r3_landvault_80mm.json            80  0/9   0/9      0/14  0/14        3.926    4.071   4.071  0.6405   -2.55  114.2   0/2.9
+   best_r3_landvault_90mm.json            90  0/9   0/9      0/14  0/14        5.513    6.037   4.473  0.6405   -1.57   96.3  26/48.3
+   best_r3_cornerclimb_120mm.json        120  0/9   0/9      0/14  0/14        3.498    3.728   3.728  0.6405   -0.86  114.5   0/0 OUT-OF-BOUNDS
+   best_r3_cornerclimb2_120mm.json       120  0/9   0/9      0/14  0/14        3.648    3.835   3.835  0.6405   -1.48  132.1   0/0 OUT-OF-BOUNDS
+   best_r3_cornerclimb_180mm.json        180  0/9   0/9      0/14  0/14        2.075    2.238   2.238  0.6405   -1.47  153.6   0/2.6
+   best_r4_famA_60mm.json                 60  4/9   4/9      4/14  4/14       25.610   27.415  23.788  0.6405   -1.28  275.7   8/44.2
+   best_r4_famB_beat1_80mm.json           80  0/9   0/9      0/14  0/14        6.652    6.644   4.422  0.6405   -2.84    256   0/46.2
+   best_r4_famB_beat1_90mm.json           90  0/9   0/9      0/14  0/14        6.581    6.806   4.664  0.6405   -3.28   88.3  39/48.2
+   best_r4_famB_beat1_120mm.json         120  0/9   0/9      0/14  0/14        3.461    3.485   3.485  0.6405       0   93.1  43/49.2
+   best_r4_famB_beat2_80mm.json           80  0/9   0/9      0/14  0/14        8.314    9.231   5.231  0.6405   -4.55  101.7   0/45.8 NOT-A-CLIMB
+   best_r4_famB_beat2_90mm.json           90  0/9   0/9      0/14  0/14        7.097    7.712   3.952  0.6405   -5.25   93.3   0/40.9 NOT-A-CLIMB
+   best_r4_famB_beat2_120mm.json         120  0/9   0/9      0/14  0/14        2.156    2.510   2.261  0.6405   -2.74   94.4  14/27.5 NOT-A-CLIMB
+   best_r4_famB_concat_80mm.json          80  0/9   0/9      0/14  0/14        7.628    8.174   5.063  0.6405   -3.29   87.5   0/46.1
+   best_r4_famB_concat_90mm.json          90  0/9   0/9      0/14  0/14        6.105    6.534   3.743  0.6405      -3  187.2   9/37
+   best_r4_famB_concat_120mm.json        120  0/9   0/9      0/14  0/14        3.211    3.271   3.271  0.6405   -0.01   93.1   0/42.9
+   [162s]
+
+PHASE D — family A's "same behaviour, second hash" claim, cell by cell
+   best_r4_famA_60mm (7b790070b010) vs best_r3_vault_60mm (4b9110c448ec)
+   max |dx| over 14 cells = 0.000000 mm   max |dz| = 0.000000 mm   identical honest pattern = true
+   -> ONE MOVE, TWO HASHES. It is not a new behaviour and is not counted as one.
+   round-3 relabelling, re-checked: vault_60=4b9110c4 vault_70=4b9110c4 vault_80=4b9110c4  -> ONE vector under THREE labels
+
+PHASE C — the controls, on the same plant
+   ctrl_do_nothing.json           @ 40mm  kCore 0/9  kCoreStable 0/9  kExt 0/14  obj 5.452  objR3 5.451  pen 50mm  upTail>=50  [floor spawn — a climb]
+   ctrl_do_nothing.json           @ 60mm  kCore 0/9  kCoreStable 0/9  kExt 0/14  obj 4.610  objR3 4.609  pen 50mm  upTail>=50  [floor spawn — a climb]
+   ctrl_do_nothing.json           @ 90mm  kCore 0/9  kCoreStable 0/9  kExt 0/14  obj 3.347  objR3 3.345  pen 50mm  upTail>=50  [floor spawn — a climb]
+   r4_ctrl_on_tread_40mm.json     @ 40mm  kCore 9/9  kCoreStable 9/9  kExt 14/14  obj 72.000  objR3 48.000  pen -1.23mm  upTail>=50  [PLACED SPAWN — NOT A CLIMB]
+   r4_ctrl_on_tread_50mm.json     @ 50mm  kCore 9/9  kCoreStable 9/9  kExt 14/14  obj 72.000  objR3 48.000  pen -1.23mm  upTail>=50  [PLACED SPAWN — NOT A CLIMB]
+   r4_ctrl_on_tread_60mm.json     @ 60mm  kCore 9/9  kCoreStable 9/9  kExt 14/14  obj 72.000  objR3 48.000  pen -1.23mm  upTail>=50  [PLACED SPAWN — NOT A CLIMB]
+   r4_ctrl_on_tread_80mm.json     @ 80mm  kCore 9/9  kCoreStable 9/9  kExt 14/14  obj 72.000  objR3 48.000  pen -1.24mm  upTail>=50  [PLACED SPAWN — NOT A CLIMB]
+   r4_ctrl_on_tread_90mm.json     @ 90mm  kCore 9/9  kCoreStable 9/9  kExt 14/14  obj 72.000  objR3 48.000  pen -1.25mm  upTail>=50  [PLACED SPAWN — NOT A CLIMB]
+   do-nothing fails everywhere: true   placed duck clears 9/9 core everywhere: true
+
+================================================================
+THE LADDER — best ADMISSIBLE (floor-spawned, in bounds) DISTINCT move at each rise
+     40 mm  best_r3_vault_40mm.json            dff01b0a1906  kCore 2/9  stable 1/9  kExt 2/14  obj 12.262
+     50 mm  best_r3_vault_50mm.json            7904bf3363c5  kCore 2/9  stable 2/9  kExt 2/14  obj 17.132
+     60 mm  best_r3_vault_60mm.json            4b9110c448ec  kCore 4/9  stable 4/9  kExt 4/14  obj 25.610
+     70 mm  best_r3_vault_70mm.json            4b9110c448ec  kCore 2/9  stable 2/9  kExt 2/14  obj 16.314
+     80 mm  best_r3_vault_80mm.json            4b9110c448ec  kCore 1/9  stable 1/9  kExt 1/14  obj 11.829
+     90 mm  best_r4_famB_beat1_90mm.json       2524a35672b4  kCore 0/9  stable 0/9  kExt 0/14  obj 6.581
+    120 mm  best_r4_famB_beat1_120mm.json      7c52acef4acf  kCore 0/9  stable 0/9  kExt 0/14  obj 3.461
+    180 mm  best_r3_cornerclimb_180mm.json     725674c1b517  kCore 0/9  stable 0/9  kExt 0/14  obj 2.075
+   torque: any row above 0.6405 N.m? false   files that SATURATE it: 23/23
+   total wall 207s

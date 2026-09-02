@@ -59,7 +59,6 @@ import * as ort from 'onnxruntime-node';
 import fs from 'node:fs';
 import { makeLoop } from '../site/duckloop.mjs';
 import { findStairJoints, layoutStairs, STAIR_Y, STAIR_HALF_WIDTH } from '../site/stairs.js';
-import { normEvent, eventFires, eventError, buildDynTrack } from '../climb/event.mjs';
 
 const C = JSON.parse(fs.readFileSync('duckkit-constants.json', 'utf8'));
 export const { HOME, LO, HI, buildObs, projectedGravity, command, findDuckJoints } = makeLoop(C);
@@ -96,21 +95,6 @@ const FEET = []; for (let g = 0; g < model.ngeom; g++) if (/foot_collision|sole/
 // Every step geom, for the contact half of the foot clause below.
 const STEPG = []; for (let g = 0; g < model.ngeom; g++) if (/^step\d+_geom$/.test(model.geom(g).name || '')) STEPG.push(g);
 
-// ROUND 4, HOLE 3: every collidable geom that belongs to the DUCK, so that
-// penetration into a step block is a first-class field of a scored row rather
-// than something only the audit ever looked at. Construction copied verbatim
-// from climb/audit_r3.mjs (which reported 11 duck geoms, 14 step geoms) so the
-// number printed here is the number that audit printed.
-let DUCKROOT = -1;
-for (let j = 0; j < model.njnt; j++) if (model.jnt_type[j] === 0 && model.jnt_qposadr[j] === D.freeQpos) { DUCKROOT = model.jnt_bodyid[j]; break; }
-const underDuck = b => { let c = b; for (let i = 0; i < 64 && c > 0; i++) { if (c === DUCKROOT) return true; c = model.body_parentid[c]; } return c === DUCKROOT; };
-export const DUCKG = [];
-for (let g = 0; g < model.ngeom; g++) {
-  if (model.geom_contype[g] === 0 && model.geom_conaffinity[g] === 0) continue;
-  if (DUCKROOT >= 0 && underDuck(model.geom_bodyid[g])) DUCKG.push(g);
-}
-if (!DUCKG.length) { for (const g of JAW) DUCKG.push(g); for (const g of FEET) DUCKG.push(g); }
-
 /**
  * A foot RESTING on the tread: past the riser line, inside the flight, within
  * 5 mm below to 45 mm above the tread's height, AND within 3 mm of a step geom.
@@ -143,84 +127,10 @@ export function poseAt(tr, time) {
   return tr[tr.length - 1].pose.slice();
 }
 
-
-/**
- * ROUND 4, FAMILY B — THE HANDOFF FIELDS (additive, and off unless asked for).
- *
- * Family B splits the 80-120 mm band into two beats and has to start beat 2
- * from the state beat 1 ended in. `spawn:{x,y,z}` carries only the trunk's
- * position, so four optional fields carry the rest:
- *
- *   spawnQuat        [4]   trunk orientation (default: the identity rig3 sets)
- *   spawnPose        [14]  joint qpos AND the initial ctrl (default: HOME)
- *   spawnVel  {free:[6], joint:[14]}  the velocities (default: zero)
- *   spawnLastAction  [14]  the policy's own last-action term in the
- *                          observation (default: zeros, as before)
- *   settleTicks      int   ticks of the stand policy run BEFORE the track
- *                          (default 25 — climb_lib's own settle). Beat 2 uses
- *                          0, because a settle would erase the handoff.
- *
- * EVERY ONE of them is absent from every file written before this round, and
- * when a field is absent not one line of it executes, so the episode is the
- * episode rig3 already ran. climb/famB_parity.log proves that at full float
- * digits against climb/rig3_prefamB.mjs (a byte copy of this file as it stood,
- * differing only in its isMain guard string).
- *
- * A spawn handoff is NOT a climb. It reproduces qpos, qvel and the last-action
- * term; it does not reproduce the fact that the duck GOT there. Any result
- * that only works from a handoff spawn is reported as a beat-2 result.
- */
-
-/** The complete state a beat-2 spawn needs, read off the live sim. Read-only. */
-function handoffNow(h) {
-  const jp = [], jv = [], free = [];
-  for (let k = 0; k < 14; k++) { jp.push(data.qpos[D.qpos[k]]); jv.push(data.qvel[D.dof[k]]); }
-  for (let k = 0; k < 6; k++) free.push(data.qvel[D.freeDof + k]);
-  let head = false;
-  for (const g of JAW) if (mj.mj_geomDistance(model, data, g, STEP0, 0.05, null) < 0.003) { head = true; break; }
-  let footRiser = false, feetOnTread = 0;
-  for (const g of [LFOOT, RFOOT]) {
-    if (data.geom_xpos[g * 3 + 2] < h - 0.005 && mj.mj_geomDistance(model, data, g, STEP0, 0.05, null) < 0.003) footRiser = true;
-  }
-  for (const g of FEET) if (footResting(g, h)) feetOnTread++;
-  const P = penetrationNow();
-  return {
-    penetration: P.pen, penetrationPair: P.pair,
-    spawn: { x: data.qpos[D.freeQpos], y: data.qpos[D.freeQpos + 1], z: data.qpos[D.freeQpos + 2] },
-    spawnQuat: [data.qpos[D.freeQpos + 3], data.qpos[D.freeQpos + 4], data.qpos[D.freeQpos + 5], data.qpos[D.freeQpos + 6]],
-    spawnPose: jp, spawnVel: { free, joint: jv },
-    head, footRiser, feetOnTread,
-    up: projectedGravity(quat())[2] < -0.90,
-  };
-}
-
 // ---------------------------------------------------------------- snapshots
 
-/**
- * ROUND 4, HOLE 3. The most negative mj_geomDistance between ANY collidable
- * duck geom and ANY step geom, AT THIS INSTANT, with the pair named.
- * A duck standing 9 mm inside a block is not standing on it. This is read-only:
- * mj_geomDistance is a query, it touches neither qpos nor ctrl.
- */
-function penetrationNow() {
-  let pen = 1e9, pair = null;
-  for (const g of DUCKG) for (const sg of STEPG) {
-    const d = mj.mj_geomDistance(model, data, g, sg, 0.05, null);
-    if (d < pen) { pen = d; pair = `${model.geom(g).name || 'g' + g}<->${model.geom(sg).name}`; }
-  }
-  return { pen: pen === 1e9 ? null : pen, pair };
-}
-
-/**
- * Everything the criterion could possibly want, read off the live state.
- *
- * ROUND 4: `maxAbsDY` (the WHOLE-EPISODE worst lateral excursion so far) and
- * `penetrationAtScore` are threaded in here so criteria() and every consumer
- * see them as ordinary snapshot fields. maxAbsDY is undefined only when a
- * caller predates round 4; criteria() then falls back to the point gate and
- * says so in `lateralSource`.
- */
-function snapshot(h, maxAbsDY) {
+/** Everything the criterion could possibly want, read off the live state. */
+function snapshot(h) {
   const x = data.qpos[D.freeQpos], y = data.qpos[D.freeQpos + 1], z = data.qpos[D.freeQpos + 2];
   const up = projectedGravity(quat())[2] < -0.90;
   // climb_lib.mjs:141-145 exactly as written — no y term, foot x > 0.05
@@ -234,13 +144,10 @@ function snapshot(h, maxAbsDY) {
   let feetOnTread = 0;
   for (const g of FEET) if (footResting(g, h)) feetOnTread++;
   const foot = g => ({ x: data.geom_xpos[g * 3], y: data.geom_xpos[g * 3 + 1], z: data.geom_xpos[g * 3 + 2] });
-  const P = penetrationNow();
   return {
     x, y, z, dy: y - STAIR_Y, above: z - h, up,
     feetUpRaw, feetUpLat, feetOnTread,
     lfoot: foot(LFOOT), rfoot: foot(RFOOT),
-    maxAbsDY,                                   // whole-episode, threaded in
-    penetrationAtScore: P.pen, penetrationPair: P.pair,
   };
 }
 
@@ -254,26 +161,13 @@ function snapshot(h, maxAbsDY) {
  *  honest60  honest with the height clause relaxed to 60 mm above the tread
  *          (a deep crouch on the tread rather than a full stand).
  */
-export function criteria(h, s, maxAbsDY) {
-  // ROUND 4, HOLE 1. reward() has always applied the lateral gate over the
-  // WHOLE episode; criteria() applied it only at the scored instant, so a move
-  // could swing 426 mm off the side of the 340 mm flight, come back, and score
-  // `honest`. The gate is now whole-episode HERE TOO. The excursion arrives
-  // either on the snapshot (snapshot(h, maxAbsDY)) or as the third argument;
-  // when neither is present the point gate is used and `lateralSource` says so,
-  // which is the only way a pre-round-4 caller can silently differ.
-  const dyMax = (maxAbsDY !== undefined && maxAbsDY !== null) ? maxAbsDY
-              : (s.maxAbsDY !== undefined && s.maxAbsDY !== null) ? s.maxAbsDY : null;
-  const lateralAtScore = Math.abs(s.dy) <= LATERAL;
-  const lateralEpisode = dyMax === null ? true : dyMax <= LATERAL;
-  const lateral = lateralAtScore && lateralEpisode;
+export function criteria(h, s) {
+  const lateral = Math.abs(s.dy) <= LATERAL;
   const orig = s.up && s.x > RISER_X && s.above > 0.095 && s.feetUpRaw >= 2;
   const lat = s.up && lateral && s.x > RISER_X && s.above > 0.095 && s.feetUpLat >= 2;
   const honest = s.up && lateral && s.x > RISER_X && s.above > 0.095 && s.feetOnTread >= 2;
   const honest60 = s.up && lateral && s.x > RISER_X && s.above > 0.060 && s.feetOnTread >= 2;
-  return { orig, lat, honest, honest60, lateral,
-           lateralAtScore, lateralEpisode,
-           lateralSource: dyMax === null ? 'point-only (no maxAbsDY supplied)' : 'whole-episode' };
+  return { orig, lat, honest, honest60, lateral };
 }
 
 /**
@@ -318,19 +212,9 @@ async function runEpisodeRaw(track, opts, h, tail) {
   }
   data.qpos[D.freeQpos + 3] = 1;
   for (let i = 0; i < 14; i++) { data.qpos[D.qpos[i]] = HOME[i]; data.ctrl[i] = HOME[i]; }
-  // ROUND 4, FAMILY B: the optional handoff state. Absent -> nothing runs.
-  if (opts.spawnQuat) for (let k = 0; k < 4; k++) data.qpos[D.freeQpos + 3 + k] = opts.spawnQuat[k];
-  if (opts.spawnPose) for (let i = 0; i < 14; i++) {
-    data.qpos[D.qpos[i]] = opts.spawnPose[i];
-    data.ctrl[i] = Math.min(Math.max(opts.spawnPose[i], LO[i]), HI[i]);
-  }
-  if (opts.spawnVel) {
-    if (opts.spawnVel.free) for (let k = 0; k < 6; k++) data.qvel[D.freeDof + k] = opts.spawnVel.free[k];
-    if (opts.spawnVel.joint) for (let i = 0; i < 14; i++) data.qvel[D.dof[i]] = opts.spawnVel.joint[i];
-  }
   mj.mj_forward(model, data);
   const tr = track.map(f => ({ t: f.t, pose: f.pose.slice() }));
-  let la = opts.spawnLastAction ? opts.spawnLastAction.slice() : new Array(14).fill(0);
+  let la = new Array(14).fill(0);
   const cmd = command({ vx: opts.approach });
 
   const R = { ticks: 0, headTicks: 0, riserTicks: 0, upTicks: 0, sat: 0, ctrls: 0,
@@ -449,81 +333,32 @@ async function runEpisodeRaw(track, opts, h, tail) {
     record();
   };
 
-  const SETTLE = (opts.settleTicks === undefined || opts.settleTicks === null) ? 25 : opts.settleTicks;
-  for (let t = 0; t < SETTLE; t++) await step(null, false);
+  for (let t = 0; t < 25; t++) await step(null, false);
   const x0 = data.qpos[D.freeQpos];
   Z0 = data.qpos[D.freeQpos + 2];
-  // ================================================== ROUND 4, FAMILY A
-  // AN OPTIONAL EVENT-TRIGGERED TAIL. `opts.event` is absent in every file
-  // written before round 4, and normEvent(undefined) is null, in which case
-  // TR === tr, `total` never changes, and the two lines below are the
-  // pre-round-4 loop verbatim: same tick count, same poses, same ONNX calls.
-  // climb/famA_r4.mjs PHASE P proves that on every existing best_* file.
-  const EV = normEvent(opts.event);
-  let TR = tr;
-  let total = TR[TR.length - 1].t + 0.8;
-  let evFired = false, evT = null, evE = null, evTrunkX = null;
-  const beakDistNow = () => {
-    let d = 1e9;
-    for (const g of JAW) for (const sg of STEPG) { const v = mj.mj_geomDistance(model, data, g, sg, 0.05, null); if (v < d) d = v; }
-    return d === 1e9 ? null : d;
-  };
-  for (let t = 0; t * DT < total; t++) {
-    const time = t * DT;
-    if (EV && !evFired && time >= EV.arm) {
-      const fire = time >= EV.fallback || eventFires(EV, {
-        beakDist: EV.type === 'beak' ? beakDistNow() : null,
-        pitch: projectedGravity(quat())[0],
-        above: data.qpos[D.freeQpos + 2] - h,
-      });
-      if (fire) {
-        evFired = true; evT = time; evTrunkX = data.qpos[D.freeQpos];
-        evE = eventError(EV, evTrunkX);
-        TR = buildDynTrack(tr, EV, time, poseAt(TR, time), evE);
-        total = TR[TR.length - 1].t + 0.8;
-      }
-    }
-    await step(poseAt(TR, time), true);
-  }
+  const total = tr[tr.length - 1].t + 0.8;
+  for (let t = 0; t * DT < total; t++) await step(poseAt(tr, t * DT), true);
 
-  const atTrackEnd = snapshot(h, R.maxAbsDY);
-  // ROUND 4, FAMILY B: the handoff point. This instant IS where a beat-2 track
-  // is concatenated (beat 1's last keyframe + 0.8 s), so terminal is exactly the
-  // state a two-beat concatenation would hand over.
-  const terminal = handoffNow(h); terminal.spawnLastAction = la.slice();
+  const atTrackEnd = snapshot(h);
   // what the servos were last told, and what 'hold' will freeze them at
   const ctrlAtHandoff = []; for (let k = 0; k < 14; k++) ctrlAtHandoff.push(data.ctrl[k]);
-  const finalPose = poseAt(TR, total);   // TR === tr when the file has no event
+  const finalPose = poseAt(tr, total);
   const held = finalPose.map((v, k) => Math.min(Math.max(v, LO[k]), HI[k]));
   let ctrlJump = 0; for (let k = 0; k < 14; k++) ctrlJump = Math.max(ctrlJump, Math.abs(held[k] - ctrlAtHandoff[k]));
 
-  // ROUND 4, HOLE 2. Count how many of the 50 TAIL ticks the duck is upright.
-  // The objective had no term for "still standing at the end", so a candidate
-  // that reaches the tread and topples through the tail could outrank one that
-  // stands. upTicks is cumulative, so the tail's share is the difference.
-  const upBeforeTail = R.upTicks, ticksBeforeTail = R.ticks;
   let afterTail;
   if (tail === 'policy') {
     for (let t = 0; t < 50; t++) await step(null, true);
-    afterTail = snapshot(h, R.maxAbsDY);
+    afterTail = snapshot(h);
   } else {
     for (let t = 0; t < 50; t++) holdStep(held);
-    afterTail = snapshot(h, R.maxAbsDY);
+    afterTail = snapshot(h);
   }
-  const uprightTailTicks = R.upTicks - upBeforeTail;
-  const tailTicks = R.ticks - ticksBeforeTail;
 
   const scored = (tail === 'none') ? atTrackEnd : afterTail;
   const rec = {
     tail, rise: h, x0, ctrlJump,
-    event: EV ? { type: EV.type, fired: evFired, tFire: evT, trunkXAtFire: evTrunkX, e_mm: evE === null ? null : +(evE * 1000).toFixed(2) } : null,
     scored, atTrackEnd, afterTail,
-    // ROUND 4 first-class fields of every scored row
-    penetrationAtScore: scored.penetrationAtScore,
-    penetrationPair: scored.penetrationPair,
-    uprightTailTicks, tailTicks,
-    uprightTailFrac: uprightTailTicks / Math.max(tailTicks, 1),
-    terminal,          // ROUND 4, FAMILY B: the beat-1 -> beat-2 handoff state
     crit: criteria(h, scored),
     critAtTrackEnd: criteria(h, atTrackEnd),
     critAfterTail: criteria(h, afterTail),
@@ -566,14 +401,7 @@ export async function scoreSaved(path, { rise, tail = 'policy', gapOffset = 0, o
   const opts = {
     blend: j.blend, approach: j.approach || 0,
     gap: (j.gap || 0) + gapOffset, side: j.side || 0,
-    spawn: j.spawn || null,
-    // ROUND 4, FAMILY A: the optional event-triggered tail (climb/event.mjs).
-    event: j.event || null,
-    // ROUND 4, FAMILY B handoff fields — null/undefined for every older file
-    spawnQuat: j.spawnQuat || null, spawnPose: j.spawnPose || null,
-    spawnVel: j.spawnVel || null, spawnLastAction: j.spawnLastAction || null,
-    settleTicks: j.settleTicks === undefined ? undefined : j.settleTicks,
-    ...overrides,
+    spawn: j.spawn || null, ...overrides,
   };
   const rec = await runEpisodeRaw(j.keyframes, opts, rise, tail);
   rec.source = path; rec.opts = { ...opts, gapOffset };
@@ -704,8 +532,6 @@ async function allTails(path, rise, gapOffset = 0) {
   const pol = await scoreSaved(path, { rise, tail: 'policy', gapOffset });
   const hld = await scoreSaved(path, { rise, tail: 'hold', gapOffset });
   const non = { ...hld, tail: 'none', scored: hld.atTrackEnd, crit: hld.critAtTrackEnd,
-                penetrationAtScore: hld.atTrackEnd.penetrationAtScore,
-                penetrationPair: hld.atTrackEnd.penetrationPair,
                 stillUpAfter50Hold: hld.afterTail.up, stillPassesAfter50Hold: hld.critAfterTail };
   non.reward = reward(non);
   return { policy: pol, hold: hld, none: non };
@@ -725,9 +551,6 @@ const slim = r => ({ tail: r.tail, x_mm: +mm(r.scored.x), dy_mm: +mm(r.scored.dy
   peakX_mm: +mm(r.maxX), peakZ_mm: +mm(r.maxZ), maxAbsDY_mm: +mm(r.maxAbsDY),
   feetOnTreadMax: r.feetOnTreadMax, feetUpRawMax: r.feetUpRawMax,
   headFrac: +r.headFrac.toFixed(3), riserFrac: +r.riserFrac.toFixed(3), ctrlJump: +r.ctrlJump.toFixed(4),
-  penetrationAtScore_mm: r.penetrationAtScore === null ? null : +mm(r.penetrationAtScore),
-  penetrationPair: r.penetrationPair,
-  uprightTailTicks: r.uprightTailTicks, tailTicks: r.tailTicks,
   stillUpAfter50Hold: r.stillUpAfter50Hold, stillPassesAfter50Hold: r.stillPassesAfter50Hold });
 
 // ---------------------------------------------------------------- PHASE A
