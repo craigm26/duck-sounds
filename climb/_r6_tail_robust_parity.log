@@ -1,0 +1,7 @@
+=== ROUND 6 — robust.mjs vs robust_pre_r6.mjs, all 9 core cells, full float digits ===
+  best_r3_vault_60mm.json              EXACT 9/9
+  best_r5_servo_60mm.json              EXACT 9/9
+  best_r5_servoland_kcore_60mm.json    EXACT 9/9
+  best_r2_vault_60mm.json              EXACT 9/9
+  ctrl_do_nothing.json                 EXACT 9/9
+  INERT — 45/45 core cells identical to the pre-round-6 robust.mjs at full float digits

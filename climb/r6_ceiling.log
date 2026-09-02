@@ -1,0 +1,82 @@
+[   0s] R6 CEILING. rise 60 mm only. bar 95 mm (NOT moved). pop 24, elite 5, sig0 0.03, sigMin 0.008, sigMax 0.075, seed 6000, budget 2100s
+[   0s] grid: rise 50/60/70 mm x plants 0.12/x1 0.13/x0.7 0.125/x1.3
+[   4s] A warm-start (best_r3_vault_60mm.json, 4b9110c448ec): ceil=5/9 obj=5.0932 kCore=4/9 kStab=4/9 tq=0.6405 pen=-10.72mm peaks[71.1 122.6 120.2 122.5 130.4 63.3 53.8 50.9 119.3]
+[  16s] A gen1: full=0/24 sig=0.0225 elite [5.093] | best ceil=5/9 obj=5.0932 | maxCeilSeen=5 | evals=25 full=1 distinct=1
+[  31s] A gen2: full=1/24 sig=0.0169 elite [5.093 1.075] | best ceil=5/9 obj=5.0932 | maxCeilSeen=5 | evals=49 full=2 distinct=2
+[  41s] A gen3: full=0/24 sig=0.0127 elite [5.093] | best ceil=5/9 obj=5.0932 | maxCeilSeen=5 | evals=73 full=2 distinct=2
+[  56s] A gen4: full=1/24 sig=0.0095 elite [5.093 1.073] | best ceil=5/9 obj=5.0932 | maxCeilSeen=5 | evals=97 full=3 distinct=3
+[  75s] A gen5: full=2/24 sig=0.0080 elite [5.093 2.079 0.065] | best ceil=5/9 obj=5.0932 | maxCeilSeen=5 | evals=121 full=5 distinct=5
+[ 113s] A gen6: full=7/24 sig=0.0080 elite [5.093 3.085 2.079 2.078 1.072] | best ceil=5/9 obj=5.0932 | maxCeilSeen=5 | evals=145 full=12 distinct=12
+[ 163s] A gen7: full=10/24 sig=0.0092 elite [5.093 4.086 2.078 2.078 2.077] | best ceil=5/9 obj=5.0932 | maxCeilSeen=5 | evals=169 full=22 distinct=22
+[ 210s] A gen8: full=9/24 sig=0.0106 elite [5.093 4.092 4.088 3.089 3.084] | best ceil=5/9 obj=5.0932 | maxCeilSeen=5 | evals=193 full=31 distinct=31
+[ 224s] A gen9: full=1/24 sig=0.0080 elite [5.093 1.074] | best ceil=5/9 obj=5.0932 | maxCeilSeen=5 | evals=217 full=32 distinct=32
+[ 254s] A gen10: full=5/24 sig=0.0080 elite [5.093 3.084 3.084 2.079 2.075] | best ceil=5/9 obj=5.0932 | maxCeilSeen=5 | evals=241 full=37 distinct=37
+[ 298s] A gen11: full=8/24 sig=0.0092 elite [5.093 3.086 3.082 2.079 1.071] | best ceil=5/9 obj=5.0932 | maxCeilSeen=5 | evals=265 full=45 distinct=45
+[ 336s] A gen12: full=7/24 sig=0.0092 elite [5.093 2.078 1.078 1.072 1.071] | best ceil=5/9 obj=5.0932 | maxCeilSeen=5 | evals=289 full=52 distinct=52
+[ 354s] A gen13: full=2/24 sig=0.0080 elite [5.093 2.078 2.077] | best ceil=5/9 obj=5.0932 | maxCeilSeen=5 | evals=313 full=54 distinct=54
+[ 385s] A gen14: full=5/24 sig=0.0080 elite [5.093 4.086 3.078 2.082 1.069] | best ceil=5/9 obj=5.0932 | maxCeilSeen=5 | evals=337 full=59 distinct=59
+[ 427s] A gen15: full=8/24 sig=0.0092 elite [5.093 3.081 2.080 2.080 2.079] | best ceil=5/9 obj=5.0932 | maxCeilSeen=5 | evals=361 full=67 distinct=67
+[ 454s] A gen16: full=4/24 sig=0.0092 elite [5.093 4.094 3.086 1.075 1.072] | best ceil=5/9 obj=5.0932 | maxCeilSeen=5 | evals=385 full=71 distinct=71
+[ 490s] A gen17: full=6/24 sig=0.0092 elite [5.093 3.079 2.080 1.074 1.072] | best ceil=5/9 obj=5.0932 | maxCeilSeen=5 | evals=409 full=77 distinct=77
+[ 509s] A gen18: full=2/24 sig=0.0080 elite [5.093 3.089 2.078] | best ceil=5/9 obj=5.0932 | maxCeilSeen=5 | evals=433 full=79 distinct=79
+[ 527s] A gen19: full=2/24 sig=0.0080 elite [5.093 2.077 2.075] | best ceil=5/9 obj=5.0932 | maxCeilSeen=5 | evals=457 full=81 distinct=81
+[ 562s] A gen20: full=6/24 sig=0.0080 elite [5.093 3.084 3.082 3.079 2.078] | best ceil=5/9 obj=5.0932 | maxCeilSeen=5 | evals=481 full=87 distinct=87
+[ 593s] A gen21: full=5/24 sig=0.0080 elite [5.093 3.087 3.085 2.082 2.078] | best ceil=5/9 obj=5.0932 | maxCeilSeen=5 | evals=505 full=92 distinct=92
+[ 652s] A gen22: full=12/24 sig=0.0092 elite [5.093 3.086 3.084 3.083 3.081] | best ceil=5/9 obj=5.0932 | maxCeilSeen=5 | evals=529 full=104 distinct=104
+[ 691s] A gen23: full=7/24 sig=0.0092 elite [5.093 4.087 3.083 3.081 1.076] | best ceil=5/9 obj=5.0932 | maxCeilSeen=5 | evals=553 full=111 distinct=111
+[ 731s] A gen24: full=7/24 sig=0.0092 elite [5.093 5.093 3.088 3.083 2.082] | best ceil=5/9 obj=5.0932 | maxCeilSeen=5 | evals=577 full=118 distinct=118
+[ 765s] A gen25: full=6/24 sig=0.0092 elite [5.093 3.084 2.074 1.076 1.069] | best ceil=5/9 obj=5.0932 | maxCeilSeen=5 | evals=601 full=124 distinct=124
+[ 797s] A gen26: full=5/24 sig=0.0092 elite [5.093 4.088 2.075 1.075 1.074] | best ceil=5/9 obj=5.0932 | maxCeilSeen=5 | evals=625 full=129 distinct=129
+[ 827s] A gen27: full=5/24 sig=0.0092 elite [5.093 2.078 2.077 2.076 2.075] | best ceil=5/9 obj=5.0932 | maxCeilSeen=5 | evals=649 full=134 distinct=134
+[ 869s] A gen28: full=8/24 sig=0.0106 elite [5.093 3.086 3.083 3.083 2.081] | best ceil=5/9 obj=5.0932 | maxCeilSeen=5 | evals=673 full=142 distinct=142
+[ 902s] A gen29: full=5/24 sig=0.0106 elite [5.093 3.086 2.081 2.074 1.072] | best ceil=5/9 obj=5.0932 | maxCeilSeen=5 | evals=697 full=147 distinct=147
+[ 930s] A gen30: full=4/24 sig=0.0106 elite [5.093 2.075 1.074 1.070 0.067] | best ceil=5/9 obj=5.0932 | maxCeilSeen=5 | evals=721 full=151 distinct=151
+[ 969s] A gen31: full=6/24 sig=0.0106 elite [5.093 2.080 1.076 1.075 1.071] | best ceil=5/9 obj=5.0932 | maxCeilSeen=5 | evals=745 full=157 distinct=157
+[1023s] A gen32: full=10/24 sig=0.0122 elite [5.093 4.088 4.088 2.080 2.076] | best ceil=5/9 obj=5.0932 | maxCeilSeen=5 | evals=769 full=167 distinct=167
+[1057s] A gen33: full=5/24 sig=0.0122 elite [5.093 3.085 3.081 2.077 2.075] | best ceil=5/9 obj=5.0932 | maxCeilSeen=5 | evals=793 full=172 distinct=172
+[1088s] A gen34: full=4/24 sig=0.0122 elite [5.093 3.083 1.071 1.067 1.067] | best ceil=5/9 obj=5.0932 | maxCeilSeen=5 | evals=817 full=176 distinct=176
+[1118s] A gen35: full=5/24 sig=0.0122 elite [5.093 4.093 4.088 3.086 3.083] | best ceil=5/9 obj=5.0932 | maxCeilSeen=5 | evals=841 full=181 distinct=181
+[1144s] A gen36: full=4/24 sig=0.0122 elite [5.093 3.083 3.082 2.078 2.076] | best ceil=5/9 obj=5.0932 | maxCeilSeen=5 | evals=865 full=185 distinct=185
+[1179s] A gen37: full=6/24 sig=0.0122 elite [5.093 3.079 2.082 2.078 1.074] | best ceil=5/9 obj=5.0932 | maxCeilSeen=5 | evals=889 full=191 distinct=191
+[1229s] A gen38: full=10/24 sig=0.0140 elite [5.093 3.086 3.082 2.080 2.077] | best ceil=5/9 obj=5.0932 | maxCeilSeen=5 | evals=913 full=201 distinct=201
+[1244s] A gen39 IMPROVE ceil=5/9 obj=5.0964 kCore=1/9 kStab=1/9 tq=0.6405 pen=-8.97mm 8c57838ee9d0 peaks[73.5 141.6 70.9 120.7 131.7 120.0 61.4 131.0 61.5]
+[1260s] A gen39: full=6/16 sig=0.0140 elite [5.096 5.096 3.085 2.073 1.076] | best ceil=5/9 obj=5.0964 | maxCeilSeen=5 | evals=929 full=207 distinct=207
+[1264s] B warm-start (best_r5_servo_60mm.json, 4b9110c448ec): ceil=5/9 obj=5.0932 kCore=4/9 kStab=4/9 tq=0.6405 pen=-10.72mm peaks[71.1 122.6 120.2 122.5 130.4 63.3 53.8 50.9 119.3]
+[1279s] B gen1: full=1/24 sig=0.0225 elite [5.093 2.074] | best ceil=5/9 obj=5.0932 | maxCeilSeen=5 | evals=954 full=209 distinct=208
+[1301s] B gen2: full=3/24 sig=0.0225 elite [5.093 1.072 1.066 0.066] | best ceil=5/9 obj=5.0932 | maxCeilSeen=5 | evals=978 full=212 distinct=211
+[1316s] B gen3: full=1/24 sig=0.0169 elite [5.093 1.068] | best ceil=5/9 obj=5.0932 | maxCeilSeen=5 | evals=1002 full=213 distinct=212
+[1331s] B gen4: full=1/24 sig=0.0127 elite [5.093 1.071] | best ceil=5/9 obj=5.0932 | maxCeilSeen=5 | evals=1026 full=214 distinct=213
+[1354s] B gen5: full=3/24 sig=0.0127 elite [5.093 2.075 1.073 1.070] | best ceil=5/9 obj=5.0932 | maxCeilSeen=5 | evals=1050 full=217 distinct=216
+[1373s] B gen6: full=2/24 sig=0.0095 elite [5.093 3.082 1.070] | best ceil=5/9 obj=5.0932 | maxCeilSeen=5 | evals=1074 full=219 distinct=218
+[1418s] B gen7: full=9/24 sig=0.0109 elite [5.093 3.088 3.084 3.084 2.075] | best ceil=5/9 obj=5.0932 | maxCeilSeen=5 | evals=1098 full=228 distinct=227
+[1462s] B gen8: full=8/24 sig=0.0126 elite [5.093 4.091 2.080 2.078 1.074] | best ceil=5/9 obj=5.0932 | maxCeilSeen=5 | evals=1122 full=236 distinct=235
+[1500s] B gen9: full=7/24 sig=0.0126 elite [5.093 3.083 2.084 2.078 2.076] | best ceil=5/9 obj=5.0932 | maxCeilSeen=5 | evals=1146 full=243 distinct=242
+[1514s] B gen10: full=1/24 sig=0.0094 elite [5.093 2.078] | best ceil=5/9 obj=5.0932 | maxCeilSeen=5 | evals=1170 full=244 distinct=243
+[1544s] B gen11: full=5/24 sig=0.0094 elite [5.093 2.075 1.072 1.071 1.069] | best ceil=5/9 obj=5.0932 | maxCeilSeen=5 | evals=1194 full=249 distinct=248
+[1578s] B gen12: full=6/24 sig=0.0094 elite [5.093 2.077 1.074 1.074 1.073] | best ceil=5/9 obj=5.0932 | maxCeilSeen=5 | evals=1218 full=255 distinct=254
+[1597s] B gen13: full=2/24 sig=0.0080 elite [5.093 2.077 1.071] | best ceil=5/9 obj=5.0932 | maxCeilSeen=5 | evals=1242 full=257 distinct=256
+[1627s] B gen14: full=5/24 sig=0.0080 elite [5.093 2.079 1.071 1.071 1.070] | best ceil=5/9 obj=5.0932 | maxCeilSeen=5 | evals=1266 full=262 distinct=261
+[1650s] B gen15: full=3/24 sig=0.0080 elite [5.093 1.070 1.068 0.065] | best ceil=5/9 obj=5.0932 | maxCeilSeen=5 | evals=1290 full=265 distinct=264
+[1676s] B gen16: full=4/24 sig=0.0080 elite [5.093 2.077 1.072 1.071 0.066] | best ceil=5/9 obj=5.0932 | maxCeilSeen=5 | evals=1314 full=269 distinct=268
+[1707s] B gen17: full=5/24 sig=0.0080 elite [5.093 2.082 2.081 2.079 2.078] | best ceil=5/9 obj=5.0932 | maxCeilSeen=5 | evals=1338 full=274 distinct=273
+[1750s] B gen18: full=8/24 sig=0.0092 elite [5.093 4.087 2.082 2.079 2.079] | best ceil=5/9 obj=5.0932 | maxCeilSeen=5 | evals=1362 full=282 distinct=281
+[1772s] B gen19: full=3/24 sig=0.0092 elite [5.093 2.073 1.074 1.069] | best ceil=5/9 obj=5.0932 | maxCeilSeen=5 | evals=1386 full=285 distinct=284
+[1812s] B gen20: full=7/24 sig=0.0092 elite [5.093 3.084 2.082 2.080 2.078] | best ceil=5/9 obj=5.0932 | maxCeilSeen=5 | evals=1410 full=292 distinct=291
+[1862s] B gen21: full=10/24 sig=0.0106 elite [5.093 4.089 3.086 3.085 3.084] | best ceil=5/9 obj=5.0932 | maxCeilSeen=5 | evals=1434 full=302 distinct=301
+[1893s] B gen22: full=5/24 sig=0.0106 elite [5.093 3.084 3.082 2.082 2.078] | best ceil=5/9 obj=5.0932 | maxCeilSeen=5 | evals=1458 full=307 distinct=306
+[1899s] B gen23 IMPROVE ceil=5/9 obj=5.0956 kCore=3/9 kStab=2/9 tq=0.6405 pen=-9.9mm 29c97398fe13 peaks[72.5 118.1 86.5 134.3 108.1 119.3 58.4 119.2 58.5]
+[1928s] B gen23: full=6/24 sig=0.0106 elite [5.096 5.096 2.079 2.077 2.076] | best ceil=5/9 obj=5.0956 | maxCeilSeen=5 | evals=1482 full=313 distinct=312
+[1955s] B gen24: full=4/24 sig=0.0106 elite [5.096 3.085 2.078 1.073 1.071] | best ceil=5/9 obj=5.0956 | maxCeilSeen=5 | evals=1506 full=317 distinct=316
+[2005s] B gen25: full=9/24 sig=0.0122 elite [5.096 3.087 3.086 3.082 1.080] | best ceil=5/9 obj=5.0956 | maxCeilSeen=5 | evals=1530 full=326 distinct=325
+[2031s] B gen26: full=4/24 sig=0.0122 elite [5.096 3.082 2.083 2.079 0.067] | best ceil=5/9 obj=5.0956 | maxCeilSeen=5 | evals=1554 full=330 distinct=329
+[2065s] B gen27: full=6/24 sig=0.0122 elite [5.096 4.086 2.076 1.076 1.076] | best ceil=5/9 obj=5.0956 | maxCeilSeen=5 | evals=1578 full=336 distinct=335
+[2091s] B gen28: full=4/24 sig=0.0122 elite [5.096 3.082 2.079 2.075 1.072] | best ceil=5/9 obj=5.0956 | maxCeilSeen=5 | evals=1602 full=340 distinct=339
+[2100s] B gen29: full=1/12 sig=0.0091 elite [5.096 4.087] | best ceil=5/9 obj=5.0956 | maxCeilSeen=5 | evals=1614 full=341 distinct=340
+file:///home/craigm26/projects/duck-sounds/climb/r6_ceiling_search.mjs:326
+log(`DONE. gens=${gen} evals=${EVALS} full9=${FULL} distinct=${SEEN.size} wall=${el().toFixed(0)}s`);
+                  ^
+
+ReferenceError: gen is not defined
+    at file:///home/craigm26/projects/duck-sounds/climb/r6_ceiling_search.mjs:326:19
+
+Node.js v24.16.0

@@ -1,0 +1,126 @@
+{
+  "generated": "2026-09-02T13:12:52.045Z",
+  "script": "_r6_tail_parity.mjs",
+  "round6Fields": [
+    "servo.tailTicks (intent)",
+    "servo.tailAuthority",
+    "servo.tailTicksRun",
+    "tailTrace"
+  ],
+  "set1": {
+    "rows": 86,
+    "exact": 86,
+    "diffs": []
+  },
+  "set2": {
+    "files": 126,
+    "servoFiles": [
+      "audit_r5_shift_all_minus1tick.json",
+      "audit_r5_shift_all_plus1tick.json",
+      "audit_r5_shift_armonly_plus1tick.json",
+      "best_r5_servo_60mm.json",
+      "best_r5_servoland_60mm.json",
+      "best_r5_servoland_kcore_60mm.json",
+      "r5_servo_armed_60mm.json",
+      "r5_servo_never_60mm.json"
+    ],
+    "rows": 252,
+    "exact": 252,
+    "diffs": []
+  },
+  "set3": {
+    "rows": 8,
+    "exact": 8,
+    "rowsOut": [
+      {
+        "file": "best_r2_vault_40mm.json",
+        "rise_mm": 40,
+        "exact": true,
+        "diffs": [],
+        "x": 0.1422605779184436,
+        "z": 0.15633799589438296,
+        "honest": true,
+        "upTail": 50,
+        "servoTailRun": null
+      },
+      {
+        "file": "best_r2_vault_60mm.json",
+        "rise_mm": 60,
+        "exact": true,
+        "diffs": [],
+        "x": 0.3805401176680053,
+        "z": 0.17976822581803467,
+        "honest": true,
+        "upTail": 37,
+        "servoTailRun": null
+      },
+      {
+        "file": "best_r2_vault_90mm.json",
+        "rise_mm": 90,
+        "exact": true,
+        "diffs": [],
+        "x": 0.11473662194247528,
+        "z": 0.13462525585082294,
+        "honest": false,
+        "upTail": 50,
+        "servoTailRun": null
+      },
+      {
+        "file": "ctrl_on_tread_90mm.json",
+        "rise_mm": 90,
+        "exact": true,
+        "diffs": [],
+        "x": 0.2523539597728589,
+        "z": 0.20593235946297223,
+        "honest": true,
+        "upTail": 50,
+        "servoTailRun": null
+      },
+      {
+        "file": "ctrl_do_nothing.json",
+        "rise_mm": 90,
+        "exact": true,
+        "diffs": [],
+        "x": 0.0019814926726257733,
+        "z": 0.11623081135898501,
+        "honest": false,
+        "upTail": 50,
+        "servoTailRun": null
+      },
+      {
+        "file": "best_r3_vault_60mm.json",
+        "rise_mm": 60,
+        "exact": true,
+        "diffs": [],
+        "x": 0.3342751251273466,
+        "z": 0.17613474586397462,
+        "honest": true,
+        "upTail": 50,
+        "servoTailRun": null
+      },
+      {
+        "file": "best_r5_servo_60mm.json",
+        "rise_mm": 60,
+        "exact": true,
+        "diffs": [],
+        "x": 0.18202093555452417,
+        "z": 0.1760163721045542,
+        "honest": true,
+        "upTail": 15,
+        "servoTailRun": 0
+      },
+      {
+        "file": "best_r5_servoland_kcore_60mm.json",
+        "rise_mm": 60,
+        "exact": true,
+        "diffs": [],
+        "x": 0.2984152505410222,
+        "z": 0.1774535981320455,
+        "honest": true,
+        "upTail": 25,
+        "servoTailRun": 0
+      }
+    ]
+  },
+  "verdict": "INERT \u2014 338 instrument rows identical at full float digits, and 8/8 cell-0 rows identical between robust.mjs and rig3.mjs"
+}

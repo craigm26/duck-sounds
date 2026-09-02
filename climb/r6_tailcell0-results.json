@@ -1,0 +1,79 @@
+{
+  "generated": "2026-09-02T13:24:10.219Z",
+  "script": "_r6_tail_cell0_check.mjs",
+  "rows": [
+    {
+      "file": "best_r6_tail10_servo_60mm.json",
+      "sha256": "847e04685c20ed856f661409d2a76d7cd9aa74dac59d6afdbe21127576139d54",
+      "exact": true,
+      "diffs": [],
+      "tailAuthority": 10,
+      "tailTicksRun": 10,
+      "x": 0.19710979998263337,
+      "z": 0.17734089989470045,
+      "honest": true,
+      "uprightTailTicks": 17
+    },
+    {
+      "file": "best_r6_tail10_servoland_60mm.json",
+      "sha256": "3ff2de93400ee7f1b1be2a4b39d200d615028393c343d5aa56ea89a34381f63e",
+      "exact": true,
+      "diffs": [],
+      "tailAuthority": 10,
+      "tailTicksRun": 10,
+      "x": 0.29270922465459026,
+      "z": 0.17891488576665596,
+      "honest": false,
+      "uprightTailTicks": 25
+    },
+    {
+      "file": "best_r6_tail25_servo_60mm.json",
+      "sha256": "098ce4d211f9c3795404318d541bb0e2d061ad6af55deaa523b96eee4dae9b5a",
+      "exact": true,
+      "diffs": [],
+      "tailAuthority": 25,
+      "tailTicksRun": 25,
+      "x": 0.07707086876466546,
+      "z": 0.1264801330253626,
+      "honest": false,
+      "uprightTailTicks": 32
+    },
+    {
+      "file": "best_r6_tail25_servoland_60mm.json",
+      "sha256": "d78034ef9cd9a4052a64573b5ba458945df09a916cd3aff849c6a500734278b7",
+      "exact": true,
+      "diffs": [],
+      "tailAuthority": 25,
+      "tailTicksRun": 25,
+      "x": 0.21352751844370807,
+      "z": 0.1695374273830994,
+      "honest": false,
+      "uprightTailTicks": 28
+    },
+    {
+      "file": "best_r6_tail50_servo_60mm.json",
+      "sha256": "b160eec56c23abb6122ccf13eb900adc1a8f64ef47548bdd716814d9755fbe69",
+      "exact": true,
+      "diffs": [],
+      "tailAuthority": 50,
+      "tailTicksRun": 50,
+      "x": 0.2132258087585337,
+      "z": 0.10931364549734914,
+      "honest": false,
+      "uprightTailTicks": 50
+    },
+    {
+      "file": "best_r6_tail50_servoland_60mm.json",
+      "sha256": "b78f6248359c8bdcae596b5bab4efc23d838e2da42502e8b7aaf72d1ba76d267",
+      "exact": true,
+      "diffs": [],
+      "tailAuthority": 50,
+      "tailTicksRun": 50,
+      "x": 0.21950250035361218,
+      "z": 0.10577934276568352,
+      "honest": false,
+      "uprightTailTicks": 50
+    }
+  ],
+  "verdict": "EXACT 6/6 — the two implementations of servo.tailTicks agree at full float digits"
+}

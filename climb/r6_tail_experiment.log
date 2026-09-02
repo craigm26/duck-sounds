@@ -1,0 +1,47 @@
+================================================================
+ROUND 6, PHASE 2 — servo.tailTicks 0 / 10 / 25 / 50 on the two round-5 servoed bests
+  9 core cells each, scored from the SAVED file through robust.mjs scoreRobust(core:true)
+
+file                                    tail  sha256        kCore kStable meanUpTail  ceilingCore  medianFall  meanSatFrac  objectiveCore
+best_r5_servo_60mm.json                    0  e0434c2c90da    4/9     0/9     27.67/50          4/9          0      0.2089        9.2324   [5s]
+best_r6_tail10_servo_60mm.json            10  847e04685c20    4/9     0/9     25.56/50          4/9          0      0.2217        9.4666   [9s]
+best_r6_tail25_servo_60mm.json            25  098ce4d211f9    0/9     0/9     21.78/50          3/9          0      0.2397        7.5613   [14s]
+best_r6_tail50_servo_60mm.json            50  b160eec56c23    0/9     0/9        27/50          0/9          0      0.2219        8.1740   [18s]
+best_r5_servoland_kcore_60mm.json          0  880a120ef649    3/9     0/9     19.56/50          3/9          3      0.2778        8.9997   [23s]
+best_r6_tail10_servoland_60mm.json        10  3ff2de93400e    1/9     0/9     23.56/50          3/9         13      0.3146        9.0320   [27s]
+best_r6_tail25_servoland_60mm.json        25  d78034ef9cd9    0/9     0/9     32.33/50          3/9         28      0.3249       10.7784   [33s]
+best_r6_tail50_servoland_60mm.json        50  b78f6248359c    0/9     0/9        50/50          0/9       null      0.2143        9.8685   [38s]
+
+PER-CELL FALL TICK (null = upright for all 50 tail ticks)
+file                                    tail       50/0.12/1   50/0.13/0.7  50/0.125/1.3     60/0.12/1   60/0.13/0.7  60/0.125/1.3     70/0.12/1   70/0.13/0.7  70/0.125/1.3
+best_r5_servo_60mm.json                    0               0             2             0             1             0             0          none          none          none
+best_r6_tail10_servo_60mm.json            10               0            11             0            11             0             0          none          none          none
+best_r6_tail25_servo_60mm.json            25               0            14             0            27             0             0          none          none            37
+best_r6_tail50_servo_60mm.json            50               0            14             0          none             0             0          none          none          none
+best_r5_servoland_kcore_60mm.json          0               3             2             3             3             3             3             3            24             3
+best_r6_tail10_servoland_60mm.json        10              13            13            13            13            13            13            13            34            13
+best_r6_tail25_servoland_60mm.json        25              28            28            28            28            28            28            28            48            28
+best_r6_tail50_servoland_60mm.json        50            none          none          none          none          none          none          none          none          none
+
+PER-CELL UPRIGHT TAIL TICKS (of 50)
+best_r5_servo_60mm.json                    0               9            22            19            15            34             0            50            50            50
+best_r6_tail10_servo_60mm.json            10               0            30             9            17            24             0            50            50            50
+best_r6_tail25_servo_60mm.json            25               0            19             0            32             8             0            50            50            37
+best_r6_tail50_servo_60mm.json            50               0            43             0            50             0             0            50            50            50
+best_r5_servoland_kcore_60mm.json          0               4             2             8            25            25            25            34            38            15
+best_r6_tail10_servoland_60mm.json        10              17            13            16            25            19            24            32            37            29
+best_r6_tail25_servoland_60mm.json        25              28            28            31            28            28            28            32            48            40
+best_r6_tail50_servoland_60mm.json        50              50            50            50            50            50            50            50            50            50
+
+VERDICT
+  servo:
+     tailTicks  0  kCore 4/9  kCoreStable 0/9  meanUpTail 27.67/50 (+0)  medianFall 0  satFrac 0.2089  objCore 9.2324
+     tailTicks 10  kCore 4/9  kCoreStable 0/9  meanUpTail 25.56/50 (-2.11)  medianFall 0  satFrac 0.2217  objCore 9.4666
+     tailTicks 25  kCore 0/9  kCoreStable 0/9  meanUpTail 21.78/50 (-5.89)  medianFall 0  satFrac 0.2397  objCore 7.5613
+     tailTicks 50  kCore 0/9  kCoreStable 0/9  meanUpTail 27/50 (-0.67)  medianFall 0  satFrac 0.2219  objCore 8.174
+  servoland:
+     tailTicks  0  kCore 3/9  kCoreStable 0/9  meanUpTail 19.56/50 (+0)  medianFall 3  satFrac 0.2778  objCore 8.9997
+     tailTicks 10  kCore 1/9  kCoreStable 0/9  meanUpTail 23.56/50 (+4)  medianFall 13  satFrac 0.3146  objCore 9.032
+     tailTicks 25  kCore 0/9  kCoreStable 0/9  meanUpTail 32.33/50 (+12.77)  medianFall 28  satFrac 0.3249  objCore 10.7784
+     tailTicks 50  kCore 0/9  kCoreStable 0/9  meanUpTail 50/50 (+30.44)  medianFall null  satFrac 0.2143  objCore 9.8685
+  max ceilingCore over every row here: 4/9 (the bar is 7)

@@ -1,0 +1,8 @@
+=== ROUND 6 cell-0 parity on the six tailTicks files: robust.mjs vs rig3.mjs ===
+  best_r6_tail10_servo_60mm.json           tailAuth=10 run=10  EXACT=true  x=0.197110 z=0.177341 honest=true upTail=17/50
+  best_r6_tail10_servoland_60mm.json       tailAuth=10 run=10  EXACT=true  x=0.292709 z=0.178915 honest=false upTail=25/50
+  best_r6_tail25_servo_60mm.json           tailAuth=25 run=25  EXACT=true  x=0.077071 z=0.126480 honest=false upTail=32/50
+  best_r6_tail25_servoland_60mm.json       tailAuth=25 run=25  EXACT=true  x=0.213528 z=0.169537 honest=false upTail=28/50
+  best_r6_tail50_servo_60mm.json           tailAuth=50 run=50  EXACT=true  x=0.213226 z=0.109314 honest=false upTail=50/50
+  best_r6_tail50_servoland_60mm.json       tailAuth=50 run=50  EXACT=true  x=0.219503 z=0.105779 honest=false upTail=50/50
+  EXACT 6/6 — the two implementations of servo.tailTicks agree at full float digits

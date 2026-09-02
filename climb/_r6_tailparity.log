@@ -1,0 +1,19 @@
+================================================================
+SET 1 — the round-4 judge's 86 rows vs rig3_pre_r5 (43 files x 2 tails)
+   rows 86   EXACT 86/86   [97s]
+
+SET 2 — every scorable intent JSON (126 files, 8 of them carrying a servo block) x 2 tails vs rig3_pre_r6
+   rows 252   EXACT 252/252   [313s]
+
+SET 3 — robust.mjs cell 0 vs rig3.scoreSaved (the ONE shared scorer)
+   best_r2_vault_40mm.json            @ 40mm  EXACT=true  x=0.142261 z=0.156338 honest=true upTail=50/50 svTail=-
+   best_r2_vault_60mm.json            @ 60mm  EXACT=true  x=0.380540 z=0.179768 honest=true upTail=37/50 svTail=-
+   best_r2_vault_90mm.json            @ 90mm  EXACT=true  x=0.114737 z=0.134625 honest=false upTail=50/50 svTail=-
+   ctrl_on_tread_90mm.json            @ 90mm  EXACT=true  x=0.252354 z=0.205932 honest=true upTail=50/50 svTail=-
+   ctrl_do_nothing.json               @ 90mm  EXACT=true  x=0.001981 z=0.116231 honest=false upTail=50/50 svTail=-
+   best_r3_vault_60mm.json            @ 60mm  EXACT=true  x=0.334275 z=0.176135 honest=true upTail=50/50 svTail=-
+   best_r5_servo_60mm.json            @ 60mm  EXACT=true  x=0.182021 z=0.176016 honest=true upTail=15/50 svTail=0
+   best_r5_servoland_kcore_60mm.json  @ 60mm  EXACT=true  x=0.298415 z=0.177454 honest=true upTail=25/50 svTail=0
+   cell-0 parity EXACT 8/8   [320s]
+
+VERDICT: INERT — 338 instrument rows identical at full float digits, and 8/8 cell-0 rows identical between robust.mjs and rig3.mjs   [320s]

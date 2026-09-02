@@ -1,0 +1,481 @@
+{
+ "generated": "2026-09-02T14:09:51.745Z",
+ "what": "re-score of the published round-6 files from disk, and the per-cell ceiling over every distinct move round 6 scored",
+ "scorer": "climb/robust.mjs scoreRobust({rise:0.060, core:true})",
+ "rescored": [
+  {
+   "file": "best_r6_ceilvault_60mm.json",
+   "sha256": "8c57838ee9d09e5a4e1df37f14f77e03562745f2183dcb7e7909847bad55e277",
+   "hashMatchesSearch": true,
+   "ceilingCore": 5,
+   "kCore": 1,
+   "kCoreStable": 1,
+   "maxTq": 0.6405,
+   "minPenetrationEpisode_mm": -8.97,
+   "peakAboveTread_mm": [
+    73.5,
+    141.6,
+    70.9,
+    120.7,
+    131.7,
+    120,
+    61.4,
+    131,
+    61.5
+   ],
+   "cells": [
+    {
+     "cell": "50/0.120/x1.0",
+     "peakAbove_mm": 73.5,
+     "over95": false,
+     "honest": false,
+     "stable": false,
+     "above_mm": 48,
+     "uprightTailTicks": 0
+    },
+    {
+     "cell": "50/0.130/x0.7",
+     "peakAbove_mm": 141.6,
+     "over95": true,
+     "honest": false,
+     "stable": false,
+     "above_mm": 66.6,
+     "uprightTailTicks": 40
+    },
+    {
+     "cell": "50/0.125/x1.3",
+     "peakAbove_mm": 70.9,
+     "over95": false,
+     "honest": false,
+     "stable": false,
+     "above_mm": 65.8,
+     "uprightTailTicks": 44
+    },
+    {
+     "cell": "60/0.120/x1.0",
+     "peakAbove_mm": 120.7,
+     "over95": true,
+     "honest": true,
+     "stable": true,
+     "above_mm": 116.1,
+     "uprightTailTicks": 50
+    },
+    {
+     "cell": "60/0.130/x0.7",
+     "peakAbove_mm": 131.7,
+     "over95": true,
+     "honest": false,
+     "stable": false,
+     "above_mm": 13.3,
+     "uprightTailTicks": 0
+    },
+    {
+     "cell": "60/0.125/x1.3",
+     "peakAbove_mm": 120,
+     "over95": true,
+     "honest": false,
+     "stable": false,
+     "above_mm": 7.3,
+     "uprightTailTicks": 36
+    },
+    {
+     "cell": "70/0.120/x1.0",
+     "peakAbove_mm": 61.4,
+     "over95": false,
+     "honest": false,
+     "stable": false,
+     "above_mm": 46.3,
+     "uprightTailTicks": 50
+    },
+    {
+     "cell": "70/0.130/x0.7",
+     "peakAbove_mm": 131,
+     "over95": true,
+     "honest": false,
+     "stable": false,
+     "above_mm": 47.4,
+     "uprightTailTicks": 19
+    },
+    {
+     "cell": "70/0.125/x1.3",
+     "peakAbove_mm": 61.5,
+     "over95": false,
+     "honest": false,
+     "stable": false,
+     "above_mm": 46,
+     "uprightTailTicks": 50
+    }
+   ]
+  },
+  {
+   "file": "best_r6_ceilvaultB_60mm.json",
+   "sha256": "29c97398fe13da7072b954b2f8b582cb5b9754eeb6e9ee604e8c9ed722fdfd89",
+   "hashMatchesSearch": true,
+   "ceilingCore": 5,
+   "kCore": 3,
+   "kCoreStable": 2,
+   "maxTq": 0.6405,
+   "minPenetrationEpisode_mm": -9.9,
+   "peakAboveTread_mm": [
+    72.5,
+    118.1,
+    86.5,
+    134.3,
+    108.1,
+    119.3,
+    58.4,
+    119.2,
+    58.5
+   ],
+   "cells": [
+    {
+     "cell": "50/0.120/x1.0",
+     "peakAbove_mm": 72.5,
+     "over95": false,
+     "honest": false,
+     "stable": false,
+     "above_mm": 66.2,
+     "uprightTailTicks": 50
+    },
+    {
+     "cell": "50/0.130/x0.7",
+     "peakAbove_mm": 118.1,
+     "over95": true,
+     "honest": true,
+     "stable": true,
+     "above_mm": 116.4,
+     "uprightTailTicks": 50
+    },
+    {
+     "cell": "50/0.125/x1.3",
+     "peakAbove_mm": 86.5,
+     "over95": false,
+     "honest": false,
+     "stable": false,
+     "above_mm": 67.7,
+     "uprightTailTicks": 6
+    },
+    {
+     "cell": "60/0.120/x1.0",
+     "peakAbove_mm": 134.3,
+     "over95": true,
+     "honest": false,
+     "stable": false,
+     "above_mm": 47.9,
+     "uprightTailTicks": 0
+    },
+    {
+     "cell": "60/0.130/x0.7",
+     "peakAbove_mm": 108.1,
+     "over95": true,
+     "honest": false,
+     "stable": false,
+     "above_mm": 47,
+     "uprightTailTicks": 8
+    },
+    {
+     "cell": "60/0.125/x1.3",
+     "peakAbove_mm": 119.3,
+     "over95": true,
+     "honest": true,
+     "stable": true,
+     "above_mm": 115.5,
+     "uprightTailTicks": 50
+    },
+    {
+     "cell": "70/0.120/x1.0",
+     "peakAbove_mm": 58.4,
+     "over95": false,
+     "honest": false,
+     "stable": false,
+     "above_mm": 46.4,
+     "uprightTailTicks": 50
+    },
+    {
+     "cell": "70/0.130/x0.7",
+     "peakAbove_mm": 119.2,
+     "over95": true,
+     "honest": true,
+     "stable": false,
+     "above_mm": 116.2,
+     "uprightTailTicks": 44
+    },
+    {
+     "cell": "70/0.125/x1.3",
+     "peakAbove_mm": 58.5,
+     "over95": false,
+     "honest": false,
+     "stable": false,
+     "above_mm": 45.9,
+     "uprightTailTicks": 50
+    }
+   ]
+  },
+  {
+   "file": "best_r6_ceilvaultC_60mm.json",
+   "sha256": "a56d459fb6493855d635021dce569cc8b06b325b32b3c19e8593cf430ca442d1",
+   "hashMatchesSearch": true,
+   "ceilingCore": 5,
+   "kCore": 5,
+   "kCoreStable": 5,
+   "maxTq": 0.6405,
+   "minPenetrationEpisode_mm": -11.12,
+   "peakAboveTread_mm": [
+    121.7,
+    73.7,
+    117.3,
+    119.3,
+    117.9,
+    120.6,
+    54.4,
+    56.9,
+    54.1
+   ],
+   "cells": [
+    {
+     "cell": "50/0.120/x1.0",
+     "peakAbove_mm": 121.7,
+     "over95": true,
+     "honest": true,
+     "stable": true,
+     "above_mm": 116.2,
+     "uprightTailTicks": 50
+    },
+    {
+     "cell": "50/0.130/x0.7",
+     "peakAbove_mm": 73.7,
+     "over95": false,
+     "honest": false,
+     "stable": false,
+     "above_mm": 66.4,
+     "uprightTailTicks": 50
+    },
+    {
+     "cell": "50/0.125/x1.3",
+     "peakAbove_mm": 117.3,
+     "over95": true,
+     "honest": true,
+     "stable": true,
+     "above_mm": 115.6,
+     "uprightTailTicks": 50
+    },
+    {
+     "cell": "60/0.120/x1.0",
+     "peakAbove_mm": 119.3,
+     "over95": true,
+     "honest": true,
+     "stable": true,
+     "above_mm": 116,
+     "uprightTailTicks": 50
+    },
+    {
+     "cell": "60/0.130/x0.7",
+     "peakAbove_mm": 117.9,
+     "over95": true,
+     "honest": true,
+     "stable": true,
+     "above_mm": 116.4,
+     "uprightTailTicks": 50
+    },
+    {
+     "cell": "60/0.125/x1.3",
+     "peakAbove_mm": 120.6,
+     "over95": true,
+     "honest": true,
+     "stable": true,
+     "above_mm": 115.4,
+     "uprightTailTicks": 50
+    },
+    {
+     "cell": "70/0.120/x1.0",
+     "peakAbove_mm": 54.4,
+     "over95": false,
+     "honest": false,
+     "stable": false,
+     "above_mm": 46.3,
+     "uprightTailTicks": 50
+    },
+    {
+     "cell": "70/0.130/x0.7",
+     "peakAbove_mm": 56.9,
+     "over95": false,
+     "honest": false,
+     "stable": false,
+     "above_mm": 46.4,
+     "uprightTailTicks": 44
+    },
+    {
+     "cell": "70/0.125/x1.3",
+     "peakAbove_mm": 54.1,
+     "over95": false,
+     "honest": false,
+     "stable": false,
+     "above_mm": 15.7,
+     "uprightTailTicks": 0
+    }
+   ]
+  },
+  {
+   "file": "best_r3_vault_60mm.json",
+   "sha256": "4b9110c448ec45b7e9aa9e25e8720ab6e149562dbba2c00dda73f5c86aee8f15",
+   "hashMatchesSearch": true,
+   "ceilingCore": 5,
+   "kCore": 4,
+   "kCoreStable": 4,
+   "maxTq": 0.6405,
+   "minPenetrationEpisode_mm": -10.72,
+   "peakAboveTread_mm": [
+    71.1,
+    122.6,
+    120.2,
+    122.5,
+    130.4,
+    63.3,
+    53.8,
+    50.9,
+    119.3
+   ],
+   "cells": [
+    {
+     "cell": "50/0.120/x1.0",
+     "peakAbove_mm": 71.1,
+     "over95": false,
+     "honest": false,
+     "stable": false,
+     "above_mm": 66.4,
+     "uprightTailTicks": 50
+    },
+    {
+     "cell": "50/0.130/x0.7",
+     "peakAbove_mm": 122.6,
+     "over95": true,
+     "honest": true,
+     "stable": true,
+     "above_mm": 116.1,
+     "uprightTailTicks": 50
+    },
+    {
+     "cell": "50/0.125/x1.3",
+     "peakAbove_mm": 120.2,
+     "over95": true,
+     "honest": true,
+     "stable": true,
+     "above_mm": 115.4,
+     "uprightTailTicks": 50
+    },
+    {
+     "cell": "60/0.120/x1.0",
+     "peakAbove_mm": 122.5,
+     "over95": true,
+     "honest": true,
+     "stable": true,
+     "above_mm": 116.1,
+     "uprightTailTicks": 50
+    },
+    {
+     "cell": "60/0.130/x0.7",
+     "peakAbove_mm": 130.4,
+     "over95": true,
+     "honest": false,
+     "stable": false,
+     "above_mm": 44.1,
+     "uprightTailTicks": 8
+    },
+    {
+     "cell": "60/0.125/x1.3",
+     "peakAbove_mm": 63.3,
+     "over95": false,
+     "honest": false,
+     "stable": false,
+     "above_mm": 55.9,
+     "uprightTailTicks": 50
+    },
+    {
+     "cell": "70/0.120/x1.0",
+     "peakAbove_mm": 53.8,
+     "over95": false,
+     "honest": false,
+     "stable": false,
+     "above_mm": 46.4,
+     "uprightTailTicks": 50
+    },
+    {
+     "cell": "70/0.130/x0.7",
+     "peakAbove_mm": 50.9,
+     "over95": false,
+     "honest": false,
+     "stable": false,
+     "above_mm": 46.5,
+     "uprightTailTicks": 50
+    },
+    {
+     "cell": "70/0.125/x1.3",
+     "peakAbove_mm": 119.3,
+     "over95": true,
+     "honest": true,
+     "stable": true,
+     "above_mm": 115.6,
+     "uprightTailTicks": 50
+    }
+   ]
+  }
+ ],
+ "perCell": [
+  {
+   "cell": "50/0.120/x1.0",
+   "bestPeak_mm": 124.1,
+   "movesOver95": 43,
+   "share": 0.126
+  },
+  {
+   "cell": "50/0.130/x0.7",
+   "bestPeak_mm": 141.6,
+   "movesOver95": 27,
+   "share": 0.079
+  },
+  {
+   "cell": "50/0.125/x1.3",
+   "bestPeak_mm": 133.1,
+   "movesOver95": 56,
+   "share": 0.165
+  },
+  {
+   "cell": "60/0.120/x1.0",
+   "bestPeak_mm": 143.8,
+   "movesOver95": 271,
+   "share": 0.797
+  },
+  {
+   "cell": "60/0.130/x0.7",
+   "bestPeak_mm": 131.7,
+   "movesOver95": 93,
+   "share": 0.274
+  },
+  {
+   "cell": "60/0.125/x1.3",
+   "bestPeak_mm": 129.8,
+   "movesOver95": 88,
+   "share": 0.259
+  },
+  {
+   "cell": "70/0.120/x1.0",
+   "bestPeak_mm": 127.5,
+   "movesOver95": 8,
+   "share": 0.024
+  },
+  {
+   "cell": "70/0.130/x0.7",
+   "bestPeak_mm": 131,
+   "movesOver95": 5,
+   "share": 0.015
+  },
+  {
+   "cell": "70/0.125/x1.3",
+   "bestPeak_mm": 124.9,
+   "movesOver95": 10,
+   "share": 0.029
+  }
+ ],
+ "maxCeilingCore": 5,
+ "distinctMoves": 340
+}

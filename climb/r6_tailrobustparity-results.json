@@ -1,0 +1,9 @@
+{
+  "generated": "2026-09-02T13:25:09.018Z",
+  "script": "_r6_tail_robust_parity.mjs",
+  "grid": "the 9 core cells",
+  "rows": 45,
+  "exact": 45,
+  "diffs": [],
+  "verdict": "INERT — 45/45 core cells identical to the pre-round-6 robust.mjs at full float digits"
+}

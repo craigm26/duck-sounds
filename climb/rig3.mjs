@@ -541,6 +541,16 @@ async function runEpisodeRaw(track, opts, h, tail) {
   const SV = normServo(opts.servo);
   let svArmed = false, svT = null, svBase = null, svTicks = 0, svLastCtrl = null;
   const svLog = [];
+  /** The five servo readings, off the live state. Read-only. */
+  const svMeasure = () => ({
+    above: data.qpos[D.freeQpos + 2] - h,
+    pitch: projectedGravity(quat())[0],
+    dxTrunk: data.qpos[D.freeQpos] - RISER_X,
+    feet: [LFOOT, RFOOT].map(g => ({
+      dx: data.geom_xpos[g * 3] - RISER_X,
+      dz: data.geom_xpos[g * 3 + 2] - h,
+    })),
+  });
   for (let t = 0; t * DT < total; t++) {
     const time = t * DT;
     if (EV && !evFired && time >= EV.arm) {
@@ -563,15 +573,7 @@ async function runEpisodeRaw(track, opts, h, tail) {
       }
       if (svArmed) {
         const prev = []; for (let k = 0; k < 14; k++) prev.push(data.ctrl[k]);
-        const m = {
-          above: data.qpos[D.freeQpos + 2] - h,
-          pitch: projectedGravity(quat())[0],
-          dxTrunk: data.qpos[D.freeQpos] - RISER_X,
-          feet: [LFOOT, RFOOT].map(g => ({
-            dx: data.geom_xpos[g * 3] - RISER_X,
-            dz: data.geom_xpos[g * 3 + 2] - h,
-          })),
-        };
+        const m = svMeasure();
         svTargets = servoTick(SV, svBase, m, prev, LO, HI);
         svLastCtrl = svTargets;
         svTicks++;
@@ -609,8 +611,47 @@ async function runEpisodeRaw(track, opts, h, tail) {
   // stands. upTicks is cumulative, so the tail's share is the difference.
   const upBeforeTail = R.upTicks, ticksBeforeTail = R.ticks;
   let afterTail;
+  // ROUND 6, THE TAIL. Two additive things, both inert unless asked for:
+  //
+  //  (a) servo.tailTicks (default 0). For the first n ticks of the POLICY tail
+  //      the same law keeps commanding the leg slots from the same live
+  //      readings. With n = 0 the loop below is `await step(null, true,
+  //      undefined)`, which is the pre-round-6 call verbatim.
+  //  (b) opts.tailTrace (default false). A read-only per-tail-tick record of
+  //      what the duck was doing: projected gravity, trunk, both feet, the 14
+  //      commands, the 14 measured joint angles, and the saturation count. It
+  //      is sampled AFTER the tick's four substeps and touches nothing.
+  const tailLog = [];
+  let svTailRun = 0;
+  const tailSample = (t, servoed) => {
+    const pg = projectedGravity(quat());
+    const cmdv = [], qv = [];
+    let sat = 0;
+    for (let k = 0; k < 14; k++) {
+      const c = data.ctrl[k];
+      cmdv.push(c); qv.push(data.qpos[D.qpos[k]]);
+      if (c <= LO[k] + 1e-9 || c >= HI[k] - 1e-9) sat++;
+    }
+    const fg = g => [data.geom_xpos[g * 3], data.geom_xpos[g * 3 + 1], data.geom_xpos[g * 3 + 2]];
+    tailLog.push({
+      t, servoed, gz: pg[2], up: pg[2] < -0.90, pitch: pg[0], roll: pg[1],
+      x: data.qpos[D.freeQpos], y: data.qpos[D.freeQpos + 1], z: data.qpos[D.freeQpos + 2],
+      above: data.qpos[D.freeQpos + 2] - h,
+      lfoot: fg(LFOOT), rfoot: fg(RFOOT),
+      cmd: cmdv, qpos: qv, sat,
+    });
+  };
   if (tail === 'policy') {
-    for (let t = 0; t < 50; t++) await step(null, true);
+    for (let t = 0; t < 50; t++) {
+      let svTail;
+      if (SV && svArmed && t < SV.tailTicks) {
+        const prev = []; for (let k = 0; k < 14; k++) prev.push(data.ctrl[k]);
+        svTail = servoTick(SV, svBase, svMeasure(), prev, LO, HI);
+        svTicks++; svTailRun++;
+      }
+      await step(null, true, svTail);
+      if (opts.tailTrace) tailSample(t, svTail !== undefined);
+    }
     afterTail = snapshot(h, R.maxAbsDY);
   } else {
     for (let t = 0; t < 50; t++) holdStep(held);
@@ -639,7 +680,11 @@ async function runEpisodeRaw(track, opts, h, tail) {
     // ROUND 5, THE SERVOED LANDING. null for a file with no `servo` block.
     servo: SV ? { armed: svArmed, tArm: svT, ticks: svTicks,
                   at: SV.at, onEvent: SV.onEvent,
+                  // ROUND 6: authority asked for, and ticks of it actually run.
+                  tailAuthority: SV.tailTicks, tailTicksRun: svTailRun,
                   base: svBase, trace: opts.servoTrace ? svLog : undefined } : null,
+    // ROUND 6: read-only per-tail-tick record; undefined unless asked for.
+    tailTrace: opts.tailTrace ? tailLog : undefined,
     uprightTailTicks, tailTicks,
     uprightTailFrac: uprightTailTicks / Math.max(tailTicks, 1),
     terminal,          // ROUND 4, FAMILY B: the beat-1 -> beat-2 handoff state

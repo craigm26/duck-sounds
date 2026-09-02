@@ -64,6 +64,19 @@
 // Whichever comes first wins. A file with neither never arms (and is therefore
 // identical to a file with no servo at all).
 //
+// ---------------------------------------------------------------- ROUND 6
+//   servo.tailTicks how many of the 50 TAIL ticks the law keeps the legs for.
+//                   DEFAULT 0 — the law lets go of the legs at the end of the
+//                   track, exactly as round 5 published it, and every number
+//                   of every round-5 row is unchanged. With tailTicks = n > 0
+//                   the first n tail ticks are commanded by the same law from
+//                   the same live readings, while the standing policy keeps
+//                   running and keeps the head, neck and (with yawRoll:'track')
+//                   the hip yaw/roll slots. It exists to MEASURE whether the
+//                   tail's topple is the hand-back to the policy or the pose
+//                   the law hands back; it is not a gain.
+//                   0 <= tailTicks <= 50 (the tail is 50 ticks long).
+//
 // ---------------------------------------------------------------- INERTNESS
 // `servo` is an OPTIONAL top-level field of the saved intent JSON. normServo()
 // returns null for a file that does not carry one, and on a null every call
@@ -107,13 +120,17 @@ export function normServo(sv) {
   } else if (yawRoll !== 'hold' && yawRoll !== 'track') {
     throw new Error("servo.yawRoll must be 'hold', 'track', or 4 numbers");
   }
+  // ROUND 6. Tail authority. Default 0 = round-5 behaviour exactly.
+  const tailTicks = (sv.tailTicks === undefined || sv.tailTicks === null) ? 0 : +sv.tailTicks;
+  if (!Number.isInteger(tailTicks) || tailTicks < 0 || tailTicks > 50)
+    throw new Error('servo.tailTicks must be an integer in [0, 50]');
   const base = sv.base ? {
     hip: sv.base.hip, knee: sv.base.knee, ankle: sv.base.ankle,
   } : null;
   if (base) for (const k of ['hip', 'knee', 'ankle'])
     if (!Array.isArray(base[k]) || base[k].length !== 2) throw new Error('servo.base.' + k + ' must be [left, right]');
   return {
-    at, onEvent, yawRoll, base,
+    at, onEvent, yawRoll, base, tailTicks,
     // set-points
     zTarget: num(sv.zTarget, 0.115),      // trunk metres above the tread
     xTrunk: num(sv.xTrunk, 0.16),         // trunk metres past the riser line

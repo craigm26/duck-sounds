@@ -1,0 +1,402 @@
+================================================================
+ROUND 6 — THE JUDGE. Every number measured here, from saved JSON, now.
+   lateral gate 170 mm | duck geoms 11 | riser 120 mm
+   CONTROL TICK from duckkit-constants.json: tickHz=50 -> 20.00 ms
+   THE BAR: rig3 criteria() honest needs trunk above > 95 mm. It is not moved anywhere in this file.
+
+PHASE P0 — PROVENANCE of the three byte copies, and of the corpus itself.
+   OK  rig3_pre_r5.mjs IS climb/rig3.mjs at e00e1e4, character for character apart from its isMain guard string
+   OK  rig3_pre_r6.mjs IS climb/rig3.mjs at 52b0392, character for character apart from its isMain guard string
+   OK  robust_pre_r6.mjs IS climb/robust.mjs at 52b0392, character for character apart from its isMain guard string
+   OK  no tracked JSON under climb/ is modified — every earlier round's saved intent is byte-identical to its commit
+      instrument diff vs 52b0392: climb/rig3.mjs   | 65 ++++++++++++++++++++++++++++++++++++++++++++--------
+      instrument diff vs 52b0392:  climb/robust.mjs | 70 ++++++++++++++++++++++++++++++++++++++++++++------------
+      instrument diff vs 52b0392:  climb/servo.mjs  | 19 ++++++++++++++-
+      instrument diff vs 52b0392:  3 files changed, 128 insertions(+), 26 deletions(-)
+
+PHASE P1 — CURRENT rig3.mjs vs rig3_pre_r5.mjs on the round-4 judge's own 86 rows.
+   DEEP recursive walk over every leaf, Object.is, full float digits.
+   86 rows (43 pre-round-4 files x tails policy+hold)
+   DEEP walk identical: 86/86   (round-5-only keys excluded: minPenetrationEpisode, minPenetrationPair, minPenetrationTick, penetrationTicksScanned, servo)
+                                                 (round-6-only keys excluded: tailTrace, tailAuthority, tailTicksRun)
+   minPenetrationEpisode <= penetrationAtScore : 86/86
+   servo/tailTrace leaked onto a file that has neither: 0
+   86 rows as the round-4 judge counted them: true
+   VERDICT: ROUND 6 MOVED NOTHING on the round-4 floor   [66s]
+
+PHASE P2 — CURRENT rig3.mjs vs rig3_pre_r6.mjs (52b0392) on the half rig3_pre_r5 cannot
+   score: the round-5 SERVOED files, plus the round-6 launches and the record.
+   26 rows (13 files x tails policy+hold)   DEEP walk identical: 26/26
+   VERDICT: servo.tailTicks is INERT at its default on every servoed file here   [90s]
+
+PHASE P3 — CURRENT robust.mjs vs robust_pre_r6.mjs over all 9 CORE cells. robust.mjs is
+   the scorer that decides every verdict, so it is the one that has to be unchanged.
+   best_r3_vault_60mm.json              kCore 4/4  kCoreStable 4/4  objective 27.414903169/27.414903169  SAME
+   best_r5_servo_60mm.json              kCore 4/4  kCoreStable 0/0  objective 9.232402686/9.232402686  SAME
+   best_r5_servoland_kcore_60mm.json    kCore 3/3  kCoreStable 0/0  objective 8.999669753/8.999669753  SAME
+   best_r6_ceilvaultC_60mm.json         kCore 5/5  kCoreStable 5/5  objective 31.030431263/31.030431263  SAME
+   ctrl_do_nothing.json                 kCore 0/0  kCoreStable 0/0  objective 4.608492891/4.608492891  SAME
+   45 core cells (5 files x 9)   DEEP walk identical: 45/45
+   VERDICT: THE VERDICT SCORER IS UNCHANGED   [132s]
+   ROUND 6 IS ADMISSIBLE — the instrument edit moved nothing.
+
+PHASE R — rig3.scoreSaved vs robust.scoreCell (cell 0), on the round-6 files
+   best_r3_vault_60mm.json                EXACT=true  tailAuthority=- run=-  maxZ=182.5mm  upTail=50/50
+   best_r6_ceilvault_60mm.json            EXACT=true  tailAuthority=- run=-  maxZ=180.7mm  upTail=50/50
+   best_r6_ceilvaultB_60mm.json           EXACT=true  tailAuthority=- run=-  maxZ=194.3mm  upTail=0/50
+   best_r6_ceilvaultC_60mm.json           EXACT=true  tailAuthority=- run=-  maxZ=179.3mm  upTail=50/50
+   best_r6_tail10_servo_60mm.json         EXACT=true  tailAuthority=10 run=10  maxZ=177.3mm  upTail=17/50
+   best_r6_tail25_servo_60mm.json         EXACT=true  tailAuthority=25 run=25  maxZ=149.2mm  upTail=32/50
+   best_r6_tail50_servo_60mm.json         EXACT=true  tailAuthority=50 run=50  maxZ=131.3mm  upTail=50/50
+   best_r6_tail10_servoland_60mm.json     EXACT=true  tailAuthority=10 run=10  maxZ=182.2mm  upTail=25/50
+   best_r6_tail25_servoland_60mm.json     EXACT=true  tailAuthority=25 run=25  maxZ=169.5mm  upTail=28/50
+   best_r6_tail50_servoland_60mm.json     EXACT=true  tailAuthority=50 run=50  maxZ=120.8mm  upTail=50/50
+   allExact = true   [142s]
+
+PHASE H / B / S — identity, declared bounds, the search's own bounds, and the start
+   best_r6_ceilvaultB_60mm.json           29c97398fe13  blend=2.1566 gap=0.0213 side=0.0076 approach=0.1581  declaredViol=0 searchBoxViol=0  servo=no event=false  [floor spawn — a climb]
+   best_r6_ceilvaultC_60mm.json           a56d459fb649  blend=2.1153 gap=0.0194 side=0.0102 approach=0.1653  declaredViol=0 searchBoxViol=0  servo=no event=false  [floor spawn — a climb]
+   best_r6_ceilvault_60mm.json            8c57838ee9d0  blend=2.1787 gap=0.021 side=0.0053 approach=0.1737  declaredViol=0 searchBoxViol=0  servo=no event=false  [floor spawn — a climb]
+   best_r6_tail10_servo_60mm.json         847e04685c20  blend=2.1572 gap=0.0187 side=0.0078 approach=0.1663  declaredViol=0 searchBoxViol=0  servo=yes tailTicks=10 event=false  [floor spawn — a climb]
+   best_r6_tail10_servoland_60mm.json     3ff2de93400e  blend=2.1782 gap=0.0249 side=0.0082 approach=0.1663  declaredViol=0 searchBoxViol=0  servo=yes tailTicks=10 event=false  [floor spawn — a climb]
+   best_r6_tail25_servo_60mm.json         098ce4d211f9  blend=2.1572 gap=0.0187 side=0.0078 approach=0.1663  declaredViol=0 searchBoxViol=0  servo=yes tailTicks=25 event=false  [floor spawn — a climb]
+   best_r6_tail25_servoland_60mm.json     d78034ef9cd9  blend=2.1782 gap=0.0249 side=0.0082 approach=0.1663  declaredViol=0 searchBoxViol=0  servo=yes tailTicks=25 event=false  [floor spawn — a climb]
+   best_r6_tail50_servo_60mm.json         b160eec56c23  blend=2.1572 gap=0.0187 side=0.0078 approach=0.1663  declaredViol=0 searchBoxViol=0  servo=yes tailTicks=50 event=false  [floor spawn — a climb]
+   best_r6_tail50_servoland_60mm.json     b78f6248359c  blend=2.1782 gap=0.0249 side=0.0082 approach=0.1663  declaredViol=0 searchBoxViol=0  servo=yes tailTicks=50 event=false  [floor spawn — a climb]
+   best_r3_vault_60mm.json                4b9110c448ec  blend=2.1572 gap=0.0187 side=0.0078 approach=0.1663  declaredViol=0 searchBoxViol=0  servo=no event=false  [floor spawn — a climb]
+   best_r4_famA_60mm.json                 7b790070b010  blend=2.1572 gap=0.0187 side=0.0078 approach=0.1663  declaredViol=0 searchBoxViol=0  servo=no event=true  [floor spawn — a climb]
+   best_r2_vault_60mm.json                74d35b21ac80  blend=2.0949 gap=0.018 side=0.0085 approach=0.1625  declaredViol=0 searchBoxViol=0  servo=no event=false  [floor spawn — a climb]
+   best_r5_servo_60mm.json                e0434c2c90da  blend=2.1572 gap=0.0187 side=0.0078 approach=0.1663  declaredViol=0 searchBoxViol=0  servo=yes tailTicks=0 event=false  [floor spawn — a climb]
+   best_r5_servoland_60mm.json            e6e8ff144695  blend=2.1878 gap=0.0106 side=0.02 approach=0.1663  declaredViol=0 searchBoxViol=0  servo=yes tailTicks=0 event=false  [floor spawn — a climb]
+   best_r5_servoland_kcore_60mm.json      880a120ef649  blend=2.1782 gap=0.0249 side=0.0082 approach=0.1663  declaredViol=0 searchBoxViol=0  servo=yes tailTicks=0 event=false  [floor spawn — a climb]
+   hash best_r6_ceilvault_60mm.json            claimed 8c57838ee9d0  now 8c57838ee9d0  MATCHES
+   hash best_r6_ceilvaultB_60mm.json           claimed 29c97398fe13  now 29c97398fe13  MATCHES
+   hash best_r6_ceilvaultC_60mm.json           claimed a56d459fb649  now a56d459fb649  MATCHES
+   hash best_r6_tail10_servo_60mm.json         claimed 847e04685c20  now 847e04685c20  MATCHES
+   hash best_r6_tail25_servo_60mm.json         claimed 098ce4d211f9  now 098ce4d211f9  MATCHES
+   hash best_r6_tail50_servo_60mm.json         claimed b160eec56c23  now b160eec56c23  MATCHES
+   hash best_r6_tail10_servoland_60mm.json     claimed 3ff2de93400e  now 3ff2de93400e  MATCHES
+   hash best_r6_tail25_servoland_60mm.json     claimed d78034ef9cd9  now d78034ef9cd9  MATCHES
+   hash best_r6_tail50_servoland_60mm.json     claimed b78f6248359c  now b78f6248359c  MATCHES
+   hash best_r3_vault_60mm.json                claimed 4b9110c448ec  now 4b9110c448ec  MATCHES
+   hash best_r4_famA_60mm.json                 claimed 7b790070b010  now 7b790070b010  MATCHES
+   hash best_r2_vault_60mm.json                claimed 74d35b21ac80  now 74d35b21ac80  MATCHES
+   hash best_r5_servo_60mm.json                claimed e0434c2c90da  now e0434c2c90da  MATCHES
+   hash best_r5_servoland_60mm.json            claimed e6e8ff144695  now e6e8ff144695  MATCHES
+   hash best_r5_servoland_kcore_60mm.json      claimed 880a120ef649  now 880a120ef649  MATCHES
+   distinct vectors 15 | declared-bound violations 0 | search-box violations 0 | NOT-A-CLIMB 0
+
+ABLATION INTENTS WRITTEN (the launch alone, servo block deleted):
+   audit_r6_launchonly_r6_tail10_servo_60mm.json    4b9110c448ec   from best_r6_tail10_servo_60mm.json
+   audit_r6_launchonly_r6_tail25_servo_60mm.json    4b9110c448ec   from best_r6_tail25_servo_60mm.json
+   audit_r6_launchonly_r6_tail50_servo_60mm.json    4b9110c448ec   from best_r6_tail50_servo_60mm.json
+   audit_r6_launchonly_r6_tail10_servoland_60mm.json be5f462a37a5   from best_r6_tail10_servoland_60mm.json
+   audit_r6_launchonly_r6_tail25_servoland_60mm.json be5f462a37a5   from best_r6_tail25_servoland_60mm.json
+   audit_r6_launchonly_r6_tail50_servoland_60mm.json be5f462a37a5   from best_r6_tail50_servoland_60mm.json
+   audit_r6_launchonly_r5_servo_60mm.json           4b9110c448ec   from best_r5_servo_60mm.json
+   audit_r6_launchonly_r5_servoland_kcore_60mm.json be5f462a37a5   from best_r5_servoland_kcore_60mm.json
+
+PHASE G — every round-6 claim, re-scored from disk on the 14-cell grid, POLICY tail
+   (the tail every verdict is decided on), and at the nominal cell on the HOLD tail.
+   file                                    rise kC  kCs kExt kEs ceil objective  maxTq  minPenEp upTail(min/mean) holdUp holdHonest
+   best_r3_vault_60mm.json                    60 4/9 4/9  4/14  4/14 5/9    25.610 0.6405   -13.67  8/44.2  13/50  false
+   best_r6_ceilvault_60mm.json                60 1/9 1/9  1/14  1/14 5/9    10.177 0.6405   -13.30  0/36.8  50/50  true
+   best_r6_ceilvaultB_60mm.json               60 3/9 2/9  3/14  2/14 5/9    15.884 0.6405    -9.90  0/32.1   0/50  false
+   best_r6_ceilvaultC_60mm.json               60 5/9 5/9  5/14  5/14 5/9    29.802 0.6405   -11.12  0/42.1   6/50  false
+   best_r5_servo_60mm.json                    60 4/9 0/9  5/14  0/14 4/9     9.526 0.6405   -13.67  0/28.1   0/50  false
+   best_r5_servoland_kcore_60mm.json          60 3/9 0/9  4/14  0/14 3/9     8.168 0.6405   -10.22  2/17.3   5/50  false
+   best_r6_tail10_servo_60mm.json             60 4/9 0/9  4/14  0/14 4/9     8.515 0.6405   -13.67  0/23.7   0/50  false
+   best_r6_tail25_servo_60mm.json             60 0/9 0/9  0/14  0/14 3/9     7.784 0.6405   -13.67  0/  22   0/50  false
+   best_r6_tail50_servo_60mm.json             60 0/9 0/9  0/14  0/14 0/9     8.257 0.6405   -13.67  0/27.9   0/50  false
+   best_r6_tail10_servoland_60mm.json         60 1/9 0/9  1/14  0/14 3/9     8.511 0.6405   -10.22 13/22.6   5/50  false
+   best_r6_tail25_servoland_60mm.json         60 0/9 0/9  0/14  0/14 3/9    10.525 0.6405   -10.22 28/32.6   5/50  false
+   best_r6_tail50_servoland_60mm.json         60 0/9 0/9  0/14  0/14 0/9     9.836 0.6405   -10.22 50/  50   5/50  false
+   best_r4_famA_60mm.json                     60 4/9 4/9  4/14  4/14 5/9    25.610 0.6405   -13.67  8/44.2  13/50  false
+   audit_r6_launchonly_r6_tail10_servo_60mm.json   60 4/9 4/9  4/14  4/14 5/9    25.610 0.6405   -13.67  8/44.2  13/50  false
+   audit_r6_launchonly_r6_tail25_servo_60mm.json   60 4/9 4/9  4/14  4/14 5/9    25.610 0.6405   -13.67  8/44.2  13/50  false
+   audit_r6_launchonly_r6_tail50_servo_60mm.json   60 4/9 4/9  4/14  4/14 5/9    25.610 0.6405   -13.67  8/44.2  13/50  false
+   audit_r6_launchonly_r6_tail10_servoland_60mm.json   60 2/9 2/9  4/14  4/14 2/9    25.604 0.6405   -12.76 21/47.5  25/50  false
+   audit_r6_launchonly_r6_tail25_servoland_60mm.json   60 2/9 2/9  4/14  4/14 2/9    25.604 0.6405   -12.76 21/47.5  25/50  false
+   audit_r6_launchonly_r6_tail50_servoland_60mm.json   60 2/9 2/9  4/14  4/14 2/9    25.604 0.6405   -12.76 21/47.5  25/50  false
+   audit_r6_launchonly_r5_servo_60mm.json     60 4/9 4/9  4/14  4/14 5/9    25.610 0.6405   -13.67  8/44.2  13/50  false
+   audit_r6_launchonly_r5_servoland_kcore_60mm.json   60 2/9 2/9  4/14  4/14 2/9    25.604 0.6405   -12.76 21/47.5  25/50  false
+   [287s]
+
+PHASE A — THE ABLATION, read off PHASE G. What is the servo block worth, and what is
+   servo.tailTicks worth, on the SAME launch? (every servoed row is an ORACLE row)
+   best_r6_tail10_servo_60mm.json         servo(tailTicks 10) kCore 4/9 stable 0/9 ceil 4/9 upTail 23.7
+                                          launch only                 kCore 4/9 stable 4/9 ceil 5/9 upTail 44.2   -> the law is worth kCore +0, ceiling -1, upright tail -20.5
+   best_r6_tail25_servo_60mm.json         servo(tailTicks 25) kCore 0/9 stable 0/9 ceil 3/9 upTail 22
+                                          launch only                 kCore 4/9 stable 4/9 ceil 5/9 upTail 44.2   -> the law is worth kCore -4, ceiling -2, upright tail -22.2
+   best_r6_tail50_servo_60mm.json         servo(tailTicks 50) kCore 0/9 stable 0/9 ceil 0/9 upTail 27.9
+                                          launch only                 kCore 4/9 stable 4/9 ceil 5/9 upTail 44.2   -> the law is worth kCore -4, ceiling -5, upright tail -16.3
+   best_r6_tail10_servoland_60mm.json     servo(tailTicks 10) kCore 1/9 stable 0/9 ceil 3/9 upTail 22.6
+                                          launch only                 kCore 2/9 stable 2/9 ceil 2/9 upTail 47.5   -> the law is worth kCore -1, ceiling +1, upright tail -24.9
+   best_r6_tail25_servoland_60mm.json     servo(tailTicks 25) kCore 0/9 stable 0/9 ceil 3/9 upTail 32.6
+                                          launch only                 kCore 2/9 stable 2/9 ceil 2/9 upTail 47.5   -> the law is worth kCore -2, ceiling +1, upright tail -14.9
+   best_r6_tail50_servoland_60mm.json     servo(tailTicks 50) kCore 0/9 stable 0/9 ceil 0/9 upTail 50
+                                          launch only                 kCore 2/9 stable 2/9 ceil 2/9 upTail 47.5   -> the law is worth kCore -2, ceiling -2, upright tail +2.5
+   best_r5_servo_60mm.json                servo(tailTicks 0) kCore 4/9 stable 0/9 ceil 4/9 upTail 28.1
+                                          launch only                 kCore 4/9 stable 4/9 ceil 5/9 upTail 44.2   -> the law is worth kCore +0, ceiling -1, upright tail -16.1
+   best_r5_servoland_kcore_60mm.json      servo(tailTicks 0) kCore 3/9 stable 0/9 ceil 3/9 upTail 17.3
+                                          launch only                 kCore 2/9 stable 2/9 ceil 2/9 upTail 47.5   -> the law is worth kCore +1, ceiling +1, upright tail -30.2
+   COROLLARY CONFIRMED: the launch under best_r6_tail10_servo_60mm.json hashes to the record, 4b9110c448ec
+   COROLLARY CONFIRMED: the launch under best_r6_tail25_servo_60mm.json hashes to the record, 4b9110c448ec
+   COROLLARY CONFIRMED: the launch under best_r6_tail50_servo_60mm.json hashes to the record, 4b9110c448ec
+   COROLLARY CONFIRMED: the launch under best_r5_servo_60mm.json hashes to the record, 4b9110c448ec
+
+PHASE W — THE SCREEN, RE-DERIVED. Every published launch r6_screen.mjs claims to have
+   scored, re-scored here at 60 mm through scoreRobust({core:true}), row against row.
+   [ 291s] best_0_120mm.json                      ceil 0/9 kCore 0/9 kStable 0/9  9d41f468fc37  agrees with the screen
+   [ 295s] best_0_180mm.json                      ceil 0/9 kCore 0/9 kStable 0/9  ff7464333598  agrees with the screen
+   [ 299s] best_0_20mm.json                       ceil 1/9 kCore 0/9 kStable 0/9  f41baaab17f2  agrees with the screen
+   [ 303s] best_0_40mm.json                       ceil 1/9 kCore 0/9 kStable 0/9  52517952e96c  agrees with the screen
+   [ 307s] best_0_60mm.json                       ceil 0/9 kCore 0/9 kStable 0/9  310534191b2c  agrees with the screen
+   [ 311s] best_0_90mm.json                       ceil 0/9 kCore 0/9 kStable 0/9  639c32fc6eda  agrees with the screen
+   [ 316s] best_1_120mm.json                      ceil 0/9 kCore 0/9 kStable 0/9  8288648ebe30  agrees with the screen
+   [ 321s] best_1_120mm_b2.json                   ceil 0/9 kCore 0/9 kStable 0/9  8288648ebe30  agrees with the screen
+   [ 325s] best_1_180mm.json                      ceil 1/9 kCore 0/9 kStable 0/9  ad222d7ef50b  agrees with the screen
+   [ 330s] best_1_180mm_c1.json                   ceil 1/9 kCore 0/9 kStable 0/9  ad222d7ef50b  agrees with the screen
+   [ 334s] best_1_20mm.json                       ceil 0/9 kCore 0/9 kStable 0/9  654dfe145eb4  agrees with the screen
+   [ 338s] best_1_20mm_c1.json                    ceil 0/9 kCore 0/9 kStable 0/9  654dfe145eb4  agrees with the screen
+   [ 343s] best_1_40mm.json                       ceil 0/9 kCore 0/9 kStable 0/9  76f77dfc4afc  agrees with the screen
+   [ 347s] best_1_40mm_a1.json                    ceil 0/9 kCore 0/9 kStable 0/9  76f77dfc4afc  agrees with the screen
+   [ 352s] best_1_60mm.json                       ceil 0/9 kCore 0/9 kStable 0/9  a0536567ece5  agrees with the screen
+   [ 357s] best_1_60mm_b1.json                    ceil 0/9 kCore 0/9 kStable 0/9  a0536567ece5  agrees with the screen
+   [ 361s] best_1_90mm.json                       ceil 0/9 kCore 0/9 kStable 0/9  1146b2d6bc8c  agrees with the screen
+   [ 366s] best_1_90mm_c1.json                    ceil 0/9 kCore 0/9 kStable 0/9  1146b2d6bc8c  agrees with the screen
+   [ 371s] best_2_120mm.json                      ceil 1/9 kCore 0/9 kStable 0/9  161f0ed81cbd  agrees with the screen
+   [ 376s] best_2_120mm_a3.json                   ceil 1/9 kCore 0/9 kStable 0/9  161f0ed81cbd  agrees with the screen
+   [ 381s] best_2_180mm.json                      ceil 0/9 kCore 0/9 kStable 0/9  f04cc154127e  agrees with the screen
+   [ 385s] best_2_180mm_b3.json                   ceil 0/9 kCore 0/9 kStable 0/9  f04cc154127e  agrees with the screen
+   [ 389s] best_2_20mm.json                       ceil 0/9 kCore 0/9 kStable 0/9  f6c1d01e490d  agrees with the screen
+   [ 394s] best_2_20mm_a2.json                    ceil 0/9 kCore 0/9 kStable 0/9  94844ba8f479  agrees with the screen
+   [ 398s] best_2_20mm_r20.json                   ceil 0/9 kCore 0/9 kStable 0/9  f6c1d01e490d  agrees with the screen
+   [ 402s] best_2_40mm.json                       ceil 1/9 kCore 0/9 kStable 0/9  5913074b86b8  agrees with the screen
+   [ 406s] best_2_40mm_a1.json                    ceil 0/9 kCore 0/9 kStable 0/9  e2335403efeb  agrees with the screen
+   [ 411s] best_2_40mm_r40.json                   ceil 1/9 kCore 0/9 kStable 0/9  5913074b86b8  agrees with the screen
+   [ 415s] best_2_60mm.json                       ceil 0/9 kCore 0/9 kStable 0/9  ed6a3b0d82ad  agrees with the screen
+   [ 420s] best_2_60mm_b1.json                    ceil 0/9 kCore 0/9 kStable 0/9  ed6a3b0d82ad  agrees with the screen
+   [ 424s] best_2_90mm.json                       ceil 0/9 kCore 0/9 kStable 0/9  63b351b98401  agrees with the screen
+   [ 429s] best_2_90mm_b2.json                    ceil 0/9 kCore 0/9 kStable 0/9  63b351b98401  agrees with the screen
+   [ 433s] best_r2_blockclimb_180mm.json          ceil 1/9 kCore 0/9 kStable 0/9  4751d565ee63  agrees with the screen
+   [ 438s] best_r2_blockclimb_90mm.json           ceil 0/9 kCore 0/9 kStable 0/9  49d4ea454195  agrees with the screen
+   [ 440s] best_r2_blockdrag.json                 ceil 0/9 kCore 0/9 kStable 0/9  8d39bf8b5123  agrees with the screen
+   [ 442s] best_r2_blockpush.json                 ceil 0/9 kCore 0/9 kStable 0/9  d4427eb06f1b  agrees with the screen
+   [ 446s] best_r2_cornerstem_120mm.json          ceil 0/9 kCore 0/9 kStable 0/9  fb0141297a0d  agrees with the screen
+   [ 450s] best_r2_cornerstem_180mm.json          ceil 0/9 kCore 0/9 kStable 0/9  4400172375ca  agrees with the screen
+   [ 454s] best_r2_vault_40mm.json                ceil 0/9 kCore 0/9 kStable 0/9  86813f9c1ad4  agrees with the screen
+   [ 458s] best_r2_vault_60mm.json                ceil 3/9 kCore 2/9 kStable 1/9  74d35b21ac80  agrees with the screen
+   [ 462s] best_r2_vault_90mm.json                ceil 0/9 kCore 0/9 kStable 0/9  4bd2cecbdb9a  agrees with the screen
+   [ 462s] best_r3_cornerclimb2_120mm.json        INVALID (out of declared bounds)  claim says invalid=true
+   [ 462s] best_r3_cornerclimb_120mm.json         INVALID (out of declared bounds)  claim says invalid=true
+   [ 466s] best_r3_cornerclimb_180mm.json         ceil 0/9 kCore 0/9 kStable 0/9  725674c1b517  agrees with the screen
+   [ 470s] best_r3_landvault_80mm.json            ceil 0/9 kCore 0/9 kStable 0/9  fc074d800905  agrees with the screen
+   [ 474s] best_r3_landvault_90mm.json            ceil 0/9 kCore 0/9 kStable 0/9  0f3619fb30c2  agrees with the screen
+   [ 478s] best_r3_vault_40mm.json                ceil 0/9 kCore 0/9 kStable 0/9  dff01b0a1906  agrees with the screen
+   [ 483s] best_r3_vault_50mm.json                ceil 0/9 kCore 0/9 kStable 0/9  7904bf3363c5  agrees with the screen
+   [ 487s] best_r3_vault_60mm.json                ceil 5/9 kCore 4/9 kStable 4/9  4b9110c448ec  agrees with the screen
+   [ 491s] best_r3_vault_70mm.json                ceil 5/9 kCore 4/9 kStable 4/9  4b9110c448ec  agrees with the screen
+   [ 495s] best_r3_vault_80mm.json                ceil 5/9 kCore 4/9 kStable 4/9  4b9110c448ec  agrees with the screen
+   [ 499s] best_r4_famA_60mm.json                 ceil 5/9 kCore 4/9 kStable 4/9  7b790070b010  agrees with the screen
+   [ 502s] best_r4_famB_beat1_120mm.json          ceil 0/9 kCore 0/9 kStable 0/9  7c52acef4acf  agrees with the screen
+   [ 504s] best_r4_famB_beat1_80mm.json           ceil 0/9 kCore 0/9 kStable 0/9  650fa4edffc8  agrees with the screen
+   [ 507s] best_r4_famB_beat1_90mm.json           ceil 0/9 kCore 0/9 kStable 0/9  2524a35672b4  agrees with the screen
+   [ 509s] best_r4_famB_beat2_120mm.json          ceil 1/9 kCore 0/9 kStable 0/9  8395c0016094  agrees with the screen
+   [ 511s] best_r4_famB_beat2_80mm.json           ceil 0/9 kCore 0/9 kStable 0/9  513f0a02c8a0  agrees with the screen
+   [ 514s] best_r4_famB_beat2_90mm.json           ceil 1/9 kCore 0/9 kStable 0/9  89d6562ef337  agrees with the screen
+   [ 518s] best_r4_famB_concat_120mm.json         ceil 0/9 kCore 0/9 kStable 0/9  0a63b4ab5fc9  agrees with the screen
+   [ 522s] best_r4_famB_concat_80mm.json          ceil 1/9 kCore 0/9 kStable 0/9  0416d87af714  agrees with the screen
+   [ 526s] best_r4_famB_concat_90mm.json          ceil 0/9 kCore 0/9 kStable 0/9  4f522283952c  agrees with the screen
+   [ 530s] best_r5_servo_60mm.json                ceil 4/9 kCore 4/9 kStable 0/9  e0434c2c90da  agrees with the screen
+   [ 534s] best_r5_servoland_60mm.json            ceil 0/9 kCore 0/9 kStable 0/9  e6e8ff144695  agrees with the screen
+   [ 539s] best_r5_servoland_kcore_60mm.json      ceil 3/9 kCore 3/9 kStable 0/9  880a120ef649  agrees with the screen
+
+   64 files, 62 scorable, 2 refused by the bounds gate, 48 distinct vectors
+   ceilingCore histogram over files {"0":43,"1":12,"3":2,"4":1,"5":4} | over distinct vectors {"0":34,"1":9,"3":2,"4":1,"5":2}
+   HIGHEST ceilingCore in the published corpus at 60 mm: 5/9
+      best_r3_vault_60mm.json                4b9110c448ec  kCore 4/9 kCoreStable 4/9
+      best_r3_vault_70mm.json                4b9110c448ec  kCore 4/9 kCoreStable 4/9
+      best_r3_vault_80mm.json                4b9110c448ec  kCore 4/9 kCoreStable 4/9
+      best_r4_famA_60mm.json                 7b790070b010  kCore 4/9 kCoreStable 4/9
+   rows that DISAGREE with r6_screen-results.json: 0
+   cells where the 0.1 mm rounding could flip a ceiling verdict: 0
+   kCore <= ceilingCore holds on every row: true   [539s]
+
+PHASE X — THE SEARCH, RECONSTRUCTED. 337 of the 340 vectors the CEM reports were never
+   saved, so their rows cannot be audited as published. They are rebuilt here from the
+   29-parameter `params` on every row of r6_ceiling-results.json, through the search's
+   own intentOf(), WRITTEN TO DISK, and re-scored. A rebuild whose sha256 is not the
+   claimed sha256 is not the same vector and is reported as such.
+   rebuilding 340 of 340 distinct moves into ../climb/audit_r6_recon/
+   [ 543s]   1/340 8c57838ee9d0  hash OK  ceil claimed 5 measured 5  kCore 1->1 kStable 1->1
+   [ 547s]   2/340 29c97398fe13  hash OK  ceil claimed 5 measured 5  kCore 3->3 kStable 2->2
+   [ 551s]   3/340 4b9110c448ec  hash OK  ceil claimed 5 measured 5  kCore 4->4 kStable 4->4
+   [ 555s]   4/340 a56d459fb649  hash OK  ceil claimed 5 measured 5  kCore 5->5 kStable 5->5
+   [ 559s]   5/340 b3f06fb9e903  hash OK  ceil claimed 4 measured 4  kCore 4->4 kStable 4->4
+   [ 563s]   6/340 d0b9b705282c  hash OK  ceil claimed 4 measured 4  kCore 3->3 kStable 3->3
+   [ 567s]   7/340 56b676fab298  hash OK  ceil claimed 4 measured 4  kCore 4->4 kStable 4->4
+   [ 571s]   8/340 36bccdb2b8e8  hash OK  ceil claimed 4 measured 4  kCore 3->3 kStable 3->3
+   [ 575s]   9/340 154843fafb01  hash OK  ceil claimed 4 measured 4  kCore 2->2 kStable 2->2
+   [ 579s]  10/340 46adeecc387a  hash OK  ceil claimed 4 measured 4  kCore 3->3 kStable 3->3
+   [ 583s]  11/340 0e30d3aa6636  hash OK  ceil claimed 4 measured 4  kCore 3->3 kStable 3->3
+   [ 588s]  12/340 a7c595fb8ef8  hash OK  ceil claimed 4 measured 4  kCore 2->2 kStable 1->1
+   [ 591s]  13/340 0cfcd0cb760a  hash OK  ceil claimed 4 measured 4  kCore 3->3 kStable 3->3
+   [ 596s]  14/340 4886bd27f9a3  hash OK  ceil claimed 4 measured 4  kCore 4->4 kStable 4->4
+   [ 600s]  15/340 22b1d03134e0  hash OK  ceil claimed 4 measured 4  kCore 3->3 kStable 3->3
+   [ 604s]  16/340 be95ef31a97a  hash OK  ceil claimed 4 measured 4  kCore 3->3 kStable 3->3
+   [ 608s]  17/340 4b948e6e8b3b  hash OK  ceil claimed 4 measured 4  kCore 3->3 kStable 3->3
+   [ 612s]  18/340 2a677c2dab36  hash OK  ceil claimed 4 measured 4  kCore 2->2 kStable 2->2
+   [ 616s]  19/340 42ea1c7b04a4  hash OK  ceil claimed 4 measured 4  kCore 2->2 kStable 2->2
+   [ 620s]  20/340 16a5d35c5d4e  hash OK  ceil claimed 4 measured 4  kCore 3->3 kStable 3->3
+   [620s] ... 20 rebuilt, hash 20/20, ceiling 20/20, k 20/20
+   [ 624s]  21/340 5f7d8944085f  hash OK  ceil claimed 3 measured 3  kCore 3->3 kStable 3->3
+   [ 628s]  22/340 09df32d417ff  hash OK  ceil claimed 3 measured 3  kCore 2->2 kStable 2->2
+   [ 632s]  23/340 5a76ca5b7108  hash OK  ceil claimed 3 measured 3  kCore 3->3 kStable 3->3
+   [ 636s]  24/340 1f2e5eac024b  hash OK  ceil claimed 3 measured 3  kCore 3->3 kStable 3->3
+   [ 640s]  25/340 5651bbe8d5af  hash OK  ceil claimed 3 measured 3  kCore 3->3 kStable 2->2
+   [ 644s]  26/340 245861596d61  hash OK  ceil claimed 3 measured 3  kCore 1->1 kStable 1->1
+   [ 648s]  27/340 eeef2837a20f  hash OK  ceil claimed 3 measured 3  kCore 1->1 kStable 1->1
+   [ 653s]  28/340 e929624cb897  hash OK  ceil claimed 3 measured 3  kCore 2->2 kStable 2->2
+   [ 657s]  29/340 8236f363024d  hash OK  ceil claimed 3 measured 3  kCore 1->1 kStable 1->1
+   [ 661s]  30/340 9c870f3b8e5a  hash OK  ceil claimed 3 measured 3  kCore 3->3 kStable 2->2
+   [701s] ... 40 rebuilt, hash 40/40, ceiling 40/40, k 40/40
+   [783s] ... 60 rebuilt, hash 60/60, ceiling 60/60, k 60/60
+   [863s] ... 80 rebuilt, hash 80/80, ceiling 80/80, k 80/80
+   [943s] ... 100 rebuilt, hash 100/100, ceiling 100/100, k 100/100
+   [1023s] ... 120 rebuilt, hash 120/120, ceiling 120/120, k 120/120
+   [1103s] ... 140 rebuilt, hash 140/140, ceiling 140/140, k 140/140
+   [1184s] ... 160 rebuilt, hash 160/160, ceiling 160/160, k 160/160
+   [1265s] ... 180 rebuilt, hash 180/180, ceiling 180/180, k 180/180
+   [1352s] ... 200 rebuilt, hash 200/200, ceiling 200/200, k 200/200
+   [1432s] ... 220 rebuilt, hash 220/220, ceiling 220/220, k 220/220
+   [1514s] ... 240 rebuilt, hash 240/240, ceiling 240/240, k 240/240
+   [1599s] ... 260 rebuilt, hash 260/260, ceiling 260/260, k 260/260
+   [1685s] ... 280 rebuilt, hash 280/280, ceiling 280/280, k 280/280
+   [1764s] ... 300 rebuilt, hash 300/300, ceiling 300/300, k 300/300
+   [1843s] ... 320 rebuilt, hash 320/320, ceiling 320/320, k 320/320
+   [1923s] ... 340 rebuilt, hash 340/340, ceiling 340/340, k 340/340
+
+   rebuilt 340 of 340 distinct moves
+   sha256 of the rebuild equals the claimed sha256 : 340/340
+   ceilingCore reproduces                          : 340/340
+   kCore and kCoreStable reproduce                 : 340/340
+   measured ceilingCore histogram {"0":28,"1":127,"2":105,"3":60,"4":16,"5":4}   claimed {"0":28,"1":127,"2":105,"3":60,"4":16,"5":4}
+   HIGHEST measured ceilingCore over the rebuilt search: 5/9
+   kCore <= ceilingCore on every rebuilt row: true
+   any rebuilt row over the 0.6405 N.m forcerange: false
+   rebuilt moves with a CLEAR that penetrates deeper than -15 mm: 0
+   [1923s]
+
+PHASE E — THE CEILING, stated as what it is: an IDENTITY of the criterion, not a result.
+   rig3 criteria() honest requires scored.above > 0.095 m at the scored instant. above is
+   trunk z minus the tread height, and maxZ is the trunk's maximum over the whole episode,
+   so honest in a cell IMPLIES maxZ - rise > 0.095 in that cell. Therefore
+   kCore <= ceilingCore, for every landing law that exists or could be written.
+   file                                    kCore ceil  peak trunk above the tread, the 9 core cells (mm)
+   best_r3_vault_60mm.json                  4/9   5/9  [71.1, 122.6, 120.2, 122.5, 130.4, 63.3, 53.8, 50.9, 119.3]
+   best_r6_ceilvault_60mm.json              1/9   5/9  [73.5, 141.6, 70.9, 120.7, 131.7, 120, 61.4, 131, 61.5]
+   best_r6_ceilvaultB_60mm.json             3/9   5/9  [72.5, 118.1, 86.5, 134.3, 108.1, 119.3, 58.4, 119.2, 58.5]
+   best_r6_ceilvaultC_60mm.json             5/9   5/9  [121.7, 73.7, 117.3, 119.3, 117.9, 120.6, 54.4, 56.9, 54.1]
+   best_r5_servo_60mm.json                  4/9   4/9  [70.8, 118.6, 117.6, 116.4, 120.2, 60.1, 53.8, 50.9, 56.6]
+   best_r5_servoland_kcore_60mm.json        3/9   3/9  [82, 84, 83.1, 123.5, 122.1, 121.5, 60.9, 55.4, 61.5]
+   best_r6_tail10_servo_60mm.json           4/9   4/9  [70.8, 120.6, 116.3, 117.3, 119.8, 60.1, 53.8, 52.2, 56.6]
+   best_r6_tail25_servo_60mm.json           0/9   3/9  [70.8, 119.3, 102.4, 89.2, 120, 60.1, 53.8, 50.9, 56.6]
+   best_r6_tail50_servo_60mm.json           0/9   0/9  [70.8, 77, 70.1, 71.3, 60.9, 60.1, 53.8, 50.9, 56.6]
+   best_r6_tail10_servoland_60mm.json       1/9   3/9  [80.6, 83.8, 83.5, 122.2, 119.8, 120.4, 62.3, 52.6, 61.6]
+   best_r6_tail25_servoland_60mm.json       0/9   3/9  [75.7, 70.9, 82.9, 109.5, 106.6, 110.2, 63.3, 50.9, 60.8]
+   best_r6_tail50_servoland_60mm.json       0/9   0/9  [70.8, 70.9, 70.2, 60.8, 60.9, 60.2, 50.8, 50.9, 54.4]
+   best_r4_famA_60mm.json                   4/9   5/9  [71.1, 122.6, 120.2, 122.5, 130.4, 63.3, 53.8, 50.9, 119.3]
+   audit_r6_launchonly_r6_tail10_servo_60mm.json 4/9   5/9  [71.1, 122.6, 120.2, 122.5, 130.4, 63.3, 53.8, 50.9, 119.3]
+   audit_r6_launchonly_r6_tail25_servo_60mm.json 4/9   5/9  [71.1, 122.6, 120.2, 122.5, 130.4, 63.3, 53.8, 50.9, 119.3]
+   audit_r6_launchonly_r6_tail50_servo_60mm.json 4/9   5/9  [71.1, 122.6, 120.2, 122.5, 130.4, 63.3, 53.8, 50.9, 119.3]
+   audit_r6_launchonly_r6_tail10_servoland_60mm.json 2/9   2/9  [78.7, 70.9, 71.1, 120.1, 116.5, 71, 52, 53.9, 54]
+   audit_r6_launchonly_r6_tail25_servoland_60mm.json 2/9   2/9  [78.7, 70.9, 71.1, 120.1, 116.5, 71, 52, 53.9, 54]
+   audit_r6_launchonly_r6_tail50_servoland_60mm.json 2/9   2/9  [78.7, 70.9, 71.1, 120.1, 116.5, 71, 52, 53.9, 54]
+   audit_r6_launchonly_r5_servo_60mm.json   4/9   5/9  [71.1, 122.6, 120.2, 122.5, 130.4, 63.3, 53.8, 50.9, 119.3]
+   audit_r6_launchonly_r5_servoland_kcore_60mm.json 2/9   2/9  [78.7, 70.9, 71.1, 120.1, 116.5, 71, 52, 53.9, 54]
+
+   max ceilingCore over the round-6 CLAIMS            : 5/9
+   max ceilingCore over the PUBLISHED CORPUS (re-scored): 5/9
+   max ceilingCore over the REBUILT SEARCH            : 5/9
+   MAX OVER EVERYTHING SCORED HERE                    : 5/9   over 394 distinct vectors
+   kCore <= ceilingCore holds everywhere: true
+
+PHASE N — penetration, whole-episode, on every clear of every claim
+   best_r3_vault_60mm.json                  clears  4/14  [-8.52, -9.27, -8.57, -8.88]  worst cell -13.67 mm  clears deeper than -15 mm: 0
+   best_r6_ceilvault_60mm.json              clears  1/14  [-7.15]  worst cell -13.30 mm  clears deeper than -15 mm: 0
+   best_r6_ceilvaultB_60mm.json             clears  3/14  [-9.9, -7.36, -5.57]  worst cell -9.90 mm  clears deeper than -15 mm: 0
+   best_r6_ceilvaultC_60mm.json             clears  5/14  [-6.97, -8.01, -7.23, -9.39, -11.12]  worst cell -11.12 mm  clears deeper than -15 mm: 0
+   best_r5_servo_60mm.json                  clears  5/14  [-10.37, -9.27, -8.57, -8.85, -9.57]  worst cell -13.67 mm  clears deeper than -15 mm: 0
+   best_r5_servoland_kcore_60mm.json        clears  4/14  [-7.27, -7.59, -6.76, -8.09]  worst cell -10.22 mm  clears deeper than -15 mm: 0
+   best_r6_tail10_servo_60mm.json           clears  4/14  [-8.52, -9.27, -8.57, -8.85]  worst cell -13.67 mm  clears deeper than -15 mm: 0
+   best_r6_tail25_servo_60mm.json           clears  0/14  []  worst cell -13.67 mm  clears deeper than -15 mm: 0
+   best_r6_tail50_servo_60mm.json           clears  0/14  []  worst cell -13.67 mm  clears deeper than -15 mm: 0
+   best_r6_tail10_servoland_60mm.json       clears  1/14  [-7.59]  worst cell -10.22 mm  clears deeper than -15 mm: 0
+   best_r6_tail25_servoland_60mm.json       clears  0/14  []  worst cell -10.22 mm  clears deeper than -15 mm: 0
+   best_r6_tail50_servoland_60mm.json       clears  0/14  []  worst cell -10.22 mm  clears deeper than -15 mm: 0
+   best_r4_famA_60mm.json                   clears  4/14  [-8.52, -9.27, -8.57, -8.88]  worst cell -13.67 mm  clears deeper than -15 mm: 0
+   audit_r6_launchonly_r6_tail10_servo_60mm.json clears  4/14  [-8.52, -9.27, -8.57, -8.88]  worst cell -13.67 mm  clears deeper than -15 mm: 0
+   audit_r6_launchonly_r6_tail25_servo_60mm.json clears  4/14  [-8.52, -9.27, -8.57, -8.88]  worst cell -13.67 mm  clears deeper than -15 mm: 0
+   audit_r6_launchonly_r6_tail50_servo_60mm.json clears  4/14  [-8.52, -9.27, -8.57, -8.88]  worst cell -13.67 mm  clears deeper than -15 mm: 0
+   audit_r6_launchonly_r6_tail10_servoland_60mm.json clears  4/14  [-7.27, -8.95, -8.62, -6.28]  worst cell -12.76 mm  clears deeper than -15 mm: 0
+   audit_r6_launchonly_r6_tail25_servoland_60mm.json clears  4/14  [-7.27, -8.95, -8.62, -6.28]  worst cell -12.76 mm  clears deeper than -15 mm: 0
+   audit_r6_launchonly_r6_tail50_servoland_60mm.json clears  4/14  [-7.27, -8.95, -8.62, -6.28]  worst cell -12.76 mm  clears deeper than -15 mm: 0
+   audit_r6_launchonly_r5_servo_60mm.json   clears  4/14  [-8.52, -9.27, -8.57, -8.88]  worst cell -13.67 mm  clears deeper than -15 mm: 0
+   audit_r6_launchonly_r5_servoland_kcore_60mm.json clears  4/14  [-7.27, -8.95, -8.62, -6.28]  worst cell -12.76 mm  clears deeper than -15 mm: 0
+   invariant minPenEpisode <= penAtScore holds on every cell: true
+   deepest reading — claims -13.67 mm | published corpus -14.55 mm | rebuilt search -17.28 mm
+
+PHASE T — torque against the forcerange
+   claims: 21/21 saturate 0.6405 N.m, none exceeds it
+   published corpus: 60/62 saturate; the exceptions are the ones that never push:
+      best_r2_blockdrag.json                 maxTq 0.1077
+      best_r2_blockpush.json                 maxTq 0.1077
+   rebuilt search: 340/340 saturate
+   ANY row anywhere above the forcerange: false
+
+PHASE C — the controls, under the CURRENT (round-6-edited) instrument
+   ctrl_do_nothing.json           @ 40mm  kCore 0/9  stable 0/9  kExt 0/14  ceil 0/9  maxTq 0.1077
+   ctrl_do_nothing.json           @ 60mm  kCore 0/9  stable 0/9  kExt 0/14  ceil 0/9  maxTq 0.1077
+   r4_ctrl_on_tread_60mm.json     @ 60mm  kCore 9/9  stable 9/9  kExt 14/14  ceil 9/9  maxTq 0.0937
+   r4_ctrl_on_tread_90mm.json     @ 90mm  kCore 9/9  stable 9/9  kExt 14/14  ceil 9/9  maxTq 0.0937
+   do-nothing fails everywhere: true   placed duck clears 14/14: true
+
+PHASE Y — the tail agent's MECHANISM claim, re-derived from the trace the round-6 edit
+   added. Claim: the fall is 3 control ticks after the law lets go, at every setting, and
+   holding the law to tick 50 buys uprightness by cancelling the lift. "Fall" = the first
+   tail tick with projected-gravity z >= -0.90, which is rig3's own upright test.
+   best_r5_servoland_kcore_60mm.json        tailTicks  0  kCore 3/9 stable 0/9 ceil 3/9  meanUpTail 19.56/50
+      fall tick per core cell : [3, 2, 3, 3, 3, 3, 3, 24, 3]
+      fall minus tailTicks    : [3, 2, 3, 3, 3, 3, 3, 24, 3]   median 3
+      trunk above tread, tail entry -> tail end (mm): [47.2, 48.4, 47.2, 46.3, 46.5, 46.5, 47.3, 28, 47.3] -> [64.2, 61.5, 79.3, 117.5, 115.2, 118.4, 46.7, 50.4, -11.1]
+   best_r6_tail10_servoland_60mm.json       tailTicks 10  kCore 1/9 stable 0/9 ceil 3/9  meanUpTail 23.56/50
+      fall tick per core cell : [13, 13, 13, 13, 13, 13, 13, 34, 13]
+      fall minus tailTicks    : [3, 3, 3, 3, 3, 3, 3, 24, 3]   median 3
+      trunk above tread, tail entry -> tail end (mm): [46.7, 48.2, 46.6, 45.7, 45.9, 46.1, 46.6, 27, 46.8] -> [78.4, 69.9, 65.9, 118.9, 119.8, 120.4, 53, 44.7, 6.6]
+   best_r6_tail25_servoland_60mm.json       tailTicks 25  kCore 0/9 stable 0/9 ceil 3/9  meanUpTail 32.33/50
+      fall tick per core cell : [28, 28, 28, 28, 28, 28, 28, 48, 28]
+      fall minus tailTicks    : [3, 3, 3, 3, 3, 3, 3, 23, 3]   median 3
+      trunk above tread, tail entry -> tail end (mm): [46.7, 48.2, 46.6, 45.7, 45.9, 46.1, 46.6, 27, 46.8] -> [75.7, 70.3, 82.9, 109.5, 106.6, 110.2, 38.3, 40.2, 53.2]
+   best_r6_tail50_servoland_60mm.json       tailTicks 50  kCore 0/9 stable 0/9 ceil 0/9  meanUpTail 50/50
+      fall tick per core cell : [none, none, none, none, none, none, none, none, none]
+      fall minus tailTicks    : [-, -, -, -, -, -, -, -, -]   median null
+      trunk above tread, tail entry -> tail end (mm): [46.7, 48.2, 46.6, 45.7, 45.9, 46.1, 46.6, 27, 46.8] -> [46.7, 47.8, 46.6, 45.8, 45.9, 46, 46.7, 27, 46.9]
+   the fall moves with the hand-back (median fall - tailTicks ~ 3): true
+   holding the law for all 50 tail ticks drives kCore and ceilingCore to 0: true
+
+================================================================
+PHASE K — THE KILL GATE
+   RULE: PASSED only if a DISTINCT, FLOOR-SPAWNED launch reaches ceilingCore >= 7 of 9
+   at 60 mm, in declared bounds, under the actuator ceiling, with no cheat.
+
+   distinct vectors scored at 60 mm in this audit: 394   (eligible 394)
+   ceilingCore histogram over them: {"0":64,"1":136,"2":106,"3":65,"4":18,"5":5}
+   BEST ceilingCore  : 5/9  (4b9110c448ec, round-6 claims)
+   BEST kCoreStable  : 5/9  (a56d459fb649, round-6 claims)
+   THE GATE NEEDS 7. KILL CONDITION: FAILED
+
+   THE ONE SENTENCE THE APP MAY PRINT:
+   "After six rounds and 394 distinct scored launches, the best whole-body move gets the duck onto a 60 mm step and leaves it standing in 5 of the 9 robustness cells, no move has ever cleared more than 5, and the limit is not tuning: all 14 servos are already pinned at their 0.6405 N.m torque limit in every cell of every move."
+
+   total wall 1969s

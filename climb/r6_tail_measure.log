@@ -1,0 +1,42 @@
+
+================================================================
+best_r3_vault_60mm.json   4b9110c448ec   record (round-3 beak-strut vault, NO servo)
+   servo: NONE
+   rise 50 drop 0.12 f1  honest=false upTail=50/50  enteredUp=true  fall=none  satFrac=0.000
+   rise 50 drop 0.13 f0.7  honest=true  upTail=50/50  enteredUp=true  fall=none  satFrac=0.013
+   rise 50 drop 0.125 f1.3  honest=true  upTail=50/50  enteredUp=true  fall=none  satFrac=0.120
+   rise 60 drop 0.12 f1  honest=true  upTail=50/50  enteredUp=true  fall=none  satFrac=0.000
+   rise 60 drop 0.13 f0.7  honest=false upTail= 8/50  enteredUp=false fall= 0  satFrac=0.214  @fall pitch=-0.9967 above=-4mm x=-112.5mm lz=26.8 rz=25.8
+   rise 60 drop 0.125 f1.3  honest=false upTail=50/50  enteredUp=true  fall=none  satFrac=0.019
+   rise 70 drop 0.12 f1  honest=false upTail=50/50  enteredUp=true  fall=none  satFrac=0.000
+   rise 70 drop 0.13 f0.7  honest=false upTail=50/50  enteredUp=true  fall=none  satFrac=0.000
+   rise 70 drop 0.125 f1.3  honest=true  upTail=50/50  enteredUp=true  fall=none  satFrac=0.001
+   SUMMARY kCore=4/9 kCoreStable=4/9 meanUpTail=45.33/50 enteredUp=8/9 upAll50=8/9 meanFallTick=null medianFallTick=null meanSatFrac=0.0408  [5s]
+
+================================================================
+best_r5_servo_60mm.json   e0434c2c90da   round-5 servoed best by objective
+   servo: armed at t=1.53352s, tailTicks=0
+   rise 50 drop 0.12 f1  honest=false upTail= 9/50  enteredUp=false fall= 0  satFrac=0.236  @fall pitch=0.0029 above=48.5mm x=114.4mm lz=70.3 rz=31.3
+   rise 50 drop 0.13 f0.7  honest=true  upTail=22/50  enteredUp=true  fall= 2  satFrac=0.199  @fall pitch=0.4927 above=72.1mm x=192.9mm lz=127.1 rz=78
+   rise 50 drop 0.125 f1.3  honest=true  upTail=19/50  enteredUp=false fall= 0  satFrac=0.243  @fall pitch=0.295 above=53.2mm x=248.3mm lz=80.7 rz=80.7
+   rise 60 drop 0.12 f1  honest=true  upTail=15/50  enteredUp=true  fall= 1  satFrac=0.286  @fall pitch=0.2119 above=43.8mm x=217.3mm lz=90.3 rz=74.5
+   rise 60 drop 0.13 f0.7  honest=true  upTail=34/50  enteredUp=false fall= 0  satFrac=0.129  @fall pitch=0.2496 above=52.3mm x=210.7mm lz=88.7 rz=84.4
+   rise 60 drop 0.125 f1.3  honest=false upTail= 0/50  enteredUp=false fall= 0  satFrac=0.144  @fall pitch=0.0433 above=-10.9mm x=-132.8mm lz=22.9 rz=90.2
+   rise 70 drop 0.12 f1  honest=false upTail=50/50  enteredUp=true  fall=none  satFrac=0.203
+   rise 70 drop 0.13 f0.7  honest=false upTail=50/50  enteredUp=true  fall=none  satFrac=0.224
+   rise 70 drop 0.125 f1.3  honest=false upTail=50/50  enteredUp=true  fall=none  satFrac=0.217
+   SUMMARY kCore=4/9 kCoreStable=0/9 meanUpTail=27.67/50 enteredUp=5/9 upAll50=3/9 meanFallTick=1.5 medianFallTick=2 meanSatFrac=0.2089  [11s]
+
+================================================================
+best_r5_servoland_kcore_60mm.json   880a120ef649   round-5 servoed best by kCore
+   servo: armed at t=1.1838s, tailTicks=0
+   rise 50 drop 0.12 f1  honest=false upTail= 4/50  enteredUp=true  fall= 3  satFrac=0.241  @fall pitch=0.2879 above=53.5mm x=200.8mm lz=105 rz=74.7
+   rise 50 drop 0.13 f0.7  honest=false upTail= 2/50  enteredUp=true  fall= 2  satFrac=0.234  @fall pitch=0.245 above=50.9mm x=177.3mm lz=93.4 rz=70.7
+   rise 50 drop 0.125 f1.3  honest=false upTail= 8/50  enteredUp=true  fall= 3  satFrac=0.314  @fall pitch=0.2954 above=53.7mm x=192.7mm lz=105.4 rz=74.4
+   rise 60 drop 0.12 f1  honest=true  upTail=25/50  enteredUp=true  fall= 3  satFrac=0.263  @fall pitch=0.2809 above=50.8mm x=220.9mm lz=110.2 rz=80.7
+   rise 60 drop 0.13 f0.7  honest=true  upTail=25/50  enteredUp=true  fall= 3  satFrac=0.264  @fall pitch=0.2902 above=51.3mm x=213.8mm lz=112.1 rz=80.8
+   rise 60 drop 0.125 f1.3  honest=true  upTail=25/50  enteredUp=true  fall= 3  satFrac=0.291  @fall pitch=0.2473 above=49.5mm x=219.2mm lz=104.3 rz=81.3
+   rise 70 drop 0.12 f1  honest=false upTail=34/50  enteredUp=true  fall= 3  satFrac=0.261  @fall pitch=0.3005 above=52.2mm x=175.3mm lz=124.8 rz=89.9
+   rise 70 drop 0.13 f0.7  honest=false upTail=38/50  enteredUp=true  fall=24  satFrac=0.351  @fall pitch=0.0156 above=39.6mm x=121.1mm lz=35.9 rz=39.4
+   rise 70 drop 0.125 f1.3  honest=false upTail=15/50  enteredUp=true  fall= 3  satFrac=0.279  @fall pitch=0.2686 above=49.7mm x=187.8mm lz=120 rz=84.9
+   SUMMARY kCore=3/9 kCoreStable=0/9 meanUpTail=19.56/50 enteredUp=9/9 upAll50=0/9 meanFallTick=5.22 medianFallTick=3 meanSatFrac=0.2778  [16s]

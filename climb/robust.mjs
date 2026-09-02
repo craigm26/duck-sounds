@@ -367,6 +367,16 @@ async function go(track, o, h, { drop = 0.120, fmul = 1.0, isolate = true, stepC
   // identical to rig3.mjs's. null for every pre-round-5 file.
   const SV = normServo(o.servo);
   let svArmed = false, svT = null, svBase = null, svTicks = 0;
+  /** The five servo readings, off the live state. Read-only. */
+  const svMeasure = () => ({
+    above: data.qpos[D.freeQpos + 2] - h,
+    pitch: projectedGravity(quat())[0],
+    dxTrunk: data.qpos[D.freeQpos] - RISER_X,
+    feet: [LFOOT, RFOOT].map(g => ({
+      dx: data.geom_xpos[g * 3] - RISER_X,
+      dz: data.geom_xpos[g * 3 + 2] - h,
+    })),
+  });
   for (let t = 0; t * DT < total; t++) {
     const time = t * DT;
     if (EV && !evFired && time >= EV.arm) {
@@ -389,15 +399,7 @@ async function go(track, o, h, { drop = 0.120, fmul = 1.0, isolate = true, stepC
       }
       if (svArmed) {
         const prev = []; for (let k = 0; k < 14; k++) prev.push(data.ctrl[k]);
-        svTargets = servoTick(SV, svBase, {
-          above: data.qpos[D.freeQpos + 2] - h,
-          pitch: projectedGravity(quat())[0],
-          dxTrunk: data.qpos[D.freeQpos] - RISER_X,
-          feet: [LFOOT, RFOOT].map(g => ({
-            dx: data.geom_xpos[g * 3] - RISER_X,
-            dz: data.geom_xpos[g * 3 + 2] - h,
-          })),
-        }, prev, LO, HI);
+        svTargets = servoTick(SV, svBase, svMeasure(), prev, LO, HI);
         svTicks++;
       }
     }
@@ -409,7 +411,41 @@ async function go(track, o, h, { drop = 0.120, fmul = 1.0, isolate = true, stepC
   const terminal = handoffNow(h); terminal.spawnLastAction = la.slice();
   // ROUND 4, HOLE 2: how much of the 50-tick tail was the duck upright?
   const upBeforeTail = R.upTicks, ticksBeforeTail = R.ticks;
-  for (let t = 0; t < 50; t++) await step(null, true);   // tail 'policy' — climb_lib's own
+  // ROUND 6, THE TAIL. Identical to rig3.mjs's: servo.tailTicks (default 0)
+  // keeps the leg slots on the law for the first n tail ticks, and o.tailTrace
+  // (default false) records, read-only, what the duck was doing on every tail
+  // tick. With tailTicks = 0 and no trace this loop is `await step(null, true)`
+  // verbatim, which is why cell 0 stays exact against rig3.scoreSaved.
+  const tailLog = [];
+  let svTailRun = 0;
+  const tailSample = (t, servoed) => {
+    const pg = projectedGravity(quat());
+    const cmdv = [], qv = [];
+    let sat = 0;
+    for (let k = 0; k < 14; k++) {
+      const c = data.ctrl[k];
+      cmdv.push(c); qv.push(data.qpos[D.qpos[k]]);
+      if (c <= LO[k] + 1e-9 || c >= HI[k] - 1e-9) sat++;
+    }
+    const fg = g => [data.geom_xpos[g * 3], data.geom_xpos[g * 3 + 1], data.geom_xpos[g * 3 + 2]];
+    tailLog.push({
+      t, servoed, gz: pg[2], up: pg[2] < -0.90, pitch: pg[0], roll: pg[1],
+      x: data.qpos[D.freeQpos], y: data.qpos[D.freeQpos + 1], z: data.qpos[D.freeQpos + 2],
+      above: data.qpos[D.freeQpos + 2] - h,
+      lfoot: fg(LFOOT), rfoot: fg(RFOOT),
+      cmd: cmdv, qpos: qv, sat,
+    });
+  };
+  for (let t = 0; t < 50; t++) {                         // tail 'policy' — climb_lib's own
+    let svTail;
+    if (SV && svArmed && t < SV.tailTicks) {
+      const prev = []; for (let k = 0; k < 14; k++) prev.push(data.ctrl[k]);
+      svTail = servoTick(SV, svBase, svMeasure(), prev, LO, HI);
+      svTicks++; svTailRun++;
+    }
+    await step(null, true, svTail);
+    if (o.tailTrace) tailSample(t, svTail !== undefined);
+  }
   const scored = snapshot(h, R.maxAbsDY);
   const uprightTailTicks = R.upTicks - upBeforeTail;
   const tailTicks = R.ticks - ticksBeforeTail;
@@ -422,7 +458,11 @@ async function go(track, o, h, { drop = 0.120, fmul = 1.0, isolate = true, stepC
     minPenetrationEpisode: PEN.get().min, minPenetrationPair: PEN.get().pair,
     minPenetrationTick: PEN.get().tick, penetrationTicksScanned: PEN.get().ticksScanned,
     // ROUND 5, THE SERVOED LANDING. null for a file with no `servo` block.
-    servo: SV ? { armed: svArmed, tArm: svT, ticks: svTicks, at: SV.at, onEvent: SV.onEvent } : null,
+    servo: SV ? { armed: svArmed, tArm: svT, ticks: svTicks, at: SV.at, onEvent: SV.onEvent,
+                  // ROUND 6: authority asked for, and ticks of it actually run.
+                  tailAuthority: SV.tailTicks, tailTicksRun: svTailRun } : null,
+    // ROUND 6: read-only per-tail-tick record; undefined unless asked for.
+    tailTrace: o.tailTrace ? tailLog : undefined,
     uprightTailTicks, tailTicks, uprightTailFrac: uprightTailTicks / Math.max(tailTicks, 1),
     terminal,          // ROUND 4, FAMILY B: the beat-1 -> beat-2 handoff state
     crit: rig3Criteria(h, scored), critAtTrackEnd: rig3Criteria(h, atTrackEnd),
@@ -582,7 +622,7 @@ function shoutInvalid(path, viol, B) {
  * Score ONE cell of the grid, from a SAVED file. Used for cheap screening;
  * a reported result must always come from scoreRobust().
  */
-export async function scoreCell(path, { rise, dh = 0, drop = 0.120, fmul = 1.0, isolate, stepCount, skipBounds = false } = {}) {
+export async function scoreCell(path, { rise, dh = 0, drop = 0.120, fmul = 1.0, isolate, stepCount, skipBounds = false, tailTrace = false } = {}) {
   const j = readIntent(path);
   const B = checkBounds(j);
   if (B.violations.length && !skipBounds) {
@@ -590,7 +630,7 @@ export async function scoreCell(path, { rise, dh = 0, drop = 0.120, fmul = 1.0, 
     return { invalid: true, boundViolations: B.violations, bounds: B.bounds,
              sha256: intentHash(j), reward: -Infinity, crit: { honest: false, orig: false } };
   }
-  const r = await go(j.keyframes, optsOf(j), rise + dh,
+  const r = await go(j.keyframes, { ...optsOf(j), tailTrace }, rise + dh,
     { drop, fmul, isolate: isolate === undefined ? isoOf(j) : isolate,
       stepCount: stepCount || scOf(j) });
   r.sha256 = intentHash(j);
@@ -613,7 +653,7 @@ export async function scoreCell(path, { rise, dh = 0, drop = 0.120, fmul = 1.0, 
  * A file outside its declared bounds does not get scored: it returns
  * invalid:true with objective -Infinity, after shouting.
  */
-export async function scoreRobust(path, { rise, isolate, stepCount, onCell, skipBounds = false, core = false } = {}) {
+export async function scoreRobust(path, { rise, isolate, stepCount, onCell, skipBounds = false, core = false, tailTrace = false } = {}) {
   const j = readIntent(path);
   const sha = intentHash(j);
   const B = checkBounds(j);
@@ -640,7 +680,7 @@ export async function scoreRobust(path, { rise, isolate, stepCount, onCell, skip
 
   const cells = [];
   for (const { dh, p, tier } of plan) {
-    const r = await go(j.keyframes, o, rise + dh, { drop: p.drop, fmul: p.fmul, isolate: iso, stepCount: sc });
+    const r = await go(j.keyframes, tailTrace ? { ...o, tailTrace: true } : o, rise + dh, { drop: p.drop, fmul: p.fmul, isolate: iso, stepCount: sc });
     r.cell = { rise_mm: Math.round((rise + dh) * 1000), drop: p.drop, fmul: p.fmul, tier };
     r.sha256 = sha;
     // ROUND 4, HOLE 2: a clear only counts toward the BONUS if it also stood up

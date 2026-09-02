@@ -1,0 +1,4854 @@
+{
+  "generated": "2026-09-02T13:19:15.943Z",
+  "script": "r6_tail_measure.mjs",
+  "rise_mm": 60,
+  "cells": "the 9 core cells of climb/robust.mjs",
+  "upright": "projectedGravity(trunkQuat)[2] < -0.90",
+  "files": [
+    {
+      "file": "best_r3_vault_60mm.json",
+      "sha256": "4b9110c448ec45b7e9aa9e25e8720ab6e149562dbba2c00dda73f5c86aee8f15",
+      "move": "4b9110c448ec",
+      "label": "record (round-3 beak-strut vault, NO servo)",
+      "servo": null,
+      "cells": [
+        {
+          "cell": {
+            "rise_mm": 50,
+            "drop": 0.12,
+            "fmul": 1
+          },
+          "honest": false,
+          "stableClear": false,
+          "uprightTailTicks": 50,
+          "enteredTailUpright": true,
+          "trunkAboveAtTrackEnd_mm": 66.5,
+          "peakZ_mm": 121.1,
+          "ceiling_mm": 71.1,
+          "fallTick": null,
+          "fallStatus": "upright for all 50 tail ticks",
+          "recoveredAfterFall": null,
+          "tailSatFrac": 0,
+          "servoTailTicksRun": null,
+          "atFall": null,
+          "fiveBefore": null,
+          "jointErrorAtFall": null,
+          "scored": {
+            "x_mm": 12.2,
+            "above_mm": 66.4,
+            "up": true,
+            "feetOnTread": 0
+          },
+          "tailEvery5": [
+            {
+              "t": 0,
+              "gz": -1,
+              "up": true,
+              "pitch": -0.0029,
+              "above_mm": 66.4,
+              "x_mm": 11.6,
+              "lz_mm": 5.7,
+              "rz_mm": 5.7,
+              "sat": 0
+            },
+            {
+              "t": 5,
+              "gz": -1,
+              "up": true,
+              "pitch": 0.0048,
+              "above_mm": 66.4,
+              "x_mm": 12,
+              "lz_mm": 5.7,
+              "rz_mm": 5.7,
+              "sat": 0
+            },
+            {
+              "t": 10,
+              "gz": -1,
+              "up": true,
+              "pitch": 0.0095,
+              "above_mm": 66.4,
+              "x_mm": 12.1,
+              "lz_mm": 5.6,
+              "rz_mm": 5.7,
+              "sat": 0
+            },
+            {
+              "t": 15,
+              "gz": -1,
+              "up": true,
+              "pitch": 0.0081,
+              "above_mm": 66.4,
+              "x_mm": 12.1,
+              "lz_mm": 5.6,
+              "rz_mm": 5.7,
+              "sat": 0
+            },
+            {
+              "t": 20,
+              "gz": -1,
+              "up": true,
+              "pitch": 0.0062,
+              "above_mm": 66.4,
+              "x_mm": 12.2,
+              "lz_mm": 5.6,
+              "rz_mm": 5.7,
+              "sat": 0
+            },
+            {
+              "t": 25,
+              "gz": -1,
+              "up": true,
+              "pitch": 0.0056,
+              "above_mm": 66.4,
+              "x_mm": 12.2,
+              "lz_mm": 5.6,
+              "rz_mm": 5.7,
+              "sat": 0
+            },
+            {
+              "t": 30,
+              "gz": -1,
+              "up": true,
+              "pitch": 0.0054,
+              "above_mm": 66.4,
+              "x_mm": 12.2,
+              "lz_mm": 5.6,
+              "rz_mm": 5.7,
+              "sat": 0
+            },
+            {
+              "t": 35,
+              "gz": -1,
+              "up": true,
+              "pitch": 0.0054,
+              "above_mm": 66.4,
+              "x_mm": 12.2,
+              "lz_mm": 5.6,
+              "rz_mm": 5.7,
+              "sat": 0
+            },
+            {
+              "t": 40,
+              "gz": -1,
+              "up": true,
+              "pitch": 0.0055,
+              "above_mm": 66.4,
+              "x_mm": 12.2,
+              "lz_mm": 5.6,
+              "rz_mm": 5.7,
+              "sat": 0
+            },
+            {
+              "t": 45,
+              "gz": -1,
+              "up": true,
+              "pitch": 0.0055,
+              "above_mm": 66.4,
+              "x_mm": 12.2,
+              "lz_mm": 5.6,
+              "rz_mm": 5.7,
+              "sat": 0
+            }
+          ]
+        },
+        {
+          "cell": {
+            "rise_mm": 50,
+            "drop": 0.13,
+            "fmul": 0.7
+          },
+          "honest": true,
+          "stableClear": true,
+          "uprightTailTicks": 50,
+          "enteredTailUpright": true,
+          "trunkAboveAtTrackEnd_mm": 114.4,
+          "peakZ_mm": 172.6,
+          "ceiling_mm": 122.6,
+          "fallTick": null,
+          "fallStatus": "upright for all 50 tail ticks",
+          "recoveredAfterFall": null,
+          "tailSatFrac": 0.0129,
+          "servoTailTicksRun": null,
+          "atFall": null,
+          "fiveBefore": null,
+          "jointErrorAtFall": null,
+          "scored": {
+            "x_mm": 328.5,
+            "above_mm": 116.1,
+            "up": true,
+            "feetOnTread": 2
+          },
+          "tailEvery5": [
+            {
+              "t": 0,
+              "gz": -0.9641,
+              "up": true,
+              "pitch": 0.2654,
+              "above_mm": 116.6,
+              "x_mm": 250.7,
+              "lz_mm": 66.2,
+              "rz_mm": 59.4,
+              "sat": 1
+            },
+            {
+              "t": 5,
+              "gz": -0.9908,
+              "up": true,
+              "pitch": 0.1063,
+              "above_mm": 118.9,
+              "x_mm": 261.2,
+              "lz_mm": 59.5,
+              "rz_mm": 62,
+              "sat": 0
+            },
+            {
+              "t": 10,
+              "gz": -0.994,
+              "up": true,
+              "pitch": 0.1058,
+              "above_mm": 121.1,
+              "x_mm": 275.8,
+              "lz_mm": 67.3,
+              "rz_mm": 60.2,
+              "sat": 0
+            },
+            {
+              "t": 15,
+              "gz": -0.9975,
+              "up": true,
+              "pitch": 0.0641,
+              "above_mm": 118.5,
+              "x_mm": 302.9,
+              "lz_mm": 57.7,
+              "rz_mm": 63.9,
+              "sat": 0
+            },
+            {
+              "t": 20,
+              "gz": -0.9981,
+              "up": true,
+              "pitch": 0.0609,
+              "above_mm": 119.9,
+              "x_mm": 320.1,
+              "lz_mm": 63.7,
+              "rz_mm": 59.5,
+              "sat": 0
+            },
+            {
+              "t": 25,
+              "gz": -0.9986,
+              "up": true,
+              "pitch": 0.0516,
+              "above_mm": 117.5,
+              "x_mm": 332.7,
+              "lz_mm": 56.8,
+              "rz_mm": 59.8,
+              "sat": 0
+            },
+            {
+              "t": 30,
+              "gz": -0.9983,
+              "up": true,
+              "pitch": 0.0586,
+              "above_mm": 117.5,
+              "x_mm": 333.6,
+              "lz_mm": 57.2,
+              "rz_mm": 57.1,
+              "sat": 0
+            },
+            {
+              "t": 35,
+              "gz": -0.9988,
+              "up": true,
+              "pitch": 0.0493,
+              "above_mm": 117,
+              "x_mm": 332,
+              "lz_mm": 56.1,
+              "rz_mm": 56.7,
+              "sat": 0
+            },
+            {
+              "t": 40,
+              "gz": -1,
+              "up": true,
+              "pitch": -0.0016,
+              "above_mm": 116.2,
+              "x_mm": 328.7,
+              "lz_mm": 55.2,
+              "rz_mm": 55.5,
+              "sat": 0
+            },
+            {
+              "t": 45,
+              "gz": -1,
+              "up": true,
+              "pitch": -0.0085,
+              "above_mm": 116.3,
+              "x_mm": 328.1,
+              "lz_mm": 55.3,
+              "rz_mm": 55.5,
+              "sat": 0
+            }
+          ]
+        },
+        {
+          "cell": {
+            "rise_mm": 50,
+            "drop": 0.125,
+            "fmul": 1.3
+          },
+          "honest": true,
+          "stableClear": true,
+          "uprightTailTicks": 50,
+          "enteredTailUpright": true,
+          "trunkAboveAtTrackEnd_mm": 114.6,
+          "peakZ_mm": 170.2,
+          "ceiling_mm": 120.2,
+          "fallTick": null,
+          "fallStatus": "upright for all 50 tail ticks",
+          "recoveredAfterFall": null,
+          "tailSatFrac": 0.12,
+          "servoTailTicksRun": null,
+          "atFall": null,
+          "fiveBefore": null,
+          "jointErrorAtFall": null,
+          "scored": {
+            "x_mm": 213,
+            "above_mm": 115.4,
+            "up": true,
+            "feetOnTread": 2
+          },
+          "tailEvery5": [
+            {
+              "t": 0,
+              "gz": -0.9989,
+              "up": true,
+              "pitch": 0.0479,
+              "above_mm": 114.6,
+              "x_mm": 219.6,
+              "lz_mm": 56.3,
+              "rz_mm": 57,
+              "sat": 2
+            },
+            {
+              "t": 5,
+              "gz": -0.9996,
+              "up": true,
+              "pitch": 0.0274,
+              "above_mm": 114.5,
+              "x_mm": 217.8,
+              "lz_mm": 56,
+              "rz_mm": 56.1,
+              "sat": 2
+            },
+            {
+              "t": 10,
+              "gz": -0.9999,
+              "up": true,
+              "pitch": 0.002,
+              "above_mm": 114.6,
+              "x_mm": 215,
+              "lz_mm": 56,
+              "rz_mm": 55.4,
+              "sat": 2
+            },
+            {
+              "t": 15,
+              "gz": -0.9999,
+              "up": true,
+              "pitch": -0.003,
+              "above_mm": 114.8,
+              "x_mm": 213.9,
+              "lz_mm": 55.8,
+              "rz_mm": 55.3,
+              "sat": 2
+            },
+            {
+              "t": 20,
+              "gz": -1,
+              "up": true,
+              "pitch": 0.0047,
+              "above_mm": 114.9,
+              "x_mm": 213.8,
+              "lz_mm": 55.5,
+              "rz_mm": 55.2,
+              "sat": 2
+            },
+            {
+              "t": 25,
+              "gz": -0.9999,
+              "up": true,
+              "pitch": 0.0081,
+              "above_mm": 115.1,
+              "x_mm": 213.9,
+              "lz_mm": 55.3,
+              "rz_mm": 55.1,
+              "sat": 2
+            },
+            {
+              "t": 30,
+              "gz": -0.9999,
+              "up": true,
+              "pitch": 0.0067,
+              "above_mm": 115.2,
+              "x_mm": 213.8,
+              "lz_mm": 55.2,
+              "rz_mm": 54.9,
+              "sat": 2
+            },
+            {
+              "t": 35,
+              "gz": -0.9999,
+              "up": true,
+              "pitch": 0.0059,
+              "above_mm": 115.3,
+              "x_mm": 213.7,
+              "lz_mm": 55,
+              "rz_mm": 54.7,
+              "sat": 2
+            },
+            {
+              "t": 40,
+              "gz": -0.9999,
+              "up": true,
+              "pitch": 0.0056,
+              "above_mm": 115.3,
+              "x_mm": 213.4,
+              "lz_mm": 54.8,
+              "rz_mm": 54.5,
+              "sat": 1
+            },
+            {
+              "t": 45,
+              "gz": -1,
+              "up": true,
+              "pitch": 0.0044,
+              "above_mm": 115.3,
+              "x_mm": 212.9,
+              "lz_mm": 54.5,
+              "rz_mm": 54.6,
+              "sat": 0
+            }
+          ]
+        },
+        {
+          "cell": {
+            "rise_mm": 60,
+            "drop": 0.12,
+            "fmul": 1
+          },
+          "honest": true,
+          "stableClear": true,
+          "uprightTailTicks": 50,
+          "enteredTailUpright": true,
+          "trunkAboveAtTrackEnd_mm": 118.1,
+          "peakZ_mm": 182.5,
+          "ceiling_mm": 122.5,
+          "fallTick": null,
+          "fallStatus": "upright for all 50 tail ticks",
+          "recoveredAfterFall": null,
+          "tailSatFrac": 0,
+          "servoTailTicksRun": null,
+          "atFall": null,
+          "fiveBefore": null,
+          "jointErrorAtFall": null,
+          "scored": {
+            "x_mm": 334.3,
+            "above_mm": 116.1,
+            "up": true,
+            "feetOnTread": 2
+          },
+          "tailEvery5": [
+            {
+              "t": 0,
+              "gz": -0.9995,
+              "up": true,
+              "pitch": 0.0274,
+              "above_mm": 116.3,
+              "x_mm": 337.8,
+              "lz_mm": 68.2,
+              "rz_mm": 69.1,
+              "sat": 0
+            },
+            {
+              "t": 5,
+              "gz": -0.999,
+              "up": true,
+              "pitch": 0.0431,
+              "above_mm": 117.2,
+              "x_mm": 343,
+              "lz_mm": 66.7,
+              "rz_mm": 66.9,
+              "sat": 0
+            },
+            {
+              "t": 10,
+              "gz": -0.9984,
+              "up": true,
+              "pitch": 0.0557,
+              "above_mm": 116.7,
+              "x_mm": 341.7,
+              "lz_mm": 66.1,
+              "rz_mm": 66.2,
+              "sat": 0
+            },
+            {
+              "t": 15,
+              "gz": -1,
+              "up": true,
+              "pitch": -0.0002,
+              "above_mm": 116.2,
+              "x_mm": 335.4,
+              "lz_mm": 65.1,
+              "rz_mm": 65.4,
+              "sat": 0
+            },
+            {
+              "t": 20,
+              "gz": -1,
+              "up": true,
+              "pitch": -0.0081,
+              "above_mm": 116.2,
+              "x_mm": 333.5,
+              "lz_mm": 65.2,
+              "rz_mm": 65.3,
+              "sat": 0
+            },
+            {
+              "t": 25,
+              "gz": -0.9999,
+              "up": true,
+              "pitch": 0.012,
+              "above_mm": 115.9,
+              "x_mm": 334.7,
+              "lz_mm": 65.1,
+              "rz_mm": 65.2,
+              "sat": 0
+            },
+            {
+              "t": 30,
+              "gz": -0.9999,
+              "up": true,
+              "pitch": 0.0131,
+              "above_mm": 116,
+              "x_mm": 334.9,
+              "lz_mm": 65.1,
+              "rz_mm": 65.2,
+              "sat": 0
+            },
+            {
+              "t": 35,
+              "gz": -1,
+              "up": true,
+              "pitch": 0.0092,
+              "above_mm": 116.1,
+              "x_mm": 334.6,
+              "lz_mm": 65.2,
+              "rz_mm": 65.2,
+              "sat": 0
+            },
+            {
+              "t": 40,
+              "gz": -1,
+              "up": true,
+              "pitch": 0.0073,
+              "above_mm": 116.1,
+              "x_mm": 334.4,
+              "lz_mm": 65.2,
+              "rz_mm": 65.3,
+              "sat": 0
+            },
+            {
+              "t": 45,
+              "gz": -1,
+              "up": true,
+              "pitch": 0.0063,
+              "above_mm": 116.1,
+              "x_mm": 334.3,
+              "lz_mm": 65.2,
+              "rz_mm": 65.3,
+              "sat": 0
+            }
+          ]
+        },
+        {
+          "cell": {
+            "rise_mm": 60,
+            "drop": 0.13,
+            "fmul": 0.7
+          },
+          "honest": false,
+          "stableClear": false,
+          "uprightTailTicks": 8,
+          "enteredTailUpright": false,
+          "trunkAboveAtTrackEnd_mm": 4.5,
+          "peakZ_mm": 190.4,
+          "ceiling_mm": 130.4,
+          "fallTick": 0,
+          "fallStatus": "entered the tail already down",
+          "recoveredAfterFall": true,
+          "tailSatFrac": 0.2143,
+          "servoTailTicksRun": null,
+          "atFall": {
+            "t": 0,
+            "servoed": false,
+            "gz": -0.0802,
+            "up": false,
+            "pitch": -0.9967,
+            "roll": 0.009,
+            "trunkX_mm": -112.5,
+            "trunkAbove_mm": -4,
+            "trunkZ_mm": 56,
+            "dy_mm": 1192.7,
+            "lfoot_mm": [
+              -27.6,
+              1265.5,
+              26.8
+            ],
+            "rfoot_mm": [
+              9.2,
+              1201.5,
+              25.8
+            ],
+            "sat": 3
+          },
+          "fiveBefore": null,
+          "jointErrorAtFall": [
+            {
+              "joint": "L_hip_pitch",
+              "cmd": -0.9808,
+              "q": -0.1767,
+              "err": -0.8041
+            },
+            {
+              "joint": "L_knee",
+              "cmd": 0.0534,
+              "q": 0.0017,
+              "err": 0.0517
+            },
+            {
+              "joint": "L_ankle",
+              "cmd": 0.2788,
+              "q": 0.223,
+              "err": 0.0558
+            },
+            {
+              "joint": "R_hip_pitch",
+              "cmd": -0.7993,
+              "q": 0.4587,
+              "err": -1.258
+            },
+            {
+              "joint": "R_knee",
+              "cmd": 1.0382,
+              "q": 0.6848,
+              "err": 0.3534
+            },
+            {
+              "joint": "R_ankle",
+              "cmd": -0.6363,
+              "q": 0.1362,
+              "err": -0.7725
+            }
+          ],
+          "scored": {
+            "x_mm": -6.9,
+            "above_mm": 44.1,
+            "up": false,
+            "feetOnTread": 0
+          },
+          "tailEvery5": [
+            {
+              "t": 0,
+              "gz": -0.0802,
+              "up": false,
+              "pitch": -0.9967,
+              "above_mm": -4,
+              "x_mm": -112.5,
+              "lz_mm": 26.8,
+              "rz_mm": 25.8,
+              "sat": 3
+            },
+            {
+              "t": 5,
+              "gz": 0.0698,
+              "up": false,
+              "pitch": -0.9,
+              "above_mm": 20.5,
+              "x_mm": -123.8,
+              "lz_mm": 82.2,
+              "rz_mm": 19.4,
+              "sat": 2
+            },
+            {
+              "t": 10,
+              "gz": 0.205,
+              "up": false,
+              "pitch": -0.3857,
+              "above_mm": 14.9,
+              "x_mm": -86.3,
+              "lz_mm": 53.7,
+              "rz_mm": 104.1,
+              "sat": 0
+            },
+            {
+              "t": 15,
+              "gz": -0.0774,
+              "up": false,
+              "pitch": 0.1242,
+              "above_mm": -1.8,
+              "x_mm": -41.1,
+              "lz_mm": 22.2,
+              "rz_mm": 108.3,
+              "sat": 4
+            },
+            {
+              "t": 20,
+              "gz": -0.7019,
+              "up": false,
+              "pitch": 0.4294,
+              "above_mm": 27.4,
+              "x_mm": -23.2,
+              "lz_mm": 23.2,
+              "rz_mm": 33.3,
+              "sat": 2
+            },
+            {
+              "t": 25,
+              "gz": -0.9339,
+              "up": true,
+              "pitch": 0.3412,
+              "above_mm": 56.6,
+              "x_mm": -19.3,
+              "lz_mm": 11.5,
+              "rz_mm": 17.7,
+              "sat": 3
+            },
+            {
+              "t": 30,
+              "gz": -0.9416,
+              "up": true,
+              "pitch": 0.2675,
+              "above_mm": 52.6,
+              "x_mm": -37.1,
+              "lz_mm": 21.8,
+              "rz_mm": 6.7,
+              "sat": 6
+            },
+            {
+              "t": 35,
+              "gz": -0.7831,
+              "up": false,
+              "pitch": 0.6206,
+              "above_mm": 31,
+              "x_mm": -32.5,
+              "lz_mm": 31.7,
+              "rz_mm": 7.1,
+              "sat": 5
+            },
+            {
+              "t": 40,
+              "gz": -0.6063,
+              "up": false,
+              "pitch": 0.7941,
+              "above_mm": 35.8,
+              "x_mm": -16.7,
+              "lz_mm": 8.5,
+              "rz_mm": 30.6,
+              "sat": 5
+            },
+            {
+              "t": 45,
+              "gz": -0.6539,
+              "up": false,
+              "pitch": 0.7564,
+              "above_mm": 35.4,
+              "x_mm": -11.9,
+              "lz_mm": 7.8,
+              "rz_mm": 18.7,
+              "sat": 3
+            }
+          ]
+        },
+        {
+          "cell": {
+            "rise_mm": 60,
+            "drop": 0.125,
+            "fmul": 1.3
+          },
+          "honest": false,
+          "stableClear": false,
+          "uprightTailTicks": 50,
+          "enteredTailUpright": true,
+          "trunkAboveAtTrackEnd_mm": 57,
+          "peakZ_mm": 123.3,
+          "ceiling_mm": 63.3,
+          "fallTick": null,
+          "fallStatus": "upright for all 50 tail ticks",
+          "recoveredAfterFall": null,
+          "tailSatFrac": 0.0186,
+          "servoTailTicksRun": null,
+          "atFall": null,
+          "fiveBefore": null,
+          "jointErrorAtFall": null,
+          "scored": {
+            "x_mm": -163.9,
+            "above_mm": 55.9,
+            "up": true,
+            "feetOnTread": 0
+          },
+          "tailEvery5": [
+            {
+              "t": 0,
+              "gz": -0.9882,
+              "up": true,
+              "pitch": 0.1534,
+              "above_mm": 57.1,
+              "x_mm": -204.1,
+              "lz_mm": 13.1,
+              "rz_mm": 8.6,
+              "sat": 0
+            },
+            {
+              "t": 5,
+              "gz": -0.9971,
+              "up": true,
+              "pitch": 0.0699,
+              "above_mm": 56.5,
+              "x_mm": -187.9,
+              "lz_mm": 6.4,
+              "rz_mm": 12.1,
+              "sat": 0
+            },
+            {
+              "t": 10,
+              "gz": -0.9953,
+              "up": true,
+              "pitch": 0.0969,
+              "above_mm": 56.4,
+              "x_mm": -174.6,
+              "lz_mm": 10.1,
+              "rz_mm": 6.9,
+              "sat": 0
+            },
+            {
+              "t": 15,
+              "gz": -0.9974,
+              "up": true,
+              "pitch": 0.072,
+              "above_mm": 56.1,
+              "x_mm": -157.8,
+              "lz_mm": 5.5,
+              "rz_mm": 10.5,
+              "sat": 0
+            },
+            {
+              "t": 20,
+              "gz": -0.9969,
+              "up": true,
+              "pitch": 0.0774,
+              "above_mm": 56.2,
+              "x_mm": -153.9,
+              "lz_mm": 7.5,
+              "rz_mm": 6.3,
+              "sat": 0
+            },
+            {
+              "t": 25,
+              "gz": -0.9974,
+              "up": true,
+              "pitch": 0.0722,
+              "above_mm": 57.1,
+              "x_mm": -153.5,
+              "lz_mm": 6.3,
+              "rz_mm": 7.9,
+              "sat": 0
+            },
+            {
+              "t": 30,
+              "gz": -0.9979,
+              "up": true,
+              "pitch": 0.0638,
+              "above_mm": 56.7,
+              "x_mm": -156.8,
+              "lz_mm": 6.3,
+              "rz_mm": 6.6,
+              "sat": 1
+            },
+            {
+              "t": 35,
+              "gz": -0.9994,
+              "up": true,
+              "pitch": 0.0333,
+              "above_mm": 56.1,
+              "x_mm": -160.5,
+              "lz_mm": 5.6,
+              "rz_mm": 5.7,
+              "sat": 1
+            },
+            {
+              "t": 40,
+              "gz": -0.9999,
+              "up": true,
+              "pitch": -0.0145,
+              "above_mm": 55.8,
+              "x_mm": -164.7,
+              "lz_mm": 5,
+              "rz_mm": 5.2,
+              "sat": 0
+            },
+            {
+              "t": 45,
+              "gz": -1,
+              "up": true,
+              "pitch": -0.0009,
+              "above_mm": 55.8,
+              "x_mm": -164.6,
+              "lz_mm": 5.2,
+              "rz_mm": 5.2,
+              "sat": 0
+            }
+          ]
+        },
+        {
+          "cell": {
+            "rise_mm": 70,
+            "drop": 0.12,
+            "fmul": 1
+          },
+          "honest": false,
+          "stableClear": false,
+          "uprightTailTicks": 50,
+          "enteredTailUpright": true,
+          "trunkAboveAtTrackEnd_mm": 45.7,
+          "peakZ_mm": 123.8,
+          "ceiling_mm": 53.8,
+          "fallTick": null,
+          "fallStatus": "upright for all 50 tail ticks",
+          "recoveredAfterFall": null,
+          "tailSatFrac": 0,
+          "servoTailTicksRun": null,
+          "atFall": null,
+          "fiveBefore": null,
+          "jointErrorAtFall": null,
+          "scored": {
+            "x_mm": 73.2,
+            "above_mm": 46.4,
+            "up": true,
+            "feetOnTread": 0
+          },
+          "tailEvery5": [
+            {
+              "t": 0,
+              "gz": -1,
+              "up": true,
+              "pitch": 0.0006,
+              "above_mm": 45.9,
+              "x_mm": 75.6,
+              "lz_mm": 5.3,
+              "rz_mm": 5.5,
+              "sat": 0
+            },
+            {
+              "t": 5,
+              "gz": -1,
+              "up": true,
+              "pitch": -0.0074,
+              "above_mm": 46.1,
+              "x_mm": 73.6,
+              "lz_mm": 5.5,
+              "rz_mm": 5.4,
+              "sat": 0
+            },
+            {
+              "t": 10,
+              "gz": -1,
+              "up": true,
+              "pitch": 0.0083,
+              "above_mm": 46,
+              "x_mm": 74.1,
+              "lz_mm": 5.4,
+              "rz_mm": 5.4,
+              "sat": 0
+            },
+            {
+              "t": 15,
+              "gz": -0.9999,
+              "up": true,
+              "pitch": 0.0112,
+              "above_mm": 46.1,
+              "x_mm": 74.1,
+              "lz_mm": 5.4,
+              "rz_mm": 5.5,
+              "sat": 0
+            },
+            {
+              "t": 20,
+              "gz": -1,
+              "up": true,
+              "pitch": 0.008,
+              "above_mm": 46.2,
+              "x_mm": 73.8,
+              "lz_mm": 5.5,
+              "rz_mm": 5.5,
+              "sat": 0
+            },
+            {
+              "t": 25,
+              "gz": -1,
+              "up": true,
+              "pitch": 0.0062,
+              "above_mm": 46.2,
+              "x_mm": 73.6,
+              "lz_mm": 5.5,
+              "rz_mm": 5.6,
+              "sat": 0
+            },
+            {
+              "t": 30,
+              "gz": -1,
+              "up": true,
+              "pitch": 0.0047,
+              "above_mm": 46.3,
+              "x_mm": 73.4,
+              "lz_mm": 5.5,
+              "rz_mm": 5.6,
+              "sat": 0
+            },
+            {
+              "t": 35,
+              "gz": -1,
+              "up": true,
+              "pitch": 0.0036,
+              "above_mm": 46.3,
+              "x_mm": 73.2,
+              "lz_mm": 5.5,
+              "rz_mm": 5.6,
+              "sat": 0
+            },
+            {
+              "t": 40,
+              "gz": -1,
+              "up": true,
+              "pitch": 0.0034,
+              "above_mm": 46.3,
+              "x_mm": 73.2,
+              "lz_mm": 5.5,
+              "rz_mm": 5.6,
+              "sat": 0
+            },
+            {
+              "t": 45,
+              "gz": -1,
+              "up": true,
+              "pitch": 0.0033,
+              "above_mm": 46.4,
+              "x_mm": 73.2,
+              "lz_mm": 5.5,
+              "rz_mm": 5.6,
+              "sat": 0
+            }
+          ]
+        },
+        {
+          "cell": {
+            "rise_mm": 70,
+            "drop": 0.13,
+            "fmul": 0.7
+          },
+          "honest": false,
+          "stableClear": false,
+          "uprightTailTicks": 50,
+          "enteredTailUpright": true,
+          "trunkAboveAtTrackEnd_mm": 46.4,
+          "peakZ_mm": 120.9,
+          "ceiling_mm": 50.9,
+          "fallTick": null,
+          "fallStatus": "upright for all 50 tail ticks",
+          "recoveredAfterFall": null,
+          "tailSatFrac": 0,
+          "servoTailTicksRun": null,
+          "atFall": null,
+          "fiveBefore": null,
+          "jointErrorAtFall": null,
+          "scored": {
+            "x_mm": 79.9,
+            "above_mm": 46.5,
+            "up": true,
+            "feetOnTread": 0
+          },
+          "tailEvery5": [
+            {
+              "t": 0,
+              "gz": -0.9999,
+              "up": true,
+              "pitch": -0.0098,
+              "above_mm": 46.4,
+              "x_mm": 80.3,
+              "lz_mm": 5.5,
+              "rz_mm": 5.7,
+              "sat": 0
+            },
+            {
+              "t": 5,
+              "gz": -1,
+              "up": true,
+              "pitch": -0.0013,
+              "above_mm": 46.3,
+              "x_mm": 79.9,
+              "lz_mm": 5.6,
+              "rz_mm": 5.7,
+              "sat": 0
+            },
+            {
+              "t": 10,
+              "gz": -1,
+              "up": true,
+              "pitch": 0.0069,
+              "above_mm": 46.3,
+              "x_mm": 80.2,
+              "lz_mm": 5.6,
+              "rz_mm": 5.7,
+              "sat": 0
+            },
+            {
+              "t": 15,
+              "gz": -1,
+              "up": true,
+              "pitch": 0.0077,
+              "above_mm": 46.3,
+              "x_mm": 80.2,
+              "lz_mm": 5.6,
+              "rz_mm": 5.7,
+              "sat": 0
+            },
+            {
+              "t": 20,
+              "gz": -1,
+              "up": true,
+              "pitch": 0.0069,
+              "above_mm": 46.4,
+              "x_mm": 80.1,
+              "lz_mm": 5.6,
+              "rz_mm": 5.7,
+              "sat": 0
+            },
+            {
+              "t": 25,
+              "gz": -1,
+              "up": true,
+              "pitch": 0.0057,
+              "above_mm": 46.4,
+              "x_mm": 80.1,
+              "lz_mm": 5.6,
+              "rz_mm": 5.7,
+              "sat": 0
+            },
+            {
+              "t": 30,
+              "gz": -1,
+              "up": true,
+              "pitch": 0.0048,
+              "above_mm": 46.4,
+              "x_mm": 80,
+              "lz_mm": 5.7,
+              "rz_mm": 5.7,
+              "sat": 0
+            },
+            {
+              "t": 35,
+              "gz": -1,
+              "up": true,
+              "pitch": 0.0041,
+              "above_mm": 46.5,
+              "x_mm": 79.9,
+              "lz_mm": 5.7,
+              "rz_mm": 5.7,
+              "sat": 0
+            },
+            {
+              "t": 40,
+              "gz": -1,
+              "up": true,
+              "pitch": 0.0043,
+              "above_mm": 46.5,
+              "x_mm": 79.9,
+              "lz_mm": 5.7,
+              "rz_mm": 5.8,
+              "sat": 0
+            },
+            {
+              "t": 45,
+              "gz": -1,
+              "up": true,
+              "pitch": 0.0044,
+              "above_mm": 46.5,
+              "x_mm": 79.9,
+              "lz_mm": 5.7,
+              "rz_mm": 5.8,
+              "sat": 0
+            }
+          ]
+        },
+        {
+          "cell": {
+            "rise_mm": 70,
+            "drop": 0.125,
+            "fmul": 1.3
+          },
+          "honest": true,
+          "stableClear": true,
+          "uprightTailTicks": 50,
+          "enteredTailUpright": true,
+          "trunkAboveAtTrackEnd_mm": 115.4,
+          "peakZ_mm": 189.3,
+          "ceiling_mm": 119.3,
+          "fallTick": null,
+          "fallStatus": "upright for all 50 tail ticks",
+          "recoveredAfterFall": null,
+          "tailSatFrac": 0.0014,
+          "servoTailTicksRun": null,
+          "atFall": null,
+          "fiveBefore": null,
+          "jointErrorAtFall": null,
+          "scored": {
+            "x_mm": 255.5,
+            "above_mm": 115.6,
+            "up": true,
+            "feetOnTread": 2
+          },
+          "tailEvery5": [
+            {
+              "t": 0,
+              "gz": -0.9999,
+              "up": true,
+              "pitch": -0.0102,
+              "above_mm": 115.4,
+              "x_mm": 254.8,
+              "lz_mm": 75,
+              "rz_mm": 74.4,
+              "sat": 1
+            },
+            {
+              "t": 5,
+              "gz": -1,
+              "up": true,
+              "pitch": 0.0004,
+              "above_mm": 115.2,
+              "x_mm": 255,
+              "lz_mm": 74.5,
+              "rz_mm": 74.6,
+              "sat": 0
+            },
+            {
+              "t": 10,
+              "gz": -0.9999,
+              "up": true,
+              "pitch": 0.0105,
+              "above_mm": 115.3,
+              "x_mm": 255.8,
+              "lz_mm": 74.5,
+              "rz_mm": 74.6,
+              "sat": 0
+            },
+            {
+              "t": 15,
+              "gz": -1,
+              "up": true,
+              "pitch": 0.0096,
+              "above_mm": 115.5,
+              "x_mm": 255.6,
+              "lz_mm": 74.6,
+              "rz_mm": 74.7,
+              "sat": 0
+            },
+            {
+              "t": 20,
+              "gz": -1,
+              "up": true,
+              "pitch": 0.0076,
+              "above_mm": 115.6,
+              "x_mm": 255.5,
+              "lz_mm": 74.6,
+              "rz_mm": 74.8,
+              "sat": 0
+            },
+            {
+              "t": 25,
+              "gz": -1,
+              "up": true,
+              "pitch": 0.0066,
+              "above_mm": 115.6,
+              "x_mm": 255.4,
+              "lz_mm": 74.7,
+              "rz_mm": 74.8,
+              "sat": 0
+            },
+            {
+              "t": 30,
+              "gz": -1,
+              "up": true,
+              "pitch": 0.007,
+              "above_mm": 115.6,
+              "x_mm": 255.4,
+              "lz_mm": 74.7,
+              "rz_mm": 74.8,
+              "sat": 0
+            },
+            {
+              "t": 35,
+              "gz": -1,
+              "up": true,
+              "pitch": 0.0068,
+              "above_mm": 115.6,
+              "x_mm": 255.4,
+              "lz_mm": 74.7,
+              "rz_mm": 74.8,
+              "sat": 0
+            },
+            {
+              "t": 40,
+              "gz": -1,
+              "up": true,
+              "pitch": 0.0068,
+              "above_mm": 115.6,
+              "x_mm": 255.5,
+              "lz_mm": 74.7,
+              "rz_mm": 74.8,
+              "sat": 0
+            },
+            {
+              "t": 45,
+              "gz": -1,
+              "up": true,
+              "pitch": 0.0071,
+              "above_mm": 115.6,
+              "x_mm": 255.5,
+              "lz_mm": 74.7,
+              "rz_mm": 74.8,
+              "sat": 0
+            }
+          ]
+        }
+      ],
+      "summary": {
+        "kCore": 4,
+        "kCoreStable": 4,
+        "meanUprightTailTicks": 45.33,
+        "cellsEnteringTailUpright": 8,
+        "cellsUprightAll50": 8,
+        "cellsEnteringDown": 1,
+        "fallTicks": [
+          null,
+          null,
+          null,
+          null,
+          0,
+          null,
+          null,
+          null,
+          null
+        ],
+        "meanFallTickOfThoseThatFellFromUpright": null,
+        "medianFallTick": null,
+        "meanTailSatFrac": 0.0408
+      }
+    },
+    {
+      "file": "best_r5_servo_60mm.json",
+      "sha256": "e0434c2c90da69e00c2ef5d06c301ba4a20542229e3155372a35c06f4e153d99",
+      "move": "e0434c2c90da",
+      "label": "round-5 servoed best by objective",
+      "servo": {
+        "at": 1.53352,
+        "tailTicks": 0
+      },
+      "cells": [
+        {
+          "cell": {
+            "rise_mm": 50,
+            "drop": 0.12,
+            "fmul": 1
+          },
+          "honest": false,
+          "stableClear": false,
+          "uprightTailTicks": 9,
+          "enteredTailUpright": false,
+          "trunkAboveAtTrackEnd_mm": 47.4,
+          "peakZ_mm": 120.8,
+          "ceiling_mm": 70.8,
+          "fallTick": 0,
+          "fallStatus": "entered the tail already down",
+          "recoveredAfterFall": true,
+          "tailSatFrac": 0.2357,
+          "servoTailTicksRun": 0,
+          "atFall": {
+            "t": 0,
+            "servoed": false,
+            "gz": -0.6733,
+            "up": false,
+            "pitch": 0.0029,
+            "roll": -0.7394,
+            "trunkX_mm": 114.4,
+            "trunkAbove_mm": 48.5,
+            "trunkZ_mm": 98.5,
+            "dy_mm": 1280,
+            "lfoot_mm": [
+              81,
+              1382,
+              70.3
+            ],
+            "rfoot_mm": [
+              61.4,
+              1338.2,
+              31.3
+            ],
+            "sat": 9
+          },
+          "fiveBefore": null,
+          "jointErrorAtFall": [
+            {
+              "joint": "L_hip_pitch",
+              "cmd": 1.5708,
+              "q": 0.308,
+              "err": 1.2628
+            },
+            {
+              "joint": "L_knee",
+              "cmd": -1.5708,
+              "q": -0.0895,
+              "err": -1.4813
+            },
+            {
+              "joint": "L_ankle",
+              "cmd": -0.7478,
+              "q": 1.2457,
+              "err": -1.9935
+            },
+            {
+              "joint": "R_hip_pitch",
+              "cmd": 1.5708,
+              "q": -0.399,
+              "err": 1.9698
+            },
+            {
+              "joint": "R_knee",
+              "cmd": -1.5708,
+              "q": -0.1881,
+              "err": -1.3827
+            },
+            {
+              "joint": "R_ankle",
+              "cmd": -1.5708,
+              "q": -1.4753,
+              "err": -0.0955
+            }
+          ],
+          "scored": {
+            "x_mm": -116.5,
+            "above_mm": 69,
+            "up": true,
+            "feetOnTread": 0
+          },
+          "tailEvery5": [
+            {
+              "t": 0,
+              "gz": -0.6733,
+              "up": false,
+              "pitch": 0.0029,
+              "above_mm": 48.5,
+              "x_mm": 114.4,
+              "lz_mm": 70.3,
+              "rz_mm": 31.3,
+              "sat": 9
+            },
+            {
+              "t": 5,
+              "gz": -0.3243,
+              "up": false,
+              "pitch": 0.2263,
+              "above_mm": 68.2,
+              "x_mm": 90.2,
+              "lz_mm": 200.2,
+              "rz_mm": 33.7,
+              "sat": 7
+            },
+            {
+              "t": 10,
+              "gz": 0.1979,
+              "up": false,
+              "pitch": 0.013,
+              "above_mm": 53.4,
+              "x_mm": 40.9,
+              "lz_mm": 178.2,
+              "rz_mm": 55.7,
+              "sat": 2
+            },
+            {
+              "t": 15,
+              "gz": 0.0436,
+              "up": false,
+              "pitch": -0.6956,
+              "above_mm": -11.5,
+              "x_mm": 11.3,
+              "lz_mm": 77,
+              "rz_mm": 24.3,
+              "sat": 3
+            },
+            {
+              "t": 20,
+              "gz": -0.1664,
+              "up": false,
+              "pitch": -0.9456,
+              "above_mm": 7.2,
+              "x_mm": 5.1,
+              "lz_mm": 82.9,
+              "rz_mm": 30.3,
+              "sat": 5
+            },
+            {
+              "t": 25,
+              "gz": -0.007,
+              "up": false,
+              "pitch": -0.5993,
+              "above_mm": 0.5,
+              "x_mm": -12,
+              "lz_mm": 28,
+              "rz_mm": 50.6,
+              "sat": 2
+            },
+            {
+              "t": 30,
+              "gz": 0.0265,
+              "up": false,
+              "pitch": 0.0556,
+              "above_mm": 9.5,
+              "x_mm": -35.6,
+              "lz_mm": 24.2,
+              "rz_mm": 119,
+              "sat": 3
+            },
+            {
+              "t": 35,
+              "gz": -0.5945,
+              "up": false,
+              "pitch": 0.4592,
+              "above_mm": 34.2,
+              "x_mm": -75.1,
+              "lz_mm": 27.1,
+              "rz_mm": 49.9,
+              "sat": 2
+            },
+            {
+              "t": 40,
+              "gz": -0.8839,
+              "up": false,
+              "pitch": 0.4337,
+              "above_mm": 61.2,
+              "x_mm": -108.6,
+              "lz_mm": 13.5,
+              "rz_mm": 15.1,
+              "sat": 1
+            },
+            {
+              "t": 45,
+              "gz": -0.9671,
+              "up": true,
+              "pitch": 0.2376,
+              "above_mm": 68.2,
+              "x_mm": -115.8,
+              "lz_mm": 13.5,
+              "rz_mm": 11.1,
+              "sat": 3
+            }
+          ]
+        },
+        {
+          "cell": {
+            "rise_mm": 50,
+            "drop": 0.13,
+            "fmul": 0.7
+          },
+          "honest": true,
+          "stableClear": false,
+          "uprightTailTicks": 22,
+          "enteredTailUpright": true,
+          "trunkAboveAtTrackEnd_mm": 65.3,
+          "peakZ_mm": 168.6,
+          "ceiling_mm": 118.6,
+          "fallTick": 2,
+          "fallStatus": "fell at tail tick 2 (40 ms into the tail)",
+          "recoveredAfterFall": true,
+          "tailSatFrac": 0.1986,
+          "servoTailTicksRun": 0,
+          "atFall": {
+            "t": 2,
+            "servoed": false,
+            "gz": -0.8702,
+            "up": false,
+            "pitch": 0.4927,
+            "roll": 0.0055,
+            "trunkX_mm": 192.9,
+            "trunkAbove_mm": 72.1,
+            "trunkZ_mm": 122.1,
+            "dy_mm": 1280.3,
+            "lfoot_mm": [
+              219.3,
+              1392.7,
+              127.1
+            ],
+            "rfoot_mm": [
+              120.6,
+              1359.2,
+              78
+            ],
+            "sat": 9
+          },
+          "fiveBefore": null,
+          "jointErrorAtFall": [
+            {
+              "joint": "L_hip_pitch",
+              "cmd": 1.5708,
+              "q": 0.5311,
+              "err": 1.0397
+            },
+            {
+              "joint": "L_knee",
+              "cmd": -1.5708,
+              "q": -0.7645,
+              "err": -0.8063
+            },
+            {
+              "joint": "L_ankle",
+              "cmd": -0.3446,
+              "q": 0.4204,
+              "err": -0.765
+            },
+            {
+              "joint": "R_hip_pitch",
+              "cmd": 1.5708,
+              "q": -0.2394,
+              "err": 1.8102
+            },
+            {
+              "joint": "R_knee",
+              "cmd": -1.5708,
+              "q": -0.0313,
+              "err": -1.5395
+            },
+            {
+              "joint": "R_ankle",
+              "cmd": -1.5708,
+              "q": -1.0458,
+              "err": -0.525
+            }
+          ],
+          "scored": {
+            "x_mm": 270.1,
+            "above_mm": 118.2,
+            "up": true,
+            "feetOnTread": 2
+          },
+          "tailEvery5": [
+            {
+              "t": 0,
+              "gz": -0.9231,
+              "up": true,
+              "pitch": 0.3826,
+              "above_mm": 66.3,
+              "x_mm": 187.6,
+              "lz_mm": 84.1,
+              "rz_mm": 77.2,
+              "sat": 10
+            },
+            {
+              "t": 5,
+              "gz": -0.725,
+              "up": false,
+              "pitch": 0.6796,
+              "above_mm": 85.9,
+              "x_mm": 208.3,
+              "lz_mm": 182.9,
+              "rz_mm": 77.4,
+              "sat": 9
+            },
+            {
+              "t": 10,
+              "gz": -0.6656,
+              "up": false,
+              "pitch": 0.7132,
+              "above_mm": 100.5,
+              "x_mm": 245.2,
+              "lz_mm": 138.8,
+              "rz_mm": 80.2,
+              "sat": 2
+            },
+            {
+              "t": 15,
+              "gz": -0.7053,
+              "up": false,
+              "pitch": 0.6714,
+              "above_mm": 99,
+              "x_mm": 272.3,
+              "lz_mm": 63.3,
+              "rz_mm": 69.4,
+              "sat": 4
+            },
+            {
+              "t": 20,
+              "gz": -0.6027,
+              "up": false,
+              "pitch": 0.797,
+              "above_mm": 103.1,
+              "x_mm": 271.4,
+              "lz_mm": 60.8,
+              "rz_mm": 71,
+              "sat": 4
+            },
+            {
+              "t": 25,
+              "gz": -0.6909,
+              "up": false,
+              "pitch": 0.7212,
+              "above_mm": 101.1,
+              "x_mm": 270,
+              "lz_mm": 59.6,
+              "rz_mm": 60.6,
+              "sat": 3
+            },
+            {
+              "t": 30,
+              "gz": -0.9364,
+              "up": true,
+              "pitch": 0.3476,
+              "above_mm": 110.4,
+              "x_mm": 282.2,
+              "lz_mm": 56.7,
+              "rz_mm": 60.5,
+              "sat": 0
+            },
+            {
+              "t": 35,
+              "gz": -0.9976,
+              "up": true,
+              "pitch": 0.069,
+              "above_mm": 116.3,
+              "x_mm": 277.6,
+              "lz_mm": 56.1,
+              "rz_mm": 56.5,
+              "sat": 1
+            },
+            {
+              "t": 40,
+              "gz": -0.9989,
+              "up": true,
+              "pitch": 0.0462,
+              "above_mm": 118.6,
+              "x_mm": 270.8,
+              "lz_mm": 56.9,
+              "rz_mm": 57.2,
+              "sat": 0
+            },
+            {
+              "t": 45,
+              "gz": -0.9962,
+              "up": true,
+              "pitch": 0.0864,
+              "above_mm": 118.1,
+              "x_mm": 269.7,
+              "lz_mm": 57.4,
+              "rz_mm": 57.7,
+              "sat": 0
+            }
+          ]
+        },
+        {
+          "cell": {
+            "rise_mm": 50,
+            "drop": 0.125,
+            "fmul": 1.3
+          },
+          "honest": true,
+          "stableClear": false,
+          "uprightTailTicks": 19,
+          "enteredTailUpright": false,
+          "trunkAboveAtTrackEnd_mm": 52.8,
+          "peakZ_mm": 167.6,
+          "ceiling_mm": 117.6,
+          "fallTick": 0,
+          "fallStatus": "entered the tail already down",
+          "recoveredAfterFall": true,
+          "tailSatFrac": 0.2429,
+          "servoTailTicksRun": 0,
+          "atFall": {
+            "t": 0,
+            "servoed": false,
+            "gz": -0.8242,
+            "up": false,
+            "pitch": 0.295,
+            "roll": 0.4834,
+            "trunkX_mm": 248.3,
+            "trunkAbove_mm": 53.2,
+            "trunkZ_mm": 103.2,
+            "dy_mm": 1350.1,
+            "lfoot_mm": [
+              160.2,
+              1412.4,
+              80.7
+            ],
+            "rfoot_mm": [
+              135.5,
+              1334.5,
+              80.7
+            ],
+            "sat": 11
+          },
+          "fiveBefore": null,
+          "jointErrorAtFall": [
+            {
+              "joint": "L_hip_pitch",
+              "cmd": 1.5708,
+              "q": 0.5114,
+              "err": 1.0594
+            },
+            {
+              "joint": "L_knee",
+              "cmd": -1.5708,
+              "q": -0.564,
+              "err": -1.0068
+            },
+            {
+              "joint": "L_ankle",
+              "cmd": -0.7722,
+              "q": 0.9099,
+              "err": -1.6821
+            },
+            {
+              "joint": "R_hip_pitch",
+              "cmd": 1.5708,
+              "q": -0.2515,
+              "err": 1.8223
+            },
+            {
+              "joint": "R_knee",
+              "cmd": -1.5708,
+              "q": 0.2391,
+              "err": -1.8099
+            },
+            {
+              "joint": "R_ankle",
+              "cmd": -1.5708,
+              "q": -0.9305,
+              "err": -0.6403
+            }
+          ],
+          "scored": {
+            "x_mm": 230.1,
+            "above_mm": 114.7,
+            "up": true,
+            "feetOnTread": 2
+          },
+          "tailEvery5": [
+            {
+              "t": 0,
+              "gz": -0.8242,
+              "up": false,
+              "pitch": 0.295,
+              "above_mm": 53.2,
+              "x_mm": 248.3,
+              "lz_mm": 80.7,
+              "rz_mm": 80.7,
+              "sat": 11
+            },
+            {
+              "t": 5,
+              "gz": -0.751,
+              "up": false,
+              "pitch": 0.36,
+              "above_mm": 57,
+              "x_mm": 253.3,
+              "lz_mm": 97.8,
+              "rz_mm": 81.2,
+              "sat": 8
+            },
+            {
+              "t": 10,
+              "gz": -0.709,
+              "up": false,
+              "pitch": 0.3451,
+              "above_mm": 63.9,
+              "x_mm": 243.8,
+              "lz_mm": 74.5,
+              "rz_mm": 74.7,
+              "sat": 2
+            },
+            {
+              "t": 15,
+              "gz": -0.8181,
+              "up": false,
+              "pitch": 0.471,
+              "above_mm": 90.6,
+              "x_mm": 231.7,
+              "lz_mm": 72,
+              "rz_mm": 63.8,
+              "sat": 2
+            },
+            {
+              "t": 20,
+              "gz": -0.7061,
+              "up": false,
+              "pitch": 0.7044,
+              "above_mm": 95.7,
+              "x_mm": 222.2,
+              "lz_mm": 64.4,
+              "rz_mm": 71.1,
+              "sat": 6
+            },
+            {
+              "t": 25,
+              "gz": -0.701,
+              "up": false,
+              "pitch": 0.7125,
+              "above_mm": 92.3,
+              "x_mm": 209.1,
+              "lz_mm": 62.8,
+              "rz_mm": 67.4,
+              "sat": 3
+            },
+            {
+              "t": 30,
+              "gz": -0.876,
+              "up": false,
+              "pitch": 0.4817,
+              "above_mm": 102.1,
+              "x_mm": 200.9,
+              "lz_mm": 60,
+              "rz_mm": 63.5,
+              "sat": 2
+            },
+            {
+              "t": 35,
+              "gz": -0.991,
+              "up": true,
+              "pitch": 0.1327,
+              "above_mm": 114.2,
+              "x_mm": 199.5,
+              "lz_mm": 57.8,
+              "rz_mm": 60.4,
+              "sat": 3
+            },
+            {
+              "t": 40,
+              "gz": -0.9965,
+              "up": true,
+              "pitch": 0.0826,
+              "above_mm": 116.9,
+              "x_mm": 208.4,
+              "lz_mm": 58.4,
+              "rz_mm": 60.1,
+              "sat": 1
+            },
+            {
+              "t": 45,
+              "gz": -0.9983,
+              "up": true,
+              "pitch": 0.0575,
+              "above_mm": 115.7,
+              "x_mm": 219.5,
+              "lz_mm": 57.9,
+              "rz_mm": 60.8,
+              "sat": 0
+            }
+          ]
+        },
+        {
+          "cell": {
+            "rise_mm": 60,
+            "drop": 0.12,
+            "fmul": 1
+          },
+          "honest": true,
+          "stableClear": false,
+          "uprightTailTicks": 15,
+          "enteredTailUpright": true,
+          "trunkAboveAtTrackEnd_mm": 46.1,
+          "peakZ_mm": 176.4,
+          "ceiling_mm": 116.4,
+          "fallTick": 1,
+          "fallStatus": "fell at tail tick 1 (20 ms into the tail)",
+          "recoveredAfterFall": true,
+          "tailSatFrac": 0.2857,
+          "servoTailTicksRun": 0,
+          "atFall": {
+            "t": 1,
+            "servoed": false,
+            "gz": -0.8857,
+            "up": false,
+            "pitch": 0.2119,
+            "roll": 0.413,
+            "trunkX_mm": 217.3,
+            "trunkAbove_mm": 43.8,
+            "trunkZ_mm": 103.8,
+            "dy_mm": 1286.9,
+            "lfoot_mm": [
+              194.8,
+              1393.3,
+              90.3
+            ],
+            "rfoot_mm": [
+              106.5,
+              1300.5,
+              74.5
+            ],
+            "sat": 11
+          },
+          "fiveBefore": null,
+          "jointErrorAtFall": [
+            {
+              "joint": "L_hip_pitch",
+              "cmd": 1.5708,
+              "q": 0.6666,
+              "err": 0.9042
+            },
+            {
+              "joint": "L_knee",
+              "cmd": -1.3775,
+              "q": -0.768,
+              "err": -0.6095
+            },
+            {
+              "joint": "L_ankle",
+              "cmd": -1.1974,
+              "q": 0.8631,
+              "err": -2.0605
+            },
+            {
+              "joint": "R_hip_pitch",
+              "cmd": 1.5708,
+              "q": -0.2675,
+              "err": 1.8383
+            },
+            {
+              "joint": "R_knee",
+              "cmd": -1.5708,
+              "q": 0.0574,
+              "err": -1.6282
+            },
+            {
+              "joint": "R_ankle",
+              "cmd": -1.5708,
+              "q": -1.1159,
+              "err": -0.4549
+            }
+          ],
+          "scored": {
+            "x_mm": 182,
+            "above_mm": 116,
+            "up": true,
+            "feetOnTread": 2
+          },
+          "tailEvery5": [
+            {
+              "t": 0,
+              "gz": -0.9011,
+              "up": true,
+              "pitch": 0.2242,
+              "above_mm": 45.4,
+              "x_mm": 217.2,
+              "lz_mm": 86.9,
+              "rz_mm": 79.2,
+              "sat": 10
+            },
+            {
+              "t": 5,
+              "gz": -0.8356,
+              "up": false,
+              "pitch": 0.246,
+              "above_mm": 46.2,
+              "x_mm": 217,
+              "lz_mm": 91.2,
+              "rz_mm": 74.5,
+              "sat": 8
+            },
+            {
+              "t": 10,
+              "gz": -0.8225,
+              "up": false,
+              "pitch": 0.2581,
+              "above_mm": 65.9,
+              "x_mm": 206.9,
+              "lz_mm": 87.5,
+              "rz_mm": 91.6,
+              "sat": 4
+            },
+            {
+              "t": 15,
+              "gz": -0.8867,
+              "up": false,
+              "pitch": 0.3934,
+              "above_mm": 88.3,
+              "x_mm": 200.6,
+              "lz_mm": 77.2,
+              "rz_mm": 74.8,
+              "sat": 2
+            },
+            {
+              "t": 20,
+              "gz": -0.8086,
+              "up": false,
+              "pitch": 0.5879,
+              "above_mm": 109.8,
+              "x_mm": 201.6,
+              "lz_mm": 76.4,
+              "rz_mm": 79.3,
+              "sat": 5
+            },
+            {
+              "t": 25,
+              "gz": -0.621,
+              "up": false,
+              "pitch": 0.7795,
+              "above_mm": 101.2,
+              "x_mm": 208.2,
+              "lz_mm": 92.5,
+              "rz_mm": 81.8,
+              "sat": 4
+            },
+            {
+              "t": 30,
+              "gz": -0.7373,
+              "up": false,
+              "pitch": 0.6755,
+              "above_mm": 91,
+              "x_mm": 199.2,
+              "lz_mm": 69.4,
+              "rz_mm": 85.2,
+              "sat": 4
+            },
+            {
+              "t": 35,
+              "gz": -0.8643,
+              "up": false,
+              "pitch": 0.5028,
+              "above_mm": 96.7,
+              "x_mm": 173.8,
+              "lz_mm": 69.7,
+              "rz_mm": 70.3,
+              "sat": 3
+            },
+            {
+              "t": 40,
+              "gz": -0.9951,
+              "up": true,
+              "pitch": 0.0975,
+              "above_mm": 110.2,
+              "x_mm": 165.1,
+              "lz_mm": 67.2,
+              "rz_mm": 68.9,
+              "sat": 2
+            },
+            {
+              "t": 45,
+              "gz": -0.9993,
+              "up": true,
+              "pitch": 0.0329,
+              "above_mm": 115.9,
+              "x_mm": 174.3,
+              "lz_mm": 67.2,
+              "rz_mm": 68.3,
+              "sat": 2
+            }
+          ]
+        },
+        {
+          "cell": {
+            "rise_mm": 60,
+            "drop": 0.13,
+            "fmul": 0.7
+          },
+          "honest": true,
+          "stableClear": false,
+          "uprightTailTicks": 34,
+          "enteredTailUpright": false,
+          "trunkAboveAtTrackEnd_mm": 53,
+          "peakZ_mm": 180.2,
+          "ceiling_mm": 120.2,
+          "fallTick": 0,
+          "fallStatus": "entered the tail already down",
+          "recoveredAfterFall": true,
+          "tailSatFrac": 0.1286,
+          "servoTailTicksRun": 0,
+          "atFall": {
+            "t": 0,
+            "servoed": false,
+            "gz": -0.8065,
+            "up": false,
+            "pitch": 0.2496,
+            "roll": 0.536,
+            "trunkX_mm": 210.7,
+            "trunkAbove_mm": 52.3,
+            "trunkZ_mm": 112.3,
+            "dy_mm": 1295.6,
+            "lfoot_mm": [
+              164.1,
+              1392.1,
+              88.7
+            ],
+            "rfoot_mm": [
+              104,
+              1324,
+              84.4
+            ],
+            "sat": 9
+          },
+          "fiveBefore": null,
+          "jointErrorAtFall": [
+            {
+              "joint": "L_hip_pitch",
+              "cmd": 1.5708,
+              "q": 0.5597,
+              "err": 1.0111
+            },
+            {
+              "joint": "L_knee",
+              "cmd": -1.4118,
+              "q": -0.5678,
+              "err": -0.844
+            },
+            {
+              "joint": "L_ankle",
+              "cmd": -0.7882,
+              "q": 0.9333,
+              "err": -1.7216
+            },
+            {
+              "joint": "R_hip_pitch",
+              "cmd": 1.5708,
+              "q": -0.264,
+              "err": 1.8348
+            },
+            {
+              "joint": "R_knee",
+              "cmd": -1.4057,
+              "q": 0.0553,
+              "err": -1.461
+            },
+            {
+              "joint": "R_ankle",
+              "cmd": -1.5708,
+              "q": -0.941,
+              "err": -0.6298
+            }
+          ],
+          "scored": {
+            "x_mm": 179.8,
+            "above_mm": 116.2,
+            "up": true,
+            "feetOnTread": 2
+          },
+          "tailEvery5": [
+            {
+              "t": 0,
+              "gz": -0.8065,
+              "up": false,
+              "pitch": 0.2496,
+              "above_mm": 52.3,
+              "x_mm": 210.7,
+              "lz_mm": 88.7,
+              "rz_mm": 84.4,
+              "sat": 9
+            },
+            {
+              "t": 5,
+              "gz": -0.7241,
+              "up": false,
+              "pitch": 0.2799,
+              "above_mm": 52.7,
+              "x_mm": 203.8,
+              "lz_mm": 90.9,
+              "rz_mm": 76.4,
+              "sat": 4
+            },
+            {
+              "t": 10,
+              "gz": -0.7791,
+              "up": false,
+              "pitch": 0.4471,
+              "above_mm": 84.9,
+              "x_mm": 181.8,
+              "lz_mm": 81.8,
+              "rz_mm": 82.9,
+              "sat": 2
+            },
+            {
+              "t": 15,
+              "gz": -0.8867,
+              "up": false,
+              "pitch": 0.453,
+              "above_mm": 106,
+              "x_mm": 163.4,
+              "lz_mm": 72.7,
+              "rz_mm": 74.3,
+              "sat": 3
+            },
+            {
+              "t": 20,
+              "gz": -0.9643,
+              "up": true,
+              "pitch": 0.2488,
+              "above_mm": 120.2,
+              "x_mm": 162.3,
+              "lz_mm": 75.2,
+              "rz_mm": 74,
+              "sat": 3
+            },
+            {
+              "t": 25,
+              "gz": -0.9938,
+              "up": true,
+              "pitch": 0.0983,
+              "above_mm": 115.2,
+              "x_mm": 166.1,
+              "lz_mm": 75.2,
+              "rz_mm": 69.1,
+              "sat": 3
+            },
+            {
+              "t": 30,
+              "gz": -0.9992,
+              "up": true,
+              "pitch": 0.0114,
+              "above_mm": 116.1,
+              "x_mm": 172.9,
+              "lz_mm": 66.2,
+              "rz_mm": 67.1,
+              "sat": 0
+            },
+            {
+              "t": 35,
+              "gz": -0.9997,
+              "up": true,
+              "pitch": 0.0251,
+              "above_mm": 116.6,
+              "x_mm": 181.6,
+              "lz_mm": 65.5,
+              "rz_mm": 66.4,
+              "sat": 0
+            },
+            {
+              "t": 40,
+              "gz": -1,
+              "up": true,
+              "pitch": 0.0012,
+              "above_mm": 116.1,
+              "x_mm": 181.9,
+              "lz_mm": 65.4,
+              "rz_mm": 65.6,
+              "sat": 0
+            },
+            {
+              "t": 45,
+              "gz": -0.9999,
+              "up": true,
+              "pitch": -0.0102,
+              "above_mm": 116.2,
+              "x_mm": 180.2,
+              "lz_mm": 65.3,
+              "rz_mm": 65.5,
+              "sat": 0
+            }
+          ]
+        },
+        {
+          "cell": {
+            "rise_mm": 60,
+            "drop": 0.125,
+            "fmul": 1.3
+          },
+          "honest": false,
+          "stableClear": false,
+          "uprightTailTicks": 0,
+          "enteredTailUpright": false,
+          "trunkAboveAtTrackEnd_mm": -12,
+          "peakZ_mm": 120.1,
+          "ceiling_mm": 60.1,
+          "fallTick": 0,
+          "fallStatus": "entered the tail already down",
+          "recoveredAfterFall": false,
+          "tailSatFrac": 0.1443,
+          "servoTailTicksRun": 0,
+          "atFall": {
+            "t": 0,
+            "servoed": false,
+            "gz": -0.0565,
+            "up": false,
+            "pitch": 0.0433,
+            "roll": 0.9975,
+            "trunkX_mm": -132.8,
+            "trunkAbove_mm": -10.9,
+            "trunkZ_mm": 49.1,
+            "dy_mm": 1288.4,
+            "lfoot_mm": [
+              -161,
+              1368,
+              22.9
+            ],
+            "rfoot_mm": [
+              -179.6,
+              1356.2,
+              90.2
+            ],
+            "sat": 4
+          },
+          "fiveBefore": null,
+          "jointErrorAtFall": [
+            {
+              "joint": "L_hip_pitch",
+              "cmd": 1.0515,
+              "q": 1.0551,
+              "err": -0.0036
+            },
+            {
+              "joint": "L_knee",
+              "cmd": 0.4355,
+              "q": 0.6509,
+              "err": -0.2154
+            },
+            {
+              "joint": "L_ankle",
+              "cmd": -0.4536,
+              "q": 1.3676,
+              "err": -1.8213
+            },
+            {
+              "joint": "R_hip_pitch",
+              "cmd": 0.5624,
+              "q": -0.9373,
+              "err": 1.4997
+            },
+            {
+              "joint": "R_knee",
+              "cmd": -0.616,
+              "q": -0.7383,
+              "err": 0.1222
+            },
+            {
+              "joint": "R_ankle",
+              "cmd": -0.383,
+              "q": -1.156,
+              "err": 0.773
+            }
+          ],
+          "scored": {
+            "x_mm": -67.9,
+            "above_mm": -11.9,
+            "up": false,
+            "feetOnTread": 0
+          },
+          "tailEvery5": [
+            {
+              "t": 0,
+              "gz": -0.0565,
+              "up": false,
+              "pitch": 0.0433,
+              "above_mm": -10.9,
+              "x_mm": -132.8,
+              "lz_mm": 22.9,
+              "rz_mm": 90.2,
+              "sat": 4
+            },
+            {
+              "t": 5,
+              "gz": 0.1604,
+              "up": false,
+              "pitch": 0.1008,
+              "above_mm": -3.6,
+              "x_mm": -138.8,
+              "lz_mm": 21.8,
+              "rz_mm": 128.4,
+              "sat": 3
+            },
+            {
+              "t": 10,
+              "gz": 0.0204,
+              "up": false,
+              "pitch": 0.189,
+              "above_mm": 4.8,
+              "x_mm": -145.3,
+              "lz_mm": 25.3,
+              "rz_mm": 134.4,
+              "sat": 4
+            },
+            {
+              "t": 15,
+              "gz": -0.1583,
+              "up": false,
+              "pitch": 0.3996,
+              "above_mm": 21.3,
+              "x_mm": -140.3,
+              "lz_mm": 26.5,
+              "rz_mm": 120.6,
+              "sat": 2
+            },
+            {
+              "t": 20,
+              "gz": -0.0884,
+              "up": false,
+              "pitch": 0.5243,
+              "above_mm": 35.4,
+              "x_mm": -131.8,
+              "lz_mm": 26.2,
+              "rz_mm": 110.5,
+              "sat": 1
+            },
+            {
+              "t": 25,
+              "gz": -0.0311,
+              "up": false,
+              "pitch": 0.4347,
+              "above_mm": 29.2,
+              "x_mm": -113.8,
+              "lz_mm": 25.6,
+              "rz_mm": 117.2,
+              "sat": 1
+            },
+            {
+              "t": 30,
+              "gz": 0.031,
+              "up": false,
+              "pitch": 0.1024,
+              "above_mm": -4.6,
+              "x_mm": -79.8,
+              "lz_mm": 22.2,
+              "rz_mm": 124.5,
+              "sat": 0
+            },
+            {
+              "t": 35,
+              "gz": 0.2972,
+              "up": false,
+              "pitch": -0.2993,
+              "above_mm": -22.6,
+              "x_mm": -59,
+              "lz_mm": 41.9,
+              "rz_mm": 128.3,
+              "sat": 1
+            },
+            {
+              "t": 40,
+              "gz": 0.4963,
+              "up": false,
+              "pitch": -0.4173,
+              "above_mm": -12.2,
+              "x_mm": -69.8,
+              "lz_mm": 31.3,
+              "rz_mm": 151.9,
+              "sat": 1
+            },
+            {
+              "t": 45,
+              "gz": 0.4172,
+              "up": false,
+              "pitch": -0.7322,
+              "above_mm": -4.4,
+              "x_mm": -75.3,
+              "lz_mm": 29.5,
+              "rz_mm": 152.4,
+              "sat": 3
+            }
+          ]
+        },
+        {
+          "cell": {
+            "rise_mm": 70,
+            "drop": 0.12,
+            "fmul": 1
+          },
+          "honest": false,
+          "stableClear": false,
+          "uprightTailTicks": 50,
+          "enteredTailUpright": true,
+          "trunkAboveAtTrackEnd_mm": 41.7,
+          "peakZ_mm": 123.8,
+          "ceiling_mm": 53.8,
+          "fallTick": null,
+          "fallStatus": "upright for all 50 tail ticks",
+          "recoveredAfterFall": null,
+          "tailSatFrac": 0.2029,
+          "servoTailTicksRun": 0,
+          "atFall": null,
+          "fiveBefore": null,
+          "jointErrorAtFall": null,
+          "scored": {
+            "x_mm": 63.8,
+            "above_mm": 46.4,
+            "up": true,
+            "feetOnTread": 0
+          },
+          "tailEvery5": [
+            {
+              "t": 0,
+              "gz": -0.9885,
+              "up": true,
+              "pitch": -0.1513,
+              "above_mm": 42.2,
+              "x_mm": 134.4,
+              "lz_mm": 28.9,
+              "rz_mm": 27,
+              "sat": 10
+            },
+            {
+              "t": 5,
+              "gz": -0.9775,
+              "up": true,
+              "pitch": -0.023,
+              "above_mm": 37.2,
+              "x_mm": 119.9,
+              "lz_mm": 77.6,
+              "rz_mm": 27.9,
+              "sat": 5
+            },
+            {
+              "t": 10,
+              "gz": -0.9552,
+              "up": true,
+              "pitch": -0.1742,
+              "above_mm": 30.9,
+              "x_mm": 113.9,
+              "lz_mm": 40.1,
+              "rz_mm": 31.4,
+              "sat": 3
+            },
+            {
+              "t": 15,
+              "gz": -0.9679,
+              "up": true,
+              "pitch": -0.1711,
+              "above_mm": 28.3,
+              "x_mm": 103.7,
+              "lz_mm": 48.8,
+              "rz_mm": 21.7,
+              "sat": 4
+            },
+            {
+              "t": 20,
+              "gz": -0.9722,
+              "up": true,
+              "pitch": 0.0143,
+              "above_mm": 38.7,
+              "x_mm": 101.9,
+              "lz_mm": 38.6,
+              "rz_mm": 18.8,
+              "sat": 2
+            },
+            {
+              "t": 25,
+              "gz": -0.9909,
+              "up": true,
+              "pitch": 0.1177,
+              "above_mm": 48,
+              "x_mm": 96.9,
+              "lz_mm": 18.8,
+              "rz_mm": 33.1,
+              "sat": 2
+            },
+            {
+              "t": 30,
+              "gz": -0.988,
+              "up": true,
+              "pitch": 0.1032,
+              "above_mm": 39.6,
+              "x_mm": 78.8,
+              "lz_mm": 51.5,
+              "rz_mm": 9.9,
+              "sat": 4
+            },
+            {
+              "t": 35,
+              "gz": -0.9984,
+              "up": true,
+              "pitch": -0.0556,
+              "above_mm": 37.2,
+              "x_mm": 51.9,
+              "lz_mm": 4.2,
+              "rz_mm": 7.5,
+              "sat": 0
+            },
+            {
+              "t": 40,
+              "gz": -0.9993,
+              "up": true,
+              "pitch": -0.0384,
+              "above_mm": 44.8,
+              "x_mm": 47.9,
+              "lz_mm": 5.4,
+              "rz_mm": 6.8,
+              "sat": 2
+            },
+            {
+              "t": 45,
+              "gz": -0.9997,
+              "up": true,
+              "pitch": 0.0193,
+              "above_mm": 47.1,
+              "x_mm": 61.7,
+              "lz_mm": 5.4,
+              "rz_mm": 6.1,
+              "sat": 0
+            }
+          ]
+        },
+        {
+          "cell": {
+            "rise_mm": 70,
+            "drop": 0.13,
+            "fmul": 0.7
+          },
+          "honest": false,
+          "stableClear": false,
+          "uprightTailTicks": 50,
+          "enteredTailUpright": true,
+          "trunkAboveAtTrackEnd_mm": 28.6,
+          "peakZ_mm": 120.9,
+          "ceiling_mm": 50.9,
+          "fallTick": null,
+          "fallStatus": "upright for all 50 tail ticks",
+          "recoveredAfterFall": null,
+          "tailSatFrac": 0.2243,
+          "servoTailTicksRun": 0,
+          "atFall": null,
+          "fiveBefore": null,
+          "jointErrorAtFall": null,
+          "scored": {
+            "x_mm": 44.5,
+            "above_mm": 47,
+            "up": true,
+            "feetOnTread": 0
+          },
+          "tailEvery5": [
+            {
+              "t": 0,
+              "gz": -0.9949,
+              "up": true,
+              "pitch": -0.0442,
+              "above_mm": 29.3,
+              "x_mm": 141.6,
+              "lz_mm": 30.4,
+              "rz_mm": 27.6,
+              "sat": 10
+            },
+            {
+              "t": 5,
+              "gz": -0.9745,
+              "up": true,
+              "pitch": 0.1259,
+              "above_mm": 36,
+              "x_mm": 127.2,
+              "lz_mm": 101.6,
+              "rz_mm": 26.9,
+              "sat": 8
+            },
+            {
+              "t": 10,
+              "gz": -0.947,
+              "up": true,
+              "pitch": -0.208,
+              "above_mm": 26.9,
+              "x_mm": 128,
+              "lz_mm": 49.7,
+              "rz_mm": 35.3,
+              "sat": 3
+            },
+            {
+              "t": 15,
+              "gz": -0.9762,
+              "up": true,
+              "pitch": -0.1393,
+              "above_mm": 27.1,
+              "x_mm": 118.4,
+              "lz_mm": 62,
+              "rz_mm": 20.5,
+              "sat": 4
+            },
+            {
+              "t": 20,
+              "gz": -0.9778,
+              "up": true,
+              "pitch": 0.0701,
+              "above_mm": 38.6,
+              "x_mm": 113.3,
+              "lz_mm": 42.9,
+              "rz_mm": 15.8,
+              "sat": 1
+            },
+            {
+              "t": 25,
+              "gz": -0.9902,
+              "up": true,
+              "pitch": 0.1359,
+              "above_mm": 48.3,
+              "x_mm": 99.8,
+              "lz_mm": 17.9,
+              "rz_mm": 32.6,
+              "sat": 5
+            },
+            {
+              "t": 30,
+              "gz": -0.9655,
+              "up": true,
+              "pitch": 0.2236,
+              "above_mm": 42.3,
+              "x_mm": 77.3,
+              "lz_mm": 48.3,
+              "rz_mm": 12.9,
+              "sat": 6
+            },
+            {
+              "t": 35,
+              "gz": -0.9842,
+              "up": true,
+              "pitch": 0.163,
+              "above_mm": 37.8,
+              "x_mm": 46.9,
+              "lz_mm": 35.1,
+              "rz_mm": 9.6,
+              "sat": 4
+            },
+            {
+              "t": 40,
+              "gz": -1,
+              "up": true,
+              "pitch": -0.0002,
+              "above_mm": 43.4,
+              "x_mm": 30.6,
+              "lz_mm": 5.8,
+              "rz_mm": 6.6,
+              "sat": 0
+            },
+            {
+              "t": 45,
+              "gz": -0.9999,
+              "up": true,
+              "pitch": -0.0162,
+              "above_mm": 46.8,
+              "x_mm": 35.2,
+              "lz_mm": 6.5,
+              "rz_mm": 6.3,
+              "sat": 0
+            }
+          ]
+        },
+        {
+          "cell": {
+            "rise_mm": 70,
+            "drop": 0.125,
+            "fmul": 1.3
+          },
+          "honest": false,
+          "stableClear": false,
+          "uprightTailTicks": 50,
+          "enteredTailUpright": true,
+          "trunkAboveAtTrackEnd_mm": 41.1,
+          "peakZ_mm": 126.6,
+          "ceiling_mm": 56.6,
+          "fallTick": null,
+          "fallStatus": "upright for all 50 tail ticks",
+          "recoveredAfterFall": null,
+          "tailSatFrac": 0.2171,
+          "servoTailTicksRun": 0,
+          "atFall": null,
+          "fiveBefore": null,
+          "jointErrorAtFall": null,
+          "scored": {
+            "x_mm": 60.1,
+            "above_mm": 45.8,
+            "up": true,
+            "feetOnTread": 0
+          },
+          "tailEvery5": [
+            {
+              "t": 0,
+              "gz": -0.9585,
+              "up": true,
+              "pitch": -0.1804,
+              "above_mm": 42.1,
+              "x_mm": 100.5,
+              "lz_mm": 26.9,
+              "rz_mm": 31.1,
+              "sat": 9
+            },
+            {
+              "t": 5,
+              "gz": -0.9919,
+              "up": true,
+              "pitch": -0.0928,
+              "above_mm": 39.5,
+              "x_mm": 104.1,
+              "lz_mm": 72.2,
+              "rz_mm": 26.1,
+              "sat": 6
+            },
+            {
+              "t": 10,
+              "gz": -0.9497,
+              "up": true,
+              "pitch": -0.1221,
+              "above_mm": 39.8,
+              "x_mm": 99.7,
+              "lz_mm": 43.2,
+              "rz_mm": 24.8,
+              "sat": 4
+            },
+            {
+              "t": 15,
+              "gz": -0.9883,
+              "up": true,
+              "pitch": -0.0419,
+              "above_mm": 38.1,
+              "x_mm": 105.5,
+              "lz_mm": 15.7,
+              "rz_mm": 15.7,
+              "sat": 2
+            },
+            {
+              "t": 20,
+              "gz": -0.9763,
+              "up": true,
+              "pitch": 0.1532,
+              "above_mm": 35.1,
+              "x_mm": 109.3,
+              "lz_mm": 21,
+              "rz_mm": 17,
+              "sat": 3
+            },
+            {
+              "t": 25,
+              "gz": -0.9964,
+              "up": true,
+              "pitch": 0.0845,
+              "above_mm": 46.5,
+              "x_mm": 91,
+              "lz_mm": 14.6,
+              "rz_mm": 16.1,
+              "sat": 1
+            },
+            {
+              "t": 30,
+              "gz": -0.9826,
+              "up": true,
+              "pitch": 0.1677,
+              "above_mm": 45.2,
+              "x_mm": 102.2,
+              "lz_mm": 18.2,
+              "rz_mm": 11.7,
+              "sat": 1
+            },
+            {
+              "t": 35,
+              "gz": -0.9609,
+              "up": true,
+              "pitch": 0.2757,
+              "above_mm": 30.8,
+              "x_mm": 80.6,
+              "lz_mm": 44.1,
+              "rz_mm": 12.6,
+              "sat": 4
+            },
+            {
+              "t": 40,
+              "gz": -0.9994,
+              "up": true,
+              "pitch": 0.0338,
+              "above_mm": 30.6,
+              "x_mm": 48,
+              "lz_mm": 4.6,
+              "rz_mm": 7.6,
+              "sat": 2
+            },
+            {
+              "t": 45,
+              "gz": -0.9999,
+              "up": true,
+              "pitch": 0.0133,
+              "above_mm": 44.7,
+              "x_mm": 52,
+              "lz_mm": 7.3,
+              "rz_mm": 8.5,
+              "sat": 2
+            }
+          ]
+        }
+      ],
+      "summary": {
+        "kCore": 4,
+        "kCoreStable": 0,
+        "meanUprightTailTicks": 27.67,
+        "cellsEnteringTailUpright": 5,
+        "cellsUprightAll50": 3,
+        "cellsEnteringDown": 4,
+        "fallTicks": [
+          0,
+          2,
+          0,
+          1,
+          0,
+          0,
+          null,
+          null,
+          null
+        ],
+        "meanFallTickOfThoseThatFellFromUpright": 1.5,
+        "medianFallTick": 2,
+        "meanTailSatFrac": 0.2089
+      }
+    },
+    {
+      "file": "best_r5_servoland_kcore_60mm.json",
+      "sha256": "880a120ef6497c46275d95ade70c12bb421c64cdac473c1a944ab236ce0495f5",
+      "move": "880a120ef649",
+      "label": "round-5 servoed best by kCore",
+      "servo": {
+        "at": 1.1838,
+        "tailTicks": 0
+      },
+      "cells": [
+        {
+          "cell": {
+            "rise_mm": 50,
+            "drop": 0.12,
+            "fmul": 1
+          },
+          "honest": false,
+          "stableClear": false,
+          "uprightTailTicks": 4,
+          "enteredTailUpright": true,
+          "trunkAboveAtTrackEnd_mm": 46.7,
+          "peakZ_mm": 132,
+          "ceiling_mm": 82,
+          "fallTick": 3,
+          "fallStatus": "fell at tail tick 3 (60 ms into the tail)",
+          "recoveredAfterFall": true,
+          "tailSatFrac": 0.2414,
+          "servoTailTicksRun": 0,
+          "atFall": {
+            "t": 3,
+            "servoed": false,
+            "gz": -0.8926,
+            "up": false,
+            "pitch": 0.2879,
+            "roll": 0.3469,
+            "trunkX_mm": 200.8,
+            "trunkAbove_mm": 53.5,
+            "trunkZ_mm": 103.5,
+            "dy_mm": 1366.4,
+            "lfoot_mm": [
+              96.6,
+              1386.5,
+              105
+            ],
+            "rfoot_mm": [
+              166,
+              1258.3,
+              74.7
+            ],
+            "sat": 13
+          },
+          "fiveBefore": null,
+          "jointErrorAtFall": [
+            {
+              "joint": "L_hip_pitch",
+              "cmd": 1.5708,
+              "q": 0.5309,
+              "err": 1.0399
+            },
+            {
+              "joint": "L_knee",
+              "cmd": -1.5708,
+              "q": -1.4688,
+              "err": -0.102
+            },
+            {
+              "joint": "L_ankle",
+              "cmd": -1.1384,
+              "q": 0.7409,
+              "err": -1.8793
+            },
+            {
+              "joint": "R_hip_pitch",
+              "cmd": 1.5708,
+              "q": 0.2583,
+              "err": 1.3125
+            },
+            {
+              "joint": "R_knee",
+              "cmd": -1.5708,
+              "q": 0.866,
+              "err": -2.4368
+            },
+            {
+              "joint": "R_ankle",
+              "cmd": -1.5708,
+              "q": -1.5014,
+              "err": -0.0694
+            }
+          ],
+          "scored": {
+            "x_mm": 102.3,
+            "above_mm": 64.2,
+            "up": false,
+            "feetOnTread": 0
+          },
+          "tailEvery5": [
+            {
+              "t": 0,
+              "gz": -0.9815,
+              "up": true,
+              "pitch": 0.1603,
+              "above_mm": 47.2,
+              "x_mm": 215.3,
+              "lz_mm": 80.3,
+              "rz_mm": 71.2,
+              "sat": 13
+            },
+            {
+              "t": 5,
+              "gz": -0.7845,
+              "up": false,
+              "pitch": 0.3565,
+              "above_mm": 57.6,
+              "x_mm": 190.1,
+              "lz_mm": 109,
+              "rz_mm": 80,
+              "sat": 11
+            },
+            {
+              "t": 10,
+              "gz": -0.7346,
+              "up": false,
+              "pitch": 0.3032,
+              "above_mm": 59.5,
+              "x_mm": 192.5,
+              "lz_mm": 97.1,
+              "rz_mm": 81.4,
+              "sat": 4
+            },
+            {
+              "t": 15,
+              "gz": -0.8071,
+              "up": false,
+              "pitch": 0.1891,
+              "above_mm": 61.8,
+              "x_mm": 163.6,
+              "lz_mm": 35.2,
+              "rz_mm": 74.4,
+              "sat": 2
+            },
+            {
+              "t": 20,
+              "gz": -0.8337,
+              "up": false,
+              "pitch": 0.3611,
+              "above_mm": 70,
+              "x_mm": 127.4,
+              "lz_mm": 14.3,
+              "rz_mm": 66.2,
+              "sat": 2
+            },
+            {
+              "t": 25,
+              "gz": -0.8563,
+              "up": false,
+              "pitch": 0.3559,
+              "above_mm": 77.9,
+              "x_mm": 100.5,
+              "lz_mm": 14.1,
+              "rz_mm": 69.9,
+              "sat": 1
+            },
+            {
+              "t": 30,
+              "gz": -0.8786,
+              "up": false,
+              "pitch": 0.0711,
+              "above_mm": 80,
+              "x_mm": 81.6,
+              "lz_mm": 13.4,
+              "rz_mm": 63.6,
+              "sat": 1
+            },
+            {
+              "t": 35,
+              "gz": -0.8382,
+              "up": false,
+              "pitch": -0.0275,
+              "above_mm": 77.3,
+              "x_mm": 75.3,
+              "lz_mm": 14.1,
+              "rz_mm": 65.8,
+              "sat": 1
+            },
+            {
+              "t": 40,
+              "gz": -0.8017,
+              "up": false,
+              "pitch": -0.1126,
+              "above_mm": 69.8,
+              "x_mm": 69.3,
+              "lz_mm": 16.2,
+              "rz_mm": 68.2,
+              "sat": 1
+            },
+            {
+              "t": 45,
+              "gz": -0.7954,
+              "up": false,
+              "pitch": -0.1731,
+              "above_mm": 65.6,
+              "x_mm": 85.9,
+              "lz_mm": 17.1,
+              "rz_mm": 73.1,
+              "sat": 1
+            }
+          ]
+        },
+        {
+          "cell": {
+            "rise_mm": 50,
+            "drop": 0.13,
+            "fmul": 0.7
+          },
+          "honest": false,
+          "stableClear": false,
+          "uprightTailTicks": 2,
+          "enteredTailUpright": true,
+          "trunkAboveAtTrackEnd_mm": 48.2,
+          "peakZ_mm": 134,
+          "ceiling_mm": 84,
+          "fallTick": 2,
+          "fallStatus": "fell at tail tick 2 (40 ms into the tail)",
+          "recoveredAfterFall": false,
+          "tailSatFrac": 0.2343,
+          "servoTailTicksRun": 0,
+          "atFall": {
+            "t": 2,
+            "servoed": false,
+            "gz": -0.8977,
+            "up": false,
+            "pitch": 0.245,
+            "roll": 0.3662,
+            "trunkX_mm": 177.3,
+            "trunkAbove_mm": 50.9,
+            "trunkZ_mm": 100.9,
+            "dy_mm": 1339.1,
+            "lfoot_mm": [
+              74.4,
+              1349.3,
+              93.4
+            ],
+            "rfoot_mm": [
+              135.8,
+              1236.2,
+              70.7
+            ],
+            "sat": 13
+          },
+          "fiveBefore": null,
+          "jointErrorAtFall": [
+            {
+              "joint": "L_hip_pitch",
+              "cmd": 1.5708,
+              "q": 0.3712,
+              "err": 1.1996
+            },
+            {
+              "joint": "L_knee",
+              "cmd": -1.5708,
+              "q": -1.4882,
+              "err": -0.0826
+            },
+            {
+              "joint": "L_ankle",
+              "cmd": -1.4292,
+              "q": 0.9594,
+              "err": -2.3886
+            },
+            {
+              "joint": "R_hip_pitch",
+              "cmd": 1.5708,
+              "q": 0.321,
+              "err": 1.2498
+            },
+            {
+              "joint": "R_knee",
+              "cmd": -1.5708,
+              "q": 1.1043,
+              "err": -2.6751
+            },
+            {
+              "joint": "R_ankle",
+              "cmd": -1.5708,
+              "q": -1.4258,
+              "err": -0.145
+            }
+          ],
+          "scored": {
+            "x_mm": 80.3,
+            "above_mm": 61.5,
+            "up": false,
+            "feetOnTread": 1
+          },
+          "tailEvery5": [
+            {
+              "t": 0,
+              "gz": -0.9652,
+              "up": true,
+              "pitch": 0.1702,
+              "above_mm": 48.4,
+              "x_mm": 186,
+              "lz_mm": 81.3,
+              "rz_mm": 72.5,
+              "sat": 13
+            },
+            {
+              "t": 5,
+              "gz": -0.7405,
+              "up": false,
+              "pitch": 0.3248,
+              "above_mm": 55.1,
+              "x_mm": 156.4,
+              "lz_mm": 95.6,
+              "rz_mm": 79.2,
+              "sat": 12
+            },
+            {
+              "t": 10,
+              "gz": -0.7144,
+              "up": false,
+              "pitch": 0.0877,
+              "above_mm": 48,
+              "x_mm": 152.9,
+              "lz_mm": 70.2,
+              "rz_mm": 82.5,
+              "sat": 3
+            },
+            {
+              "t": 15,
+              "gz": -0.8024,
+              "up": false,
+              "pitch": 0.0234,
+              "above_mm": 53.1,
+              "x_mm": 144.6,
+              "lz_mm": 13.2,
+              "rz_mm": 70.4,
+              "sat": 2
+            },
+            {
+              "t": 20,
+              "gz": -0.8037,
+              "up": false,
+              "pitch": 0.4508,
+              "above_mm": 65.7,
+              "x_mm": 134.9,
+              "lz_mm": 15.9,
+              "rz_mm": 66.2,
+              "sat": 6
+            },
+            {
+              "t": 25,
+              "gz": -0.7996,
+              "up": false,
+              "pitch": 0.453,
+              "above_mm": 69.9,
+              "x_mm": 117.6,
+              "lz_mm": 13.1,
+              "rz_mm": 67.8,
+              "sat": 2
+            },
+            {
+              "t": 30,
+              "gz": -0.8783,
+              "up": false,
+              "pitch": 0.3257,
+              "above_mm": 83.9,
+              "x_mm": 103.1,
+              "lz_mm": 17.7,
+              "rz_mm": 68.3,
+              "sat": 1
+            },
+            {
+              "t": 35,
+              "gz": -0.8505,
+              "up": false,
+              "pitch": 0.0872,
+              "above_mm": 75.8,
+              "x_mm": 95.2,
+              "lz_mm": 14.7,
+              "rz_mm": 63.2,
+              "sat": 1
+            },
+            {
+              "t": 40,
+              "gz": -0.8643,
+              "up": false,
+              "pitch": 0.043,
+              "above_mm": 72.2,
+              "x_mm": 84.3,
+              "lz_mm": 16.2,
+              "rz_mm": 64.5,
+              "sat": 0
+            },
+            {
+              "t": 45,
+              "gz": -0.8228,
+              "up": false,
+              "pitch": -0.0831,
+              "above_mm": 65.6,
+              "x_mm": 81.8,
+              "lz_mm": 16.7,
+              "rz_mm": 65,
+              "sat": 0
+            }
+          ]
+        },
+        {
+          "cell": {
+            "rise_mm": 50,
+            "drop": 0.125,
+            "fmul": 1.3
+          },
+          "honest": false,
+          "stableClear": false,
+          "uprightTailTicks": 8,
+          "enteredTailUpright": true,
+          "trunkAboveAtTrackEnd_mm": 46.6,
+          "peakZ_mm": 133.1,
+          "ceiling_mm": 83.1,
+          "fallTick": 3,
+          "fallStatus": "fell at tail tick 3 (60 ms into the tail)",
+          "recoveredAfterFall": true,
+          "tailSatFrac": 0.3143,
+          "servoTailTicksRun": 0,
+          "atFall": {
+            "t": 3,
+            "servoed": false,
+            "gz": -0.8903,
+            "up": false,
+            "pitch": 0.2954,
+            "roll": 0.3466,
+            "trunkX_mm": 192.7,
+            "trunkAbove_mm": 53.7,
+            "trunkZ_mm": 103.7,
+            "dy_mm": 1355.3,
+            "lfoot_mm": [
+              87.8,
+              1368.7,
+              105.4
+            ],
+            "rfoot_mm": [
+              165.1,
+              1245.1,
+              74.4
+            ],
+            "sat": 13
+          },
+          "fiveBefore": null,
+          "jointErrorAtFall": [
+            {
+              "joint": "L_hip_pitch",
+              "cmd": 1.5708,
+              "q": 0.5193,
+              "err": 1.0514
+            },
+            {
+              "joint": "L_knee",
+              "cmd": -1.5708,
+              "q": -1.4864,
+              "err": -0.0844
+            },
+            {
+              "joint": "L_ankle",
+              "cmd": -1.1123,
+              "q": 0.742,
+              "err": -1.8542
+            },
+            {
+              "joint": "R_hip_pitch",
+              "cmd": 1.5708,
+              "q": 0.2582,
+              "err": 1.3126
+            },
+            {
+              "joint": "R_knee",
+              "cmd": -1.5708,
+              "q": 0.8626,
+              "err": -2.4334
+            },
+            {
+              "joint": "R_ankle",
+              "cmd": -1.5708,
+              "q": -1.4893,
+              "err": -0.0815
+            }
+          ],
+          "scored": {
+            "x_mm": 91.8,
+            "above_mm": 79.3,
+            "up": false,
+            "feetOnTread": 1
+          },
+          "tailEvery5": [
+            {
+              "t": 0,
+              "gz": -0.9825,
+              "up": true,
+              "pitch": 0.1617,
+              "above_mm": 47.2,
+              "x_mm": 208.7,
+              "lz_mm": 81,
+              "rz_mm": 71.4,
+              "sat": 13
+            },
+            {
+              "t": 5,
+              "gz": -0.7808,
+              "up": false,
+              "pitch": 0.3617,
+              "above_mm": 57.4,
+              "x_mm": 177.6,
+              "lz_mm": 107.2,
+              "rz_mm": 78.3,
+              "sat": 12
+            },
+            {
+              "t": 10,
+              "gz": -0.7275,
+              "up": false,
+              "pitch": 0.2326,
+              "above_mm": 55.7,
+              "x_mm": 177,
+              "lz_mm": 90.2,
+              "rz_mm": 80.1,
+              "sat": 4
+            },
+            {
+              "t": 15,
+              "gz": -0.7959,
+              "up": false,
+              "pitch": -0.0101,
+              "above_mm": 53.1,
+              "x_mm": 151.3,
+              "lz_mm": 11,
+              "rz_mm": 70.8,
+              "sat": 1
+            },
+            {
+              "t": 20,
+              "gz": -0.9074,
+              "up": true,
+              "pitch": 0.1445,
+              "above_mm": 72.2,
+              "x_mm": 129.2,
+              "lz_mm": 13.9,
+              "rz_mm": 64.6,
+              "sat": 3
+            },
+            {
+              "t": 25,
+              "gz": -0.89,
+              "up": false,
+              "pitch": 0.2935,
+              "above_mm": 83.1,
+              "x_mm": 120.1,
+              "lz_mm": 17.9,
+              "rz_mm": 66.4,
+              "sat": 4
+            },
+            {
+              "t": 30,
+              "gz": -0.8112,
+              "up": false,
+              "pitch": 0.2177,
+              "above_mm": 68.8,
+              "x_mm": 110.2,
+              "lz_mm": 16.7,
+              "rz_mm": 69,
+              "sat": 5
+            },
+            {
+              "t": 35,
+              "gz": -0.7564,
+              "up": false,
+              "pitch": 0.4036,
+              "above_mm": 73.5,
+              "x_mm": 105.1,
+              "lz_mm": 16.9,
+              "rz_mm": 86.4,
+              "sat": 5
+            },
+            {
+              "t": 40,
+              "gz": -0.8247,
+              "up": false,
+              "pitch": 0.3802,
+              "above_mm": 66.5,
+              "x_mm": 105.5,
+              "lz_mm": 12.4,
+              "rz_mm": 65.1,
+              "sat": 2
+            },
+            {
+              "t": 45,
+              "gz": -0.9068,
+              "up": true,
+              "pitch": 0.2132,
+              "above_mm": 79.5,
+              "x_mm": 95.3,
+              "lz_mm": 14.3,
+              "rz_mm": 65.4,
+              "sat": 1
+            }
+          ]
+        },
+        {
+          "cell": {
+            "rise_mm": 60,
+            "drop": 0.12,
+            "fmul": 1
+          },
+          "honest": true,
+          "stableClear": false,
+          "uprightTailTicks": 25,
+          "enteredTailUpright": true,
+          "trunkAboveAtTrackEnd_mm": 45.7,
+          "peakZ_mm": 183.5,
+          "ceiling_mm": 123.5,
+          "fallTick": 3,
+          "fallStatus": "fell at tail tick 3 (60 ms into the tail)",
+          "recoveredAfterFall": true,
+          "tailSatFrac": 0.2629,
+          "servoTailTicksRun": 0,
+          "atFall": {
+            "t": 3,
+            "servoed": false,
+            "gz": -0.8854,
+            "up": false,
+            "pitch": 0.2809,
+            "roll": 0.3704,
+            "trunkX_mm": 220.9,
+            "trunkAbove_mm": 50.8,
+            "trunkZ_mm": 110.8,
+            "dy_mm": 1337.8,
+            "lfoot_mm": [
+              164.4,
+              1428.2,
+              110.2
+            ],
+            "rfoot_mm": [
+              118.4,
+              1288.7,
+              80.7
+            ],
+            "sat": 13
+          },
+          "fiveBefore": null,
+          "jointErrorAtFall": [
+            {
+              "joint": "L_hip_pitch",
+              "cmd": 1.5708,
+              "q": 0.5447,
+              "err": 1.0261
+            },
+            {
+              "joint": "L_knee",
+              "cmd": -1.5708,
+              "q": -1.4285,
+              "err": -0.1423
+            },
+            {
+              "joint": "L_ankle",
+              "cmd": -1.3865,
+              "q": 0.7538,
+              "err": -2.1403
+            },
+            {
+              "joint": "R_hip_pitch",
+              "cmd": 1.5708,
+              "q": 0.3775,
+              "err": 1.1933
+            },
+            {
+              "joint": "R_knee",
+              "cmd": -1.5708,
+              "q": 1.0129,
+              "err": -2.5837
+            },
+            {
+              "joint": "R_ankle",
+              "cmd": -1.5708,
+              "q": -1.4461,
+              "err": -0.1247
+            }
+          ],
+          "scored": {
+            "x_mm": 298.4,
+            "above_mm": 117.5,
+            "up": true,
+            "feetOnTread": 2
+          },
+          "tailEvery5": [
+            {
+              "t": 0,
+              "gz": -0.9831,
+              "up": true,
+              "pitch": 0.1615,
+              "above_mm": 46.3,
+              "x_mm": 219.5,
+              "lz_mm": 87.4,
+              "rz_mm": 84.7,
+              "sat": 13
+            },
+            {
+              "t": 5,
+              "gz": -0.7574,
+              "up": false,
+              "pitch": 0.3399,
+              "above_mm": 55.3,
+              "x_mm": 224.3,
+              "lz_mm": 113.2,
+              "rz_mm": 90.6,
+              "sat": 12
+            },
+            {
+              "t": 10,
+              "gz": -0.6916,
+              "up": false,
+              "pitch": 0.3079,
+              "above_mm": 60.4,
+              "x_mm": 224.5,
+              "lz_mm": 102.6,
+              "rz_mm": 90.8,
+              "sat": 4
+            },
+            {
+              "t": 15,
+              "gz": -0.8353,
+              "up": false,
+              "pitch": 0.3097,
+              "above_mm": 73.1,
+              "x_mm": 217.6,
+              "lz_mm": 82.1,
+              "rz_mm": 80.4,
+              "sat": 2
+            },
+            {
+              "t": 20,
+              "gz": -0.7716,
+              "up": false,
+              "pitch": 0.6217,
+              "above_mm": 91.4,
+              "x_mm": 218.7,
+              "lz_mm": 74.7,
+              "rz_mm": 70.3,
+              "sat": 2
+            },
+            {
+              "t": 25,
+              "gz": -0.8285,
+              "up": false,
+              "pitch": 0.5599,
+              "above_mm": 113.6,
+              "x_mm": 226.2,
+              "lz_mm": 71.3,
+              "rz_mm": 77,
+              "sat": 1
+            },
+            {
+              "t": 30,
+              "gz": -0.9667,
+              "up": true,
+              "pitch": 0.2518,
+              "above_mm": 114.6,
+              "x_mm": 255.4,
+              "lz_mm": 73.8,
+              "rz_mm": 69,
+              "sat": 3
+            },
+            {
+              "t": 35,
+              "gz": -0.9875,
+              "up": true,
+              "pitch": 0.1237,
+              "above_mm": 122.4,
+              "x_mm": 278.5,
+              "lz_mm": 78.3,
+              "rz_mm": 72.9,
+              "sat": 1
+            },
+            {
+              "t": 40,
+              "gz": -0.9858,
+              "up": true,
+              "pitch": 0.1478,
+              "above_mm": 115.3,
+              "x_mm": 297.4,
+              "lz_mm": 74.2,
+              "rz_mm": 66.5,
+              "sat": 2
+            },
+            {
+              "t": 45,
+              "gz": -0.9985,
+              "up": true,
+              "pitch": 0.0452,
+              "above_mm": 116.1,
+              "x_mm": 298.6,
+              "lz_mm": 68.5,
+              "rz_mm": 68,
+              "sat": 0
+            }
+          ]
+        },
+        {
+          "cell": {
+            "rise_mm": 60,
+            "drop": 0.13,
+            "fmul": 0.7
+          },
+          "honest": true,
+          "stableClear": false,
+          "uprightTailTicks": 25,
+          "enteredTailUpright": true,
+          "trunkAboveAtTrackEnd_mm": 45.9,
+          "peakZ_mm": 182.1,
+          "ceiling_mm": 122.1,
+          "fallTick": 3,
+          "fallStatus": "fell at tail tick 3 (60 ms into the tail)",
+          "recoveredAfterFall": true,
+          "tailSatFrac": 0.2643,
+          "servoTailTicksRun": 0,
+          "atFall": {
+            "t": 3,
+            "servoed": false,
+            "gz": -0.8883,
+            "up": false,
+            "pitch": 0.2902,
+            "roll": 0.3558,
+            "trunkX_mm": 213.8,
+            "trunkAbove_mm": 51.3,
+            "trunkZ_mm": 111.3,
+            "dy_mm": 1332.6,
+            "lfoot_mm": [
+              147.8,
+              1415.9,
+              112.1
+            ],
+            "rfoot_mm": [
+              117.4,
+              1273.1,
+              80.8
+            ],
+            "sat": 13
+          },
+          "fiveBefore": null,
+          "jointErrorAtFall": [
+            {
+              "joint": "L_hip_pitch",
+              "cmd": 1.5708,
+              "q": 0.5295,
+              "err": 1.0413
+            },
+            {
+              "joint": "L_knee",
+              "cmd": -1.5708,
+              "q": -1.4531,
+              "err": -0.1177
+            },
+            {
+              "joint": "L_ankle",
+              "cmd": -1.4144,
+              "q": 0.7557,
+              "err": -2.1701
+            },
+            {
+              "joint": "R_hip_pitch",
+              "cmd": 1.5708,
+              "q": 0.372,
+              "err": 1.1987
+            },
+            {
+              "joint": "R_knee",
+              "cmd": -1.5708,
+              "q": 1.0093,
+              "err": -2.5801
+            },
+            {
+              "joint": "R_ankle",
+              "cmd": -1.5708,
+              "q": -1.4471,
+              "err": -0.1237
+            }
+          ],
+          "scored": {
+            "x_mm": 253.2,
+            "above_mm": 115.2,
+            "up": true,
+            "feetOnTread": 2
+          },
+          "tailEvery5": [
+            {
+              "t": 0,
+              "gz": -0.9832,
+              "up": true,
+              "pitch": 0.1662,
+              "above_mm": 46.5,
+              "x_mm": 214.9,
+              "lz_mm": 89.1,
+              "rz_mm": 84.7,
+              "sat": 13
+            },
+            {
+              "t": 5,
+              "gz": -0.7568,
+              "up": false,
+              "pitch": 0.3549,
+              "above_mm": 55.3,
+              "x_mm": 214.4,
+              "lz_mm": 114,
+              "rz_mm": 88.5,
+              "sat": 12
+            },
+            {
+              "t": 10,
+              "gz": -0.6395,
+              "up": false,
+              "pitch": 0.3304,
+              "above_mm": 61.2,
+              "x_mm": 213.5,
+              "lz_mm": 98.4,
+              "rz_mm": 102.5,
+              "sat": 4
+            },
+            {
+              "t": 15,
+              "gz": -0.8288,
+              "up": false,
+              "pitch": 0.3426,
+              "above_mm": 73.7,
+              "x_mm": 205.3,
+              "lz_mm": 84.4,
+              "rz_mm": 76.9,
+              "sat": 2
+            },
+            {
+              "t": 20,
+              "gz": -0.7707,
+              "up": false,
+              "pitch": 0.6211,
+              "above_mm": 93.5,
+              "x_mm": 201.6,
+              "lz_mm": 75,
+              "rz_mm": 70.6,
+              "sat": 2
+            },
+            {
+              "t": 25,
+              "gz": -0.8154,
+              "up": false,
+              "pitch": 0.5786,
+              "above_mm": 115.7,
+              "x_mm": 209,
+              "lz_mm": 73,
+              "rz_mm": 77.7,
+              "sat": 0
+            },
+            {
+              "t": 30,
+              "gz": -0.9466,
+              "up": true,
+              "pitch": 0.3148,
+              "above_mm": 112.5,
+              "x_mm": 238.2,
+              "lz_mm": 77.3,
+              "rz_mm": 66.1,
+              "sat": 2
+            },
+            {
+              "t": 35,
+              "gz": -0.9867,
+              "up": true,
+              "pitch": 0.1445,
+              "above_mm": 118.8,
+              "x_mm": 246.5,
+              "lz_mm": 74.1,
+              "rz_mm": 70.7,
+              "sat": 1
+            },
+            {
+              "t": 40,
+              "gz": -0.9938,
+              "up": true,
+              "pitch": 0.1003,
+              "above_mm": 115.2,
+              "x_mm": 258.2,
+              "lz_mm": 71,
+              "rz_mm": 66.3,
+              "sat": 1
+            },
+            {
+              "t": 45,
+              "gz": -0.9969,
+              "up": true,
+              "pitch": 0.061,
+              "above_mm": 118.4,
+              "x_mm": 256.9,
+              "lz_mm": 70.1,
+              "rz_mm": 71.6,
+              "sat": 0
+            }
+          ]
+        },
+        {
+          "cell": {
+            "rise_mm": 60,
+            "drop": 0.125,
+            "fmul": 1.3
+          },
+          "honest": true,
+          "stableClear": false,
+          "uprightTailTicks": 25,
+          "enteredTailUpright": true,
+          "trunkAboveAtTrackEnd_mm": 46.1,
+          "peakZ_mm": 181.5,
+          "ceiling_mm": 121.5,
+          "fallTick": 3,
+          "fallStatus": "fell at tail tick 3 (60 ms into the tail)",
+          "recoveredAfterFall": true,
+          "tailSatFrac": 0.2914,
+          "servoTailTicksRun": 0,
+          "atFall": {
+            "t": 3,
+            "servoed": false,
+            "gz": -0.8646,
+            "up": false,
+            "pitch": 0.2473,
+            "roll": 0.4374,
+            "trunkX_mm": 219.2,
+            "trunkAbove_mm": 49.5,
+            "trunkZ_mm": 109.5,
+            "dy_mm": 1328.8,
+            "lfoot_mm": [
+              183.5,
+              1430.1,
+              104.3
+            ],
+            "rfoot_mm": [
+              109.4,
+              1300.5,
+              81.3
+            ],
+            "sat": 13
+          },
+          "fiveBefore": null,
+          "jointErrorAtFall": [
+            {
+              "joint": "L_hip_pitch",
+              "cmd": 1.5708,
+              "q": 0.5756,
+              "err": 0.9952
+            },
+            {
+              "joint": "L_knee",
+              "cmd": -1.5708,
+              "q": -1.3985,
+              "err": -0.1723
+            },
+            {
+              "joint": "L_ankle",
+              "cmd": -1.3412,
+              "q": 0.7467,
+              "err": -2.0879
+            },
+            {
+              "joint": "R_hip_pitch",
+              "cmd": 1.5708,
+              "q": 0.4254,
+              "err": 1.1454
+            },
+            {
+              "joint": "R_knee",
+              "cmd": -1.5708,
+              "q": 1.0717,
+              "err": -2.6425
+            },
+            {
+              "joint": "R_ankle",
+              "cmd": -1.5708,
+              "q": -1.4456,
+              "err": -0.1252
+            }
+          ],
+          "scored": {
+            "x_mm": 300.8,
+            "above_mm": 118.4,
+            "up": true,
+            "feetOnTread": 2
+          },
+          "tailEvery5": [
+            {
+              "t": 0,
+              "gz": -0.9791,
+              "up": true,
+              "pitch": 0.1475,
+              "above_mm": 46.5,
+              "x_mm": 213.6,
+              "lz_mm": 85.9,
+              "rz_mm": 85.5,
+              "sat": 13
+            },
+            {
+              "t": 5,
+              "gz": -0.7451,
+              "up": false,
+              "pitch": 0.2925,
+              "above_mm": 53.2,
+              "x_mm": 223.1,
+              "lz_mm": 106.4,
+              "rz_mm": 84.7,
+              "sat": 11
+            },
+            {
+              "t": 10,
+              "gz": -0.7112,
+              "up": false,
+              "pitch": 0.2773,
+              "above_mm": 59.8,
+              "x_mm": 215.3,
+              "lz_mm": 96.2,
+              "rz_mm": 88.9,
+              "sat": 4
+            },
+            {
+              "t": 15,
+              "gz": -0.835,
+              "up": false,
+              "pitch": 0.3661,
+              "above_mm": 74.2,
+              "x_mm": 207.9,
+              "lz_mm": 81.6,
+              "rz_mm": 81.6,
+              "sat": 2
+            },
+            {
+              "t": 20,
+              "gz": -0.7679,
+              "up": false,
+              "pitch": 0.6261,
+              "above_mm": 92.2,
+              "x_mm": 185.6,
+              "lz_mm": 75.9,
+              "rz_mm": 72.3,
+              "sat": 3
+            },
+            {
+              "t": 25,
+              "gz": -0.8026,
+              "up": false,
+              "pitch": 0.5963,
+              "above_mm": 111.7,
+              "x_mm": 184.8,
+              "lz_mm": 74.6,
+              "rz_mm": 77.3,
+              "sat": 2
+            },
+            {
+              "t": 30,
+              "gz": -0.9496,
+              "up": true,
+              "pitch": 0.3063,
+              "above_mm": 113.5,
+              "x_mm": 205.8,
+              "lz_mm": 75.7,
+              "rz_mm": 69.8,
+              "sat": 3
+            },
+            {
+              "t": 35,
+              "gz": -0.9842,
+              "up": true,
+              "pitch": 0.1769,
+              "above_mm": 115.3,
+              "x_mm": 225.4,
+              "lz_mm": 69.8,
+              "rz_mm": 73.9,
+              "sat": 2
+            },
+            {
+              "t": 40,
+              "gz": -0.9949,
+              "up": true,
+              "pitch": 0.1004,
+              "above_mm": 117.6,
+              "x_mm": 252,
+              "lz_mm": 70.3,
+              "rz_mm": 75.5,
+              "sat": 1
+            },
+            {
+              "t": 45,
+              "gz": -0.9949,
+              "up": true,
+              "pitch": 0.0905,
+              "above_mm": 120.4,
+              "x_mm": 280.9,
+              "lz_mm": 73.4,
+              "rz_mm": 72.6,
+              "sat": 0
+            }
+          ]
+        },
+        {
+          "cell": {
+            "rise_mm": 70,
+            "drop": 0.12,
+            "fmul": 1
+          },
+          "honest": false,
+          "stableClear": false,
+          "uprightTailTicks": 34,
+          "enteredTailUpright": true,
+          "trunkAboveAtTrackEnd_mm": 46.6,
+          "peakZ_mm": 130.9,
+          "ceiling_mm": 60.9,
+          "fallTick": 3,
+          "fallStatus": "fell at tail tick 3 (60 ms into the tail)",
+          "recoveredAfterFall": true,
+          "tailSatFrac": 0.2614,
+          "servoTailTicksRun": 0,
+          "atFall": {
+            "t": 3,
+            "servoed": false,
+            "gz": -0.8969,
+            "up": false,
+            "pitch": 0.3005,
+            "roll": 0.3244,
+            "trunkX_mm": 175.3,
+            "trunkAbove_mm": 52.2,
+            "trunkZ_mm": 122.2,
+            "dy_mm": 1369.9,
+            "lfoot_mm": [
+              77.3,
+              1409.6,
+              124.8
+            ],
+            "rfoot_mm": [
+              119,
+              1272.4,
+              89.9
+            ],
+            "sat": 13
+          },
+          "fiveBefore": null,
+          "jointErrorAtFall": [
+            {
+              "joint": "L_hip_pitch",
+              "cmd": 1.5708,
+              "q": 0.4835,
+              "err": 1.0873
+            },
+            {
+              "joint": "L_knee",
+              "cmd": -1.5708,
+              "q": -1.5051,
+              "err": -0.0657
+            },
+            {
+              "joint": "L_ankle",
+              "cmd": -1.3698,
+              "q": 0.7616,
+              "err": -2.1314
+            },
+            {
+              "joint": "R_hip_pitch",
+              "cmd": 1.5708,
+              "q": 0.3619,
+              "err": 1.2089
+            },
+            {
+              "joint": "R_knee",
+              "cmd": -1.5708,
+              "q": 0.9908,
+              "err": -2.5616
+            },
+            {
+              "joint": "R_ankle",
+              "cmd": -1.5708,
+              "q": -1.4489,
+              "err": -0.1219
+            }
+          ],
+          "scored": {
+            "x_mm": 59.5,
+            "above_mm": 46.7,
+            "up": true,
+            "feetOnTread": 0
+          },
+          "tailEvery5": [
+            {
+              "t": 0,
+              "gz": -0.9844,
+              "up": true,
+              "pitch": 0.1706,
+              "above_mm": 47.3,
+              "x_mm": 187.4,
+              "lz_mm": 101.2,
+              "rz_mm": 94.2,
+              "sat": 13
+            },
+            {
+              "t": 5,
+              "gz": -0.8,
+              "up": false,
+              "pitch": 0.3455,
+              "above_mm": 53.7,
+              "x_mm": 170.1,
+              "lz_mm": 127.7,
+              "rz_mm": 89.1,
+              "sat": 12
+            },
+            {
+              "t": 10,
+              "gz": -0.6985,
+              "up": false,
+              "pitch": 0.3779,
+              "above_mm": 60,
+              "x_mm": 163.2,
+              "lz_mm": 124.5,
+              "rz_mm": 92.4,
+              "sat": 10
+            },
+            {
+              "t": 15,
+              "gz": -0.786,
+              "up": false,
+              "pitch": 0.1849,
+              "above_mm": 50.8,
+              "x_mm": 125.1,
+              "lz_mm": 101.5,
+              "rz_mm": 77.7,
+              "sat": 4
+            },
+            {
+              "t": 20,
+              "gz": -0.8947,
+              "up": false,
+              "pitch": -0.2272,
+              "above_mm": 31.6,
+              "x_mm": 88.9,
+              "lz_mm": 8,
+              "rz_mm": 16.4,
+              "sat": 1
+            },
+            {
+              "t": 25,
+              "gz": -0.9988,
+              "up": true,
+              "pitch": -0.0491,
+              "above_mm": 39.6,
+              "x_mm": 57.6,
+              "lz_mm": 9.3,
+              "rz_mm": 5.6,
+              "sat": 2
+            },
+            {
+              "t": 30,
+              "gz": -0.9995,
+              "up": true,
+              "pitch": -0.0206,
+              "above_mm": 47,
+              "x_mm": 56.8,
+              "lz_mm": 6.1,
+              "rz_mm": 6.7,
+              "sat": 0
+            },
+            {
+              "t": 35,
+              "gz": -0.9997,
+              "up": true,
+              "pitch": 0.0169,
+              "above_mm": 48.1,
+              "x_mm": 63.1,
+              "lz_mm": 6.7,
+              "rz_mm": 6.5,
+              "sat": 0
+            },
+            {
+              "t": 40,
+              "gz": -1,
+              "up": true,
+              "pitch": 0.0078,
+              "above_mm": 47.3,
+              "x_mm": 62.1,
+              "lz_mm": 6,
+              "rz_mm": 6.2,
+              "sat": 0
+            },
+            {
+              "t": 45,
+              "gz": -1,
+              "up": true,
+              "pitch": -0.0062,
+              "above_mm": 46.9,
+              "x_mm": 59.7,
+              "lz_mm": 6,
+              "rz_mm": 6.1,
+              "sat": 0
+            }
+          ]
+        },
+        {
+          "cell": {
+            "rise_mm": 70,
+            "drop": 0.13,
+            "fmul": 0.7
+          },
+          "honest": false,
+          "stableClear": false,
+          "uprightTailTicks": 38,
+          "enteredTailUpright": true,
+          "trunkAboveAtTrackEnd_mm": 27,
+          "peakZ_mm": 125.4,
+          "ceiling_mm": 55.4,
+          "fallTick": 24,
+          "fallStatus": "fell at tail tick 24 (480 ms into the tail)",
+          "recoveredAfterFall": true,
+          "tailSatFrac": 0.3514,
+          "servoTailTicksRun": 0,
+          "atFall": {
+            "t": 24,
+            "servoed": false,
+            "gz": -0.8899,
+            "up": false,
+            "pitch": 0.0156,
+            "roll": 0.456,
+            "trunkX_mm": 121.1,
+            "trunkAbove_mm": 39.6,
+            "trunkZ_mm": 109.6,
+            "dy_mm": 1322.8,
+            "lfoot_mm": [
+              95.1,
+              1394.4,
+              35.9
+            ],
+            "rfoot_mm": [
+              76.9,
+              1240.8,
+              39.4
+            ],
+            "sat": 3
+          },
+          "fiveBefore": {
+            "t": 19,
+            "servoed": false,
+            "gz": -0.9522,
+            "up": true,
+            "pitch": 0.0692,
+            "roll": 0.2976,
+            "trunkX_mm": 122.1,
+            "trunkAbove_mm": 32.1,
+            "trunkZ_mm": 102.1,
+            "dy_mm": 1306.2,
+            "lfoot_mm": [
+              57.8,
+              1386.2,
+              52.9
+            ],
+            "rfoot_mm": [
+              92.8,
+              1234.5,
+              25.4
+            ],
+            "sat": 4
+          },
+          "jointErrorAtFall": [
+            {
+              "joint": "L_hip_pitch",
+              "cmd": -0.9992,
+              "q": 0.7662,
+              "err": -1.7655
+            },
+            {
+              "joint": "L_knee",
+              "cmd": 0.4463,
+              "q": 0.0024,
+              "err": 0.4439
+            },
+            {
+              "joint": "L_ankle",
+              "cmd": 1.4098,
+              "q": -0.1581,
+              "err": 1.568
+            },
+            {
+              "joint": "R_hip_pitch",
+              "cmd": 0.327,
+              "q": 0.538,
+              "err": -0.211
+            },
+            {
+              "joint": "R_knee",
+              "cmd": 1.1026,
+              "q": -0.1755,
+              "err": 1.2781
+            },
+            {
+              "joint": "R_ankle",
+              "cmd": -0.4353,
+              "q": -1.2183,
+              "err": 0.783
+            }
+          ],
+          "scored": {
+            "x_mm": 79.3,
+            "above_mm": 50.4,
+            "up": true,
+            "feetOnTread": 0
+          },
+          "tailEvery5": [
+            {
+              "t": 0,
+              "gz": -0.9925,
+              "up": true,
+              "pitch": -0.1211,
+              "above_mm": 28,
+              "x_mm": 123.8,
+              "lz_mm": 28.2,
+              "rz_mm": 24.2,
+              "sat": 12
+            },
+            {
+              "t": 5,
+              "gz": -0.9587,
+              "up": true,
+              "pitch": 0.1835,
+              "above_mm": 42.9,
+              "x_mm": 123.8,
+              "lz_mm": 101.6,
+              "rz_mm": 32.2,
+              "sat": 12
+            },
+            {
+              "t": 10,
+              "gz": -0.9588,
+              "up": true,
+              "pitch": 0.0991,
+              "above_mm": 42.8,
+              "x_mm": 126.2,
+              "lz_mm": 99.3,
+              "rz_mm": 29.1,
+              "sat": 5
+            },
+            {
+              "t": 15,
+              "gz": -0.984,
+              "up": true,
+              "pitch": -0.0591,
+              "above_mm": 30.2,
+              "x_mm": 123.1,
+              "lz_mm": 12.4,
+              "rz_mm": 27.6,
+              "sat": 0
+            },
+            {
+              "t": 20,
+              "gz": -0.9434,
+              "up": true,
+              "pitch": 0.0823,
+              "above_mm": 34.3,
+              "x_mm": 121.1,
+              "lz_mm": 67.6,
+              "rz_mm": 27.1,
+              "sat": 6
+            },
+            {
+              "t": 25,
+              "gz": -0.8628,
+              "up": false,
+              "pitch": 0.0151,
+              "above_mm": 40.5,
+              "x_mm": 118.8,
+              "lz_mm": 27.1,
+              "rz_mm": 45.1,
+              "sat": 3
+            },
+            {
+              "t": 30,
+              "gz": -0.9194,
+              "up": true,
+              "pitch": 0.0327,
+              "above_mm": 50.3,
+              "x_mm": 114.9,
+              "lz_mm": 24,
+              "rz_mm": 52.3,
+              "sat": 2
+            },
+            {
+              "t": 35,
+              "gz": -0.8819,
+              "up": false,
+              "pitch": 0.1028,
+              "above_mm": 48.3,
+              "x_mm": 102.2,
+              "lz_mm": 16.5,
+              "rz_mm": 56,
+              "sat": 7
+            },
+            {
+              "t": 40,
+              "gz": -0.9164,
+              "up": true,
+              "pitch": 0.0799,
+              "above_mm": 45.7,
+              "x_mm": 96.6,
+              "lz_mm": 28.7,
+              "rz_mm": 49.7,
+              "sat": 3
+            },
+            {
+              "t": 45,
+              "gz": -0.9063,
+              "up": true,
+              "pitch": 0.0341,
+              "above_mm": 42.1,
+              "x_mm": 91.7,
+              "lz_mm": 13.9,
+              "rz_mm": 40.1,
+              "sat": 6
+            }
+          ]
+        },
+        {
+          "cell": {
+            "rise_mm": 70,
+            "drop": 0.125,
+            "fmul": 1.3
+          },
+          "honest": false,
+          "stableClear": false,
+          "uprightTailTicks": 15,
+          "enteredTailUpright": true,
+          "trunkAboveAtTrackEnd_mm": 46.7,
+          "peakZ_mm": 131.5,
+          "ceiling_mm": 61.5,
+          "fallTick": 3,
+          "fallStatus": "fell at tail tick 3 (60 ms into the tail)",
+          "recoveredAfterFall": true,
+          "tailSatFrac": 0.2786,
+          "servoTailTicksRun": 0,
+          "atFall": {
+            "t": 3,
+            "servoed": false,
+            "gz": -0.8933,
+            "up": false,
+            "pitch": 0.2686,
+            "roll": 0.3603,
+            "trunkX_mm": 187.8,
+            "trunkAbove_mm": 49.7,
+            "trunkZ_mm": 119.7,
+            "dy_mm": 1335.6,
+            "lfoot_mm": [
+              134.6,
+              1426.5,
+              120
+            ],
+            "rfoot_mm": [
+              87.4,
+              1285.4,
+              84.9
+            ],
+            "sat": 14
+          },
+          "fiveBefore": null,
+          "jointErrorAtFall": [
+            {
+              "joint": "L_hip_pitch",
+              "cmd": 1.5708,
+              "q": 0.5179,
+              "err": 1.0529
+            },
+            {
+              "joint": "L_knee",
+              "cmd": -1.5708,
+              "q": -1.5001,
+              "err": -0.0707
+            },
+            {
+              "joint": "L_ankle",
+              "cmd": -1.5708,
+              "q": 0.7628,
+              "err": -2.3335
+            },
+            {
+              "joint": "R_hip_pitch",
+              "cmd": 1.5708,
+              "q": 0.4324,
+              "err": 1.1384
+            },
+            {
+              "joint": "R_knee",
+              "cmd": -1.5708,
+              "q": 1.0219,
+              "err": -2.5927
+            },
+            {
+              "joint": "R_ankle",
+              "cmd": -1.5708,
+              "q": -1.4469,
+              "err": -0.1239
+            }
+          ],
+          "scored": {
+            "x_mm": -48.4,
+            "above_mm": -11.1,
+            "up": false,
+            "feetOnTread": 0
+          },
+          "tailEvery5": [
+            {
+              "t": 0,
+              "gz": -0.9817,
+              "up": true,
+              "pitch": 0.1706,
+              "above_mm": 47.3,
+              "x_mm": 188.4,
+              "lz_mm": 101.5,
+              "rz_mm": 94.7,
+              "sat": 13
+            },
+            {
+              "t": 5,
+              "gz": -0.7759,
+              "up": false,
+              "pitch": 0.311,
+              "above_mm": 52.5,
+              "x_mm": 188.8,
+              "lz_mm": 121.5,
+              "rz_mm": 87.7,
+              "sat": 13
+            },
+            {
+              "t": 10,
+              "gz": -0.8447,
+              "up": false,
+              "pitch": 0.1911,
+              "above_mm": 47.2,
+              "x_mm": 177.7,
+              "lz_mm": 104.8,
+              "rz_mm": 80.8,
+              "sat": 5
+            },
+            {
+              "t": 15,
+              "gz": -0.9941,
+              "up": true,
+              "pitch": 0.0944,
+              "above_mm": 53,
+              "x_mm": 169.7,
+              "lz_mm": 93.3,
+              "rz_mm": 69.9,
+              "sat": 3
+            },
+            {
+              "t": 20,
+              "gz": -0.9862,
+              "up": true,
+              "pitch": 0.0858,
+              "above_mm": 58.6,
+              "x_mm": 144.4,
+              "lz_mm": 95.3,
+              "rz_mm": 39.5,
+              "sat": 0
+            },
+            {
+              "t": 25,
+              "gz": -0.8357,
+              "up": false,
+              "pitch": 0.3258,
+              "above_mm": 57.7,
+              "x_mm": 107.1,
+              "lz_mm": 94,
+              "rz_mm": 17.5,
+              "sat": 1
+            },
+            {
+              "t": 30,
+              "gz": -0.6124,
+              "up": false,
+              "pitch": 0.1916,
+              "above_mm": 49.3,
+              "x_mm": 78.5,
+              "lz_mm": 87.5,
+              "rz_mm": 20.9,
+              "sat": 1
+            },
+            {
+              "t": 35,
+              "gz": -0.214,
+              "up": false,
+              "pitch": -0.0731,
+              "above_mm": 6.7,
+              "x_mm": 48.5,
+              "lz_mm": 113.4,
+              "rz_mm": 24.2,
+              "sat": 3
+            },
+            {
+              "t": 40,
+              "gz": 0.1324,
+              "up": false,
+              "pitch": -0.7836,
+              "above_mm": -25.1,
+              "x_mm": 17.7,
+              "lz_mm": 101.4,
+              "rz_mm": 31.9,
+              "sat": 4
+            },
+            {
+              "t": 45,
+              "gz": -0.0748,
+              "up": false,
+              "pitch": -0.8703,
+              "above_mm": -8.8,
+              "x_mm": -14.2,
+              "lz_mm": 52,
+              "rz_mm": 19.4,
+              "sat": 2
+            }
+          ]
+        }
+      ],
+      "summary": {
+        "kCore": 3,
+        "kCoreStable": 0,
+        "meanUprightTailTicks": 19.56,
+        "cellsEnteringTailUpright": 9,
+        "cellsUprightAll50": 0,
+        "cellsEnteringDown": 0,
+        "fallTicks": [
+          3,
+          2,
+          3,
+          3,
+          3,
+          3,
+          3,
+          24,
+          3
+        ],
+        "meanFallTickOfThoseThatFellFromUpright": 5.22,
+        "medianFallTick": 3,
+        "meanTailSatFrac": 0.2778
+      }
+    }
+  ]
+}
