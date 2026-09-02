@@ -1,0 +1,8 @@
+{
+  "name": "ctrl_ball_kick_left",
+  "kind": "policy",
+  "seconds": 5,
+  "policy": "ball_kick_left.onnx",
+  "schedule": [[0, { "vx": 0, "vy": 0, "vyaw": 0 }]],
+  "note": "POLLEN'S KICK POLICY AT THE CONFIG'S OWN COMMAND. The schedule is read out of microduck_ball_kick_env_cfg.py, not chosen by taste: the twist command slot is kept only for observation-shape parity (cfg 406-408 lin_vel_x (-0.01, 0.01), lin_vel_y (-0.01, 0.01), ang_vel_z (-0.05, 0.05), rel_standing_envs 0.0, heading_command False, resampled once per episode), and zero is the centre of all three ranges. seconds 5 is EPISODE_LENGTH_S (cfg 74). EXPECTED 0 of 14, and that is the point: this policy is BLIND to the ball by design (cfg 11-15) and swings at one 90 mm in front of the toe. Commanding it to walk would be commanding it 50x outside its own range and calling the result a measurement of Pollen's policy."
+}

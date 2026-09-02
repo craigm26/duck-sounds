@@ -311,7 +311,10 @@ export function makeClimbRig(ctx) {
     if (/^(hip_l|hip_l_2|leg|leg_2|ankle_left|ankle_right|trunk_base)$/.test(b) && model.geom_contype[g] === 5) LEGG.push(g);
   }
   const STEP_CONAFF0 = STEPG.map(g => model.geom_conaffinity[g]);
-  const FRICT0 = FEET.map(g => model.geom_friction[g * 3]);
+  // The baseline is the PLANT'S, handed in by the shell that read it at boot
+  // (duckbench-core.mjs GEOM_FRICTION0); a rig built lazily while the other
+  // rig's cell had a multiplier applied would otherwise read that as normal.
+  const FRICT0 = FEET.map(g => (ctx.geomFriction0 ? ctx.geomFriction0[g * 3] : model.geom_friction[g * 3]));
 
   // ROUND 4, HOLE 3: every collidable geom that belongs to the DUCK, so that
   // penetration into a step block is a first-class field of a scored row.

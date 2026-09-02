@@ -1,0 +1,133 @@
+{
+ "why": "The open-loop drift of ctrl_alpha_walking, measured on the four bearing-0 cells of the published grid through chase/chase_rig.mjs. The card cites this to explain why the naive chaser clears the bearing -20 column and misses two of the three dead-ahead cells.",
+ "entrant": "ctrl_alpha_walking.json",
+ "policy": "alpha_walking.onnx",
+ "schedule": [
+  [
+   0,
+   {
+    "vx": 0.5,
+    "vy": 0,
+    "vyaw": 0
+   }
+  ]
+ ],
+ "seconds": 4,
+ "plantName": "scene.mjb",
+ "plantDigest": "3f8c9ab9b409ba74c73c30179d5f7c12b025f631693f9eec78d80dca242547be",
+ "note": "rootEnd is the duck root at the END of the driven span, in the world frame; the duck starts at the plant origin in xy, so atan2(y, x) is the heading of the whole walk. yaw0 is the heading FROZEN at the first driven tick — the axis ballTravel_mm projects onto. Their difference is the drift. Positive is LEFT, the grid convention.",
+ "rows": [
+  {
+   "cell": {
+    "bearing": 0,
+    "range": 0.45,
+    "drop": 0.12,
+    "fmul": 1,
+    "tier": "core"
+   },
+   "yaw0_rad": 0.016490956105257863,
+   "yaw0_deg": 0.9448621849667733,
+   "kickDir": [
+    0.9998640272649097,
+    0.016490208658346914
+   ],
+   "rootEnd": [
+    1.0938671397191615,
+    -0.285809730547468,
+    0.11610990996037716
+   ],
+   "pathHeading_deg": -14.643091806130258,
+   "driftFromInitialHeading_deg": -15.58795399109703,
+   "walkedDistance_m": 1.130589457510106,
+   "closest_mm": -2.1448182603767614,
+   "ballTravel_mm": 641.2679543760061,
+   "touched": true,
+   "chased": true,
+   "hash": "a0bbbbb98acb7fc5bc1d035527c2c7b153df1c3555db79b9c12e4f446d49d6a5"
+  },
+  {
+   "cell": {
+    "bearing": 0,
+    "range": 0.7,
+    "drop": 0.12,
+    "fmul": 1,
+    "tier": "core"
+   },
+   "yaw0_rad": 0.016490956105257863,
+   "yaw0_deg": 0.9448621849667733,
+   "kickDir": [
+    0.9998640272649097,
+    0.016490208658346914
+   ],
+   "rootEnd": [
+    1.1505412243710529,
+    -0.2966362771789664,
+    0.11697542032647065
+   ],
+   "pathHeading_deg": -14.457332914977213,
+   "driftFromInitialHeading_deg": -15.402195099943986,
+   "walkedDistance_m": 1.1881658932639994,
+   "closest_mm": 24.375749288717984,
+   "ballTravel_mm": 0,
+   "touched": false,
+   "chased": false,
+   "hash": "a0bbbbb98acb7fc5bc1d035527c2c7b153df1c3555db79b9c12e4f446d49d6a5"
+  },
+  {
+   "cell": {
+    "bearing": 0,
+    "range": 0.95,
+    "drop": 0.12,
+    "fmul": 1,
+    "tier": "core"
+   },
+   "yaw0_rad": 0.016490956105257863,
+   "yaw0_deg": 0.9448621849667733,
+   "kickDir": [
+    0.9998640272649097,
+    0.016490208658346914
+   ],
+   "rootEnd": [
+    1.1505412243710529,
+    -0.2966362771789664,
+    0.11697542032647065
+   ],
+   "pathHeading_deg": -14.457332914977213,
+   "driftFromInitialHeading_deg": -15.402195099943986,
+   "walkedDistance_m": 1.1881658932639994,
+   "closest_mm": 113.87268543884558,
+   "ballTravel_mm": 0,
+   "touched": false,
+   "chased": false,
+   "hash": "a0bbbbb98acb7fc5bc1d035527c2c7b153df1c3555db79b9c12e4f446d49d6a5"
+  },
+  {
+   "cell": {
+    "bearing": 0,
+    "range": 1.2,
+    "drop": 0.12,
+    "fmul": 1,
+    "tier": "ext"
+   },
+   "yaw0_rad": 0.016490956105257863,
+   "yaw0_deg": 0.9448621849667733,
+   "kickDir": [
+    0.9998640272649097,
+    0.016490208658346914
+   ],
+   "rootEnd": [
+    1.1505412243710529,
+    -0.2966362771789664,
+    0.11697542032647065
+   ],
+   "pathHeading_deg": -14.457332914977213,
+   "driftFromInitialHeading_deg": -15.402195099943986,
+   "walkedDistance_m": 1.1881658932639994,
+   "closest_mm": 196.79504618715393,
+   "ballTravel_mm": 0,
+   "touched": false,
+   "chased": false,
+   "hash": "a0bbbbb98acb7fc5bc1d035527c2c7b153df1c3555db79b9c12e4f446d49d6a5"
+  }
+ ]
+}

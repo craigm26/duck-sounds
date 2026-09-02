@@ -1,0 +1,103 @@
+{
+ "package": "Microduck Ball Challenge",
+ "version": "v1",
+ "generated": "2026-09-02T19:47:22Z",
+ "source": "github.com/craigm26/duck-sounds at tag ball-challenge-v1",
+ "note": "sha256 and byte size of every file in this package except MANIFEST.json itself.",
+ "fileCount": 23,
+ "totalBytes": 357347,
+ "files": {
+  "README.md": {
+   "sha256": "f0bb28fa1b020843467e0b7055019521d6c23b8cd4dd91c57f52236421292df0",
+   "bytes": 48683
+  },
+  "REWARD.md": {
+   "sha256": "f1a9d1b7a3c18a032b67131d303615cf1ac6fe51ce27c630c7c4163533478acb",
+   "bytes": 32174
+  },
+  "check_numbers.mjs": {
+   "sha256": "8a9ed0ee22b293bdaac7a7bf7998ab5e347e83ef2c1ed3256a86c555a305008d",
+   "bytes": 43728
+  },
+  "hf_upload.sh": {
+   "sha256": "77b8e3e6d6c7a70061d340c2aecb1dfa959dba9d07591b5f83251dad41a6662d",
+   "bytes": 1017
+  },
+  "leaderboard.md": {
+   "sha256": "f560a920f4cf791c00f033b05143fd90256e19d2c8aeb53b24199c37c8819724",
+   "bytes": 5614
+  },
+  "harness/LICENSE": {
+   "sha256": "cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30",
+   "bytes": 11358
+  },
+  "harness/README.md": {
+   "sha256": "3c5f673178bd1c46630ebbb4dc076bb8d98990c7177645d146434039fd0d5691",
+   "bytes": 5146
+  },
+  "harness/chase_parity.mjs": {
+   "sha256": "a34a039e2f5c39c24e1503f69f1f74518fbbb84aed57074acdbb44b07bfb0cd6",
+   "bytes": 11251
+  },
+  "harness/chase_rig.mjs": {
+   "sha256": "3d7a2b283748baaa088366383781a6f428b1b6333eac556608381833e1036dec",
+   "bytes": 7832
+  },
+  "harness/chase_robust.mjs": {
+   "sha256": "923625039c84ba199de804d5a111493ae338c449e122421c149cb57d00a915a8",
+   "bytes": 10465
+  },
+  "harness/chase_score.mjs": {
+   "sha256": "9555e948d2380b00f6120ce853dc071391efab0f0e1cb6ebc2c3dc7f2b0f4c6d",
+   "bytes": 42404
+  },
+  "harness/climb_score.mjs": {
+   "sha256": "bc26a19f53019a937b43b82165f3c69dca8b82759217779ca58a7603829b0cc0",
+   "bytes": 40386
+  },
+  "harness/duckkit-constants.json": {
+   "sha256": "a2ba37dda4db836ade8dd6125708179fc903f96fa0f7dd7815f5cf66fa5cb987",
+   "bytes": 1037
+  },
+  "harness/measure_drift.mjs": {
+   "sha256": "bde4519245971d36d41d16b7d675a932398802d46441fd465adf8b389a24f870",
+   "bytes": 3682
+  },
+  "harness/reward_math.mjs": {
+   "sha256": "104fea431a4d3748460d929a46a8f54f5f85d5cf5a118e51c25aa3491bcfac13",
+   "bytes": 3253
+  },
+  "harness/scene_physics.xml": {
+   "sha256": "1d1208ef740cb03c566d4f75c415ce02eb4b8a8d41529c064309bdbdabdad303",
+   "bytes": 27616
+  },
+  "results/chase_controls-results.json": {
+   "sha256": "2f1d6d2a1129b55e5fbda3945ff7bc53dde7226d9e61ab41b380ff5f42bd9b76",
+   "bytes": 53116
+  },
+  "results/chase_drift-results.json": {
+   "sha256": "b957f528a020ea9fb5927c393e56da4a2d1ae2f3742520642f7a5518977f7d45",
+   "bytes": 3623
+  },
+  "results/chase_parity.log": {
+   "sha256": "02753acb9c5a7b1dda7504f40e0dafed970e6a20d538aa1647ffc6ef09a97488",
+   "bytes": 1839
+  },
+  "entrants/ctrl_alpha_walking.json": {
+   "sha256": "f391f59d8dc9bb8ff287c25e2c0f65a067cf29e7f2a941aeb3fef668fe381f4c",
+   "bytes": 930
+  },
+  "entrants/ctrl_ball_kick_left.json": {
+   "sha256": "7c27bc04d71d24e51317f4ad74cc24e712863063786bcb60b7e4be36c61dd446",
+   "bytes": 886
+  },
+  "entrants/ctrl_ball_kick_right.json": {
+   "sha256": "2f728e59d2f6741a7bf1e277f71de7e9c910a332fb136adb331eb79537976061",
+   "bytes": 577
+  },
+  "entrants/ctrl_do_nothing.json": {
+   "sha256": "c9e68ba9ba3897998cf218cff2fae3f569017a8f2ad4343c93cac2f58c0ddcff",
+   "bytes": 730
+  }
+ }
+}

@@ -1,0 +1,8 @@
+{
+  "name": "ctrl_ball_kick_right",
+  "kind": "policy",
+  "seconds": 5,
+  "policy": "ball_kick_right.onnx",
+  "schedule": [[0, { "vx": 0, "vy": 0, "vyaw": 0 }]],
+  "note": "THE SAME POLICY WITH KICK_FOOT FLIPPED. KICK_FOOT (cfg 41) is a module-level flag, not a per-policy field, and nothing in the reward differs between the two runs — only the ball spawn side and which foot the (refused) support_foot_grounded sensor watches. So both bundled kick policies are correctly scored under ONE term table. Same schedule, same seconds, same expectation as ctrl_ball_kick_left."
+}

@@ -1,0 +1,14 @@
+{
+  "name": "ctrl_do_nothing",
+  "kind": "move",
+  "seconds": 5,
+  "intent": {
+    "name": "ctrl_do_nothing",
+    "keyframes": [
+      { "t": 1.0, "pose": [0, -0.0873, -0.4579, -0.0049, 0.453, 0.3491, 0.3491, 0, 0, 0, 0.0873, 0.4579, 0.0049, -0.453] },
+      { "t": 4.9, "pose": [0, -0.0873, -0.4579, -0.0049, 0.453, 0.3491, 0.3491, 0, 0, 0, 0.0873, 0.4579, 0.0049, -0.453] }
+    ],
+    "blend": 1
+  },
+  "note": "DO-NOTHING CONTROL. HOME held for the whole track, no command. EXPECTED 0 of 14: the nearest ball is 450 mm away and the duck never leaves the spot. A CRITERION THIS ROW PASSES IS NOT A CHASING TEST — the same guard climb/ctrl_do_nothing.json is, in the same words, and the first thing chase_parity.mjs checks."
+}

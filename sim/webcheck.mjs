@@ -130,6 +130,43 @@ else {
   if (cell.move !== '4b9110c448ec') { console.log('CLIMB FAILED — wrong move hash'); process.exitCode = 1; }
 }
 
+// ── THE BALL CELL, THROUGH THE BROWSER SHELL ─────────────────────────────
+//
+// THE SAME CHECK, ONE CHALLENGE ALONG, AND FOR THE SAME REASON. /chase pulled
+// two more files into the bundle — chase_score.mjs and reward_math.mjs, which
+// the core imports as well — and a missing one of those is invisible until
+// something asks: the page boots, /health answers, and the Ball Challenge dies
+// on its first cell. So a cell is actually scored, out of the SHIPPED copies,
+// over real HTTP.
+//
+// IT IS NOT A PARITY CHECK EITHER. `chase/chase_parity.mjs` is; this proves the
+// bundle is complete, that the fourteen cells are published, and that the nine
+// transcribed terms and the three refusals come back with them.
+const cgrid = JSON.parse(await duckbench('/chase/grid'));
+console.log(`\nchase grid  ${cgrid.cells.length} cells (${cgrid.nCore} core), `
+          + `${cgrid.terms.length} terms computed, ${cgrid.refused.length} refused by name, `
+          + `chaseable ${cgrid.chaseable}`);
+const entrant = JSON.parse(fs.readFileSync(path.join(HERE, '..', 'chase', 'ctrl_alpha_walking.json'), 'utf8'));
+const chaseT0 = Date.now();
+const chase = JSON.parse(await duckbench('/chase', JSON.stringify({
+  entrant, seconds: entrant.seconds, cell: cgrid.cells[0], tail: 'policy' })));   // cells[0] = bearing -20, range 0.45
+const chaseWall = (Date.now() - chaseT0) / 1000;
+if (chase.error) { console.log(`CHASE FAILED — ${chase.error}`); process.exitCode = 1; }
+else {
+  console.log(`chase cell  entrant ${chase.entrant} (${chase.kind} ${chase.policy}) at bearing `
+            + `${cgrid.cells[0].bearing}, range ${cgrid.cells[0].range} m, drop ${cgrid.cells[0].drop}, `
+            + `friction x${cgrid.cells[0].fmul}`);
+  console.log(`            chased ${chase.chased}  stable ${chase.stable}  touched ${chase.touched}  `
+            + `ballTravel ${chase.ballTravel_mm.toFixed(1)} mm  closest ${chase.closest_mm.toFixed(1)} mm  `
+            + `upright tail ${chase.uprightTailTicks}/50`);
+  console.log(`            ${chaseWall.toFixed(2)} s of wall clock for one cell — fourteen of them is a grid`);
+  console.log('            the desk answers this same cell chased=true stable=true travel=582.8 mm '
+            + 'closest=-3.14 mm (chase/chase_controls-results.json,\n'
+            + '            and chase/chase_parity.mjs re-measures it); a difference here is the\n'
+            + '            forward pass, not the physics.');
+  if (chase.entrant !== 'a0bbbbb98acb') { console.log('CHASE FAILED — wrong entrant hash'); process.exitCode = 1; }
+}
+
 server.close();
 if (worst > 1e-4 + 1e-9) { console.log('WEB PARITY FAILED'); process.exitCode = 1; }
 else console.log('WEB PARITY OK — the browser shell reproduces the desk trajectory');

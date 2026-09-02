@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Upload the Microduck Stairs Challenge package to the Hugging Face Hub as a DATASET.
+# Upload the Microduck Ball Challenge package to the Hugging Face Hub as a DATASET.
 #
 # THE OPERATOR LOGS IN FIRST. This script does not authenticate and will not
 # prompt for a token. Run `hf auth login` (or export HF_TOKEN) in your own shell
@@ -11,7 +11,7 @@
 set -euo pipefail
 
 HF_USER="${HF_USER:?set HF_USER to the Hugging Face account or org that will own the dataset}"
-REPO="${HF_USER}/microduck-stairs-challenge"
+REPO="${HF_USER}/microduck-ball-challenge"
 SRC="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
 # 1. Who am I? Fails loudly if the operator has not logged in.
@@ -23,7 +23,7 @@ hf repo create "${REPO}" --type dataset --exist-ok
 # 3. Push the whole package.
 hf upload "${REPO}" "${SRC}" . \
   --repo-type dataset \
-  --commit-message "Microduck Stairs Challenge v1"
+  --commit-message "Microduck Ball Challenge v1"
 
 echo
 echo "Done: https://huggingface.co/datasets/${REPO}"

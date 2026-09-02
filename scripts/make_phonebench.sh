@@ -38,6 +38,18 @@ cp "$HERE/sim/climb_score.mjs"        "$OUT/assets/"
 cp "$HERE/site/stairs.js"             "$OUT/assets/stairs.js"
 cp "$HERE/climb/event.mjs"            "$OUT/assets/climb_event.mjs"
 cp "$HERE/climb/servo.mjs"            "$OUT/assets/climb_servo.mjs"
+# THE CHASE SCORER AND THE ONE FILE ONLY IT AND THE CORE SHARE. The bench also
+# answers POST /chase — one cell of the ball challenge's fourteen — out of
+# `sim/chase_score.mjs`, which is the SAME episode `chase/chase_rig.mjs` and
+# `chase/chase_robust.mjs` run (chase/chase_parity.mjs is the gate that says
+# so). It imports the keyframe curve and the 45-of-50 tail bar from
+# `./climb_score.mjs`, already copied above, and its quaternion arithmetic from
+# `./reward_math.mjs` — which duckbench-core.mjs ALSO imports, because /tune and
+# /chase transcribe two different configs that share three terms and must not
+# hold two copies of one formula. Leave either out and the probe boots, /health
+# answers, and the first /chase dies on a module-not-found nobody can read.
+cp "$HERE/sim/chase_score.mjs"        "$OUT/assets/"
+cp "$HERE/sim/reward_math.mjs"        "$OUT/assets/"
 # THE PLANT, FROM sim/. `site/scene.mjb` and `sim/scene.mjb` share a name and
 # differ in bytes (PLANT.md), and it is sim/'s that every measurement in duckkit
 # is stamped with. Copying the wrong one is the failure this whole script exists

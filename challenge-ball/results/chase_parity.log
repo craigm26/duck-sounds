@@ -1,0 +1,26 @@
+GET /chase/grid lists 14 cells (9 core, 5 in all); identical to chase_robust's plan: true
+   criterion identical: true   refusals identical (3): true
+   plant scene.mjb 3f8c9ab9b409   chaseable: true
+   !! the bench says 9/5 where the module says 9/14
+   [  14s] ctrl_do_nothing.json         /chase 0/0/0   chase_robust 0/0/0   touched 0/14   entrant bc77453e40c6   AGREES
+   [  27s] ctrl_ball_kick_left.json     /chase 0/0/0   chase_robust 0/0/0   touched 0/14   entrant 7e44b5a781fc   AGREES
+   [  40s] ctrl_ball_kick_right.json    /chase 0/0/0   chase_robust 0/0/0   touched 0/14   entrant f8d4e8bfd2b7   AGREES
+   [  50s] ctrl_alpha_walking.json      /chase 4/4/1   chase_robust 4/4/1   touched 5/14   entrant a0bbbbb98acb   AGREES
+
+per-cell rows: 56   EXACT on all 49 compared fields + the cell itself: 56/56
+aggregates recomputed from /chase equal chase_robust on every entrant: true
+ctrl_do_nothing scores 0 of 14 and touches nothing: true
+the grid the bench publishes is the grid the scorer runs: true
+
+=== the measured leaderboard, against what was predicted in advance ===
+   ctrl_do_nothing          chased 0/9  stable 0/9  ext 0/5  centre travel 0.0 mm
+      predicted: 0 of 14: a criterion this row passes is not a chasing test
+   ctrl_ball_kick_left      chased 0/9  stable 0/9  ext 0/5  centre travel 0.0 mm
+      predicted: 0 of 14, or very close: blind to the ball by design, trained at 90 mm
+   ctrl_ball_kick_right     chased 0/9  stable 0/9  ext 0/5  centre travel 0.0 mm
+      predicted: 0 of 14, or very close: the same policy with KICK_FOOT flipped
+   ctrl_alpha_walking       chased 4/9  stable 4/9  ext 1/5  centre travel 0.0 mm
+      predicted: roughly 2-4 of the 9 core cells; every far off-bearing cell fails
+
+CHASE PARITY PASS — /chase is chase_robust.mjs, cell for cell, at full float digits.  [50s]
+EXIT=0

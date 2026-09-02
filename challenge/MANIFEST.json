@@ -4,8 +4,8 @@
  "generated": "2026-09-02T16:04:41Z",
  "source": "github.com/craigm26/duck-sounds at tag stairs-challenge-v1",
  "note": "sha256 and byte size of every file in this package except MANIFEST.json itself.",
- "fileCount": 166,
- "totalBytes": 12264022,
+ "fileCount": 167,
+ "totalBytes": 12275380,
  "files": {
   "README.md": {
    "sha256": "dddf480ac078653c068500a61c32ef2d6df308ad8b925b35a242e43526b8991a",
@@ -16,12 +16,16 @@
    "bytes": 30425
   },
   "hf_upload.sh": {
-   "sha256": "3207782d3023e20f4306f535c822eb4b23e9092d7e545b658d200bef87ed42ea",
+   "sha256": "04563cb0faf27eddb19beb167b7e4e034792994d026fdc4578123b850ca05bc4",
    "bytes": 1023
   },
   "leaderboard.md": {
    "sha256": "4a6765931656d45e2993568326c7c1f34ce20313f47a769edd5544b6c96c6376",
    "bytes": 6621
+  },
+  "harness/LICENSE": {
+   "sha256": "cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30",
+   "bytes": 11358
   },
   "harness/README.md": {
    "sha256": "3221c24799283dbd01082baa6251d07f5919005a071ee2cb7f0fd6ccdefc436b",

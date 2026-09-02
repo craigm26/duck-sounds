@@ -1,0 +1,8 @@
+{
+  "name": "ctrl_alpha_walking",
+  "kind": "policy",
+  "seconds": 4,
+  "policy": "alpha_walking.onnx",
+  "schedule": [[0, { "vx": 0.5, "vy": 0, "vyaw": 0 }]],
+  "note": "THE NAIVE CHASER. Straight ahead at 0.5 m/s for four seconds — a nominal reach of about 2 m, so a ball at 0.45, 0.70, 0.95 or even 1.20 m is inside the walk IF IT IS DEAD AHEAD. At +/-20 degrees a ball at 0.70 m sits about 240 mm off the walk line and at +/-40 about 450 mm off, and the duck walks straight past both. alpha_walking.onnx is the VELOCITY config's policy, so the nine terms reported for it are the ball-kick config's terms evaluated on a policy trained under microduck_velocity_env_cfg.py; it is here as a CHASER, judged by the criterion. This is the control that draws the line the challenge asks someone to cross: open-loop forward walking already solves 'the ball is straight ahead', and nothing bundled solves 'the ball is over there'."
+}

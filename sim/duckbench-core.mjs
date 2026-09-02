@@ -48,6 +48,24 @@ import { makeClimbRig, criteria as climbCriteria, checkBounds as climbCheckBound
          CRITERION_SENTENCE, UPRIGHT_TAIL_MIN, CLEAR_BONUS, CEILING_ABOVE,
          RISER_X as CLIMB_RISER_X, LATERAL as CLIMB_LATERAL,
          DECLARED_BOUNDS as CLIMB_BOUNDS } from './climb_score.mjs';
+// THE BALL, AND THE ONE EPISODE THAT SCORES A CHASE WITH IT.
+//
+// The same arrangement, one challenge along: `chase_score.mjs` IS the episode
+// `chase/chase_rig.mjs` runs and the one `chase/chase_robust.mjs`'s 14-cell
+// grid is decided on, imported rather than transcribed, so POST /chase answers
+// the number the package published instead of a number that looks like it. It
+// carries Pollen's ball-kick reward — the nine terms this plant can compute and
+// the three it refuses by name — and it reaches its interpolation curve and its
+// tail bar through `./climb_score.mjs` and its quaternion arithmetic through
+// `./reward_math.mjs`, both of which are real files in sim/ and flat files in
+// the phone bundles.
+import { makeChaseRig, gridCells as chaseGridCells, checkEntrant as chaseCheckEntrant,
+         entrantHashPayload as chaseHashPayload, CHASE_REFUSALS, TERMS as CHASE_TERMS,
+         CRITERION_SENTENCE as CHASE_CRITERION, TOUCH_MM, TRAVEL_MIN_MM,
+         TAIL_TICKS as CHASE_TAIL_TICKS, UPRIGHT_TAIL_MIN as CHASE_UPRIGHT_TAIL_MIN,
+         SETTLE_TICKS as CHASE_SETTLE_TICKS, N_CORE as CHASE_N_CORE, N_EXT as CHASE_N_EXT,
+         BALL_CAVEAT, CHASE_CONFIG, CHASE_CONFIG_SOURCE, DEFAULT_SECONDS as CHASE_SECONDS,
+         ACTION_RATE_SOURCE_WHY } from './chase_score.mjs';
 
 /**
  * A bench, over the machine `env` describes.
@@ -86,24 +104,20 @@ import { makeClimbRig, criteria as climbCriteria, checkBounds as climbCheckBound
 // client weighs them (`DuckTuner.terms`). A bench that returned one weighted
 // number could change what a reward means without anything upstream noticing.
 
-/** `|projected gravity xy|²` — zero upright, 1 on its side. RunMetrics's own. */
-export function gravityXYSquared([w, x, y, z]) {
-  const gx = -2 * (x * z + w * y), gy = -2 * (y * z - w * x);
-  return gx * gx + gy * gy;
-}
-
-/** Rotate a body-frame vector into the world. RunMetrics's own. */
-export function rotate([w, x, y, z], v) {
-  const tx = 2 * (y * v[2] - z * v[1]);
-  const ty = 2 * (z * v[0] - x * v[2]);
-  const tz = 2 * (x * v[1] - y * v[0]);
-  return [v[0] + w * tx + (y * tz - z * ty),
-          v[1] + w * ty + (z * tx - x * tz),
-          v[2] + w * tz + (x * ty - y * tx)];
-}
-
-/** The inverse: a WORLD vector into the trunk's frame, by the conjugate. */
-export function unrotate(q, v) { return rotate([q[0], -q[1], -q[2], -q[3]], v); }
+/**
+ * THE QUATERNION ARITHMETIC IS NOT IN THIS FILE ANY MORE, AND IT IS STILL THIS
+ * FILE'S EXPORT.
+ *
+ * `gravityXYSquared`, `rotate`, `unrotate` and `twistOf` moved to
+ * `./reward_math.mjs` when the ball challenge arrived, because
+ * `chase_score.mjs` transcribes a DIFFERENT config that shares three of this
+ * one's terms and would otherwise have needed its own copy of the same two
+ * identities. One copy, two configs. They are re-exported here under the names
+ * they have always had, so `tune_parity.mjs` and every other importer is
+ * untouched.
+ */
+export { gravityXYSquared, rotate, unrotate, twistOf } from './reward_math.mjs';
+import { gravityXYSquared, rotate, unrotate, twistOf, yawOf } from './reward_math.mjs';
 
 /**
  * `variable_posture`'s per-joint tolerance, radians — RunMetrics's `legStd`.
@@ -118,23 +132,6 @@ export function legStd(name, standing) {
   if (name.includes('knee')) return standing ? 0.15 : 0.4;
   if (name.includes('ankle')) return standing ? 0.1 : 0.25;
   return null;
-}
-
-/**
- * THE TRUNK'S TWIST IN ITS OWN FRAME, which is the frame the clip format
- * stores and the frame every tracking term is written against.
- *
- * MuJoCo keeps a free joint's LINEAR velocity in the world and its ANGULAR
- * velocity in the body, so exactly one of the two has to be rotated, and
- * rotating the wrong one produces a plausible number for a duck that is
- * walking due north and a wrong one for every other heading. `body_ang_vel`
- * then wants the WORLD-frame angular velocity, so it rotates back out — the
- * two terms genuinely live in different frames and mjlab reads them that way.
- */
-export function twistOf(root, qvel) {
-  const q = [root[3], root[4], root[5], root[6]];
-  const linear = unrotate(q, [qvel[0], qvel[1], qvel[2]]);
-  return [linear[0], linear[1], linear[2], qvel[3], qvel[4], qvel[5]];
 }
 
 /**
@@ -330,6 +327,12 @@ export async function makeBench(env) {
   const PLANT = SCENE.slice(SCENE.lastIndexOf('/') + 1);
   const PLANT_DIGEST = await env.sha256(SCENE_BYTES);
   const model = mj.MjModel.mj_loadBinary('/s.mjb', new mj.MjVFS());
+  // THE FRICTION BASELINE, READ ONCE, BEFORE ANY LANE RUNS. Both scoring rigs
+  // scale the feet's friction for a cell and restore it after; a rig that read
+  // its baseline at its own (lazy) construction could read it while the OTHER
+  // rig's cell had the multiplier applied, and carry a poisoned baseline for
+  // the life of the process. So the baseline is the plant's, captured here.
+  const GEOM_FRICTION0 = Float64Array.from(model.geom_friction);
   const data = new mj.MjData(model);
 
   /** The fourteen joints a policy drives, in the order the observation wants them. */
@@ -958,6 +961,17 @@ export async function makeBench(env) {
    * nobody can explain.
    */
   const climbJob = job => climbLane(() => liveLane(() => batchLane(job)));
+  /**
+   * A /chase cell borrows the model too, for the same reason and on the same
+   * lane. Its plant axis multiplies the foot geoms' friction exactly as a climb
+   * cell's does — written back in a `finally` inside the shared episode — and
+   * while it runs, a /intent stepping the live world or a /measure stepping the
+   * batch world would be stepping a duck with different feet. The two
+   * challenges share `climbLane` rather than taking one each, because a chase
+   * cell and a climb cell touch the same friction array and two lanes would let
+   * them interleave.
+   */
+  const chaseJob = climbJob;
 
   /**
    * THE CLIMB RIG, BUILT ON FIRST ASK AND NOT AT BOOT.
@@ -979,8 +993,15 @@ export async function makeBench(env) {
    * a climb scored there would be driving the first duck's legs. So it is
    * checked, and a scene where it does not hold is refused by name.
    */
-  let CLIMB, CLIMB_WHY = null;
+  let CLIMB, CLIMB_WHY = null, CLIMB_BUILD;
+  /** ONE construction, however many callers arrive during it: the sentinel is
+   *  the promise, not a null written before the first await — two concurrent
+   *  first calls used to make the second answer "no /climb here: null". */
   async function climbRig() {
+    if (CLIMB_BUILD === undefined) CLIMB_BUILD = buildClimbRig();
+    return CLIMB_BUILD;
+  }
+  async function buildClimbRig() {
     if (CLIMB !== undefined) return CLIMB;
     CLIMB = null;
     const duck = DUCKS.find(d => d.prefix === '');
@@ -992,6 +1013,7 @@ export async function makeBench(env) {
     }
     const loaded = await policy(STAND);
     const rig = makeClimbRig({
+      geomFriction0: GEOM_FRICTION0,
       mj, model, data: new mj.MjData(model),
       D: duck.joints, HOME, LO, HI, buildObs, projectedGravity, command,
       tickHz: C.tickHz, reference: loaded.reference,
@@ -1005,6 +1027,64 @@ export async function makeBench(env) {
     if (!rig) { CLIMB_WHY = `${PLANT} has no stair bank: its bodies step0..step13 are not in it`; return CLIMB; }
     CLIMB = rig;
     return CLIMB;
+  }
+
+  /**
+   * THE CHASE RIG, BUILT ON FIRST ASK AND NOT AT BOOT — climbRig's twin.
+   *
+   * It costs an mjData and a policy load, and a bench that is only ever asked
+   * to /record should not pay for a ball challenge it never scores. `CHASE` is
+   * `undefined` until something asks, then either the rig or `null` — and null
+   * is an answer, not a failure: it means this plant cannot be asked, and
+   * /chase says WHICH of the things is missing rather than throwing.
+   *
+   * ITS OWN mjData, for the reason the climb rig has one: a chase episode
+   * resets its world fourteen times per grid, places a ball in it and drives a
+   * duck across it, and it must not be the world a steering loop is keeping or
+   * the one /record resets.
+   *
+   * WHY THE ACTUATOR CHECK. The shared episode writes `data.ctrl[k]` for
+   * k = 0..13, which is what every scored chase number was measured through. In
+   * the canon one-duck scene actuator k IS joint k; in a multi-duck scene it is
+   * not, and a chase scored there would be driving the first duck's legs.
+   */
+  let CHASE, CHASE_WHY = null, CHASE_BUILD;
+  async function chaseRig() {
+    if (CHASE_BUILD === undefined) CHASE_BUILD = buildChaseRig();
+    return CHASE_BUILD;
+  }
+  async function buildChaseRig() {
+    if (CHASE !== undefined) return CHASE;
+    CHASE = null;
+    const duck = DUCKS.find(d => d.prefix === '');
+    if (!duck) { CHASE_WHY = `this scene's ducks are all prefixed (${DUCK_NAMES.join(', ')}); `
+      + 'the chase episode drives the unprefixed duck the challenge was measured on'; return CHASE; }
+    if (!duck.ctrl.every((a, k) => a === k)) {
+      CHASE_WHY = 'this scene\'s actuators are not in joint order, so the shared chase episode '
+        + 'would drive the wrong joints'; return CHASE;
+    }
+    const loaded = await policy(STAND);
+    let rig;
+    try {
+      rig = makeChaseRig({
+        geomFriction0: GEOM_FRICTION0,
+        mj, model, data: new mj.MjData(model),
+        D: duck.joints, HOME, LO, HI, jointNames: C.jointNames,
+        buildObs, projectedGravity, command, tickHz: C.tickHz,
+        // THE FORWARD PASS IS THE SHELL'S, exactly as it is for /climb:
+        // onnxruntime on the desk, policyforward.mjs in a browser. They agree
+        // to 3.5e-6 per action and not exactly (sim/policy_parity.mjs), which
+        // is why the answer carries the plant digest and /health the engine.
+        stand: { run: obs => loaded.net.run(obs), reference: loaded.reference },
+      });
+    } catch (error) {
+      CHASE_WHY = String(error?.message || error);
+      return CHASE;
+    }
+    if (!rig) { CHASE_WHY = `${PLANT} has no ball: no body called "ball" on a free joint, `
+      + 'and a chase without a ball is not a chase'; return CHASE; }
+    CHASE = rig;
+    return CHASE;
   }
 
   /**
@@ -1332,9 +1412,14 @@ export async function makeBench(env) {
           if (!Number.isFinite(bearing) || !Number.isFinite(range)) {
             throw new Error('bearing and range must be finite numbers');
           }
-          const q = [d.qpos[f + 3], d.qpos[f + 4], d.qpos[f + 5], d.qpos[f + 6]];
-          const yaw = Math.atan2(2 * (q[0] * q[3] + q[1] * q[2]),
-                                 1 - 2 * (q[2] * q[2] + q[3] * q[3]));
+          // `yawOf` IS THE ONE THIS BENCH PLACES AND SCORES BY. It used to be
+          // spelled out here; it now comes from `reward_math.mjs` because
+          // `chase_score.mjs` reads the SAME yaw at the same instant as
+          // Pollen's frozen `kick_dir` and as the axis `ballTravel_mm` is
+          // projected onto. Two spellings of one atan2 would put the ball on
+          // one line and score the travel along another. Same arithmetic, same
+          // operand order — `bench_parity.mjs` is what says so.
+          const yaw = yawOf([d.qpos[f + 3], d.qpos[f + 4], d.qpos[f + 5], d.qpos[f + 6]]);
           // Positive bearing is LEFT, the convention duckvision and the robot
           // both use, so a trial reads the same way the detector reports.
           const a = yaw + bearing * Math.PI / 180;
@@ -2208,6 +2293,193 @@ export async function makeBench(env) {
         // somewhere in it. Do-nothing never crosses x = 120 mm and so earns 0.
         reachedFlight: climbReachedFlight({ maxX: E.maxX, feetOnTreadMax: E.feetOnTreadMax }),
         seconds: ((typeof performance === 'object' ? performance.now() : Date.now()) - started) / 1000,
+      };
+    }
+
+    /**
+     * GET /chase/grid — THE FOURTEEN CELLS OF THE BALL CHALLENGE, AND ITS
+     * CRITERION, SO A CLIENT NEVER RETYPES EITHER.
+     *
+     * The grid is not a preference: it is the axis set every published ball
+     * result is decided on. Nine CORE cells — bearing {−20, 0, +20}° crossed
+     * with range {0.45, 0.70, 0.95} m on the nominal plant — plus five EXTENDED
+     * ones: the centre cell on the slippery and the grippy plants (the same two
+     * plant pairs the stairs grid uses, so "the slippery plant" means one
+     * thing), a ball well off the heading at ±40°, and a ball straight ahead but
+     * far at 1.20 m. A client that hard-codes fourteen numbers is a client that
+     * will one day be scoring a different grid and reporting it under the same
+     * name, so the bench that runs them is the one that lists them.
+     */
+    if (url.pathname === '/chase/grid') {
+      const rig = await chaseRig();
+      return {
+        cells: chaseGridCells(),
+        // nExt is the FIVE extended cells, the count every leaderboard row's
+        // "ext k/5" is over; nAll is every cell the grid runs. They used to
+        // share one name with two meanings.
+        nCore: CHASE_N_CORE, nExt: CHASE_N_EXT - CHASE_N_CORE, nAll: CHASE_N_EXT,
+        criterion: CHASE_CRITERION,
+        touchMm: TOUCH_MM, travelMinMm: TRAVEL_MIN_MM,
+        tailTicks: CHASE_TAIL_TICKS, uprightTailMin: CHASE_UPRIGHT_TAIL_MIN,
+        settleTicks: CHASE_SETTLE_TICKS,
+        bearingWhy: 'degrees from the duck\'s settled heading to the ball. POSITIVE IS LEFT — '
+                  + 'the convention POST /ball already uses, so a trial reads the same way '
+                  + 'duckvision reports. Bearing is the axis that makes this a chase: a ball '
+                  + 'dead ahead is reachable by walking forward, and a ball at ±40° is not.',
+        rangeWhy: 'metres from the duck\'s root to the ball\'s centre, measured after the '
+                + 'settle. Pollen\'s kick task spawns the ball 90 mm in front of the toe '
+                + '(cfg 84), so the NEAREST cell here is five times the distance the bundled '
+                + 'kick policies were trained at.',
+        config: CHASE_CONFIG,
+        configSource: CHASE_CONFIG_SOURCE,
+        terms: CHASE_TERMS.map(t => ({ term: t.term, weight: t.weight,
+                                       weightStage0: t.weightStage0, source: t.source,
+                                       formula: t.formula })),
+        refused: CHASE_REFUSALS,
+        refusedWhy: 'the three terms of the ball-kick config this plant cannot answer, named '
+                  + 'with their weights and the reason, in every answer. A shorter refusal list '
+                  + 'is not a better one: each of these could be approximated by picking a '
+                  + 'threshold or a softening fraction Pollen never wrote down, and each '
+                  + 'approximation would be a different term wearing this one\'s name.',
+        actionRateWhy: ACTION_RATE_SOURCE_WHY,
+        caveat: BALL_CAVEAT,
+        entrantKinds: ['move', 'policy'],
+        entrantWhy: 'a move is {kind: "move", intent: {keyframes, blend}} and is run under the '
+                  + 'bench\'s 25-tick settle exactly as a /climb cell is; a policy is '
+                  + '{kind: "policy", policy: <name>, schedule: [[atSeconds, {vx, vy, vyaw}]]} '
+                  + 'and is the format that makes "chase" a closed-loop question later — the '
+                  + 'same field carries a fixed schedule today and one computed from the '
+                  + 'ball\'s bearing tomorrow, with no change to the format or the hash.',
+        chaseable: !!rig,
+        ...(rig ? {} : { why: CHASE_WHY }),
+        policies: [...catalogue().keys()].sort(),
+        plantName: PLANT, plantDigest: PLANT_DIGEST,
+      };
+    }
+
+    /**
+     * POST /chase — ONE CELL OF THE GRID, FOR ONE ENTRANT, IN THE REQUEST BODY.
+     *
+     * WHY ONE CELL AND NOT THE GRID, for the reason /climb takes one: a cell is
+     * half a second of settle, up to five seconds of entrant and a second of
+     * tail, and fourteen of them is a request that times out somewhere between
+     * the app and here with nothing at all to show for it. One cell answers in
+     * about a second, the client asks fourteen times, and it can draw a progress
+     * row and stop halfway.
+     *
+     *   body { entrant: { kind: "move",   intent: <harness JSON> }
+     *              or   { kind: "policy", policy: <name>, schedule: [...] },
+     *          seconds, cell: { bearing, range, drop, fmul }, tail: "policy" }
+     *
+     * WHAT IT ANSWERS. Eight plain facts, the nine computed terms of Pollen's
+     * ball-kick config as {term, weight, value}, the three refused by name, the
+     * verdict `chased` and the stricter `stable`, and the plant this was all
+     * measured in. The nine terms are REPORTED and are NOT the verdict: a shaped
+     * sum of nine weighted terms is not a thing a person can hold in their head,
+     * and a leaderboard sorted on it would reward a duck that stands beautifully
+     * still.
+     *
+     * `chase/chase_parity.mjs` is the acceptance test: every entrant file across
+     * all fourteen cells, through here and through chase_robust, EXACT at full
+     * float digits.
+     */
+    if (url.pathname === '/chase') {
+      const started = (typeof performance === 'object' ? performance.now() : Date.now());
+      const rig = await chaseRig();
+      if (!rig) {
+        return { error: `no /chase here: ${CHASE_WHY}`, chaseable: false, why: CHASE_WHY,
+                 plantName: PLANT, plantDigest: PLANT_DIGEST };
+      }
+      let entrant;
+      try { entrant = chaseCheckEntrant(body.entrant, 'the request body'); }
+      catch (e) { return { error: String(e.message || e) }; }
+      const cellIn = body.cell || {};
+      const bearing = cellIn.bearing === undefined ? 0 : +cellIn.bearing;
+      const range = cellIn.range === undefined ? 0.70 : +cellIn.range;
+      const drop = cellIn.drop === undefined ? 0.120 : +cellIn.drop;
+      const fmul = cellIn.fmul === undefined ? 1.0 : +cellIn.fmul;
+      if (![bearing, range, drop, fmul].every(Number.isFinite)) {
+        return { error: 'chase needs a cell of finite bearing, range, drop and fmul' };
+      }
+      if (!(range > 0 && range < 10)) return { error: 'chase needs a range in METRES, 0 < range < 10' };
+      if (!(drop >= 0.05 && drop <= 0.30)) return { error: 'chase needs a drop in METRES within 0.05..0.30' };
+      if (!(fmul > 0 && fmul <= 5)) return { error: 'chase needs a friction multiplier within 0 < fmul <= 5' };
+      // THE DRIVEN SPAN IS PART OF THE HASHED ENTRANT. A body `seconds` that
+      // disagrees with what the entrant declares would score one thing under
+      // another thing's hash, so the disagreement is refused by name.
+      if (body.seconds !== undefined && entrant.seconds !== undefined
+          && +body.seconds !== +entrant.seconds) {
+        return { error: `the body asks for ${+body.seconds} s but the entrant declares `
+                      + `${+entrant.seconds} s; the entrant's seconds are part of its hash, so `
+                      + 'send one or the other, not two that disagree' };
+      }
+      const seconds = body.seconds === undefined
+        ? (entrant.seconds === undefined ? CHASE_SECONDS : +entrant.seconds)
+        : +body.seconds;
+      if (!(Number.isFinite(seconds) && seconds > 0 && seconds <= 30)) {
+        return { error: 'chase needs a driven span in SECONDS, 0 < seconds <= 30' };
+      }
+      const tail = body.tail === undefined ? 'policy' : String(body.tail);
+      if (tail !== 'policy') {
+        return { error: `this bench scores the grid, and the grid is tail "policy": ${tail} is not one of its cells` };
+      }
+      // THE ENTRANT'S ACTOR. A move rides on the standing policy, which the rig
+      // already holds; a policy entrant names a network, and a name this bench
+      // has never heard of is refused BY NAME rather than quietly settled for.
+      let actor = null;
+      if (entrant.kind === 'policy') {
+        try {
+          const loaded = await policy(entrant.policy);
+          actor = { run: obs => loaded.net.run(obs), reference: loaded.reference };
+        } catch (e) { return { error: String(e.message || e) }; }
+      }
+      const hash = await env.sha256(new TextEncoder().encode(chaseHashPayload(entrant)));
+      const answered = {
+        hash, entrant: hash.slice(0, 12), kind: entrant.kind,
+        policy: entrant.kind === 'policy' ? entrant.policy : null,
+        cell: { bearing, range, drop, fmul }, tail,
+        // SECONDS IS THE EPISODE, NOT THE STOPWATCH — and it differs from
+        // /climb, where `seconds` is how long the request took. A chase answer
+        // has to carry the driven span, because the span is part of what was
+        // scored: the same entrant at 4 s and at 5 s is two measurements. The
+        // stopwatch is `elapsedSeconds`.
+        seconds,
+        plantName: PLANT, plantDigest: PLANT_DIGEST,
+        criterion: CHASE_CRITERION,
+        config: CHASE_CONFIG,
+      };
+      let E;
+      try {
+        E = await chaseJob(() => rig.runEpisode(entrant, { bearing, range, drop, fmul },
+                                                { seconds, tail, actor }));
+      } catch (e) { return { ...answered, error: String(e?.message || e) }; }
+      // FULL FLOAT DIGITS. Not rounded: chase/chase_parity.mjs compares these
+      // against chase_robust's own numbers with Object.is, and a toFixed here
+      // would make that gate unable to tell a moved trajectory from a rounded
+      // one.
+      return {
+        ...answered,
+        ...E.facts,
+        chased: E.chased, stable: E.stable,
+        uprightTailTicks: E.uprightTailTicks,
+        tailTicks: E.tailTicks, drivenTicks: E.drivenTicks, rateTicks: E.rateTicks,
+        terms: E.terms,
+        termsWhy: 'per-tick MEANS over the DRIVEN SPAN — the entrant\'s own seconds. The 50-tick '
+                + 'tail is this bench\'s standing test and not part of the entrant\'s episode, so '
+                + 'averaging over it would put the tail length into Pollen\'s reward. The facts '
+                + 'above span the whole episode, because the criterion asks about the end of it. '
+                + 'These nine are REPORTED and are not the verdict.',
+        refused: E.refused,
+        actionRateSource: E.actionRateSource,
+        actionRateWhy: ACTION_RATE_SOURCE_WHY,
+        caveat: BALL_CAVEAT,
+        yaw0: E.yaw0, kickDir: E.kickDir, ball0: E.ball0, ballEnd: E.ballEnd,
+        kickDirWhy: 'the duck\'s heading at the FIRST DRIVEN TICK, frozen for the episode. It is '
+                  + 'Pollen\'s own kick_dir (mdp.py 5700-5702, "Frozen for the episode so the '
+                  + 'policy can\'t redefine "forward" by turning after the kick"), it is the '
+                  + 'line the ball was placed against, and it is the axis ballTravel_mm projects '
+                  + 'onto. One vector, read twice.',
+        elapsedSeconds: ((typeof performance === 'object' ? performance.now() : Date.now()) - started) / 1000,
       };
     }
     return null;
