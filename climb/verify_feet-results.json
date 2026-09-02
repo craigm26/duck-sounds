@@ -1,0 +1,57 @@
+{
+  "generated": "2026-09-02T07:18:54.745Z",
+  "rows": [
+    {
+      "path": "../climb/best_r2_blockclimb_90mm.json",
+      "rise_mm": 90,
+      "honest": false,
+      "feetOnTreadMax_rig3": 2,
+      "feetRestingMax": 1,
+      "uprightBothRestingTicks": 0,
+      "scored_feetOnTread": 1,
+      "up": false,
+      "x_mm": 134.3,
+      "z_mm": 117.8,
+      "upFrac": 0.45652173913043476
+    },
+    {
+      "path": "../climb/best_r2_blockclimb_180mm.json",
+      "rise_mm": 180,
+      "honest": false,
+      "feetOnTreadMax_rig3": 0,
+      "feetRestingMax": 0,
+      "uprightBothRestingTicks": 0,
+      "scored_feetOnTread": 0,
+      "up": true,
+      "x_mm": 61.1,
+      "z_mm": 116.5,
+      "upFrac": 0.8902077151335311
+    },
+    {
+      "path": "../climb/ablate_noblock_90mm.json",
+      "rise_mm": 90,
+      "honest": false,
+      "feetOnTreadMax_rig3": 0,
+      "feetRestingMax": 0,
+      "uprightBothRestingTicks": 0,
+      "scored_feetOnTread": 0,
+      "up": true,
+      "x_mm": 35.3,
+      "z_mm": 116.3,
+      "upFrac": 0.5528455284552846
+    },
+    {
+      "path": "../climb/ablate_noblock_180mm.json",
+      "rise_mm": 180,
+      "honest": false,
+      "feetOnTreadMax_rig3": 0,
+      "feetRestingMax": 0,
+      "uprightBothRestingTicks": 0,
+      "scored_feetOnTread": 0,
+      "up": true,
+      "x_mm": 69.9,
+      "z_mm": 116.6,
+      "upFrac": 0.8811475409836066
+    }
+  ]
+}

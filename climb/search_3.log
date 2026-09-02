@@ -1,0 +1,73 @@
+GUARD  on-tread 180 mm control: z = 288.7 mm (rig3.log says 288.7), honest = true  |  do-nothing 180 mm honest = false
+
+=== ARM 180 mm, 4-step flight — canonical four-step flight; rig3 Phase E says the on-tread control passes here
+    budget to t=1052s
+  + [3s ev1] A order=HFW seq=HFWTR lead=R lift@2 retr@0 r=2.029  x=-68.7 z=116.2 above=-63.8 feetTread=0/0 head=0.368 riser=0 gainBoth=null :: never reached the riser
+  + [3s ev2] A order=HWF seq=HWTRF lead=R lift@1 retr@0 r=3.380  x=-7.2 z=116.5 above=-63.5 feetTread=0/0 head=0.563 riser=0.023 gainBoth=-4 :: never reached the riser
+  + [6s ev10] A order=FWH seq=FWHTR lead=L lift@2 retr@1 r=3.519  x=30.2 z=116.5 above=-63.5 feetTread=0/0 head=0.115 riser=0.101 gainBoth=-25.2 :: never reached the riser
+  + [8s ev13] A order=HFW seq=HTFRW lead=R lift@0 retr@2 r=3.956  x=40.2 z=114.8 above=-65.2 feetTread=0/0 head=0.015 riser=0.273 gainBoth=0.7 :: never reached the riser
+  + [12s ev22] A order=FWH seq=FTWRH lead=R lift@0 retr@2 r=5.155  x=85.5 z=116.3 above=-63.7 feetTread=0/0 head=0.675 riser=0.342 gainBoth=6.7 :: never reached the riser
+  -- phase A done (t=26s, 54 evals). order ranking: FWH=5.16  WHF=4.78  FHW=4.53  HFW=3.96  HWF=3.57  WFH=3.01
+  + [52s ev106] B/s=0.3 order=FWH seq=FTWRH lead=R lift@0 retr@2 r=5.199  x=82.3 z=116.4 above=-63.6 feetTread=0/0 head=0.641 riser=0.455 gainBoth=8.7 :: never reached the riser
+  + [68s ev142] B/s=0.05 order=FWH seq=FTWRH lead=R lift@0 retr@2 r=5.257  x=84.5 z=116.4 above=-63.6 feetTread=0/0 head=0.649 riser=0.498 gainBoth=9.1 :: never reached the riser
+  + [75s ev155] B/s=0.3 order=FWH seq=FTWRH lead=L lift@0 retr@2 r=5.453  x=82 z=116.7 above=-63.3 feetTread=0/0 head=0.616 riser=0.424 gainBoth=13.3 :: never reached the riser
+  + [136s ev282] B/s=0.1 order=FWH seq=FTWRH lead=L lift@0 retr@2 r=5.474  x=86.5 z=116.5 above=-63.5 feetTread=0/0 head=0.556 riser=0.395 gainBoth=12.9 :: never reached the riser
+  + [141s ev292] B/s=0.05 order=FWH seq=FTRWH lead=L lift@0 retr@1 r=5.515  x=85.5 z=116.5 above=-63.5 feetTread=0/0 head=0.554 riser=0.442 gainBoth=14.4 :: never reached the riser
+  + [142s ev294] B/s=0.05 order=FWH seq=FTRWH lead=L lift@0 retr@1 r=5.543  x=85.9 z=116.5 above=-63.5 feetTread=0/0 head=0.574 riser=0.45 gainBoth=13.5 :: never reached the riser
+  + [160s ev330] B/s=0.1 order=FWH seq=FTRWH lead=L lift@0 retr@1 r=5.692  x=85.9 z=116.5 above=-63.5 feetTread=0/0 head=0.552 riser=0.457 gainBoth=16.4 :: never reached the riser
+  + [259s ev531] B/s=0.1 order=FWH seq=FTRWH lead=L lift@0 retr@1 r=5.719  x=85 z=116.5 above=-63.5 feetTread=0/0 head=0.542 riser=0.609 gainBoth=16.7 :: never reached the riser
+  + [264s ev541] B/s=0.05 order=FWH seq=FWTRH lead=L lift@1 retr@1 r=6.053  x=85 z=116.5 above=-63.5 feetTread=0/0 head=0.603 riser=0.473 gainBoth=22.8 :: never reached the riser
+  + [349s ev716] B/s=0.18 order=FWH seq=FWTRH lead=L lift@1 retr@1 r=6.324  x=80.4 z=116.5 above=-63.5 feetTread=0/0 head=0.509 riser=0.409 gainBoth=28.3 :: never reached the riser
+  + [549s ev1137] B/s=0.1 order=FHW seq=FHWTR lead=R lift@2 retr@1 r=6.636  x=81.7 z=116.5 above=-63.5 feetTread=0/0 head=0.665 riser=0.53 gainBoth=28.5 :: never reached the riser
+  + [590s ev1225] B/s=0.18 order=FHW seq=FHWTR lead=R lift@2 retr@2 r=6.813  x=79.2 z=116.5 above=-63.5 feetTread=0/0 head=0.7 riser=0.526 gainBoth=32.4 :: never reached the riser
+  + [740s ev1537] B/s=0.1 order=FHW seq=FHWTR lead=R lift@2 retr@2 r=6.990  x=74.7 z=116.5 above=-63.5 feetTread=0/0 head=0.691 riser=0.492 gainBoth=35.8 :: never reached the riser
+  + [771s ev1599] B/s=0.05 order=FHW seq=FHWTR lead=R lift@2 retr@2 r=7.243  x=76.9 z=116.6 above=-63.4 feetTread=0/0 head=0.723 riser=0.524 gainBoth=36.8 :: never reached the riser
+  -- arm done t=1052s, 2178 evals total. best r=7.243
+  RE-SCORED FROM ../climb/best_r2_cornerstem_180mm.json: r=7.243 (search said 7.243), honest=false
+
+=== ARM 120 mm, 1-step flight — ONE-BLOCK flight: with four steps the blocks shove each other and throw a standing duck off at 120 mm
+    budget to t=2103s
+  + [1053s ev2179] A order=HFW seq=HTRFW lead=L lift@0 retr@0 r=2.137  x=-48.2 z=115.5 above=-4.5 feetTread=0/0 head=0.205 riser=0 gainBoth=null :: never reached the riser
+  + [1054s ev2180] A order=HWF seq=HWFTR lead=L lift@2 retr@2 r=3.927  x=36.7 z=115 above=-5 feetTread=0/0 head=0.435 riser=0.051 gainBoth=null :: never reached the riser
+  + [1055s ev2182] A order=FWH seq=FWTRH lead=L lift@1 retr@0 r=4.045  x=52.3 z=118.9 above=-1.1 feetTread=0/0 head=0 riser=0.028 gainBoth=null :: never reached the riser
+  + [1057s ev2188] A order=FWH seq=FWTRH lead=R lift@1 retr@1 r=4.222  x=55.4 z=116.6 above=-3.4 feetTread=0/0 head=0.161 riser=0.308 gainBoth=null :: never reached the riser
+  + [1059s ev2194] A order=FWH seq=FTWRH lead=R lift@0 retr@2 r=4.972  x=86.6 z=116.6 above=-3.4 feetTread=0/0 head=0.487 riser=0.396 gainBoth=2.2 :: never reached the riser
+  + [1065s ev2209] A order=HFW seq=HFTRW lead=R lift@1 retr@2 r=5.391  x=82.4 z=116.4 above=-3.6 feetTread=0/0 head=0.297 riser=0.321 gainBoth=10.9 :: never reached the riser
+  -- phase A done (t=1074s, 2232 evals). order ranking: HFW=5.39  FWH=4.97  HWF=4.78  FHW=4.47  WFH=3.97  WHF=3.30
+  + [1108s ev2317] B/s=0.1 order=HWF seq=HWTRF lead=R lift@1 retr@2 r=5.552  x=51.9 z=116.7 above=-3.3 feetTread=0/0 head=0.313 riser=0.215 gainBoth=15.7 :: never reached the riser
+  + [1110s ev2321] B/s=0.05 order=HFW seq=HFTRW lead=R lift@1 retr@2 r=5.585  x=80.6 z=116.2 above=-3.8 feetTread=0/0 head=0.432 riser=0.239 gainBoth=16.9 :: never reached the riser
+  + [1115s ev2331] B/s=0.05 order=HWF seq=HWTRF lead=R lift@1 retr@2 r=5.672  x=45.9 z=116.5 above=-3.5 feetTread=0/0 head=0.366 riser=0.134 gainBoth=18 :: never reached the riser
+  + [1119s ev2343] B/s=0.3 order=HWF seq=HWTRF lead=R lift@1 retr@2 r=5.686  x=83.2 z=116.6 above=-3.4 feetTread=0/0 head=0.299 riser=0.339 gainBoth=11.4 :: never reached the riser
+  + [1127s ev2366] B/s=0.1 order=HWF seq=HWTRF lead=L lift@1 retr@2 r=5.708  x=84.4 z=116.6 above=-3.4 feetTread=0/0 head=0.244 riser=0.651 gainBoth=11.5 :: never reached the riser
+  + [1131s ev2376] B/s=0.05 order=HWF seq=HWTRF lead=L lift@1 retr@2 r=5.788  x=84 z=116.6 above=-3.4 feetTread=0/0 head=0.202 riser=0.607 gainBoth=12.8 :: never reached the riser
+  + [1137s ev2393] B/s=0.3 order=HWF seq=HWTRF lead=L lift@1 retr@2 r=6.120  x=80.3 z=116.5 above=-3.5 feetTread=0/0 head=0.401 riser=0.232 gainBoth=18.6 :: never reached the riser
+  + [1142s ev2404] B/s=0.18 order=HWF seq=HWTRF lead=R lift@1 retr@2 r=6.243  x=81.3 z=116.6 above=-3.4 feetTread=0/0 head=0.374 riser=0.54 gainBoth=18.2 :: never reached the riser
+  + [1160s ev2453] B/s=0.18 order=HWF seq=HWTRF lead=R lift@1 retr@2 r=6.249  x=80 z=116.6 above=-3.4 feetTread=0/0 head=0.349 riser=0.28 gainBoth=18.6 :: never reached the riser
+  + [1165s ev2466] B/s=0.1 order=HWF seq=HWTRF lead=R lift@1 retr@2 r=6.636  x=84.8 z=116.6 above=-3.4 feetTread=0/0 head=0.367 riser=0.578 gainBoth=21.5 :: never reached the riser
+  + [1199s ev2553] B/s=0.18 order=HWF seq=HWTRF lead=R lift@1 retr@2 r=6.746  x=78.4 z=116.6 above=-3.4 feetTread=0/0 head=0.367 riser=0.306 gainBoth=24.4 :: never reached the riser
+  + [1205s ev2567] B/s=0.1 order=HWF seq=HWTRF lead=R lift@1 retr@2 r=6.809  x=82.3 z=116.5 above=-3.5 feetTread=0/0 head=0.368 riser=0.395 gainBoth=23.8 :: never reached the riser
+  + [1346s ev2931] B/s=0.05 order=HWF seq=HTWRF lead=R lift@0 retr@2 r=6.829  x=83.4 z=116.5 above=-3.5 feetTread=0/0 head=0.36 riser=0.726 gainBoth=24.7 :: never reached the riser
+  + [1364s ev2976] B/s=0.05 order=HWF seq=HTWRF lead=R lift@0 retr@2 r=6.862  x=79.4 z=116.6 above=-3.4 feetTread=0/0 head=0.362 riser=0.33 gainBoth=25.2 :: never reached the riser
+  + [1420s ev3127] B/s=0.05 order=HWF seq=HTWRF lead=R lift@0 retr@2 r=6.883  x=83.2 z=116.6 above=-3.4 feetTread=0/0 head=0.363 riser=0.637 gainBoth=24.7 :: never reached the riser
+  + [1478s ev3277] B/s=0.05 order=HWF seq=HTWRF lead=R lift@0 retr@2 r=6.904  x=82.7 z=116.6 above=-3.4 feetTread=0/0 head=0.403 riser=0.262 gainBoth=25.4 :: never reached the riser
+  + [1488s ev3303] B/s=0.18 order=HWF seq=HTWRF lead=R lift@0 retr@2 r=6.921  x=81.1 z=116.2 above=-3.8 feetTread=0/0 head=0.537 riser=0.473 gainBoth=25.6 :: never reached the riser
+  + [1519s ev3380] B/s=0.05 order=HWF seq=HTWRF lead=R lift@0 retr@2 r=6.996  x=83.6 z=116.6 above=-3.4 feetTread=0/0 head=0.371 riser=0.253 gainBoth=26.6 :: never reached the riser
+  -- arm done t=2103s, 4974 evals total. best r=6.996
+  RE-SCORED FROM ../climb/best_r2_cornerstem_120mm.json: r=6.996 (search said 6.996), honest=false
+
+=== +/-10 mm AND BOTH FLIGHTS, scored from the published files ===
+file                                  rise  steps      r   x_mm   z_mm above_mm feetTread head riser gainBoth  HONEST
+best_r2_cornerstem_180mm.json          170      4   5.88   80.1  116.6    -53.4         0 0.67  0.53     20.2    . 
+best_r2_cornerstem_180mm.json          170      1   6.76   54.1  116.1    -53.9         0 0.72  0.35     33.1    . 
+best_r2_cornerstem_180mm.json          180      4   7.24   76.9  116.6    -63.4         0 0.72  0.52     36.8    . 
+best_r2_cornerstem_180mm.json          180      1   0.00   26.3  120.6    -59.4         0 0.42  0.12     34.1    . 
+best_r2_cornerstem_180mm.json          190      4   3.07 -116.5   82.9   -107.1         0 0.56  0.19     52.3    . 
+best_r2_cornerstem_180mm.json          190      1   0.00 -202.5  116.2    -73.8         0 0.47  0.18     27.3    . 
+best_r2_cornerstem_120mm.json          110      1   6.61   84.2  116.6      6.6         0 0.32  0.49     15.9    . 
+best_r2_cornerstem_120mm.json          110      4   1.25 -156.0   57.4    -52.6         0 0.19  0.00     null    . 
+best_r2_cornerstem_120mm.json          120      1   7.00   83.6  116.6     -3.4         0 0.37  0.25     26.6    . 
+best_r2_cornerstem_120mm.json          120      4   1.49  -63.6   70.1    -49.9         0 0.17  0.09     null    . 
+best_r2_cornerstem_120mm.json          130      1   0.00   -7.9  120.4     -9.6         0 0.57  0.11     25.8    . 
+best_r2_cornerstem_120mm.json          130      4   2.13  -20.7   79.0    -51.0         0 0.17  0.10     null    . 
+
+WROTE ../climb/search_3-results.json  (4974 episodes, 2107s)

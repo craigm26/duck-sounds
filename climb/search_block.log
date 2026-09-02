@@ -1,0 +1,72 @@
+=== PHASE P — what the collision-bit fix changes, against rig3 on the untouched plant ===
+  rise 180mm steps=1  rig3 x=-0.045956610 z=0.115990934 gap=- driftX=0.00
+                        fixed x=-0.045956610 z=0.115990934 gap=- driftX=0.00   |diff|=0.000e+0
+  rise 180mm steps=4  rig3 x=-0.011787651 z=0.116153494 gap=-16.62 driftX=0.00
+                        fixed x=-0.045956610 z=0.115990934 gap=-20.00 driftX=0.00   |diff|=3.433e-2
+  rise 90mm steps=4  rig3 x=-0.028795605 z=0.044031753 gap=-52.57 driftX=9.94
+                        fixed x=0.051744172 z=0.094927611 gap=-60.00 driftX=0.00   |diff|=1.314e-1
+  rise 40mm steps=4  rig3 x=0.016995331 z=0.056041837 gap=-52.57 driftX=9.94
+                        fixed x=-0.005434726 z=0.118602455 gap=-60.00 driftX=0.00   |diff|=8.499e-2
+=== PHASE A [3s] — controls on the fixed flight (blockless), criterion=honest ===
+  do-nothing  90mm  honest=false  x=-8.0 z=116.2 feet=0
+  do-nothing  180mm  honest=false  x=-8.0 z=116.2 feet=0
+  walk-only   90mm  honest=false  x=-7.5 z=116.7 feet=0
+  walk-only   180mm  honest=false  x=-7.5 z=116.7 feet=0
+  on-tread    90mm  honest=true  x=262.4 z=206.0 feet=2
+  on-tread    180mm  honest=true  x=262.4 z=296.0 feet=2
+=== PHASE B [5s] — stage 1 alone: shove the block flush (budget 8 min) ===
+  [6s] n=1 obj=-28.18  blockGap=26.2mm dy=-11.8mm blockZ=38.1mm duckX=18.5mm up=true footOnBlock=100%  vx=0.304 t1=1.92 bx0=41.4mm
+  [7s] n=5 obj=-18.12  blockGap=18.4mm dy=4.6mm blockZ=37.1mm duckX=22.4mm up=true footOnBlock=100%  vx=0.230 t1=2.46 bx0=35.7mm
+  [17s] n=30 obj=-15.35  blockGap=16.3mm dy=2.1mm blockZ=37.1mm duckX=21.5mm up=true footOnBlock=100%  vx=0.222 t1=2.53 bx0=37.9mm
+  [21s] n=38 obj=-13.50  blockGap=13.3mm dy=-6.5mm blockZ=37.2mm duckX=22.7mm up=true footOnBlock=100%  vx=0.211 t1=2.72 bx0=39.4mm
+  [39s] n=81 obj=-13.34  blockGap=14.3mm dy=-1.4mm blockZ=37.4mm duckX=24.4mm up=true footOnBlock=100%  vx=0.234 t1=2.68 bx0=41.0mm
+  [143s] n=326 obj=-12.13  blockGap=13.1mm dy=1.6mm blockZ=37.2mm duckX=22.6mm up=true footOnBlock=100%  vx=0.246 t1=2.77 bx0=39.5mm
+  [156s] n=358 obj=-11.99  blockGap=16.8mm dy=-0.6mm blockZ=29.9mm duckX=-4.9mm up=true footOnBlock=4%  vx=0.301 t1=1.41 bx0=73.2mm
+  [157s] n=362 obj=-11.59  blockGap=15.0mm dy=6.2mm blockZ=29.9mm duckX=-1.8mm up=true footOnBlock=6%  vx=0.296 t1=1.23 bx0=75.0mm
+  [160s] n=373 obj=-9.84  blockGap=14.1mm dy=-2.7mm blockZ=29.9mm duckX=21.7mm up=true footOnBlock=100%  vx=0.288 t1=1.18 bx0=75.0mm
+  [168s] n=396 obj=-9.79  blockGap=13.7mm dy=-4.2mm blockZ=29.9mm duckX=24.8mm up=true footOnBlock=100%  vx=0.264 t1=1.28 bx0=70.3mm
+  [169s] n=399 obj=-5.24  blockGap=9.7mm dy=-2.1mm blockZ=29.9mm duckX=28.7mm up=true footOnBlock=100%  vx=0.277 t1=1.78 bx0=75.0mm
+  [179s] n=426 obj=-4.43  blockGap=8.0mm dy=5.7mm blockZ=29.9mm duckX=29.9mm up=true footOnBlock=100%  vx=0.254 t1=1.78 bx0=75.0mm
+  [182s] n=434 obj=-4.09  blockGap=7.6mm dy=5.8mm blockZ=29.9mm duckX=31.5mm up=true footOnBlock=100%  vx=0.251 t1=1.75 bx0=75.0mm
+  [219s] n=535 obj=-3.47  blockGap=8.3mm dy=-0.4mm blockZ=29.9mm duckX=29.4mm up=true footOnBlock=100%  vx=0.241 t1=1.57 bx0=75.0mm
+  PHASE B done: 1291 episodes. verified-from-file blockGap=8.3mm (flush<=20mm: true)
+=== PHASE C [486s] — two-stage: push then climb, at 90 and 180 mm ===
+  [486s] 90mm n=1 obj=4.409(shaped) reward=4.203 honest=false x=63.3 z=115.0 above=25.0 feetOnTread=0/max0 peakZ=122.9 head=14% riser=11% block=88% blockGap=11mm
+  [492s] 90mm n=12 obj=4.706(shaped) reward=4.461 honest=false x=80.3 z=115.1 above=25.1 feetOnTread=0/max0 peakZ=124.2 head=13% riser=11% block=82% blockGap=4mm
+  [492s] 90mm n=13 obj=6.029(shaped) reward=1.477 honest=false x=3.2 z=95.4 above=5.4 feetOnTread=0/max2 peakZ=134.4 head=2% riser=1% block=14% blockGap=7mm
+  [533s] 90mm n=100 obj=6.132(shaped) reward=1.563 honest=false x=-7.8 z=101.4 above=11.4 feetOnTread=0/max2 peakZ=135.0 head=0% riser=2% block=48% blockGap=10mm
+  [566s] 90mm n=166 obj=9.547(shaped) reward=5.105 honest=false x=86.2 z=104.5 above=14.5 feetOnTread=1/max2 peakZ=130.7 head=0% riser=3% block=48% blockGap=-0mm
+  [572s] 90mm n=177 obj=10.626(shaped) reward=5.895 honest=false x=131.6 z=111.3 above=21.3 feetOnTread=1/max2 peakZ=140.3 head=17% riser=3% block=48% blockGap=6mm
+  [862s] 90mm n=754 obj=10.740(shaped) reward=5.794 honest=false x=113.0 z=111.3 above=21.3 feetOnTread=1/max2 peakZ=147.6 head=8% riser=2% block=13% blockGap=4mm
+  [985s] 90mm n=1001 obj=10.741(shaped) reward=5.941 honest=false x=118.2 z=113.0 above=23.0 feetOnTread=1/max2 peakZ=142.7 head=5% riser=11% block=45% blockGap=0mm
+  [1015s] 90mm n=1059 obj=10.743(shaped) reward=5.658 honest=false x=106.4 z=110.5 above=20.5 feetOnTread=1/max2 peakZ=152.2 head=6% riser=3% block=12% blockGap=2mm
+  [1199s] 90mm n=1427 obj=10.882(shaped) reward=5.890 honest=false x=129.7 z=111.1 above=21.1 feetOnTread=1/max2 peakZ=149.1 head=20% riser=2% block=42% blockGap=0mm
+  [1223s] 90mm n=1476 obj=11.003(shaped) reward=5.931 honest=false x=113.5 z=114.4 above=24.4 feetOnTread=1/max2 peakZ=151.7 head=0% riser=1% block=47% blockGap=9mm
+  [1239s] 90mm n=1509 obj=11.113(shaped) reward=6.171 honest=false x=134.3 z=117.8 above=27.8 feetOnTread=1/max2 peakZ=147.4 head=17% riser=4% block=12% blockGap=2mm
+  90mm: 1564 episodes, 0 cleared honest. re-scored from ../climb/best_r2_blockclimb_90mm.json: honest=false reward=6.171 x=134.3 z=117.8
+  [1267s] 180mm n=1 obj=2.549(shaped) reward=2.414 honest=false x=14.3 z=116.2 above=-63.8 feetOnTread=0/max0 peakZ=120.5 head=15% riser=0% block=91% blockGap=4mm
+  [1268s] 180mm n=3 obj=2.585(shaped) reward=2.457 honest=false x=17.1 z=116.3 above=-63.7 feetOnTread=0/max0 peakZ=120.3 head=14% riser=0% block=86% blockGap=7mm
+  [1270s] 180mm n=8 obj=2.601(shaped) reward=2.501 honest=false x=20.1 z=116.2 above=-63.8 feetOnTread=0/max0 peakZ=119.3 head=20% riser=0% block=84% blockGap=0mm
+  [1272s] 180mm n=11 obj=2.714(shaped) reward=2.664 honest=false x=30.9 z=115.0 above=-65.0 feetOnTread=0/max0 peakZ=117.7 head=22% riser=1% block=100% blockGap=13mm
+  [1274s] 180mm n=15 obj=2.743(shaped) reward=2.625 honest=false x=28.3 z=116.4 above=-63.6 feetOnTread=0/max0 peakZ=119.9 head=29% riser=5% block=100% blockGap=12mm
+  [1274s] 180mm n=16 obj=2.748(shaped) reward=2.629 honest=false x=28.6 z=116.3 above=-63.7 feetOnTread=0/max0 peakZ=120.0 head=29% riser=0% block=100% blockGap=11mm
+  [1275s] 180mm n=18 obj=2.800(shaped) reward=2.690 honest=false x=32.7 z=116.2 above=-63.8 feetOnTread=0/max0 peakZ=119.7 head=30% riser=8% block=100% blockGap=8mm
+  [1277s] 180mm n=22 obj=3.179(shaped) reward=3.114 honest=false x=60.9 z=115.8 above=-64.2 feetOnTread=0/max0 peakZ=118.2 head=46% riser=13% block=100% blockGap=5mm
+  [1279s] 180mm n=25 obj=3.220(shaped) reward=2.893 honest=false x=46.2 z=116.4 above=-63.6 feetOnTread=0/max0 peakZ=126.9 head=21% riser=1% block=2% blockGap=3mm
+  [1286s] 180mm n=41 obj=3.452(shaped) reward=3.020 honest=false x=54.7 z=115.2 above=-64.8 feetOnTread=0/max0 peakZ=130.4 head=24% riser=5% block=34% blockGap=1mm
+  [1324s] 180mm n=120 obj=3.470(shaped) reward=3.017 honest=false x=54.5 z=116.5 above=-63.5 feetOnTread=0/max0 peakZ=131.1 head=34% riser=8% block=6% blockGap=4mm
+  [1347s] 180mm n=165 obj=3.649(shaped) reward=2.990 honest=false x=52.7 z=117.2 above=-62.8 feetOnTread=0/max0 peakZ=138.0 head=44% riser=23% block=25% blockGap=12mm
+  [1364s] 180mm n=200 obj=3.668(shaped) reward=3.203 honest=false x=66.9 z=116.5 above=-63.5 feetOnTread=0/max0 peakZ=131.5 head=35% riser=9% block=11% blockGap=1mm
+  [1673s] 180mm n=816 obj=3.810(shaped) reward=3.096 honest=false x=59.7 z=116.5 above=-63.5 feetOnTread=0/max0 peakZ=139.8 head=34% riser=18% block=32% blockGap=6mm
+  [1693s] 180mm n=855 obj=3.977(shaped) reward=3.116 honest=false x=61.1 z=116.5 above=-63.5 feetOnTread=0/max0 peakZ=144.7 head=33% riser=26% block=22% blockGap=1mm
+  180mm: 1555 episodes, 0 cleared honest. re-scored from ../climb/best_r2_blockclimb_180mm.json: honest=false reward=3.116 x=61.1 z=116.5
+=== PHASE D [2047s] — re-run each best at -10/0/+10 mm, and blockless ablation ===
+  best_r2_blockclimb_90mm.json @ 80mm  honest=false reward=6.030 x=153.2 z=104.5 feet=1
+  best_r2_blockclimb_90mm.json @ 90mm  honest=false reward=6.171 x=134.3 z=117.8 feet=1
+  best_r2_blockclimb_90mm.json @ 100mm  honest=false reward=5.801 x=122.5 z=119.0 feet=1
+  ABLATION no-block @ 90mm  honest=false reward=3.837 x=35.3 z=116.3 feet=0
+  best_r2_blockclimb_180mm.json @ 170mm  honest=false reward=0.000 x=31.8 z=116.6 feet=0
+  best_r2_blockclimb_180mm.json @ 180mm  honest=false reward=3.116 x=61.1 z=116.5 feet=0
+  best_r2_blockclimb_180mm.json @ 190mm  honest=false reward=2.987 x=52.5 z=116.5 feet=0
+  ABLATION no-block @ 180mm  honest=false reward=3.248 x=69.9 z=116.6 feet=0
+WROTE ../climb/search_block-results.json after 2051s

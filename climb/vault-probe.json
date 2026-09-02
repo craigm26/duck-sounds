@@ -1,0 +1,344 @@
+{
+  "generated": "2026-09-02T05:47:27.521Z",
+  "parity": [
+    {
+      "file": "best_0_40mm.json",
+      "rig3_x": -0.08293496414878636,
+      "vault_x": -0.08293496414878636,
+      "rig3_z": 0.11623766616979637,
+      "vault_z": 0.11623766616979637,
+      "match": true
+    },
+    {
+      "file": "best_1_90mm.json",
+      "rig3_x": 0.011071379107275991,
+      "vault_x": 0.011071379107275991,
+      "rig3_z": 0.11620600267601994,
+      "vault_z": 0.11620600267601994,
+      "match": true
+    },
+    {
+      "file": "best_2_180mm.json",
+      "rig3_x": 0.06545704919281363,
+      "vault_x": 0.06545704919281363,
+      "rig3_z": 0.11646924243073545,
+      "vault_z": 0.11646924243073545,
+      "match": true
+    }
+  ],
+  "parityAll": true,
+  "gate": [
+    {
+      "rise_mm": 40,
+      "isolate": false,
+      "minStepGap_mm": -52.571574034440786,
+      "treadDriftX_mm": 9.94377965416332,
+      "x_mm": -60.5,
+      "z_mm": 116.2,
+      "above_mm": 76.2,
+      "feetOnTread": 0,
+      "honest": false
+    },
+    {
+      "rise_mm": 40,
+      "isolate": true,
+      "minStepGap_mm": -60.00001145791011,
+      "treadDriftX_mm": 0.00001278197708787232,
+      "x_mm": 262.4,
+      "z_mm": 155.9,
+      "above_mm": 115.9,
+      "feetOnTread": 2,
+      "honest": true
+    },
+    {
+      "rise_mm": 60,
+      "isolate": false,
+      "minStepGap_mm": -52.571574034440786,
+      "treadDriftX_mm": 9.943779654163375,
+      "x_mm": -23.8,
+      "z_mm": 116.3,
+      "above_mm": 56.3,
+      "feetOnTread": 0,
+      "honest": false
+    },
+    {
+      "rise_mm": 60,
+      "isolate": true,
+      "minStepGap_mm": -60.00001145791011,
+      "treadDriftX_mm": 0.00001278197708787232,
+      "x_mm": 262.4,
+      "z_mm": 175.9,
+      "above_mm": 115.9,
+      "feetOnTread": 2,
+      "honest": true
+    },
+    {
+      "rise_mm": 90,
+      "isolate": false,
+      "minStepGap_mm": -52.571574034440786,
+      "treadDriftX_mm": 9.943779654163265,
+      "x_mm": -122.7,
+      "z_mm": 116.3,
+      "above_mm": 26.3,
+      "feetOnTread": 0,
+      "honest": false
+    },
+    {
+      "rise_mm": 90,
+      "isolate": true,
+      "minStepGap_mm": -60.00001145791011,
+      "treadDriftX_mm": 0.00001278197708787232,
+      "x_mm": 262.4,
+      "z_mm": 205.9,
+      "above_mm": 115.9,
+      "feetOnTread": 2,
+      "honest": true
+    },
+    {
+      "rise_mm": 40,
+      "isolate": true,
+      "control": "walk-only",
+      "x_mm": 2.5,
+      "z_mm": 116.7,
+      "feetOnTread": 0,
+      "honest": false,
+      "objective": 5.465
+    },
+    {
+      "rise_mm": 60,
+      "isolate": true,
+      "control": "walk-only",
+      "x_mm": 2.5,
+      "z_mm": 116.7,
+      "feetOnTread": 0,
+      "honest": false,
+      "objective": 4.623
+    },
+    {
+      "rise_mm": 90,
+      "isolate": true,
+      "control": "walk-only",
+      "x_mm": 2.5,
+      "z_mm": 116.7,
+      "feetOnTread": 0,
+      "honest": false,
+      "objective": 3.36
+    }
+  ],
+  "kin": {
+    "neck": [
+      {
+        "np": -1.5,
+        "jawX": 124.7,
+        "jawZ": 138.3,
+        "lfX": 6.8,
+        "lfZ": 8.6
+      },
+      {
+        "np": -1,
+        "jawX": 119.4,
+        "jawZ": 187.3,
+        "lfX": 6.8,
+        "lfZ": 8.6
+      },
+      {
+        "np": -0.5,
+        "jawX": 91.2,
+        "jawZ": 227.8,
+        "lfX": 6.8,
+        "lfZ": 8.6
+      },
+      {
+        "np": 0,
+        "jawX": 60.1,
+        "jawZ": 215.6,
+        "lfX": 6.8,
+        "lfZ": 8.6
+      },
+      {
+        "np": 0.349,
+        "jawX": 36.4,
+        "jawZ": 223.5,
+        "lfX": 6.8,
+        "lfZ": 8.6
+      },
+      {
+        "np": 0.7,
+        "jawX": 11.3,
+        "jawZ": 222.7,
+        "lfX": 6.8,
+        "lfZ": 8.6
+      },
+      {
+        "np": 1.04,
+        "jawX": -11.3,
+        "jawZ": 213.8,
+        "lfX": 6.8,
+        "lfZ": 8.6
+      }
+    ],
+    "head": [
+      {
+        "hp": -1.5,
+        "jawX": -12.8,
+        "jawZ": 188.1,
+        "lfX": 6.8,
+        "lfZ": 8.6
+      },
+      {
+        "hp": -1,
+        "jawX": -8.5,
+        "jawZ": 231.5,
+        "lfX": 6.8,
+        "lfZ": 8.6
+      },
+      {
+        "hp": -0.5,
+        "jawX": 9,
+        "jawZ": 236,
+        "lfX": 6.8,
+        "lfZ": 8.6
+      },
+      {
+        "hp": 0,
+        "jawX": 26.5,
+        "jawZ": 231.4,
+        "lfX": 6.8,
+        "lfZ": 8.6
+      },
+      {
+        "hp": 0.349,
+        "jawX": 36.4,
+        "jawZ": 223.5,
+        "lfX": 6.8,
+        "lfZ": 8.6
+      },
+      {
+        "hp": 0.7,
+        "jawX": 43,
+        "jawZ": 212.6,
+        "lfX": 6.8,
+        "lfZ": 8.6
+      },
+      {
+        "hp": 1.5,
+        "jawX": 57.7,
+        "jawZ": 217.3,
+        "lfX": 6.8,
+        "lfZ": 8.6
+      }
+    ],
+    "hip": [
+      {
+        "dhip": -1.2,
+        "jawX": 36.4,
+        "jawZ": 223.5,
+        "lfX": 90.3,
+        "lfZ": 69.4
+      },
+      {
+        "dhip": -0.6,
+        "jawX": 36.4,
+        "jawZ": 223.5,
+        "lfX": 58,
+        "lfZ": 26.1
+      },
+      {
+        "dhip": 0,
+        "jawX": 36.4,
+        "jawZ": 223.5,
+        "lfX": 6.8,
+        "lfZ": 8.6
+      },
+      {
+        "dhip": 0.6,
+        "jawX": 36.4,
+        "jawZ": 223.5,
+        "lfX": -45.3,
+        "lfZ": 22.9
+      },
+      {
+        "dhip": 1.2,
+        "jawX": 36.4,
+        "jawZ": 223.5,
+        "lfX": -80.3,
+        "lfZ": 64.1
+      }
+    ],
+    "knee": [
+      {
+        "dknee": -1.2,
+        "jawX": 36.4,
+        "jawZ": 223.5,
+        "lfX": -61.4,
+        "lfZ": 20.7
+      },
+      {
+        "dknee": -0.6,
+        "jawX": 36.4,
+        "jawZ": 223.5,
+        "lfX": -29.2,
+        "lfZ": 4.2
+      },
+      {
+        "dknee": 0,
+        "jawX": 36.4,
+        "jawZ": 223.5,
+        "lfX": 6.8,
+        "lfZ": 8.6
+      },
+      {
+        "dknee": 0.6,
+        "jawX": 36.4,
+        "jawZ": 223.5,
+        "lfX": 34.1,
+        "lfZ": 32.5
+      },
+      {
+        "dknee": 1.2,
+        "jawX": 36.4,
+        "jawZ": 223.5,
+        "lfX": 42.9,
+        "lfZ": 67.6
+      }
+    ],
+    "ank": [
+      {
+        "dank": -1.2,
+        "jawX": 36.4,
+        "jawZ": 223.5,
+        "lfX": 19.5,
+        "lfZ": 26.5
+      },
+      {
+        "dank": -0.6,
+        "jawX": 36.4,
+        "jawZ": 223.5,
+        "lfX": 15.9,
+        "lfZ": 15.6
+      },
+      {
+        "dank": 0,
+        "jawX": 36.4,
+        "jawZ": 223.5,
+        "lfX": 6.8,
+        "lfZ": 8.6
+      },
+      {
+        "dank": 0.6,
+        "jawX": 36.4,
+        "jawZ": 223.5,
+        "lfX": -4.6,
+        "lfZ": 7.9
+      },
+      {
+        "dank": 1.2,
+        "jawX": 36.4,
+        "jawZ": 223.5,
+        "lfX": -14.5,
+        "lfZ": 13.8
+      }
+    ]
+  },
+  "episode_s": 0.327
+}

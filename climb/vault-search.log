@@ -1,0 +1,44 @@
+[40mm n=1 0.9s] obj=5.1052 honest=false x=-1.2 z=109.4 above=69.4 maxZ=117.2 fot=0/0 hiFeet=2 headOnly=0 pivot=0mm head=0 riser=0
+[40mm n=2 1.5s] obj=12.2214 honest=false x=123.3 z=133.9 above=93.9 maxZ=134.7 fot=1/2 hiFeet=2 headOnly=2 pivot=0mm head=0.392 riser=0.044
+[40mm n=24 10.6s] obj=12.2514 honest=false x=124 z=127.7 above=87.7 maxZ=130.4 fot=1/2 hiFeet=2 headOnly=4 pivot=0.5mm head=0.171 riser=0.015
+[40mm n=44 19.2s] obj=12.3997 honest=false x=102.5 z=136.9 above=96.9 maxZ=136.9 fot=1/2 hiFeet=2 headOnly=4 pivot=2.6mm head=0.286 riser=0.022
+[40mm n=52 22.6s] obj=14.0477 honest=false x=117.2 z=121.3 above=81.3 maxZ=134 fot=2/2 hiFeet=2 headOnly=5 pivot=0mm head=0.183 riser=0.1
+[40mm n=188 80.1s] obj=18.8579 honest=true x=142.3 z=156.3 above=116.3 maxZ=163 fot=2/2 hiFeet=2 headOnly=13 pivot=42.5mm head=0.425 riser=0.037
+== 40mm done: 1388 episodes, 58 gens, 19 honest clears, best obj 18.858 honest=true
+[60mm n=1 601.0s] obj=0.5 honest=false x=-80.9 z=41.8 above=-18.2 maxZ=122.3 fot=0/0 hiFeet=1 headOnly=0 pivot=0mm head=0 riser=0
+[60mm n=2 601.3s] obj=2.6942 honest=false x=32.9 z=59.8 above=-0.2 maxZ=122.3 fot=0/0 hiFeet=2 headOnly=0 pivot=0mm head=0.054 riser=0.064
+[60mm n=3 601.7s] obj=6.0649 honest=false x=57 z=116.5 above=56.5 maxZ=135.3 fot=0/0 hiFeet=1 headOnly=1 pivot=0mm head=0.3 riser=0.233
+[60mm n=10 604.6s] obj=6.13 honest=false x=70.3 z=116.4 above=56.4 maxZ=129.5 fot=0/0 hiFeet=1 headOnly=0 pivot=0mm head=0.397 riser=0.281
+[60mm n=11 605.0s] obj=7.8685 honest=false x=68.8 z=116.2 above=56.2 maxZ=124.7 fot=0/0 hiFeet=0 headOnly=2 pivot=40.1mm head=0.358 riser=0.199
+[60mm n=14 606.2s] obj=8.9661 honest=false x=84.4 z=116.4 above=56.4 maxZ=122.2 fot=0/0 hiFeet=2 headOnly=23 pivot=2.5mm head=0.409 riser=0.449
+[60mm n=15 606.6s] obj=9.6856 honest=false x=83.7 z=116.2 above=56.2 maxZ=126.5 fot=0/0 hiFeet=2 headOnly=19 pivot=17.3mm head=0.349 riser=0.507
+[60mm n=17 607.4s] obj=10.0496 honest=false x=54.3 z=116.2 above=56.2 maxZ=121.5 fot=0/0 hiFeet=2 headOnly=5 pivot=68.2mm head=0.289 riser=0.251
+[60mm n=21 609.1s] obj=10.5432 honest=false x=63.6 z=140.5 above=80.5 maxZ=142.5 fot=1/2 hiFeet=2 headOnly=0 pivot=0mm head=0.26 riser=0.061
+[60mm n=23 610.0s] obj=10.9315 honest=false x=81.5 z=116.4 above=56.4 maxZ=119.3 fot=0/0 hiFeet=2 headOnly=13 pivot=48.1mm head=0.283 riser=0.379
+[60mm n=67 629.8s] obj=13.0144 honest=false x=121.7 z=86.3 above=26.3 maxZ=151.8 fot=1/2 hiFeet=2 headOnly=31 pivot=38.1mm head=0.385 riser=0.056
+[60mm n=141 662.6s] obj=16.096 honest=true x=191.5 z=176.2 above=116.2 maxZ=181.9 fot=2/2 hiFeet=2 headOnly=4 pivot=11.3mm head=0.274 riser=0.151
+[60mm n=285 724.5s] obj=17.0311 honest=true x=198.7 z=176 above=116 maxZ=178.5 fot=2/2 hiFeet=2 headOnly=30 pivot=0.6mm head=0.289 riser=0.04
+[60mm n=442 792.4s] obj=18.1994 honest=true x=380.5 z=179.8 above=119.8 maxZ=181.7 fot=2/2 hiFeet=2 headOnly=11 pivot=34.7mm head=0.409 riser=0.051
+== 60mm done: 1405 episodes, 59 gens, 3 honest clears, best obj 18.199 honest=true
+[90mm n=1 1201.1s] obj=6.8398 honest=false x=88 z=115.6 above=25.6 maxZ=124 fot=0/0 hiFeet=0 headOnly=15 pivot=4.8mm head=0.49 riser=0.387
+[90mm n=10 1204.8s] obj=7.0626 honest=false x=16.3 z=61.7 above=-28.3 maxZ=116.4 fot=1/1 hiFeet=1 headOnly=24 pivot=2.4mm head=0.423 riser=0.286
+[90mm n=27 1211.8s] obj=8.2726 honest=false x=-29 z=116.5 above=26.5 maxZ=117.6 fot=0/0 hiFeet=1 headOnly=17 pivot=57.8mm head=0.374 riser=0.065
+[90mm n=45 1218.9s] obj=8.6203 honest=false x=49.4 z=115.6 above=25.6 maxZ=135.4 fot=0/0 hiFeet=1 headOnly=12 pivot=50.1mm head=0.444 riser=0.227
+[90mm n=71 1229.6s] obj=8.9975 honest=false x=66.6 z=116.4 above=26.4 maxZ=123.2 fot=0/0 hiFeet=0 headOnly=20 pivot=53.8mm head=0.328 riser=0.115
+[90mm n=93 1238.5s] obj=9.2355 honest=false x=62.1 z=116.2 above=26.2 maxZ=122.3 fot=0/0 hiFeet=0 headOnly=38 pivot=62.4mm head=0.485 riser=0.064
+[90mm n=102 1242.4s] obj=10.0623 honest=false x=85.4 z=115.7 above=25.7 maxZ=133.9 fot=0/0 hiFeet=1 headOnly=30 pivot=88mm head=0.56 riser=0.382
+[90mm n=131 1254.7s] obj=11.092 honest=false x=132 z=127.8 above=37.8 maxZ=127.8 fot=0/0 hiFeet=1 headOnly=30 pivot=84.4mm head=0.56 riser=0.435
+[90mm n=833 1556.8s] obj=11.1187 honest=false x=103.8 z=134.2 above=44.2 maxZ=137 fot=0/0 hiFeet=1 headOnly=18 pivot=79.1mm head=0.742 riser=0.459
+[90mm n=966 1613.9s] obj=11.1332 honest=false x=68.3 z=153.4 above=63.4 maxZ=155.6 fot=1/1 hiFeet=2 headOnly=26 pivot=4.8mm head=0.307 riser=0.132
+[90mm n=1158 1696.1s] obj=11.1552 honest=false x=119.8 z=129.4 above=39.4 maxZ=129.4 fot=0/0 hiFeet=1 headOnly=25 pivot=85mm head=0.692 riser=0.488
+== 90mm done: 1401 episodes, 59 gens, 0 honest clears, best obj 11.155 honest=false
+neigh 40mm @ 30mm: obj=10.155 honest=false x=11.2 above=63 fot=0
+neigh 40mm @ 40mm: obj=18.858 honest=true x=142.3 above=116.3 fot=2
+neigh 40mm @ 50mm: obj=14.670 honest=false x=94 above=74 fot=2
+neigh 60mm @ 50mm: obj=11.936 honest=false x=46.8 above=66.2 fot=0
+neigh 60mm @ 60mm: obj=18.199 honest=true x=380.5 above=119.8 fot=2
+neigh 60mm @ 70mm: obj=7.546 honest=false x=-148.8 above=46.3 fot=0
+neigh 90mm @ 80mm: obj=7.224 honest=false x=53.6 above=36.6 fot=0
+neigh 90mm @ 90mm: obj=11.155 honest=false x=119.8 above=39.4 fot=0
+neigh 90mm @ 100mm: obj=6.688 honest=false x=85.9 above=16.6 fot=0
+done 1804.4 s
