@@ -5,10 +5,10 @@
  "source": "github.com/craigm26/duck-sounds at tag ball-challenge-v1",
  "note": "sha256 and byte size of every file in this package except MANIFEST.json itself.",
  "fileCount": 23,
- "totalBytes": 357347,
+ "totalBytes": 357372,
  "files": {
   "README.md": {
-   "sha256": "f0bb28fa1b020843467e0b7055019521d6c23b8cd4dd91c57f52236421292df0",
+   "sha256": "4effce3e1abe8b4348935729cd5ebc47e971fe188a6f3c57b294597afbbc26c2",
    "bytes": 48683
   },
   "REWARD.md": {
@@ -16,15 +16,15 @@
    "bytes": 32174
   },
   "check_numbers.mjs": {
-   "sha256": "8a9ed0ee22b293bdaac7a7bf7998ab5e347e83ef2c1ed3256a86c555a305008d",
-   "bytes": 43728
+   "sha256": "40517066ad5a46d497a86e5e987236d531e6434a8e2a866aee35108293e753e3",
+   "bytes": 43753
   },
   "hf_upload.sh": {
    "sha256": "77b8e3e6d6c7a70061d340c2aecb1dfa959dba9d07591b5f83251dad41a6662d",
    "bytes": 1017
   },
   "leaderboard.md": {
-   "sha256": "f560a920f4cf791c00f033b05143fd90256e19d2c8aeb53b24199c37c8819724",
+   "sha256": "70719b423ce63bd820909a0f6e73c7e880475c5e95c9b2d0ac13f7d0d60e8131",
    "bytes": 5614
   },
   "harness/LICENSE": {

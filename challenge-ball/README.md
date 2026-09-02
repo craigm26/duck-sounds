@@ -323,11 +323,11 @@ at 0.45 m, and it **fails bearing 0 at 0.70 m and 0.95 m**. It also fails ext 5 
 ahead), which was predicted to pass plausibly, and passes ext 2 (the grippy plant) instead.
 
 The cause is in the data, not in the scorer. `results/chase_drift-results.json` measures it: run
-open-loop at `vx` 0.5 for 4 s, the gait **drifts to the duck's right by 15.893°** away from the
-heading frozen at the first driven tick, and walks **1.3145 m** rather than the commanded 2.0 m
+open-loop at `vx` 0.5 for 4 s, the gait **drifts to the duck's right by 15.402°** away from the
+heading frozen at the first driven tick, and walks **1.1882 m** rather than the commanded 2.0 m
 (the three cells where it never touches the ball are identical to the last digit — a walk with
 nothing in its way is deterministic). On the 0.45 m cell it reaches the ball, the collision
-deflects it, and the drift reads **17.831°** over a **1.2896 m** path.
+deflects it, and the drift reads **15.588°** over a **1.1306 m** path.
 
 So the −20° column sits about 4° off the actual walk line and the dead-ahead column sits about
 16° off it. At 0.70 m dead ahead the duck misses the ball by **24.38 mm** — a gap narrower than

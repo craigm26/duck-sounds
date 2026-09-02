@@ -64,7 +64,7 @@ are the same entrant's aggregate fields.
 
 It passes the whole bearing −20° column and misses two of the three dead-ahead cells, which is the
 opposite of what was predicted. `results/chase_drift-results.json` measures why: the open-loop
-gait drifts **15.893°** to the duck's right and covers **1.3145 m** in the 4 s it was commanded to
+gait drifts **15.402°** to the duck's right and covers **1.1882 m** in the 4 s it was commanded to
 walk 2.0 m. Open-loop forward walking does not solve "the ball is straight ahead"; it solves "the
 ball happens to be where this gait drifts."
 
