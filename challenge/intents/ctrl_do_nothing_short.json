@@ -1,0 +1,48 @@
+{
+  "name": "control_do_nothing_short",
+  "keyframes": [
+    {
+      "t": 0.2,
+      "pose": [
+        0,
+        -0.0873,
+        -0.4579,
+        -0.0049,
+        0.453,
+        0.3491,
+        0.3491,
+        0,
+        0,
+        0,
+        0.0873,
+        0.4579,
+        0.0049,
+        -0.453
+      ]
+    },
+    {
+      "t": 0.5,
+      "pose": [
+        0,
+        -0.0873,
+        -0.4579,
+        -0.0049,
+        0.453,
+        0.3491,
+        0.3491,
+        0,
+        0,
+        0,
+        0.0873,
+        0.4579,
+        0.0049,
+        -0.453
+      ]
+    }
+  ],
+  "blend": 1,
+  "gap": 0.05,
+  "side": 0,
+  "approach": 0,
+  "note": "DO-NOTHING CONTROL, short episode (1.3 s track). Length-matched partner of the short on-tread control."
+}

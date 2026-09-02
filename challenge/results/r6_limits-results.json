@@ -1,0 +1,3988 @@
+{
+ "generated": "2026-09-02T14:10:03.236Z",
+ "what": "ROUND 6 — what physically limits the ceiling",
+ "role": "DIAGNOSTIC ONLY. No verdict, k, or objective is produced here.",
+ "parity": "every core cell is checked against climb/robust.mjs scoreRobust: peak trunk height to 0.01 mm, peak |actuator force| to 1e-6 N.m",
+ "forcerange_Nm": 0.6405,
+ "actuatorsInSlotOrder": [
+  "left_hip_yaw",
+  "left_hip_roll",
+  "left_hip_pitch",
+  "left_knee",
+  "left_ankle",
+  "neck_pitch",
+  "head_pitch",
+  "head_yaw",
+  "head_roll",
+  "right_hip_yaw",
+  "right_hip_roll",
+  "right_hip_pitch",
+  "right_knee",
+  "right_ankle"
+ ],
+ "neckStall_N": 7.66,
+ "bodyWeight_N": 7.23,
+ "rise_mm": 60,
+ "files": [
+  {
+   "file": "best_r3_vault_60mm.json",
+   "sha256": "4b9110c448ec45b7e9aa9e25e8720ab6e149562dbba2c00dda73f5c86aee8f15",
+   "move": "4b9110c448ec",
+   "parityOK": true,
+   "parityCells": "9/9 EXACT",
+   "rows": [
+    {
+     "cell": 0,
+     "rise_mm": 50,
+     "drop": 0.12,
+     "fmul": 1,
+     "peakAboveTread_mm": 71.1,
+     "over95": false,
+     "parity": {
+      "myPeakZ_mm": 121.144512,
+      "robustPeakZ_mm": 121.144512,
+      "dz_mm": 0,
+      "myMaxTq": 0.6405,
+      "robustMaxTq": 0.6405,
+      "dTq_Nm": 0,
+      "exact": true
+     },
+     "pushOffTicks": 81,
+     "pushOffMs": 1620,
+     "peakAtTick": 125,
+     "peakAtTrackTime_s": 2.5,
+     "peakDuringTrack": true,
+     "trackTicks": 162,
+     "torqueCeilingFrac_pushOff": {
+      "hipPitch": 0.4198,
+      "knee": 0.2593,
+      "ankle": 0.0741,
+      "hipRoll": 0,
+      "hipYaw": 0,
+      "neckPitch": 0.037,
+      "headPitch": 0.037
+     },
+     "torqueCeilingFrac_track": {
+      "hipPitch": 0.2284,
+      "knee": 0.1852,
+      "ankle": 0.0432,
+      "hipRoll": 0,
+      "hipYaw": 0,
+      "neckPitch": 0.0617,
+      "headPitch": 0.0185
+     },
+     "anyActuatorAtCeiling_pushOff": 0.5432,
+     "commandClipFrac_pushOff": 0.9877,
+     "neckLeverH_mm": {
+      "min": 51.8,
+      "max": 88.3
+     },
+     "neckMaxForceAtBeak_N": {
+      "atMinLever": 12.361,
+      "atMaxLever": 7.251
+     },
+     "segmentTorqueCeilingFrac": {
+      "reach": {
+       "hipPitch": 0,
+       "knee": 0,
+       "ankle": 0,
+       "hipRoll": 0,
+       "hipYaw": 0,
+       "neckPitch": 0,
+       "headPitch": 0
+      },
+      "pre": {
+       "hipPitch": 0,
+       "knee": 0.3333,
+       "ankle": 0,
+       "hipRoll": 0,
+       "hipYaw": 0,
+       "neckPitch": 0,
+       "headPitch": 0
+      },
+      "vault": {
+       "hipPitch": 0,
+       "knee": 0,
+       "ankle": 0,
+       "hipRoll": 0,
+       "hipYaw": 0,
+       "neckPitch": 0,
+       "headPitch": 0
+      },
+      "tuck": {
+       "hipPitch": 0.3333,
+       "knee": 0.4762,
+       "ankle": 0,
+       "hipRoll": 0,
+       "hipYaw": 0,
+       "neckPitch": 0,
+       "headPitch": 0
+      },
+      "land": {
+       "hipPitch": 0.3103,
+       "knee": 0.1724,
+       "ankle": 0,
+       "hipRoll": 0,
+       "hipYaw": 0,
+       "neckPitch": 0,
+       "headPitch": 0.069
+      },
+      "return": {
+       "hipPitch": 0.4,
+       "knee": 0.1714,
+       "ankle": 0.0571,
+       "hipRoll": 0,
+       "hipYaw": 0,
+       "neckPitch": 0.0857,
+       "headPitch": 0.0286
+      }
+     }
+    },
+    {
+     "cell": 1,
+     "rise_mm": 50,
+     "drop": 0.13,
+     "fmul": 0.7,
+     "peakAboveTread_mm": 122.6,
+     "over95": true,
+     "parity": {
+      "myPeakZ_mm": 172.602752,
+      "robustPeakZ_mm": 172.602752,
+      "dz_mm": 0,
+      "myMaxTq": 0.6405,
+      "robustMaxTq": 0.6405,
+      "dTq_Nm": 0,
+      "exact": true
+     },
+     "pushOffTicks": 85,
+     "pushOffMs": 1700,
+     "peakAtTick": 130,
+     "peakAtTrackTime_s": 2.6,
+     "peakDuringTrack": true,
+     "trackTicks": 162,
+     "torqueCeilingFrac_pushOff": {
+      "hipPitch": 0.5765,
+      "knee": 0.4706,
+      "ankle": 0.0471,
+      "hipRoll": 0,
+      "hipYaw": 0,
+      "neckPitch": 0,
+      "headPitch": 0.1059
+     },
+     "torqueCeilingFrac_track": {
+      "hipPitch": 0.3395,
+      "knee": 0.2901,
+      "ankle": 0.0617,
+      "hipRoll": 0,
+      "hipYaw": 0,
+      "neckPitch": 0,
+      "headPitch": 0.0556
+     },
+     "anyActuatorAtCeiling_pushOff": 0.8471,
+     "commandClipFrac_pushOff": 1,
+     "neckLeverH_mm": {
+      "min": 42.6,
+      "max": 89.3
+     },
+     "neckMaxForceAtBeak_N": {
+      "atMinLever": 15.039,
+      "atMaxLever": 7.169
+     },
+     "segmentTorqueCeilingFrac": {
+      "reach": {
+       "hipPitch": 0,
+       "knee": 0,
+       "ankle": 0,
+       "hipRoll": 0,
+       "hipYaw": 0,
+       "neckPitch": 0,
+       "headPitch": 0
+      },
+      "pre": {
+       "hipPitch": 0,
+       "knee": 0.4167,
+       "ankle": 0,
+       "hipRoll": 0,
+       "hipYaw": 0,
+       "neckPitch": 0,
+       "headPitch": 0
+      },
+      "vault": {
+       "hipPitch": 0,
+       "knee": 0,
+       "ankle": 0,
+       "hipRoll": 0,
+       "hipYaw": 0,
+       "neckPitch": 0,
+       "headPitch": 0
+      },
+      "tuck": {
+       "hipPitch": 0.3333,
+       "knee": 0.4762,
+       "ankle": 0,
+       "hipRoll": 0,
+       "hipYaw": 0,
+       "neckPitch": 0,
+       "headPitch": 0
+      },
+      "land": {
+       "hipPitch": 0.4828,
+       "knee": 0.3103,
+       "ankle": 0,
+       "hipRoll": 0,
+       "hipYaw": 0,
+       "neckPitch": 0,
+       "headPitch": 0.2414
+      },
+      "return": {
+       "hipPitch": 0.6,
+       "knee": 0.4,
+       "ankle": 0.1143,
+       "hipRoll": 0,
+       "hipYaw": 0,
+       "neckPitch": 0,
+       "headPitch": 0.0571
+      }
+     }
+    },
+    {
+     "cell": 2,
+     "rise_mm": 50,
+     "drop": 0.125,
+     "fmul": 1.3,
+     "peakAboveTread_mm": 120.2,
+     "over95": true,
+     "parity": {
+      "myPeakZ_mm": 170.219687,
+      "robustPeakZ_mm": 170.219687,
+      "dz_mm": 0,
+      "myMaxTq": 0.6405,
+      "robustMaxTq": 0.6405,
+      "dTq_Nm": 0,
+      "exact": true
+     },
+     "pushOffTicks": 68,
+     "pushOffMs": 1360,
+     "peakAtTick": 112,
+     "peakAtTrackTime_s": 2.24,
+     "peakDuringTrack": true,
+     "trackTicks": 162,
+     "torqueCeilingFrac_pushOff": {
+      "hipPitch": 0.5,
+      "knee": 0.3088,
+      "ankle": 0,
+      "hipRoll": 0,
+      "hipYaw": 0,
+      "neckPitch": 0,
+      "headPitch": 0.1618
+     },
+     "torqueCeilingFrac_track": {
+      "hipPitch": 0.2654,
+      "knee": 0.2654,
+      "ankle": 0.0432,
+      "hipRoll": 0,
+      "hipYaw": 0,
+      "neckPitch": 0.0185,
+      "headPitch": 0.0679
+     },
+     "anyActuatorAtCeiling_pushOff": 0.6618,
+     "commandClipFrac_pushOff": 0.9706,
+     "neckLeverH_mm": {
+      "min": 52.3,
+      "max": 86.5
+     },
+     "neckMaxForceAtBeak_N": {
+      "atMinLever": 12.253,
+      "atMaxLever": 7.408
+     },
+     "segmentTorqueCeilingFrac": {
+      "reach": {
+       "hipPitch": 0,
+       "knee": 0,
+       "ankle": 0,
+       "hipRoll": 0,
+       "hipYaw": 0,
+       "neckPitch": 0,
+       "headPitch": 0
+      },
+      "pre": {
+       "hipPitch": 0,
+       "knee": 0.6667,
+       "ankle": 0,
+       "hipRoll": 0,
+       "hipYaw": 0,
+       "neckPitch": 0,
+       "headPitch": 0
+      },
+      "vault": {
+       "hipPitch": 0,
+       "knee": 0,
+       "ankle": 0,
+       "hipRoll": 0,
+       "hipYaw": 0,
+       "neckPitch": 0,
+       "headPitch": 0
+      },
+      "tuck": {
+       "hipPitch": 0.3333,
+       "knee": 0.4762,
+       "ankle": 0,
+       "hipRoll": 0,
+       "hipYaw": 0,
+       "neckPitch": 0,
+       "headPitch": 0
+      },
+      "land": {
+       "hipPitch": 0.3793,
+       "knee": 0.1379,
+       "ankle": 0,
+       "hipRoll": 0,
+       "hipYaw": 0,
+       "neckPitch": 0,
+       "headPitch": 0.2069
+      },
+      "return": {
+       "hipPitch": 0.6286,
+       "knee": 0.3143,
+       "ankle": 0.1429,
+       "hipRoll": 0,
+       "hipYaw": 0,
+       "neckPitch": 0,
+       "headPitch": 0.1429
+      }
+     }
+    },
+    {
+     "cell": 3,
+     "rise_mm": 60,
+     "drop": 0.12,
+     "fmul": 1,
+     "peakAboveTread_mm": 122.5,
+     "over95": true,
+     "parity": {
+      "myPeakZ_mm": 182.464116,
+      "robustPeakZ_mm": 182.464116,
+      "dz_mm": 0,
+      "myMaxTq": 0.6405,
+      "robustMaxTq": 0.6405,
+      "dTq_Nm": 0,
+      "exact": true
+     },
+     "pushOffTicks": 98,
+     "pushOffMs": 1960,
+     "peakAtTick": 143,
+     "peakAtTrackTime_s": 2.86,
+     "peakDuringTrack": true,
+     "trackTicks": 162,
+     "torqueCeilingFrac_pushOff": {
+      "hipPitch": 0.4592,
+      "knee": 0.3878,
+      "ankle": 0,
+      "hipRoll": 0,
+      "hipYaw": 0,
+      "neckPitch": 0.0204,
+      "headPitch": 0.1122
+     },
+     "torqueCeilingFrac_track": {
+      "hipPitch": 0.3086,
+      "knee": 0.2593,
+      "ankle": 0,
+      "hipRoll": 0,
+      "hipYaw": 0,
+      "neckPitch": 0.0123,
+      "headPitch": 0.0679
+     },
+     "anyActuatorAtCeiling_pushOff": 0.7755,
+     "commandClipFrac_pushOff": 0.9184,
+     "neckLeverH_mm": {
+      "min": 32.3,
+      "max": 85.7
+     },
+     "neckMaxForceAtBeak_N": {
+      "atMinLever": 19.822,
+      "atMaxLever": 7.47
+     },
+     "segmentTorqueCeilingFrac": {
+      "reach": {
+       "hipPitch": 0,
+       "knee": 0,
+       "ankle": 0,
+       "hipRoll": 0,
+       "hipYaw": 0,
+       "neckPitch": 0,
+       "headPitch": 0
+      },
+      "pre": {
+       "hipPitch": 0,
+       "knee": 0.3333,
+       "ankle": 0,
+       "hipRoll": 0,
+       "hipYaw": 0,
+       "neckPitch": 0,
+       "headPitch": 0
+      },
+      "vault": {
+       "hipPitch": 0,
+       "knee": 0,
+       "ankle": 0,
+       "hipRoll": 0,
+       "hipYaw": 0,
+       "neckPitch": 0,
+       "headPitch": 0
+      },
+      "tuck": {
+       "hipPitch": 0.1429,
+       "knee": 0.4762,
+       "ankle": 0,
+       "hipRoll": 0,
+       "hipYaw": 0,
+       "neckPitch": 0,
+       "headPitch": 0
+      },
+      "land": {
+       "hipPitch": 0.3793,
+       "knee": 0.3448,
+       "ankle": 0,
+       "hipRoll": 0,
+       "hipYaw": 0,
+       "neckPitch": 0,
+       "headPitch": 0.3448
+      },
+      "return": {
+       "hipPitch": 0.6,
+       "knee": 0.2857,
+       "ankle": 0,
+       "hipRoll": 0,
+       "hipYaw": 0,
+       "neckPitch": 0,
+       "headPitch": 0.0286
+      }
+     }
+    },
+    {
+     "cell": 4,
+     "rise_mm": 60,
+     "drop": 0.13,
+     "fmul": 0.7,
+     "peakAboveTread_mm": 130.4,
+     "over95": true,
+     "parity": {
+      "myPeakZ_mm": 190.385794,
+      "robustPeakZ_mm": 190.385794,
+      "dz_mm": 0,
+      "myMaxTq": 0.6405,
+      "robustMaxTq": 0.6405,
+      "dTq_Nm": 0,
+      "exact": true
+     },
+     "pushOffTicks": 80,
+     "pushOffMs": 1600,
+     "peakAtTick": 124,
+     "peakAtTrackTime_s": 2.48,
+     "peakDuringTrack": true,
+     "trackTicks": 162,
+     "torqueCeilingFrac_pushOff": {
+      "hipPitch": 0.6,
+      "knee": 0.5625,
+      "ankle": 0.0375,
+      "hipRoll": 0,
+      "hipYaw": 0,
+      "neckPitch": 0.0125,
+      "headPitch": 0.175
+     },
+     "torqueCeilingFrac_track": {
+      "hipPitch": 0.3765,
+      "knee": 0.3272,
+      "ankle": 0.0247,
+      "hipRoll": 0,
+      "hipYaw": 0,
+      "neckPitch": 0.0123,
+      "headPitch": 0.1049
+     },
+     "anyActuatorAtCeiling_pushOff": 0.9125,
+     "commandClipFrac_pushOff": 0.975,
+     "neckLeverH_mm": {
+      "min": 40.5,
+      "max": 87.8
+     },
+     "neckMaxForceAtBeak_N": {
+      "atMinLever": 15.803,
+      "atMaxLever": 7.295
+     },
+     "segmentTorqueCeilingFrac": {
+      "reach": {
+       "hipPitch": 0,
+       "knee": 0,
+       "ankle": 0,
+       "hipRoll": 0,
+       "hipYaw": 0,
+       "neckPitch": 0,
+       "headPitch": 0
+      },
+      "pre": {
+       "hipPitch": 0,
+       "knee": 0.4167,
+       "ankle": 0,
+       "hipRoll": 0,
+       "hipYaw": 0,
+       "neckPitch": 0,
+       "headPitch": 0
+      },
+      "vault": {
+       "hipPitch": 0,
+       "knee": 0,
+       "ankle": 0,
+       "hipRoll": 0,
+       "hipYaw": 0,
+       "neckPitch": 0,
+       "headPitch": 0
+      },
+      "tuck": {
+       "hipPitch": 0.3333,
+       "knee": 0.4762,
+       "ankle": 0,
+       "hipRoll": 0,
+       "hipYaw": 0,
+       "neckPitch": 0,
+       "headPitch": 0
+      },
+      "land": {
+       "hipPitch": 0.4828,
+       "knee": 0.3793,
+       "ankle": 0,
+       "hipRoll": 0,
+       "hipYaw": 0,
+       "neckPitch": 0,
+       "headPitch": 0.3103
+      },
+      "return": {
+       "hipPitch": 0.6857,
+       "knee": 0.6571,
+       "ankle": 0.0857,
+       "hipRoll": 0,
+       "hipYaw": 0,
+       "neckPitch": 0,
+       "headPitch": 0.1429
+      }
+     }
+    },
+    {
+     "cell": 5,
+     "rise_mm": 60,
+     "drop": 0.125,
+     "fmul": 1.3,
+     "peakAboveTread_mm": 63.3,
+     "over95": false,
+     "parity": {
+      "myPeakZ_mm": 123.31104,
+      "robustPeakZ_mm": 123.31104,
+      "dz_mm": 0,
+      "myMaxTq": 0.6405,
+      "robustMaxTq": 0.6405,
+      "dTq_Nm": 0,
+      "exact": true
+     },
+     "pushOffTicks": 39,
+     "pushOffMs": 780,
+     "peakAtTick": 159,
+     "peakAtTrackTime_s": 3.18,
+     "peakDuringTrack": true,
+     "trackTicks": 162,
+     "torqueCeilingFrac_pushOff": {
+      "hipPitch": 0.3333,
+      "knee": 0,
+      "ankle": 0,
+      "hipRoll": 0,
+      "hipYaw": 0,
+      "neckPitch": 0.2564,
+      "headPitch": 0.1538
+     },
+     "torqueCeilingFrac_track": {
+      "hipPitch": 0.2716,
+      "knee": 0.1975,
+      "ankle": 0.0123,
+      "hipRoll": 0,
+      "hipYaw": 0,
+      "neckPitch": 0.0617,
+      "headPitch": 0.1049
+     },
+     "anyActuatorAtCeiling_pushOff": 0.5385,
+     "commandClipFrac_pushOff": 0.8205,
+     "neckLeverH_mm": {
+      "min": 57.1,
+      "max": 82.1
+     },
+     "neckMaxForceAtBeak_N": {
+      "atMinLever": 11.219,
+      "atMaxLever": 7.805
+     },
+     "segmentTorqueCeilingFrac": {
+      "reach": {
+       "hipPitch": 0,
+       "knee": 0,
+       "ankle": 0,
+       "hipRoll": 0,
+       "hipYaw": 0,
+       "neckPitch": 0,
+       "headPitch": 0
+      },
+      "pre": {
+       "hipPitch": 0,
+       "knee": 0.6667,
+       "ankle": 0,
+       "hipRoll": 0,
+       "hipYaw": 0,
+       "neckPitch": 0,
+       "headPitch": 0
+      },
+      "vault": {
+       "hipPitch": 0,
+       "knee": 0,
+       "ankle": 0,
+       "hipRoll": 0,
+       "hipYaw": 0,
+       "neckPitch": 0,
+       "headPitch": 0
+      },
+      "tuck": {
+       "hipPitch": 0.1905,
+       "knee": 0.5238,
+       "ankle": 0,
+       "hipRoll": 0,
+       "hipYaw": 0,
+       "neckPitch": 0,
+       "headPitch": 0
+      },
+      "land": {
+       "hipPitch": 0.3103,
+       "knee": 0.2759,
+       "ankle": 0.069,
+       "hipRoll": 0,
+       "hipYaw": 0,
+       "neckPitch": 0,
+       "headPitch": 0.2759
+      },
+      "return": {
+       "hipPitch": 0.5429,
+       "knee": 0.1429,
+       "ankle": 0,
+       "hipRoll": 0,
+       "hipYaw": 0,
+       "neckPitch": 0,
+       "headPitch": 0.1143
+      }
+     }
+    },
+    {
+     "cell": 6,
+     "rise_mm": 70,
+     "drop": 0.12,
+     "fmul": 1,
+     "peakAboveTread_mm": 53.8,
+     "over95": false,
+     "parity": {
+      "myPeakZ_mm": 123.849598,
+      "robustPeakZ_mm": 123.849598,
+      "dz_mm": 0,
+      "myMaxTq": 0.6405,
+      "robustMaxTq": 0.6405,
+      "dTq_Nm": 0,
+      "exact": true
+     },
+     "pushOffTicks": 18,
+     "pushOffMs": 360,
+     "peakAtTick": 62,
+     "peakAtTrackTime_s": 1.24,
+     "peakDuringTrack": true,
+     "trackTicks": 162,
+     "torqueCeilingFrac_pushOff": {
+      "hipPitch": 0.2778,
+      "knee": 0.6667,
+      "ankle": 0,
+      "hipRoll": 0,
+      "hipYaw": 0,
+      "neckPitch": 0,
+      "headPitch": 0.0556
+     },
+     "torqueCeilingFrac_track": {
+      "hipPitch": 0.1852,
+      "knee": 0.1543,
+      "ankle": 0.0185,
+      "hipRoll": 0,
+      "hipYaw": 0,
+      "neckPitch": 0.037,
+      "headPitch": 0.037
+     },
+     "anyActuatorAtCeiling_pushOff": 0.7778,
+     "commandClipFrac_pushOff": 1,
+     "neckLeverH_mm": {
+      "min": 33.9,
+      "max": 59.6
+     },
+     "neckMaxForceAtBeak_N": {
+      "atMinLever": 18.921,
+      "atMaxLever": 10.746
+     },
+     "segmentTorqueCeilingFrac": {
+      "reach": {
+       "hipPitch": 0,
+       "knee": 0,
+       "ankle": 0,
+       "hipRoll": 0,
+       "hipYaw": 0,
+       "neckPitch": 0,
+       "headPitch": 0
+      },
+      "pre": {
+       "hipPitch": 0,
+       "knee": 0.3333,
+       "ankle": 0,
+       "hipRoll": 0,
+       "hipYaw": 0,
+       "neckPitch": 0,
+       "headPitch": 0
+      },
+      "vault": {
+       "hipPitch": 0,
+       "knee": 0,
+       "ankle": 0,
+       "hipRoll": 0,
+       "hipYaw": 0,
+       "neckPitch": 0,
+       "headPitch": 0
+      },
+      "tuck": {
+       "hipPitch": 0.1905,
+       "knee": 0.5238,
+       "ankle": 0,
+       "hipRoll": 0,
+       "hipYaw": 0,
+       "neckPitch": 0,
+       "headPitch": 0
+      },
+      "land": {
+       "hipPitch": 0.069,
+       "knee": 0.0345,
+       "ankle": 0,
+       "hipRoll": 0,
+       "hipYaw": 0,
+       "neckPitch": 0,
+       "headPitch": 0.2069
+      },
+      "return": {
+       "hipPitch": 0.2857,
+       "knee": 0,
+       "ankle": 0,
+       "hipRoll": 0,
+       "hipYaw": 0,
+       "neckPitch": 0,
+       "headPitch": 0
+      }
+     }
+    },
+    {
+     "cell": 7,
+     "rise_mm": 70,
+     "drop": 0.13,
+     "fmul": 0.7,
+     "peakAboveTread_mm": 50.9,
+     "over95": false,
+     "parity": {
+      "myPeakZ_mm": 120.924619,
+      "robustPeakZ_mm": 120.924619,
+      "dz_mm": 0,
+      "myMaxTq": 0.6405,
+      "robustMaxTq": 0.6405,
+      "dTq_Nm": 0,
+      "exact": true
+     },
+     "pushOffTicks": 13,
+     "pushOffMs": 260,
+     "peakAtTick": 57,
+     "peakAtTrackTime_s": 1.1400000000000001,
+     "peakDuringTrack": true,
+     "trackTicks": 162,
+     "torqueCeilingFrac_pushOff": {
+      "hipPitch": 0.5385,
+      "knee": 0.7692,
+      "ankle": 0,
+      "hipRoll": 0,
+      "hipYaw": 0,
+      "neckPitch": 0,
+      "headPitch": 0
+     },
+     "torqueCeilingFrac_track": {
+      "hipPitch": 0.2037,
+      "knee": 0.1667,
+      "ankle": 0.0556,
+      "hipRoll": 0,
+      "hipYaw": 0,
+      "neckPitch": 0.0432,
+      "headPitch": 0.0309
+     },
+     "anyActuatorAtCeiling_pushOff": 0.7692,
+     "commandClipFrac_pushOff": 1,
+     "neckLeverH_mm": {
+      "min": 49.5,
+      "max": 62.2
+     },
+     "neckMaxForceAtBeak_N": {
+      "atMinLever": 12.952,
+      "atMaxLever": 10.291
+     },
+     "segmentTorqueCeilingFrac": {
+      "reach": {
+       "hipPitch": 0,
+       "knee": 0,
+       "ankle": 0,
+       "hipRoll": 0,
+       "hipYaw": 0,
+       "neckPitch": 0,
+       "headPitch": 0
+      },
+      "pre": {
+       "hipPitch": 0,
+       "knee": 0.4167,
+       "ankle": 0,
+       "hipRoll": 0,
+       "hipYaw": 0,
+       "neckPitch": 0,
+       "headPitch": 0
+      },
+      "vault": {
+       "hipPitch": 0,
+       "knee": 0,
+       "ankle": 0,
+       "hipRoll": 0,
+       "hipYaw": 0,
+       "neckPitch": 0,
+       "headPitch": 0
+      },
+      "tuck": {
+       "hipPitch": 0.3333,
+       "knee": 0.4762,
+       "ankle": 0,
+       "hipRoll": 0,
+       "hipYaw": 0,
+       "neckPitch": 0,
+       "headPitch": 0
+      },
+      "land": {
+       "hipPitch": 0.1724,
+       "knee": 0.069,
+       "ankle": 0.0345,
+       "hipRoll": 0,
+       "hipYaw": 0,
+       "neckPitch": 0.1034,
+       "headPitch": 0.1034
+      },
+      "return": {
+       "hipPitch": 0.1714,
+       "knee": 0.0286,
+       "ankle": 0.0571,
+       "hipRoll": 0,
+       "hipYaw": 0,
+       "neckPitch": 0.0286,
+       "headPitch": 0.0571
+      }
+     }
+    },
+    {
+     "cell": 8,
+     "rise_mm": 70,
+     "drop": 0.125,
+     "fmul": 1.3,
+     "peakAboveTread_mm": 119.3,
+     "over95": true,
+     "parity": {
+      "myPeakZ_mm": 189.347628,
+      "robustPeakZ_mm": 189.347628,
+      "dz_mm": 0,
+      "myMaxTq": 0.6405,
+      "robustMaxTq": 0.6405,
+      "dTq_Nm": 0,
+      "exact": true
+     },
+     "pushOffTicks": 77,
+     "pushOffMs": 1540,
+     "peakAtTick": 121,
+     "peakAtTrackTime_s": 2.42,
+     "peakDuringTrack": true,
+     "trackTicks": 162,
+     "torqueCeilingFrac_pushOff": {
+      "hipPitch": 0.3896,
+      "knee": 0.4026,
+      "ankle": 0,
+      "hipRoll": 0,
+      "hipYaw": 0,
+      "neckPitch": 0.013,
+      "headPitch": 0.1299
+     },
+     "torqueCeilingFrac_track": {
+      "hipPitch": 0.2346,
+      "knee": 0.2469,
+      "ankle": 0,
+      "hipRoll": 0,
+      "hipYaw": 0,
+      "neckPitch": 0.0123,
+      "headPitch": 0.0617
+     },
+     "anyActuatorAtCeiling_pushOff": 0.7403,
+     "commandClipFrac_pushOff": 1,
+     "neckLeverH_mm": {
+      "min": 22.4,
+      "max": 87.3
+     },
+     "neckMaxForceAtBeak_N": {
+      "atMinLever": 28.585,
+      "atMaxLever": 7.34
+     },
+     "segmentTorqueCeilingFrac": {
+      "reach": {
+       "hipPitch": 0,
+       "knee": 0,
+       "ankle": 0,
+       "hipRoll": 0,
+       "hipYaw": 0,
+       "neckPitch": 0,
+       "headPitch": 0
+      },
+      "pre": {
+       "hipPitch": 0,
+       "knee": 0.6667,
+       "ankle": 0,
+       "hipRoll": 0,
+       "hipYaw": 0,
+       "neckPitch": 0,
+       "headPitch": 0
+      },
+      "vault": {
+       "hipPitch": 0,
+       "knee": 0,
+       "ankle": 0,
+       "hipRoll": 0,
+       "hipYaw": 0,
+       "neckPitch": 0,
+       "headPitch": 0
+      },
+      "tuck": {
+       "hipPitch": 0.1429,
+       "knee": 0.5238,
+       "ankle": 0,
+       "hipRoll": 0,
+       "hipYaw": 0,
+       "neckPitch": 0,
+       "headPitch": 0
+      },
+      "land": {
+       "hipPitch": 0.1379,
+       "knee": 0.2069,
+       "ankle": 0,
+       "hipRoll": 0,
+       "hipYaw": 0,
+       "neckPitch": 0,
+       "headPitch": 0.3448
+      },
+      "return": {
+       "hipPitch": 0.6571,
+       "knee": 0.4,
+       "ankle": 0,
+       "hipRoll": 0,
+       "hipYaw": 0,
+       "neckPitch": 0.0286,
+       "headPitch": 0
+      }
+     }
+    }
+   ],
+   "summary": {
+    "meanPeakAboveTread_mm": 94.9,
+    "ceilingCore": 5,
+    "meanPushOffTicks": 62.1111,
+    "meanTorqueCeilingFrac_pushOff": {
+     "hipPitch": 0.455,
+     "knee": 0.4253,
+     "ankle": 0.0176,
+     "hipRoll": 0,
+     "hipYaw": 0,
+     "neckPitch": 0.0377,
+     "headPitch": 0.1035
+    },
+    "meanAnyActuatorAtCeiling_pushOff": 0.7295,
+    "meanCommandClipFrac_pushOff": 0.9636,
+    "neckLeverH_mm_min": 22.4,
+    "neckLeverH_mm_max": 89.3
+   }
+  },
+  {
+   "file": "best_r6_ceilvaultC_60mm.json",
+   "sha256": "a56d459fb6493855d635021dce569cc8b06b325b32b3c19e8593cf430ca442d1",
+   "move": "a56d459fb649",
+   "parityOK": true,
+   "parityCells": "9/9 EXACT",
+   "rows": [
+    {
+     "cell": 0,
+     "rise_mm": 50,
+     "drop": 0.12,
+     "fmul": 1,
+     "peakAboveTread_mm": 121.7,
+     "over95": true,
+     "parity": {
+      "myPeakZ_mm": 171.714082,
+      "robustPeakZ_mm": 171.714082,
+      "dz_mm": 0,
+      "myMaxTq": 0.6405,
+      "robustMaxTq": 0.6405,
+      "dTq_Nm": 0,
+      "exact": true
+     },
+     "pushOffTicks": 65,
+     "pushOffMs": 1300,
+     "peakAtTick": 109,
+     "peakAtTrackTime_s": 2.18,
+     "peakDuringTrack": true,
+     "trackTicks": 161,
+     "torqueCeilingFrac_pushOff": {
+      "hipPitch": 0.5231,
+      "knee": 0.3692,
+      "ankle": 0,
+      "hipRoll": 0,
+      "hipYaw": 0,
+      "neckPitch": 0,
+      "headPitch": 0.1231
+     },
+     "torqueCeilingFrac_track": {
+      "hipPitch": 0.3168,
+      "knee": 0.2919,
+      "ankle": 0.0559,
+      "hipRoll": 0,
+      "hipYaw": 0,
+      "neckPitch": 0.0186,
+      "headPitch": 0.0497
+     },
+     "anyActuatorAtCeiling_pushOff": 0.6769,
+     "commandClipFrac_pushOff": 1,
+     "neckLeverH_mm": {
+      "min": 53.4,
+      "max": 86.3
+     },
+     "neckMaxForceAtBeak_N": {
+      "atMinLever": 11.985,
+      "atMaxLever": 7.419
+     },
+     "segmentTorqueCeilingFrac": {
+      "reach": {
+       "hipPitch": 0,
+       "knee": 0,
+       "ankle": 0,
+       "hipRoll": 0,
+       "hipYaw": 0,
+       "neckPitch": 0,
+       "headPitch": 0
+      },
+      "pre": {
+       "hipPitch": 0,
+       "knee": 0.25,
+       "ankle": 0,
+       "hipRoll": 0,
+       "hipYaw": 0,
+       "neckPitch": 0,
+       "headPitch": 0
+      },
+      "vault": {
+       "hipPitch": 0,
+       "knee": 0,
+       "ankle": 0,
+       "hipRoll": 0,
+       "hipYaw": 0,
+       "neckPitch": 0,
+       "headPitch": 0
+      },
+      "tuck": {
+       "hipPitch": 0.4,
+       "knee": 0.45,
+       "ankle": 0,
+       "hipRoll": 0,
+       "hipYaw": 0,
+       "neckPitch": 0,
+       "headPitch": 0
+      },
+      "land": {
+       "hipPitch": 0.4138,
+       "knee": 0.2759,
+       "ankle": 0,
+       "hipRoll": 0,
+       "hipYaw": 0,
+       "neckPitch": 0,
+       "headPitch": 0.1034
+      },
+      "return": {
+       "hipPitch": 0.6571,
+       "knee": 0.3429,
+       "ankle": 0.2286,
+       "hipRoll": 0,
+       "hipYaw": 0,
+       "neckPitch": 0,
+       "headPitch": 0.1429
+      }
+     }
+    },
+    {
+     "cell": 1,
+     "rise_mm": 50,
+     "drop": 0.13,
+     "fmul": 0.7,
+     "peakAboveTread_mm": 73.7,
+     "over95": false,
+     "parity": {
+      "myPeakZ_mm": 123.731836,
+      "robustPeakZ_mm": 123.731836,
+      "dz_mm": 0,
+      "myMaxTq": 0.6405,
+      "robustMaxTq": 0.6405,
+      "dTq_Nm": 0,
+      "exact": true
+     },
+     "pushOffTicks": 29,
+     "pushOffMs": 580,
+     "peakAtTick": 144,
+     "peakAtTrackTime_s": 2.88,
+     "peakDuringTrack": true,
+     "trackTicks": 161,
+     "torqueCeilingFrac_pushOff": {
+      "hipPitch": 0.4483,
+      "knee": 0.3103,
+      "ankle": 0,
+      "hipRoll": 0,
+      "hipYaw": 0,
+      "neckPitch": 0.3793,
+      "headPitch": 0.1724
+     },
+     "torqueCeilingFrac_track": {
+      "hipPitch": 0.2733,
+      "knee": 0.2236,
+      "ankle": 0.0186,
+      "hipRoll": 0,
+      "hipYaw": 0,
+      "neckPitch": 0.087,
+      "headPitch": 0.0559
+     },
+     "anyActuatorAtCeiling_pushOff": 0.7931,
+     "commandClipFrac_pushOff": 1,
+     "neckLeverH_mm": {
+      "min": 70.1,
+      "max": 86.5
+     },
+     "neckMaxForceAtBeak_N": {
+      "atMinLever": 9.135,
+      "atMaxLever": 7.403
+     },
+     "segmentTorqueCeilingFrac": {
+      "reach": {
+       "hipPitch": 0,
+       "knee": 0,
+       "ankle": 0,
+       "hipRoll": 0,
+       "hipYaw": 0,
+       "neckPitch": 0,
+       "headPitch": 0
+      },
+      "pre": {
+       "hipPitch": 0,
+       "knee": 0.3333,
+       "ankle": 0,
+       "hipRoll": 0,
+       "hipYaw": 0,
+       "neckPitch": 0,
+       "headPitch": 0
+      },
+      "vault": {
+       "hipPitch": 0,
+       "knee": 0,
+       "ankle": 0,
+       "hipRoll": 0,
+       "hipYaw": 0,
+       "neckPitch": 0,
+       "headPitch": 0
+      },
+      "tuck": {
+       "hipPitch": 0.3,
+       "knee": 0.5,
+       "ankle": 0,
+       "hipRoll": 0,
+       "hipYaw": 0,
+       "neckPitch": 0,
+       "headPitch": 0
+      },
+      "land": {
+       "hipPitch": 0.3793,
+       "knee": 0.2069,
+       "ankle": 0,
+       "hipRoll": 0,
+       "hipYaw": 0,
+       "neckPitch": 0,
+       "headPitch": 0.0345
+      },
+      "return": {
+       "hipPitch": 0.2286,
+       "knee": 0.2,
+       "ankle": 0.0571,
+       "hipRoll": 0,
+       "hipYaw": 0,
+       "neckPitch": 0.1714,
+       "headPitch": 0.0857
+      }
+     }
+    },
+    {
+     "cell": 2,
+     "rise_mm": 50,
+     "drop": 0.125,
+     "fmul": 1.3,
+     "peakAboveTread_mm": 117.3,
+     "over95": true,
+     "parity": {
+      "myPeakZ_mm": 167.292133,
+      "robustPeakZ_mm": 167.292133,
+      "dz_mm": 0,
+      "myMaxTq": 0.6405,
+      "robustMaxTq": 0.6405,
+      "dTq_Nm": 0,
+      "exact": true
+     },
+     "pushOffTicks": 103,
+     "pushOffMs": 2060,
+     "peakAtTick": 147,
+     "peakAtTrackTime_s": 2.94,
+     "peakDuringTrack": true,
+     "trackTicks": 161,
+     "torqueCeilingFrac_pushOff": {
+      "hipPitch": 0.4951,
+      "knee": 0.301,
+      "ankle": 0.0097,
+      "hipRoll": 0,
+      "hipYaw": 0,
+      "neckPitch": 0.0291,
+      "headPitch": 0.0874
+     },
+     "torqueCeilingFrac_track": {
+      "hipPitch": 0.3168,
+      "knee": 0.236,
+      "ankle": 0.0062,
+      "hipRoll": 0,
+      "hipYaw": 0,
+      "neckPitch": 0.0186,
+      "headPitch": 0.0559
+     },
+     "anyActuatorAtCeiling_pushOff": 0.7379,
+     "commandClipFrac_pushOff": 0.8738,
+     "neckLeverH_mm": {
+      "min": 12.4,
+      "max": 89
+     },
+     "neckMaxForceAtBeak_N": {
+      "atMinLever": 51.733,
+      "atMaxLever": 7.193
+     },
+     "segmentTorqueCeilingFrac": {
+      "reach": {
+       "hipPitch": 0,
+       "knee": 0,
+       "ankle": 0,
+       "hipRoll": 0,
+       "hipYaw": 0,
+       "neckPitch": 0,
+       "headPitch": 0
+      },
+      "pre": {
+       "hipPitch": 0,
+       "knee": 0.5,
+       "ankle": 0,
+       "hipRoll": 0,
+       "hipYaw": 0,
+       "neckPitch": 0,
+       "headPitch": 0
+      },
+      "vault": {
+       "hipPitch": 0,
+       "knee": 0.1,
+       "ankle": 0,
+       "hipRoll": 0,
+       "hipYaw": 0,
+       "neckPitch": 0,
+       "headPitch": 0
+      },
+      "tuck": {
+       "hipPitch": 0.45,
+       "knee": 0.5,
+       "ankle": 0,
+       "hipRoll": 0,
+       "hipYaw": 0,
+       "neckPitch": 0,
+       "headPitch": 0
+      },
+      "land": {
+       "hipPitch": 0.5172,
+       "knee": 0.3103,
+       "ankle": 0,
+       "hipRoll": 0,
+       "hipYaw": 0,
+       "neckPitch": 0,
+       "headPitch": 0.2759
+      },
+      "return": {
+       "hipPitch": 0.6,
+       "knee": 0.2286,
+       "ankle": 0.0286,
+       "hipRoll": 0,
+       "hipYaw": 0,
+       "neckPitch": 0,
+       "headPitch": 0.0286
+      }
+     }
+    },
+    {
+     "cell": 3,
+     "rise_mm": 60,
+     "drop": 0.12,
+     "fmul": 1,
+     "peakAboveTread_mm": 119.3,
+     "over95": true,
+     "parity": {
+      "myPeakZ_mm": 179.293526,
+      "robustPeakZ_mm": 179.293526,
+      "dz_mm": 0,
+      "myMaxTq": 0.6405,
+      "robustMaxTq": 0.6405,
+      "dTq_Nm": 0,
+      "exact": true
+     },
+     "pushOffTicks": 113,
+     "pushOffMs": 2260,
+     "peakAtTick": 157,
+     "peakAtTrackTime_s": 3.14,
+     "peakDuringTrack": true,
+     "trackTicks": 161,
+     "torqueCeilingFrac_pushOff": {
+      "hipPitch": 0.3186,
+      "knee": 0.2124,
+      "ankle": 0.0088,
+      "hipRoll": 0,
+      "hipYaw": 0,
+      "neckPitch": 0.0088,
+      "headPitch": 0.115
+     },
+     "torqueCeilingFrac_track": {
+      "hipPitch": 0.2298,
+      "knee": 0.1677,
+      "ankle": 0.0062,
+      "hipRoll": 0,
+      "hipYaw": 0,
+      "neckPitch": 0.0062,
+      "headPitch": 0.0807
+     },
+     "anyActuatorAtCeiling_pushOff": 0.531,
+     "commandClipFrac_pushOff": 0.9735,
+     "neckLeverH_mm": {
+      "min": 25.7,
+      "max": 87.8
+     },
+     "neckMaxForceAtBeak_N": {
+      "atMinLever": 24.905,
+      "atMaxLever": 7.293
+     },
+     "segmentTorqueCeilingFrac": {
+      "reach": {
+       "hipPitch": 0,
+       "knee": 0,
+       "ankle": 0,
+       "hipRoll": 0,
+       "hipYaw": 0,
+       "neckPitch": 0,
+       "headPitch": 0
+      },
+      "pre": {
+       "hipPitch": 0,
+       "knee": 0.25,
+       "ankle": 0,
+       "hipRoll": 0,
+       "hipYaw": 0,
+       "neckPitch": 0,
+       "headPitch": 0
+      },
+      "vault": {
+       "hipPitch": 0,
+       "knee": 0,
+       "ankle": 0,
+       "hipRoll": 0,
+       "hipYaw": 0,
+       "neckPitch": 0,
+       "headPitch": 0
+      },
+      "tuck": {
+       "hipPitch": 0.35,
+       "knee": 0.45,
+       "ankle": 0,
+       "hipRoll": 0,
+       "hipYaw": 0,
+       "neckPitch": 0,
+       "headPitch": 0
+      },
+      "land": {
+       "hipPitch": 0.4138,
+       "knee": 0.3448,
+       "ankle": 0,
+       "hipRoll": 0,
+       "hipYaw": 0,
+       "neckPitch": 0,
+       "headPitch": 0.3103
+      },
+      "return": {
+       "hipPitch": 0.4571,
+       "knee": 0.1429,
+       "ankle": 0.0286,
+       "hipRoll": 0,
+       "hipYaw": 0,
+       "neckPitch": 0,
+       "headPitch": 0.1143
+      }
+     }
+    },
+    {
+     "cell": 4,
+     "rise_mm": 60,
+     "drop": 0.13,
+     "fmul": 0.7,
+     "peakAboveTread_mm": 117.9,
+     "over95": true,
+     "parity": {
+      "myPeakZ_mm": 177.924704,
+      "robustPeakZ_mm": 177.924704,
+      "dz_mm": 0,
+      "myMaxTq": 0.6405,
+      "robustMaxTq": 0.6405,
+      "dTq_Nm": 0,
+      "exact": true
+     },
+     "pushOffTicks": 78,
+     "pushOffMs": 1560,
+     "peakAtTick": 122,
+     "peakAtTrackTime_s": 2.44,
+     "peakDuringTrack": true,
+     "trackTicks": 161,
+     "torqueCeilingFrac_pushOff": {
+      "hipPitch": 0.5769,
+      "knee": 0.5128,
+      "ankle": 0.0128,
+      "hipRoll": 0,
+      "hipYaw": 0,
+      "neckPitch": 0,
+      "headPitch": 0.141
+     },
+     "torqueCeilingFrac_track": {
+      "hipPitch": 0.3851,
+      "knee": 0.354,
+      "ankle": 0.0559,
+      "hipRoll": 0,
+      "hipYaw": 0,
+      "neckPitch": 0.0186,
+      "headPitch": 0.0683
+     },
+     "anyActuatorAtCeiling_pushOff": 0.8974,
+     "commandClipFrac_pushOff": 1,
+     "neckLeverH_mm": {
+      "min": 39.3,
+      "max": 85.9
+     },
+     "neckMaxForceAtBeak_N": {
+      "atMinLever": 16.281,
+      "atMaxLever": 7.46
+     },
+     "segmentTorqueCeilingFrac": {
+      "reach": {
+       "hipPitch": 0,
+       "knee": 0,
+       "ankle": 0,
+       "hipRoll": 0,
+       "hipYaw": 0,
+       "neckPitch": 0,
+       "headPitch": 0
+      },
+      "pre": {
+       "hipPitch": 0,
+       "knee": 0.3333,
+       "ankle": 0,
+       "hipRoll": 0,
+       "hipYaw": 0,
+       "neckPitch": 0,
+       "headPitch": 0
+      },
+      "vault": {
+       "hipPitch": 0,
+       "knee": 0,
+       "ankle": 0,
+       "hipRoll": 0,
+       "hipYaw": 0,
+       "neckPitch": 0,
+       "headPitch": 0
+      },
+      "tuck": {
+       "hipPitch": 0.45,
+       "knee": 0.5,
+       "ankle": 0,
+       "hipRoll": 0,
+       "hipYaw": 0,
+       "neckPitch": 0,
+       "headPitch": 0
+      },
+      "land": {
+       "hipPitch": 0.4138,
+       "knee": 0.4828,
+       "ankle": 0,
+       "hipRoll": 0,
+       "hipYaw": 0,
+       "neckPitch": 0,
+       "headPitch": 0.3103
+      },
+      "return": {
+       "hipPitch": 0.6571,
+       "knee": 0.4,
+       "ankle": 0.0286,
+       "hipRoll": 0,
+       "hipYaw": 0,
+       "neckPitch": 0,
+       "headPitch": 0.0571
+      }
+     }
+    },
+    {
+     "cell": 5,
+     "rise_mm": 60,
+     "drop": 0.125,
+     "fmul": 1.3,
+     "peakAboveTread_mm": 120.6,
+     "over95": true,
+     "parity": {
+      "myPeakZ_mm": 180.601938,
+      "robustPeakZ_mm": 180.601938,
+      "dz_mm": 0,
+      "myMaxTq": 0.6405,
+      "robustMaxTq": 0.6405,
+      "dTq_Nm": 0,
+      "exact": true
+     },
+     "pushOffTicks": 115,
+     "pushOffMs": 2300,
+     "peakAtTick": 158,
+     "peakAtTrackTime_s": 3.16,
+     "peakDuringTrack": true,
+     "trackTicks": 161,
+     "torqueCeilingFrac_pushOff": {
+      "hipPitch": 0.5565,
+      "knee": 0.487,
+      "ankle": 0.0348,
+      "hipRoll": 0,
+      "hipYaw": 0,
+      "neckPitch": 0.0087,
+      "headPitch": 0.1043
+     },
+     "torqueCeilingFrac_track": {
+      "hipPitch": 0.3975,
+      "knee": 0.3913,
+      "ankle": 0.0248,
+      "hipRoll": 0,
+      "hipYaw": 0,
+      "neckPitch": 0.0124,
+      "headPitch": 0.0745
+     },
+     "anyActuatorAtCeiling_pushOff": 0.887,
+     "commandClipFrac_pushOff": 1,
+     "neckLeverH_mm": {
+      "min": 38.7,
+      "max": 86.1
+     },
+     "neckMaxForceAtBeak_N": {
+      "atMinLever": 16.542,
+      "atMaxLever": 7.438
+     },
+     "segmentTorqueCeilingFrac": {
+      "reach": {
+       "hipPitch": 0,
+       "knee": 0,
+       "ankle": 0,
+       "hipRoll": 0,
+       "hipYaw": 0,
+       "neckPitch": 0,
+       "headPitch": 0
+      },
+      "pre": {
+       "hipPitch": 0,
+       "knee": 0.5,
+       "ankle": 0,
+       "hipRoll": 0,
+       "hipYaw": 0,
+       "neckPitch": 0,
+       "headPitch": 0
+      },
+      "vault": {
+       "hipPitch": 0,
+       "knee": 0.1,
+       "ankle": 0,
+       "hipRoll": 0,
+       "hipYaw": 0,
+       "neckPitch": 0,
+       "headPitch": 0
+      },
+      "tuck": {
+       "hipPitch": 0.25,
+       "knee": 0.5,
+       "ankle": 0,
+       "hipRoll": 0,
+       "hipYaw": 0,
+       "neckPitch": 0,
+       "headPitch": 0
+      },
+      "land": {
+       "hipPitch": 0.4483,
+       "knee": 0.3103,
+       "ankle": 0,
+       "hipRoll": 0,
+       "hipYaw": 0,
+       "neckPitch": 0,
+       "headPitch": 0.3103
+      },
+      "return": {
+       "hipPitch": 0.6571,
+       "knee": 0.4571,
+       "ankle": 0.0857,
+       "hipRoll": 0,
+       "hipYaw": 0,
+       "neckPitch": 0,
+       "headPitch": 0.0857
+      }
+     }
+    },
+    {
+     "cell": 6,
+     "rise_mm": 70,
+     "drop": 0.12,
+     "fmul": 1,
+     "peakAboveTread_mm": 54.4,
+     "over95": false,
+     "parity": {
+      "myPeakZ_mm": 124.394273,
+      "robustPeakZ_mm": 124.394273,
+      "dz_mm": 0,
+      "myMaxTq": 0.6405,
+      "robustMaxTq": 0.6405,
+      "dTq_Nm": 0,
+      "exact": true
+     },
+     "pushOffTicks": 74,
+     "pushOffMs": 1480,
+     "peakAtTick": 118,
+     "peakAtTrackTime_s": 2.36,
+     "peakDuringTrack": true,
+     "trackTicks": 161,
+     "torqueCeilingFrac_pushOff": {
+      "hipPitch": 0.4865,
+      "knee": 0.2297,
+      "ankle": 0.0135,
+      "hipRoll": 0,
+      "hipYaw": 0,
+      "neckPitch": 0.0135,
+      "headPitch": 0.0946
+     },
+     "torqueCeilingFrac_track": {
+      "hipPitch": 0.2981,
+      "knee": 0.1739,
+      "ankle": 0.0497,
+      "hipRoll": 0,
+      "hipYaw": 0,
+      "neckPitch": 0.0435,
+      "headPitch": 0.0435
+     },
+     "anyActuatorAtCeiling_pushOff": 0.6216,
+     "commandClipFrac_pushOff": 0.9865,
+     "neckLeverH_mm": {
+      "min": 44.7,
+      "max": 89.3
+     },
+     "neckMaxForceAtBeak_N": {
+      "atMinLever": 14.33,
+      "atMaxLever": 7.175
+     },
+     "segmentTorqueCeilingFrac": {
+      "reach": {
+       "hipPitch": 0,
+       "knee": 0,
+       "ankle": 0,
+       "hipRoll": 0,
+       "hipYaw": 0,
+       "neckPitch": 0,
+       "headPitch": 0
+      },
+      "pre": {
+       "hipPitch": 0,
+       "knee": 0.25,
+       "ankle": 0,
+       "hipRoll": 0,
+       "hipYaw": 0,
+       "neckPitch": 0,
+       "headPitch": 0
+      },
+      "vault": {
+       "hipPitch": 0,
+       "knee": 0,
+       "ankle": 0,
+       "hipRoll": 0,
+       "hipYaw": 0,
+       "neckPitch": 0,
+       "headPitch": 0
+      },
+      "tuck": {
+       "hipPitch": 0.3,
+       "knee": 0.45,
+       "ankle": 0,
+       "hipRoll": 0,
+       "hipYaw": 0,
+       "neckPitch": 0,
+       "headPitch": 0
+      },
+      "land": {
+       "hipPitch": 0.3448,
+       "knee": 0.069,
+       "ankle": 0,
+       "hipRoll": 0,
+       "hipYaw": 0,
+       "neckPitch": 0,
+       "headPitch": 0.1724
+      },
+      "return": {
+       "hipPitch": 0.6286,
+       "knee": 0.1714,
+       "ankle": 0.0286,
+       "hipRoll": 0,
+       "hipYaw": 0,
+       "neckPitch": 0.0857,
+       "headPitch": 0.0571
+      }
+     }
+    },
+    {
+     "cell": 7,
+     "rise_mm": 70,
+     "drop": 0.13,
+     "fmul": 0.7,
+     "peakAboveTread_mm": 56.9,
+     "over95": false,
+     "parity": {
+      "myPeakZ_mm": 126.93204,
+      "robustPeakZ_mm": 126.93204,
+      "dz_mm": 0,
+      "myMaxTq": 0.6405,
+      "robustMaxTq": 0.6405,
+      "dTq_Nm": 0,
+      "exact": true
+     },
+     "pushOffTicks": 26,
+     "pushOffMs": 520,
+     "peakAtTick": 160,
+     "peakAtTrackTime_s": 3.2,
+     "peakDuringTrack": true,
+     "trackTicks": 161,
+     "torqueCeilingFrac_pushOff": {
+      "hipPitch": 0.5,
+      "knee": 0.1923,
+      "ankle": 0,
+      "hipRoll": 0,
+      "hipYaw": 0,
+      "neckPitch": 0.1923,
+      "headPitch": 0.1538
+     },
+     "torqueCeilingFrac_track": {
+      "hipPitch": 0.2919,
+      "knee": 0.1677,
+      "ankle": 0.0248,
+      "hipRoll": 0,
+      "hipYaw": 0,
+      "neckPitch": 0.0435,
+      "headPitch": 0.0932
+     },
+     "anyActuatorAtCeiling_pushOff": 0.5769,
+     "commandClipFrac_pushOff": 0.8462,
+     "neckLeverH_mm": {
+      "min": 72.4,
+      "max": 83.7
+     },
+     "neckMaxForceAtBeak_N": {
+      "atMinLever": 8.847,
+      "atMaxLever": 7.654
+     },
+     "segmentTorqueCeilingFrac": {
+      "reach": {
+       "hipPitch": 0,
+       "knee": 0,
+       "ankle": 0,
+       "hipRoll": 0,
+       "hipYaw": 0,
+       "neckPitch": 0,
+       "headPitch": 0
+      },
+      "pre": {
+       "hipPitch": 0,
+       "knee": 0.3333,
+       "ankle": 0,
+       "hipRoll": 0,
+       "hipYaw": 0,
+       "neckPitch": 0,
+       "headPitch": 0
+      },
+      "vault": {
+       "hipPitch": 0,
+       "knee": 0,
+       "ankle": 0,
+       "hipRoll": 0,
+       "hipYaw": 0,
+       "neckPitch": 0,
+       "headPitch": 0
+      },
+      "tuck": {
+       "hipPitch": 0.3,
+       "knee": 0.45,
+       "ankle": 0,
+       "hipRoll": 0,
+       "hipYaw": 0,
+       "neckPitch": 0,
+       "headPitch": 0
+      },
+      "land": {
+       "hipPitch": 0.069,
+       "knee": 0.1034,
+       "ankle": 0,
+       "hipRoll": 0,
+       "hipYaw": 0,
+       "neckPitch": 0,
+       "headPitch": 0.2414
+      },
+      "return": {
+       "hipPitch": 0.5143,
+       "knee": 0.1143,
+       "ankle": 0.0286,
+       "hipRoll": 0,
+       "hipYaw": 0,
+       "neckPitch": 0,
+       "headPitch": 0.0286
+      }
+     }
+    },
+    {
+     "cell": 8,
+     "rise_mm": 70,
+     "drop": 0.125,
+     "fmul": 1.3,
+     "peakAboveTread_mm": 54.1,
+     "over95": false,
+     "parity": {
+      "myPeakZ_mm": 124.079492,
+      "robustPeakZ_mm": 124.079492,
+      "dz_mm": 0,
+      "myMaxTq": 0.6405,
+      "robustMaxTq": 0.6405,
+      "dTq_Nm": 0,
+      "exact": true
+     },
+     "pushOffTicks": 40,
+     "pushOffMs": 800,
+     "peakAtTick": 160,
+     "peakAtTrackTime_s": 3.2,
+     "peakDuringTrack": true,
+     "trackTicks": 161,
+     "torqueCeilingFrac_pushOff": {
+      "hipPitch": 0.175,
+      "knee": 0.175,
+      "ankle": 0,
+      "hipRoll": 0,
+      "hipYaw": 0,
+      "neckPitch": 0.175,
+      "headPitch": 0.05
+     },
+     "torqueCeilingFrac_track": {
+      "hipPitch": 0.1988,
+      "knee": 0.1925,
+      "ankle": 0.0248,
+      "hipRoll": 0,
+      "hipYaw": 0,
+      "neckPitch": 0.0559,
+      "headPitch": 0.0621
+     },
+     "anyActuatorAtCeiling_pushOff": 0.3,
+     "commandClipFrac_pushOff": 1,
+     "neckLeverH_mm": {
+      "min": 71.3,
+      "max": 84.4
+     },
+     "neckMaxForceAtBeak_N": {
+      "atMinLever": 8.987,
+      "atMaxLever": 7.587
+     },
+     "segmentTorqueCeilingFrac": {
+      "reach": {
+       "hipPitch": 0,
+       "knee": 0,
+       "ankle": 0,
+       "hipRoll": 0,
+       "hipYaw": 0,
+       "neckPitch": 0,
+       "headPitch": 0
+      },
+      "pre": {
+       "hipPitch": 0,
+       "knee": 0.5,
+       "ankle": 0,
+       "hipRoll": 0,
+       "hipYaw": 0,
+       "neckPitch": 0,
+       "headPitch": 0
+      },
+      "vault": {
+       "hipPitch": 0,
+       "knee": 0.1,
+       "ankle": 0,
+       "hipRoll": 0,
+       "hipYaw": 0,
+       "neckPitch": 0,
+       "headPitch": 0
+      },
+      "tuck": {
+       "hipPitch": 0.3,
+       "knee": 0.55,
+       "ankle": 0,
+       "hipRoll": 0,
+       "hipYaw": 0,
+       "neckPitch": 0,
+       "headPitch": 0
+      },
+      "land": {
+       "hipPitch": 0.1034,
+       "knee": 0.0345,
+       "ankle": 0,
+       "hipRoll": 0,
+       "hipYaw": 0,
+       "neckPitch": 0,
+       "headPitch": 0.2759
+      },
+      "return": {
+       "hipPitch": 0.4571,
+       "knee": 0.1429,
+       "ankle": 0.1143,
+       "hipRoll": 0,
+       "hipYaw": 0,
+       "neckPitch": 0.0571,
+       "headPitch": 0
+      }
+     }
+    }
+   ],
+   "summary": {
+    "meanPeakAboveTread_mm": 92.8778,
+    "ceilingCore": 5,
+    "meanPushOffTicks": 71.4444,
+    "meanTorqueCeilingFrac_pushOff": {
+     "hipPitch": 0.4533,
+     "knee": 0.31,
+     "ankle": 0.0088,
+     "hipRoll": 0,
+     "hipYaw": 0,
+     "neckPitch": 0.0896,
+     "headPitch": 0.1157
+    },
+    "meanAnyActuatorAtCeiling_pushOff": 0.6691,
+    "meanCommandClipFrac_pushOff": 0.9644,
+    "neckLeverH_mm_min": 12.4,
+    "neckLeverH_mm_max": 89.3
+   }
+  },
+  {
+   "file": "best_r6_ceilvault_60mm.json",
+   "sha256": "8c57838ee9d09e5a4e1df37f14f77e03562745f2183dcb7e7909847bad55e277",
+   "move": "8c57838ee9d0",
+   "parityOK": true,
+   "parityCells": "9/9 EXACT",
+   "rows": [
+    {
+     "cell": 0,
+     "rise_mm": 50,
+     "drop": 0.12,
+     "fmul": 1,
+     "peakAboveTread_mm": 73.5,
+     "over95": false,
+     "parity": {
+      "myPeakZ_mm": 123.505112,
+      "robustPeakZ_mm": 123.505112,
+      "dz_mm": 0,
+      "myMaxTq": 0.6405,
+      "robustMaxTq": 0.6405,
+      "dTq_Nm": 0,
+      "exact": true
+     },
+     "pushOffTicks": 24,
+     "pushOffMs": 480,
+     "peakAtTick": 161,
+     "peakAtTrackTime_s": 3.22,
+     "peakDuringTrack": true,
+     "trackTicks": 162,
+     "torqueCeilingFrac_pushOff": {
+      "hipPitch": 0.25,
+      "knee": 0.125,
+      "ankle": 0,
+      "hipRoll": 0,
+      "hipYaw": 0,
+      "neckPitch": 0.5417,
+      "headPitch": 0.125
+     },
+     "torqueCeilingFrac_track": {
+      "hipPitch": 0.2346,
+      "knee": 0.1975,
+      "ankle": 0.0185,
+      "hipRoll": 0,
+      "hipYaw": 0,
+      "neckPitch": 0.0802,
+      "headPitch": 0.0679
+     },
+     "anyActuatorAtCeiling_pushOff": 0.875,
+     "commandClipFrac_pushOff": 1,
+     "neckLeverH_mm": {
+      "min": 50.3,
+      "max": 86.9
+     },
+     "neckMaxForceAtBeak_N": {
+      "atMinLever": 12.744,
+      "atMaxLever": 7.371
+     },
+     "segmentTorqueCeilingFrac": {
+      "reach": {
+       "hipPitch": 0,
+       "knee": 0,
+       "ankle": 0,
+       "hipRoll": 0,
+       "hipYaw": 0,
+       "neckPitch": 0,
+       "headPitch": 0
+      },
+      "pre": {
+       "hipPitch": 0,
+       "knee": 0.3636,
+       "ankle": 0,
+       "hipRoll": 0,
+       "hipYaw": 0,
+       "neckPitch": 0,
+       "headPitch": 0
+      },
+      "vault": {
+       "hipPitch": 0,
+       "knee": 0,
+       "ankle": 0,
+       "hipRoll": 0,
+       "hipYaw": 0,
+       "neckPitch": 0,
+       "headPitch": 0
+      },
+      "tuck": {
+       "hipPitch": 0.2857,
+       "knee": 0.4762,
+       "ankle": 0,
+       "hipRoll": 0,
+       "hipYaw": 0,
+       "neckPitch": 0,
+       "headPitch": 0
+      },
+      "land": {
+       "hipPitch": 0.3103,
+       "knee": 0.2414,
+       "ankle": 0,
+       "hipRoll": 0,
+       "hipYaw": 0,
+       "neckPitch": 0,
+       "headPitch": 0.2069
+      },
+      "return": {
+       "hipPitch": 0.4286,
+       "knee": 0.2286,
+       "ankle": 0.0857,
+       "hipRoll": 0,
+       "hipYaw": 0,
+       "neckPitch": 0,
+       "headPitch": 0.0571
+      }
+     }
+    },
+    {
+     "cell": 1,
+     "rise_mm": 50,
+     "drop": 0.13,
+     "fmul": 0.7,
+     "peakAboveTread_mm": 141.6,
+     "over95": true,
+     "parity": {
+      "myPeakZ_mm": 191.615118,
+      "robustPeakZ_mm": 191.615118,
+      "dz_mm": 0,
+      "myMaxTq": 0.6405,
+      "robustMaxTq": 0.6405,
+      "dTq_Nm": 0,
+      "exact": true
+     },
+     "pushOffTicks": 14,
+     "pushOffMs": 280,
+     "peakAtTick": 161,
+     "peakAtTrackTime_s": 3.22,
+     "peakDuringTrack": true,
+     "trackTicks": 162,
+     "torqueCeilingFrac_pushOff": {
+      "hipPitch": 0.5714,
+      "knee": 0.2143,
+      "ankle": 0,
+      "hipRoll": 0,
+      "hipYaw": 0,
+      "neckPitch": 0.5,
+      "headPitch": 0
+     },
+     "torqueCeilingFrac_track": {
+      "hipPitch": 0.3333,
+      "knee": 0.2346,
+      "ankle": 0.0247,
+      "hipRoll": 0,
+      "hipYaw": 0,
+      "neckPitch": 0.0432,
+      "headPitch": 0.037
+     },
+     "anyActuatorAtCeiling_pushOff": 0.7857,
+     "commandClipFrac_pushOff": 0.9286,
+     "neckLeverH_mm": {
+      "min": 64,
+      "max": 87.3
+     },
+     "neckMaxForceAtBeak_N": {
+      "atMinLever": 10.013,
+      "atMaxLever": 7.341
+     },
+     "segmentTorqueCeilingFrac": {
+      "reach": {
+       "hipPitch": 0,
+       "knee": 0,
+       "ankle": 0,
+       "hipRoll": 0,
+       "hipYaw": 0,
+       "neckPitch": 0,
+       "headPitch": 0
+      },
+      "pre": {
+       "hipPitch": 0,
+       "knee": 0.4545,
+       "ankle": 0,
+       "hipRoll": 0,
+       "hipYaw": 0,
+       "neckPitch": 0,
+       "headPitch": 0
+      },
+      "vault": {
+       "hipPitch": 0,
+       "knee": 0,
+       "ankle": 0,
+       "hipRoll": 0,
+       "hipYaw": 0,
+       "neckPitch": 0,
+       "headPitch": 0
+      },
+      "tuck": {
+       "hipPitch": 0.3333,
+       "knee": 0.4762,
+       "ankle": 0,
+       "hipRoll": 0,
+       "hipYaw": 0,
+       "neckPitch": 0,
+       "headPitch": 0
+      },
+      "land": {
+       "hipPitch": 0.3103,
+       "knee": 0.1379,
+       "ankle": 0,
+       "hipRoll": 0,
+       "hipYaw": 0,
+       "neckPitch": 0,
+       "headPitch": 0.1379
+      },
+      "return": {
+       "hipPitch": 0.4286,
+       "knee": 0.3143,
+       "ankle": 0.1143,
+       "hipRoll": 0,
+       "hipYaw": 0,
+       "neckPitch": 0,
+       "headPitch": 0
+      }
+     }
+    },
+    {
+     "cell": 2,
+     "rise_mm": 50,
+     "drop": 0.125,
+     "fmul": 1.3,
+     "peakAboveTread_mm": 70.9,
+     "over95": false,
+     "parity": {
+      "myPeakZ_mm": 120.938271,
+      "robustPeakZ_mm": 120.938271,
+      "dz_mm": 0,
+      "myMaxTq": 0.6405,
+      "robustMaxTq": 0.6405,
+      "dTq_Nm": 0,
+      "exact": true
+     },
+     "pushOffTicks": 39,
+     "pushOffMs": 780,
+     "peakAtTick": 161,
+     "peakAtTrackTime_s": 3.22,
+     "peakDuringTrack": true,
+     "trackTicks": 162,
+     "torqueCeilingFrac_pushOff": {
+      "hipPitch": 0.359,
+      "knee": 0,
+      "ankle": 0.0769,
+      "hipRoll": 0,
+      "hipYaw": 0,
+      "neckPitch": 0.2821,
+      "headPitch": 0
+     },
+     "torqueCeilingFrac_track": {
+      "hipPitch": 0.284,
+      "knee": 0.1667,
+      "ankle": 0.0494,
+      "hipRoll": 0,
+      "hipYaw": 0,
+      "neckPitch": 0.0679,
+      "headPitch": 0.0494
+     },
+     "anyActuatorAtCeiling_pushOff": 0.4615,
+     "commandClipFrac_pushOff": 1,
+     "neckLeverH_mm": {
+      "min": 49.6,
+      "max": 84.8
+     },
+     "neckMaxForceAtBeak_N": {
+      "atMinLever": 12.901,
+      "atMaxLever": 7.553
+     },
+     "segmentTorqueCeilingFrac": {
+      "reach": {
+       "hipPitch": 0,
+       "knee": 0,
+       "ankle": 0,
+       "hipRoll": 0,
+       "hipYaw": 0,
+       "neckPitch": 0,
+       "headPitch": 0
+      },
+      "pre": {
+       "hipPitch": 0,
+       "knee": 0.2727,
+       "ankle": 0,
+       "hipRoll": 0,
+       "hipYaw": 0,
+       "neckPitch": 0,
+       "headPitch": 0
+      },
+      "vault": {
+       "hipPitch": 0,
+       "knee": 0,
+       "ankle": 0,
+       "hipRoll": 0,
+       "hipYaw": 0,
+       "neckPitch": 0,
+       "headPitch": 0
+      },
+      "tuck": {
+       "hipPitch": 0.2857,
+       "knee": 0.4762,
+       "ankle": 0,
+       "hipRoll": 0,
+       "hipYaw": 0,
+       "neckPitch": 0,
+       "headPitch": 0
+      },
+      "land": {
+       "hipPitch": 0.3103,
+       "knee": 0.1724,
+       "ankle": 0,
+       "hipRoll": 0,
+       "hipYaw": 0,
+       "neckPitch": 0,
+       "headPitch": 0.1379
+      },
+      "return": {
+       "hipPitch": 0.4571,
+       "knee": 0.2286,
+       "ankle": 0.1429,
+       "hipRoll": 0,
+       "hipYaw": 0,
+       "neckPitch": 0,
+       "headPitch": 0.1143
+      }
+     }
+    },
+    {
+     "cell": 3,
+     "rise_mm": 60,
+     "drop": 0.12,
+     "fmul": 1,
+     "peakAboveTread_mm": 120.7,
+     "over95": true,
+     "parity": {
+      "myPeakZ_mm": 180.742658,
+      "robustPeakZ_mm": 180.742658,
+      "dz_mm": 0,
+      "myMaxTq": 0.6405,
+      "robustMaxTq": 0.6405,
+      "dTq_Nm": 0,
+      "exact": true
+     },
+     "pushOffTicks": 67,
+     "pushOffMs": 1340,
+     "peakAtTick": 112,
+     "peakAtTrackTime_s": 2.24,
+     "peakDuringTrack": true,
+     "trackTicks": 162,
+     "torqueCeilingFrac_pushOff": {
+      "hipPitch": 0.194,
+      "knee": 0.3284,
+      "ankle": 0,
+      "hipRoll": 0,
+      "hipYaw": 0,
+      "neckPitch": 0,
+      "headPitch": 0.0896
+     },
+     "torqueCeilingFrac_track": {
+      "hipPitch": 0.2407,
+      "knee": 0.284,
+      "ankle": 0.0617,
+      "hipRoll": 0,
+      "hipYaw": 0,
+      "neckPitch": 0.0247,
+      "headPitch": 0.037
+     },
+     "anyActuatorAtCeiling_pushOff": 0.5075,
+     "commandClipFrac_pushOff": 1,
+     "neckLeverH_mm": {
+      "min": 18.3,
+      "max": 87.9
+     },
+     "neckMaxForceAtBeak_N": {
+      "atMinLever": 35.021,
+      "atMaxLever": 7.286
+     },
+     "segmentTorqueCeilingFrac": {
+      "reach": {
+       "hipPitch": 0,
+       "knee": 0,
+       "ankle": 0,
+       "hipRoll": 0,
+       "hipYaw": 0,
+       "neckPitch": 0,
+       "headPitch": 0
+      },
+      "pre": {
+       "hipPitch": 0,
+       "knee": 0.3636,
+       "ankle": 0,
+       "hipRoll": 0,
+       "hipYaw": 0,
+       "neckPitch": 0,
+       "headPitch": 0
+      },
+      "vault": {
+       "hipPitch": 0,
+       "knee": 0,
+       "ankle": 0,
+       "hipRoll": 0,
+       "hipYaw": 0,
+       "neckPitch": 0,
+       "headPitch": 0
+      },
+      "tuck": {
+       "hipPitch": 0.1429,
+       "knee": 0.4762,
+       "ankle": 0,
+       "hipRoll": 0,
+       "hipYaw": 0,
+       "neckPitch": 0,
+       "headPitch": 0
+      },
+      "land": {
+       "hipPitch": 0.069,
+       "knee": 0.1724,
+       "ankle": 0,
+       "hipRoll": 0,
+       "hipYaw": 0,
+       "neckPitch": 0,
+       "headPitch": 0.1724
+      },
+      "return": {
+       "hipPitch": 0.4286,
+       "knee": 0.3143,
+       "ankle": 0.2,
+       "hipRoll": 0,
+       "hipYaw": 0,
+       "neckPitch": 0,
+       "headPitch": 0.0286
+      }
+     }
+    },
+    {
+     "cell": 4,
+     "rise_mm": 60,
+     "drop": 0.13,
+     "fmul": 0.7,
+     "peakAboveTread_mm": 131.7,
+     "over95": true,
+     "parity": {
+      "myPeakZ_mm": 191.703378,
+      "robustPeakZ_mm": 191.703378,
+      "dz_mm": 0,
+      "myMaxTq": 0.6405,
+      "robustMaxTq": 0.6405,
+      "dTq_Nm": 0,
+      "exact": true
+     },
+     "pushOffTicks": 22,
+     "pushOffMs": 440,
+     "peakAtTick": 161,
+     "peakAtTrackTime_s": 3.22,
+     "peakDuringTrack": true,
+     "trackTicks": 162,
+     "torqueCeilingFrac_pushOff": {
+      "hipPitch": 0.0909,
+      "knee": 0,
+      "ankle": 0,
+      "hipRoll": 0,
+      "hipYaw": 0,
+      "neckPitch": 0.4545,
+      "headPitch": 0
+     },
+     "torqueCeilingFrac_track": {
+      "hipPitch": 0.2469,
+      "knee": 0.2469,
+      "ankle": 0.037,
+      "hipRoll": 0,
+      "hipYaw": 0,
+      "neckPitch": 0.0617,
+      "headPitch": 0.0802
+     },
+     "anyActuatorAtCeiling_pushOff": 0.5455,
+     "commandClipFrac_pushOff": 1,
+     "neckLeverH_mm": {
+      "min": 45.7,
+      "max": 89.5
+     },
+     "neckMaxForceAtBeak_N": {
+      "atMinLever": 14.023,
+      "atMaxLever": 7.154
+     },
+     "segmentTorqueCeilingFrac": {
+      "reach": {
+       "hipPitch": 0,
+       "knee": 0,
+       "ankle": 0,
+       "hipRoll": 0,
+       "hipYaw": 0,
+       "neckPitch": 0,
+       "headPitch": 0
+      },
+      "pre": {
+       "hipPitch": 0,
+       "knee": 0.4545,
+       "ankle": 0,
+       "hipRoll": 0,
+       "hipYaw": 0,
+       "neckPitch": 0,
+       "headPitch": 0
+      },
+      "vault": {
+       "hipPitch": 0,
+       "knee": 0,
+       "ankle": 0,
+       "hipRoll": 0,
+       "hipYaw": 0,
+       "neckPitch": 0,
+       "headPitch": 0
+      },
+      "tuck": {
+       "hipPitch": 0.1905,
+       "knee": 0.5238,
+       "ankle": 0,
+       "hipRoll": 0,
+       "hipYaw": 0,
+       "neckPitch": 0,
+       "headPitch": 0
+      },
+      "land": {
+       "hipPitch": 0.3448,
+       "knee": 0.2414,
+       "ankle": 0,
+       "hipRoll": 0,
+       "hipYaw": 0,
+       "neckPitch": 0,
+       "headPitch": 0.3103
+      },
+      "return": {
+       "hipPitch": 0.6286,
+       "knee": 0.4857,
+       "ankle": 0.1714,
+       "hipRoll": 0,
+       "hipYaw": 0,
+       "neckPitch": 0,
+       "headPitch": 0.1143
+      }
+     }
+    },
+    {
+     "cell": 5,
+     "rise_mm": 60,
+     "drop": 0.125,
+     "fmul": 1.3,
+     "peakAboveTread_mm": 120,
+     "over95": true,
+     "parity": {
+      "myPeakZ_mm": 179.997298,
+      "robustPeakZ_mm": 179.997298,
+      "dz_mm": 0,
+      "myMaxTq": 0.6405,
+      "robustMaxTq": 0.6405,
+      "dTq_Nm": 0,
+      "exact": true
+     },
+     "pushOffTicks": 115,
+     "pushOffMs": 2300,
+     "peakAtTick": 160,
+     "peakAtTrackTime_s": 3.2,
+     "peakDuringTrack": true,
+     "trackTicks": 162,
+     "torqueCeilingFrac_pushOff": {
+      "hipPitch": 0.4522,
+      "knee": 0.4348,
+      "ankle": 0.0435,
+      "hipRoll": 0,
+      "hipYaw": 0,
+      "neckPitch": 0.0174,
+      "headPitch": 0.087
+     },
+     "torqueCeilingFrac_track": {
+      "hipPitch": 0.321,
+      "knee": 0.3272,
+      "ankle": 0.0309,
+      "hipRoll": 0,
+      "hipYaw": 0,
+      "neckPitch": 0.0123,
+      "headPitch": 0.0617
+     },
+     "anyActuatorAtCeiling_pushOff": 0.8,
+     "commandClipFrac_pushOff": 0.9565,
+     "neckLeverH_mm": {
+      "min": 26.6,
+      "max": 87.7
+     },
+     "neckMaxForceAtBeak_N": {
+      "atMinLever": 24.07,
+      "atMaxLever": 7.301
+     },
+     "segmentTorqueCeilingFrac": {
+      "reach": {
+       "hipPitch": 0,
+       "knee": 0,
+       "ankle": 0,
+       "hipRoll": 0,
+       "hipYaw": 0,
+       "neckPitch": 0,
+       "headPitch": 0
+      },
+      "pre": {
+       "hipPitch": 0,
+       "knee": 0.2727,
+       "ankle": 0,
+       "hipRoll": 0,
+       "hipYaw": 0,
+       "neckPitch": 0,
+       "headPitch": 0
+      },
+      "vault": {
+       "hipPitch": 0,
+       "knee": 0,
+       "ankle": 0,
+       "hipRoll": 0,
+       "hipYaw": 0,
+       "neckPitch": 0,
+       "headPitch": 0
+      },
+      "tuck": {
+       "hipPitch": 0.1905,
+       "knee": 0.4762,
+       "ankle": 0,
+       "hipRoll": 0,
+       "hipYaw": 0,
+       "neckPitch": 0,
+       "headPitch": 0
+      },
+      "land": {
+       "hipPitch": 0.3793,
+       "knee": 0.4138,
+       "ankle": 0.0345,
+       "hipRoll": 0,
+       "hipYaw": 0,
+       "neckPitch": 0,
+       "headPitch": 0.3103
+      },
+      "return": {
+       "hipPitch": 0.5143,
+       "knee": 0.3143,
+       "ankle": 0,
+       "hipRoll": 0,
+       "hipYaw": 0,
+       "neckPitch": 0,
+       "headPitch": 0.0286
+      }
+     }
+    },
+    {
+     "cell": 6,
+     "rise_mm": 70,
+     "drop": 0.12,
+     "fmul": 1,
+     "peakAboveTread_mm": 61.4,
+     "over95": false,
+     "parity": {
+      "myPeakZ_mm": 131.441812,
+      "robustPeakZ_mm": 131.441812,
+      "dz_mm": 0,
+      "myMaxTq": 0.6405,
+      "robustMaxTq": 0.6405,
+      "dTq_Nm": 0,
+      "exact": true
+     },
+     "pushOffTicks": 14,
+     "pushOffMs": 280,
+     "peakAtTick": 161,
+     "peakAtTrackTime_s": 3.22,
+     "peakDuringTrack": true,
+     "trackTicks": 162,
+     "torqueCeilingFrac_pushOff": {
+      "hipPitch": 0.3571,
+      "knee": 0,
+      "ankle": 0,
+      "hipRoll": 0,
+      "hipYaw": 0,
+      "neckPitch": 0.2143,
+      "headPitch": 0
+     },
+     "torqueCeilingFrac_track": {
+      "hipPitch": 0.1914,
+      "knee": 0.142,
+      "ankle": 0.0062,
+      "hipRoll": 0,
+      "hipYaw": 0,
+      "neckPitch": 0.0864,
+      "headPitch": 0.0988
+     },
+     "anyActuatorAtCeiling_pushOff": 0.7857,
+     "commandClipFrac_pushOff": 0.8571,
+     "neckLeverH_mm": {
+      "min": 72.8,
+      "max": 87.2
+     },
+     "neckMaxForceAtBeak_N": {
+      "atMinLever": 8.8,
+      "atMaxLever": 7.345
+     },
+     "segmentTorqueCeilingFrac": {
+      "reach": {
+       "hipPitch": 0,
+       "knee": 0,
+       "ankle": 0,
+       "hipRoll": 0,
+       "hipYaw": 0,
+       "neckPitch": 0,
+       "headPitch": 0
+      },
+      "pre": {
+       "hipPitch": 0,
+       "knee": 0.3636,
+       "ankle": 0,
+       "hipRoll": 0,
+       "hipYaw": 0,
+       "neckPitch": 0,
+       "headPitch": 0
+      },
+      "vault": {
+       "hipPitch": 0,
+       "knee": 0,
+       "ankle": 0,
+       "hipRoll": 0,
+       "hipYaw": 0,
+       "neckPitch": 0,
+       "headPitch": 0
+      },
+      "tuck": {
+       "hipPitch": 0.1429,
+       "knee": 0.4762,
+       "ankle": 0,
+       "hipRoll": 0,
+       "hipYaw": 0,
+       "neckPitch": 0,
+       "headPitch": 0
+      },
+      "land": {
+       "hipPitch": 0.069,
+       "knee": 0.1034,
+       "ankle": 0.0345,
+       "hipRoll": 0,
+       "hipYaw": 0,
+       "neckPitch": 0,
+       "headPitch": 0.1379
+      },
+      "return": {
+       "hipPitch": 0.2571,
+       "knee": 0.0857,
+       "ankle": 0,
+       "hipRoll": 0,
+       "hipYaw": 0,
+       "neckPitch": 0,
+       "headPitch": 0.0857
+      }
+     }
+    },
+    {
+     "cell": 7,
+     "rise_mm": 70,
+     "drop": 0.13,
+     "fmul": 0.7,
+     "peakAboveTread_mm": 131,
+     "over95": true,
+     "parity": {
+      "myPeakZ_mm": 201.041893,
+      "robustPeakZ_mm": 201.041893,
+      "dz_mm": 0,
+      "myMaxTq": 0.6405,
+      "robustMaxTq": 0.6405,
+      "dTq_Nm": 0,
+      "exact": true
+     },
+     "pushOffTicks": 18,
+     "pushOffMs": 360,
+     "peakAtTick": 161,
+     "peakAtTrackTime_s": 3.22,
+     "peakDuringTrack": true,
+     "trackTicks": 162,
+     "torqueCeilingFrac_pushOff": {
+      "hipPitch": 0.2222,
+      "knee": 0,
+      "ankle": 0,
+      "hipRoll": 0,
+      "hipYaw": 0,
+      "neckPitch": 0.3889,
+      "headPitch": 0
+     },
+     "torqueCeilingFrac_track": {
+      "hipPitch": 0.1914,
+      "knee": 0.1975,
+      "ankle": 0.0432,
+      "hipRoll": 0,
+      "hipYaw": 0,
+      "neckPitch": 0.0432,
+      "headPitch": 0.0802
+     },
+     "anyActuatorAtCeiling_pushOff": 0.5,
+     "commandClipFrac_pushOff": 0.8333,
+     "neckLeverH_mm": {
+      "min": 83.2,
+      "max": 88.4
+     },
+     "neckMaxForceAtBeak_N": {
+      "atMinLever": 7.703,
+      "atMaxLever": 7.249
+     },
+     "segmentTorqueCeilingFrac": {
+      "reach": {
+       "hipPitch": 0,
+       "knee": 0,
+       "ankle": 0,
+       "hipRoll": 0,
+       "hipYaw": 0,
+       "neckPitch": 0,
+       "headPitch": 0
+      },
+      "pre": {
+       "hipPitch": 0,
+       "knee": 0.4545,
+       "ankle": 0,
+       "hipRoll": 0,
+       "hipYaw": 0,
+       "neckPitch": 0,
+       "headPitch": 0
+      },
+      "vault": {
+       "hipPitch": 0,
+       "knee": 0,
+       "ankle": 0,
+       "hipRoll": 0,
+       "hipYaw": 0,
+       "neckPitch": 0,
+       "headPitch": 0
+      },
+      "tuck": {
+       "hipPitch": 0.1429,
+       "knee": 0.5238,
+       "ankle": 0,
+       "hipRoll": 0,
+       "hipYaw": 0,
+       "neckPitch": 0,
+       "headPitch": 0
+      },
+      "land": {
+       "hipPitch": 0.069,
+       "knee": 0.0345,
+       "ankle": 0.0345,
+       "hipRoll": 0,
+       "hipYaw": 0,
+       "neckPitch": 0,
+       "headPitch": 0.2069
+      },
+      "return": {
+       "hipPitch": 0.6286,
+       "knee": 0.4286,
+       "ankle": 0.1714,
+       "hipRoll": 0,
+       "hipYaw": 0,
+       "neckPitch": 0,
+       "headPitch": 0.2
+      }
+     }
+    },
+    {
+     "cell": 8,
+     "rise_mm": 70,
+     "drop": 0.125,
+     "fmul": 1.3,
+     "peakAboveTread_mm": 61.5,
+     "over95": false,
+     "parity": {
+      "myPeakZ_mm": 131.45661,
+      "robustPeakZ_mm": 131.45661,
+      "dz_mm": 0,
+      "myMaxTq": 0.6405,
+      "robustMaxTq": 0.6405,
+      "dTq_Nm": 0,
+      "exact": true
+     },
+     "pushOffTicks": 25,
+     "pushOffMs": 500,
+     "peakAtTick": 70,
+     "peakAtTrackTime_s": 1.4000000000000001,
+     "peakDuringTrack": true,
+     "trackTicks": 162,
+     "torqueCeilingFrac_pushOff": {
+      "hipPitch": 0.12,
+      "knee": 0.48,
+      "ankle": 0,
+      "hipRoll": 0,
+      "hipYaw": 0,
+      "neckPitch": 0,
+      "headPitch": 0.16
+     },
+     "torqueCeilingFrac_track": {
+      "hipPitch": 0.2469,
+      "knee": 0.2346,
+      "ankle": 0.0432,
+      "hipRoll": 0,
+      "hipYaw": 0,
+      "neckPitch": 0,
+      "headPitch": 0.0309
+     },
+     "anyActuatorAtCeiling_pushOff": 0.64,
+     "commandClipFrac_pushOff": 1,
+     "neckLeverH_mm": {
+      "min": 17.6,
+      "max": 60.1
+     },
+     "neckMaxForceAtBeak_N": {
+      "atMinLever": 36.374,
+      "atMaxLever": 10.663
+     },
+     "segmentTorqueCeilingFrac": {
+      "reach": {
+       "hipPitch": 0,
+       "knee": 0,
+       "ankle": 0,
+       "hipRoll": 0,
+       "hipYaw": 0,
+       "neckPitch": 0,
+       "headPitch": 0
+      },
+      "pre": {
+       "hipPitch": 0,
+       "knee": 0.2727,
+       "ankle": 0,
+       "hipRoll": 0,
+       "hipYaw": 0,
+       "neckPitch": 0,
+       "headPitch": 0
+      },
+      "vault": {
+       "hipPitch": 0,
+       "knee": 0,
+       "ankle": 0,
+       "hipRoll": 0,
+       "hipYaw": 0,
+       "neckPitch": 0,
+       "headPitch": 0
+      },
+      "tuck": {
+       "hipPitch": 0.1429,
+       "knee": 0.4762,
+       "ankle": 0,
+       "hipRoll": 0,
+       "hipYaw": 0,
+       "neckPitch": 0,
+       "headPitch": 0
+      },
+      "land": {
+       "hipPitch": 0,
+       "knee": 0.1724,
+       "ankle": 0,
+       "hipRoll": 0,
+       "hipYaw": 0,
+       "neckPitch": 0,
+       "headPitch": 0.1379
+      },
+      "return": {
+       "hipPitch": 0.3429,
+       "knee": 0.1429,
+       "ankle": 0.0286,
+       "hipRoll": 0,
+       "hipYaw": 0,
+       "neckPitch": 0,
+       "headPitch": 0.0286
+      }
+     }
+    }
+   ],
+   "summary": {
+    "meanPeakAboveTread_mm": 101.3667,
+    "ceilingCore": 5,
+    "meanPushOffTicks": 37.5556,
+    "meanTorqueCeilingFrac_pushOff": {
+     "hipPitch": 0.2908,
+     "knee": 0.1758,
+     "ankle": 0.0134,
+     "hipRoll": 0,
+     "hipYaw": 0,
+     "neckPitch": 0.2665,
+     "headPitch": 0.0513
+    },
+    "meanAnyActuatorAtCeiling_pushOff": 0.6557,
+    "meanCommandClipFrac_pushOff": 0.9528,
+    "neckLeverH_mm_min": 17.6,
+    "neckLeverH_mm_max": 89.5
+   }
+  },
+  {
+   "file": "best_r6_ceilvaultB_60mm.json",
+   "sha256": "29c97398fe13da7072b954b2f8b582cb5b9754eeb6e9ee604e8c9ed722fdfd89",
+   "move": "29c97398fe13",
+   "parityOK": true,
+   "parityCells": "9/9 EXACT",
+   "rows": [
+    {
+     "cell": 0,
+     "rise_mm": 50,
+     "drop": 0.12,
+     "fmul": 1,
+     "peakAboveTread_mm": 72.5,
+     "over95": false,
+     "parity": {
+      "myPeakZ_mm": 122.467448,
+      "robustPeakZ_mm": 122.467448,
+      "dz_mm": 0,
+      "myMaxTq": 0.6405,
+      "robustMaxTq": 0.6405,
+      "dTq_Nm": 0,
+      "exact": true
+     },
+     "pushOffTicks": 36,
+     "pushOffMs": 720,
+     "peakAtTick": 154,
+     "peakAtTrackTime_s": 3.08,
+     "peakDuringTrack": true,
+     "trackTicks": 162,
+     "torqueCeilingFrac_pushOff": {
+      "hipPitch": 0.4722,
+      "knee": 0.2222,
+      "ankle": 0,
+      "hipRoll": 0,
+      "hipYaw": 0,
+      "neckPitch": 0.3333,
+      "headPitch": 0.1667
+     },
+     "torqueCeilingFrac_track": {
+      "hipPitch": 0.284,
+      "knee": 0.1667,
+      "ankle": 0.0185,
+      "hipRoll": 0,
+      "hipYaw": 0,
+      "neckPitch": 0.0802,
+      "headPitch": 0.0617
+     },
+     "anyActuatorAtCeiling_pushOff": 0.75,
+     "commandClipFrac_pushOff": 0.9167,
+     "neckLeverH_mm": {
+      "min": 70.7,
+      "max": 85.5
+     },
+     "neckMaxForceAtBeak_N": {
+      "atMinLever": 9.057,
+      "atMaxLever": 7.495
+     },
+     "segmentTorqueCeilingFrac": {
+      "reach": {
+       "hipPitch": 0,
+       "knee": 0,
+       "ankle": 0,
+       "hipRoll": 0,
+       "hipYaw": 0,
+       "neckPitch": 0,
+       "headPitch": 0
+      },
+      "pre": {
+       "hipPitch": 0,
+       "knee": 0.3333,
+       "ankle": 0,
+       "hipRoll": 0,
+       "hipYaw": 0,
+       "neckPitch": 0,
+       "headPitch": 0
+      },
+      "vault": {
+       "hipPitch": 0,
+       "knee": 0,
+       "ankle": 0,
+       "hipRoll": 0,
+       "hipYaw": 0,
+       "neckPitch": 0,
+       "headPitch": 0
+      },
+      "tuck": {
+       "hipPitch": 0.3333,
+       "knee": 0.4286,
+       "ankle": 0,
+       "hipRoll": 0,
+       "hipYaw": 0,
+       "neckPitch": 0,
+       "headPitch": 0
+      },
+      "land": {
+       "hipPitch": 0.3448,
+       "knee": 0.1379,
+       "ankle": 0,
+       "hipRoll": 0,
+       "hipYaw": 0,
+       "neckPitch": 0,
+       "headPitch": 0.0345
+      },
+      "return": {
+       "hipPitch": 0.2857,
+       "knee": 0.1143,
+       "ankle": 0.0857,
+       "hipRoll": 0,
+       "hipYaw": 0,
+       "neckPitch": 0.1143,
+       "headPitch": 0.0857
+      }
+     }
+    },
+    {
+     "cell": 1,
+     "rise_mm": 50,
+     "drop": 0.13,
+     "fmul": 0.7,
+     "peakAboveTread_mm": 118.1,
+     "over95": true,
+     "parity": {
+      "myPeakZ_mm": 168.067076,
+      "robustPeakZ_mm": 168.067076,
+      "dz_mm": 0,
+      "myMaxTq": 0.6405,
+      "robustMaxTq": 0.6405,
+      "dTq_Nm": 0,
+      "exact": true
+     },
+     "pushOffTicks": 72,
+     "pushOffMs": 1440,
+     "peakAtTick": 116,
+     "peakAtTrackTime_s": 2.32,
+     "peakDuringTrack": true,
+     "trackTicks": 162,
+     "torqueCeilingFrac_pushOff": {
+      "hipPitch": 0.5,
+      "knee": 0.4306,
+      "ankle": 0,
+      "hipRoll": 0,
+      "hipYaw": 0,
+      "neckPitch": 0,
+      "headPitch": 0.0972
+     },
+     "torqueCeilingFrac_track": {
+      "hipPitch": 0.2531,
+      "knee": 0.2531,
+      "ankle": 0.0309,
+      "hipRoll": 0,
+      "hipYaw": 0,
+      "neckPitch": 0.0185,
+      "headPitch": 0.0432
+     },
+     "anyActuatorAtCeiling_pushOff": 0.7222,
+     "commandClipFrac_pushOff": 1,
+     "neckLeverH_mm": {
+      "min": 51.7,
+      "max": 86.8
+     },
+     "neckMaxForceAtBeak_N": {
+      "atMinLever": 12.384,
+      "atMaxLever": 7.381
+     },
+     "segmentTorqueCeilingFrac": {
+      "reach": {
+       "hipPitch": 0,
+       "knee": 0,
+       "ankle": 0,
+       "hipRoll": 0,
+       "hipYaw": 0,
+       "neckPitch": 0,
+       "headPitch": 0
+      },
+      "pre": {
+       "hipPitch": 0,
+       "knee": 0.3333,
+       "ankle": 0,
+       "hipRoll": 0,
+       "hipYaw": 0,
+       "neckPitch": 0,
+       "headPitch": 0
+      },
+      "vault": {
+       "hipPitch": 0,
+       "knee": 0,
+       "ankle": 0,
+       "hipRoll": 0,
+       "hipYaw": 0,
+       "neckPitch": 0,
+       "headPitch": 0
+      },
+      "tuck": {
+       "hipPitch": 0.4286,
+       "knee": 0.4762,
+       "ankle": 0,
+       "hipRoll": 0,
+       "hipYaw": 0,
+       "neckPitch": 0,
+       "headPitch": 0
+      },
+      "land": {
+       "hipPitch": 0.3793,
+       "knee": 0.3793,
+       "ankle": 0,
+       "hipRoll": 0,
+       "hipYaw": 0,
+       "neckPitch": 0,
+       "headPitch": 0.1034
+      },
+      "return": {
+       "hipPitch": 0.6,
+       "knee": 0.3429,
+       "ankle": 0.1143,
+       "hipRoll": 0,
+       "hipYaw": 0,
+       "neckPitch": 0,
+       "headPitch": 0.1143
+      }
+     }
+    },
+    {
+     "cell": 2,
+     "rise_mm": 50,
+     "drop": 0.125,
+     "fmul": 1.3,
+     "peakAboveTread_mm": 86.5,
+     "over95": false,
+     "parity": {
+      "myPeakZ_mm": 136.537437,
+      "robustPeakZ_mm": 136.537437,
+      "dz_mm": 0,
+      "myMaxTq": 0.6405,
+      "robustMaxTq": 0.6405,
+      "dTq_Nm": 0,
+      "exact": true
+     },
+     "pushOffTicks": 39,
+     "pushOffMs": 780,
+     "peakAtTick": 161,
+     "peakAtTrackTime_s": 3.22,
+     "peakDuringTrack": true,
+     "trackTicks": 162,
+     "torqueCeilingFrac_pushOff": {
+      "hipPitch": 0.1538,
+      "knee": 0.0769,
+      "ankle": 0,
+      "hipRoll": 0,
+      "hipYaw": 0,
+      "neckPitch": 0.2051,
+      "headPitch": 0.1026
+     },
+     "torqueCeilingFrac_track": {
+      "hipPitch": 0.2469,
+      "knee": 0.2037,
+      "ankle": 0.0185,
+      "hipRoll": 0,
+      "hipYaw": 0,
+      "neckPitch": 0.0617,
+      "headPitch": 0.0556
+     },
+     "anyActuatorAtCeiling_pushOff": 0.5641,
+     "commandClipFrac_pushOff": 0.9744,
+     "neckLeverH_mm": {
+      "min": 68.1,
+      "max": 84.6
+     },
+     "neckMaxForceAtBeak_N": {
+      "atMinLever": 9.411,
+      "atMaxLever": 7.572
+     },
+     "segmentTorqueCeilingFrac": {
+      "reach": {
+       "hipPitch": 0,
+       "knee": 0,
+       "ankle": 0,
+       "hipRoll": 0,
+       "hipYaw": 0,
+       "neckPitch": 0,
+       "headPitch": 0
+      },
+      "pre": {
+       "hipPitch": 0,
+       "knee": 0.5833,
+       "ankle": 0,
+       "hipRoll": 0,
+       "hipYaw": 0,
+       "neckPitch": 0,
+       "headPitch": 0
+      },
+      "vault": {
+       "hipPitch": 0,
+       "knee": 0,
+       "ankle": 0,
+       "hipRoll": 0,
+       "hipYaw": 0,
+       "neckPitch": 0,
+       "headPitch": 0
+      },
+      "tuck": {
+       "hipPitch": 0.2857,
+       "knee": 0.4762,
+       "ankle": 0,
+       "hipRoll": 0,
+       "hipYaw": 0,
+       "neckPitch": 0,
+       "headPitch": 0
+      },
+      "land": {
+       "hipPitch": 0.3793,
+       "knee": 0.2069,
+       "ankle": 0,
+       "hipRoll": 0,
+       "hipYaw": 0,
+       "neckPitch": 0,
+       "headPitch": 0.1034
+      },
+      "return": {
+       "hipPitch": 0.4857,
+       "knee": 0.2,
+       "ankle": 0.0857,
+       "hipRoll": 0,
+       "hipYaw": 0,
+       "neckPitch": 0.0286,
+       "headPitch": 0.0571
+      }
+     }
+    },
+    {
+     "cell": 3,
+     "rise_mm": 60,
+     "drop": 0.12,
+     "fmul": 1,
+     "peakAboveTread_mm": 134.3,
+     "over95": true,
+     "parity": {
+      "myPeakZ_mm": 194.317749,
+      "robustPeakZ_mm": 194.317749,
+      "dz_mm": 0,
+      "myMaxTq": 0.6405,
+      "robustMaxTq": 0.6405,
+      "dTq_Nm": 0,
+      "exact": true
+     },
+     "pushOffTicks": 18,
+     "pushOffMs": 360,
+     "peakAtTick": 161,
+     "peakAtTrackTime_s": 3.22,
+     "peakDuringTrack": true,
+     "trackTicks": 162,
+     "torqueCeilingFrac_pushOff": {
+      "hipPitch": 0.5,
+      "knee": 0.1111,
+      "ankle": 0,
+      "hipRoll": 0,
+      "hipYaw": 0,
+      "neckPitch": 0.3333,
+      "headPitch": 0.0556
+     },
+     "torqueCeilingFrac_track": {
+      "hipPitch": 0.321,
+      "knee": 0.2963,
+      "ankle": 0.037,
+      "hipRoll": 0,
+      "hipYaw": 0,
+      "neckPitch": 0.037,
+      "headPitch": 0.0988
+     },
+     "anyActuatorAtCeiling_pushOff": 0.7778,
+     "commandClipFrac_pushOff": 0.7778,
+     "neckLeverH_mm": {
+      "min": 71,
+      "max": 87
+     },
+     "neckMaxForceAtBeak_N": {
+      "atMinLever": 9.024,
+      "atMaxLever": 7.365
+     },
+     "segmentTorqueCeilingFrac": {
+      "reach": {
+       "hipPitch": 0,
+       "knee": 0,
+       "ankle": 0,
+       "hipRoll": 0,
+       "hipYaw": 0,
+       "neckPitch": 0,
+       "headPitch": 0
+      },
+      "pre": {
+       "hipPitch": 0,
+       "knee": 0.3333,
+       "ankle": 0,
+       "hipRoll": 0,
+       "hipYaw": 0,
+       "neckPitch": 0,
+       "headPitch": 0
+      },
+      "vault": {
+       "hipPitch": 0,
+       "knee": 0,
+       "ankle": 0,
+       "hipRoll": 0,
+       "hipYaw": 0,
+       "neckPitch": 0,
+       "headPitch": 0
+      },
+      "tuck": {
+       "hipPitch": 0.2857,
+       "knee": 0.4286,
+       "ankle": 0,
+       "hipRoll": 0,
+       "hipYaw": 0,
+       "neckPitch": 0,
+       "headPitch": 0
+      },
+      "land": {
+       "hipPitch": 0.3793,
+       "knee": 0.3793,
+       "ankle": 0.069,
+       "hipRoll": 0,
+       "hipYaw": 0,
+       "neckPitch": 0,
+       "headPitch": 0.2759
+      },
+      "return": {
+       "hipPitch": 0.6571,
+       "knee": 0.4857,
+       "ankle": 0.1143,
+       "hipRoll": 0,
+       "hipYaw": 0,
+       "neckPitch": 0,
+       "headPitch": 0.2
+      }
+     }
+    },
+    {
+     "cell": 4,
+     "rise_mm": 60,
+     "drop": 0.13,
+     "fmul": 0.7,
+     "peakAboveTread_mm": 108.1,
+     "over95": true,
+     "parity": {
+      "myPeakZ_mm": 168.08101,
+      "robustPeakZ_mm": 168.08101,
+      "dz_mm": 0,
+      "myMaxTq": 0.6405,
+      "robustMaxTq": 0.6405,
+      "dTq_Nm": 0,
+      "exact": true
+     },
+     "pushOffTicks": 1,
+     "pushOffMs": 20,
+     "peakAtTick": 161,
+     "peakAtTrackTime_s": 3.22,
+     "peakDuringTrack": true,
+     "trackTicks": 162,
+     "torqueCeilingFrac_pushOff": {
+      "hipPitch": 0,
+      "knee": 0,
+      "ankle": 0,
+      "hipRoll": 0,
+      "hipYaw": 0,
+      "neckPitch": 0,
+      "headPitch": 1
+     },
+     "torqueCeilingFrac_track": {
+      "hipPitch": 0.3642,
+      "knee": 0.3086,
+      "ankle": 0.0679,
+      "hipRoll": 0,
+      "hipYaw": 0,
+      "neckPitch": 0,
+      "headPitch": 0.0494
+     },
+     "anyActuatorAtCeiling_pushOff": 1,
+     "commandClipFrac_pushOff": 0,
+     "neckLeverH_mm": {
+      "min": 78.9,
+      "max": 78.9
+     },
+     "neckMaxForceAtBeak_N": {
+      "atMinLever": 8.123,
+      "atMaxLever": 8.123
+     },
+     "segmentTorqueCeilingFrac": {
+      "reach": {
+       "hipPitch": 0,
+       "knee": 0,
+       "ankle": 0,
+       "hipRoll": 0,
+       "hipYaw": 0,
+       "neckPitch": 0,
+       "headPitch": 0
+      },
+      "pre": {
+       "hipPitch": 0,
+       "knee": 0.3333,
+       "ankle": 0,
+       "hipRoll": 0,
+       "hipYaw": 0,
+       "neckPitch": 0,
+       "headPitch": 0
+      },
+      "vault": {
+       "hipPitch": 0,
+       "knee": 0,
+       "ankle": 0,
+       "hipRoll": 0,
+       "hipYaw": 0,
+       "neckPitch": 0,
+       "headPitch": 0
+      },
+      "tuck": {
+       "hipPitch": 0.3333,
+       "knee": 0.4762,
+       "ankle": 0,
+       "hipRoll": 0,
+       "hipYaw": 0,
+       "neckPitch": 0,
+       "headPitch": 0
+      },
+      "land": {
+       "hipPitch": 0.5172,
+       "knee": 0.4138,
+       "ankle": 0.1034,
+       "hipRoll": 0,
+       "hipYaw": 0,
+       "neckPitch": 0,
+       "headPitch": 0.2069
+      },
+      "return": {
+       "hipPitch": 0.6571,
+       "knee": 0.3714,
+       "ankle": 0.0571,
+       "hipRoll": 0,
+       "hipYaw": 0,
+       "neckPitch": 0,
+       "headPitch": 0.0286
+      }
+     }
+    },
+    {
+     "cell": 5,
+     "rise_mm": 60,
+     "drop": 0.125,
+     "fmul": 1.3,
+     "peakAboveTread_mm": 119.3,
+     "over95": true,
+     "parity": {
+      "myPeakZ_mm": 179.349665,
+      "robustPeakZ_mm": 179.349665,
+      "dz_mm": 0,
+      "myMaxTq": 0.6405,
+      "robustMaxTq": 0.6405,
+      "dTq_Nm": 0,
+      "exact": true
+     },
+     "pushOffTicks": 116,
+     "pushOffMs": 2320,
+     "peakAtTick": 160,
+     "peakAtTrackTime_s": 3.2,
+     "peakDuringTrack": true,
+     "trackTicks": 162,
+     "torqueCeilingFrac_pushOff": {
+      "hipPitch": 0.4569,
+      "knee": 0.3534,
+      "ankle": 0.0603,
+      "hipRoll": 0,
+      "hipYaw": 0,
+      "neckPitch": 0.0172,
+      "headPitch": 0.0948
+     },
+     "torqueCeilingFrac_track": {
+      "hipPitch": 0.3272,
+      "knee": 0.2963,
+      "ankle": 0.0432,
+      "hipRoll": 0,
+      "hipYaw": 0,
+      "neckPitch": 0.0123,
+      "headPitch": 0.0679
+     },
+     "anyActuatorAtCeiling_pushOff": 0.7069,
+     "commandClipFrac_pushOff": 0.8793,
+     "neckLeverH_mm": {
+      "min": 27.9,
+      "max": 86.6
+     },
+     "neckMaxForceAtBeak_N": {
+      "atMinLever": 22.949,
+      "atMaxLever": 7.395
+     },
+     "segmentTorqueCeilingFrac": {
+      "reach": {
+       "hipPitch": 0,
+       "knee": 0,
+       "ankle": 0,
+       "hipRoll": 0,
+       "hipYaw": 0,
+       "neckPitch": 0,
+       "headPitch": 0
+      },
+      "pre": {
+       "hipPitch": 0,
+       "knee": 0.5833,
+       "ankle": 0,
+       "hipRoll": 0,
+       "hipYaw": 0,
+       "neckPitch": 0,
+       "headPitch": 0
+      },
+      "vault": {
+       "hipPitch": 0,
+       "knee": 0,
+       "ankle": 0,
+       "hipRoll": 0,
+       "hipYaw": 0,
+       "neckPitch": 0,
+       "headPitch": 0
+      },
+      "tuck": {
+       "hipPitch": 0.3333,
+       "knee": 0.4762,
+       "ankle": 0,
+       "hipRoll": 0,
+       "hipYaw": 0,
+       "neckPitch": 0,
+       "headPitch": 0
+      },
+      "land": {
+       "hipPitch": 0.3103,
+       "knee": 0.3103,
+       "ankle": 0,
+       "hipRoll": 0,
+       "hipYaw": 0,
+       "neckPitch": 0,
+       "headPitch": 0.2759
+      },
+      "return": {
+       "hipPitch": 0.6857,
+       "knee": 0.4571,
+       "ankle": 0.1714,
+       "hipRoll": 0,
+       "hipYaw": 0,
+       "neckPitch": 0,
+       "headPitch": 0.0857
+      }
+     }
+    },
+    {
+     "cell": 6,
+     "rise_mm": 70,
+     "drop": 0.12,
+     "fmul": 1,
+     "peakAboveTread_mm": 58.4,
+     "over95": false,
+     "parity": {
+      "myPeakZ_mm": 128.400115,
+      "robustPeakZ_mm": 128.400115,
+      "dz_mm": 0,
+      "myMaxTq": 0.6405,
+      "robustMaxTq": 0.6405,
+      "dTq_Nm": 0,
+      "exact": true
+     },
+     "pushOffTicks": 20,
+     "pushOffMs": 400,
+     "peakAtTick": 65,
+     "peakAtTrackTime_s": 1.3,
+     "peakDuringTrack": true,
+     "trackTicks": 162,
+     "torqueCeilingFrac_pushOff": {
+      "hipPitch": 0.15,
+      "knee": 0.6,
+      "ankle": 0.05,
+      "hipRoll": 0,
+      "hipYaw": 0,
+      "neckPitch": 0,
+      "headPitch": 0.15
+     },
+     "torqueCeilingFrac_track": {
+      "hipPitch": 0.179,
+      "knee": 0.179,
+      "ankle": 0.037,
+      "hipRoll": 0,
+      "hipYaw": 0,
+      "neckPitch": 0.0556,
+      "headPitch": 0.0494
+     },
+     "anyActuatorAtCeiling_pushOff": 0.75,
+     "commandClipFrac_pushOff": 1,
+     "neckLeverH_mm": {
+      "min": 26,
+      "max": 59.8
+     },
+     "neckMaxForceAtBeak_N": {
+      "atMinLever": 24.669,
+      "atMaxLever": 10.719
+     },
+     "segmentTorqueCeilingFrac": {
+      "reach": {
+       "hipPitch": 0,
+       "knee": 0,
+       "ankle": 0,
+       "hipRoll": 0,
+       "hipYaw": 0,
+       "neckPitch": 0,
+       "headPitch": 0
+      },
+      "pre": {
+       "hipPitch": 0,
+       "knee": 0.3333,
+       "ankle": 0,
+       "hipRoll": 0,
+       "hipYaw": 0,
+       "neckPitch": 0,
+       "headPitch": 0
+      },
+      "vault": {
+       "hipPitch": 0,
+       "knee": 0,
+       "ankle": 0,
+       "hipRoll": 0,
+       "hipYaw": 0,
+       "neckPitch": 0,
+       "headPitch": 0
+      },
+      "tuck": {
+       "hipPitch": 0.1429,
+       "knee": 0.4762,
+       "ankle": 0,
+       "hipRoll": 0,
+       "hipYaw": 0,
+       "neckPitch": 0,
+       "headPitch": 0
+      },
+      "land": {
+       "hipPitch": 0.0345,
+       "knee": 0.069,
+       "ankle": 0.0345,
+       "hipRoll": 0,
+       "hipYaw": 0,
+       "neckPitch": 0,
+       "headPitch": 0.1724
+      },
+      "return": {
+       "hipPitch": 0.3143,
+       "knee": 0.1714,
+       "ankle": 0.1143,
+       "hipRoll": 0,
+       "hipYaw": 0,
+       "neckPitch": 0.1714,
+       "headPitch": 0.0857
+      }
+     }
+    },
+    {
+     "cell": 7,
+     "rise_mm": 70,
+     "drop": 0.13,
+     "fmul": 0.7,
+     "peakAboveTread_mm": 119.2,
+     "over95": true,
+     "parity": {
+      "myPeakZ_mm": 189.216264,
+      "robustPeakZ_mm": 189.216264,
+      "dz_mm": 0,
+      "myMaxTq": 0.6405,
+      "robustMaxTq": 0.6405,
+      "dTq_Nm": 0,
+      "exact": true
+     },
+     "pushOffTicks": 74,
+     "pushOffMs": 1480,
+     "peakAtTick": 118,
+     "peakAtTrackTime_s": 2.36,
+     "peakDuringTrack": true,
+     "trackTicks": 162,
+     "torqueCeilingFrac_pushOff": {
+      "hipPitch": 0.4595,
+      "knee": 0.4324,
+      "ankle": 0.0405,
+      "hipRoll": 0,
+      "hipYaw": 0,
+      "neckPitch": 0,
+      "headPitch": 0.0946
+     },
+     "torqueCeilingFrac_track": {
+      "hipPitch": 0.321,
+      "knee": 0.3148,
+      "ankle": 0.0926,
+      "hipRoll": 0,
+      "hipYaw": 0,
+      "neckPitch": 0,
+      "headPitch": 0.0432
+     },
+     "anyActuatorAtCeiling_pushOff": 0.7027,
+     "commandClipFrac_pushOff": 1,
+     "neckLeverH_mm": {
+      "min": 44.7,
+      "max": 87.3
+     },
+     "neckMaxForceAtBeak_N": {
+      "atMinLever": 14.328,
+      "atMaxLever": 7.339
+     },
+     "segmentTorqueCeilingFrac": {
+      "reach": {
+       "hipPitch": 0,
+       "knee": 0,
+       "ankle": 0,
+       "hipRoll": 0,
+       "hipYaw": 0,
+       "neckPitch": 0,
+       "headPitch": 0
+      },
+      "pre": {
+       "hipPitch": 0,
+       "knee": 0.3333,
+       "ankle": 0,
+       "hipRoll": 0,
+       "hipYaw": 0,
+       "neckPitch": 0,
+       "headPitch": 0
+      },
+      "vault": {
+       "hipPitch": 0,
+       "knee": 0,
+       "ankle": 0,
+       "hipRoll": 0,
+       "hipYaw": 0,
+       "neckPitch": 0,
+       "headPitch": 0
+      },
+      "tuck": {
+       "hipPitch": 0.3333,
+       "knee": 0.4762,
+       "ankle": 0,
+       "hipRoll": 0,
+       "hipYaw": 0,
+       "neckPitch": 0,
+       "headPitch": 0
+      },
+      "land": {
+       "hipPitch": 0.1034,
+       "knee": 0.2069,
+       "ankle": 0.0345,
+       "hipRoll": 0,
+       "hipYaw": 0,
+       "neckPitch": 0,
+       "headPitch": 0.1724
+      },
+      "return": {
+       "hipPitch": 0.7714,
+       "knee": 0.5429,
+       "ankle": 0.1429,
+       "hipRoll": 0,
+       "hipYaw": 0,
+       "neckPitch": 0,
+       "headPitch": 0.0571
+      }
+     }
+    },
+    {
+     "cell": 8,
+     "rise_mm": 70,
+     "drop": 0.125,
+     "fmul": 1.3,
+     "peakAboveTread_mm": 58.5,
+     "over95": false,
+     "parity": {
+      "myPeakZ_mm": 128.507429,
+      "robustPeakZ_mm": 128.507429,
+      "dz_mm": 0,
+      "myMaxTq": 0.6405,
+      "robustMaxTq": 0.6405,
+      "dTq_Nm": 0,
+      "exact": true
+     },
+     "pushOffTicks": 115,
+     "pushOffMs": 2300,
+     "peakAtTick": 159,
+     "peakAtTrackTime_s": 3.18,
+     "peakDuringTrack": true,
+     "trackTicks": 162,
+     "torqueCeilingFrac_pushOff": {
+      "hipPitch": 0.4087,
+      "knee": 0.2609,
+      "ankle": 0.0435,
+      "hipRoll": 0,
+      "hipYaw": 0,
+      "neckPitch": 0.0261,
+      "headPitch": 0.0783
+     },
+     "torqueCeilingFrac_track": {
+      "hipPitch": 0.2901,
+      "knee": 0.2284,
+      "ankle": 0.0309,
+      "hipRoll": 0,
+      "hipYaw": 0,
+      "neckPitch": 0.0185,
+      "headPitch": 0.0556
+     },
+     "anyActuatorAtCeiling_pushOff": 0.5739,
+     "commandClipFrac_pushOff": 0.9043,
+     "neckLeverH_mm": {
+      "min": 38.5,
+      "max": 85.9
+     },
+     "neckMaxForceAtBeak_N": {
+      "atMinLever": 16.62,
+      "atMaxLever": 7.46
+     },
+     "segmentTorqueCeilingFrac": {
+      "reach": {
+       "hipPitch": 0,
+       "knee": 0,
+       "ankle": 0,
+       "hipRoll": 0,
+       "hipYaw": 0,
+       "neckPitch": 0,
+       "headPitch": 0
+      },
+      "pre": {
+       "hipPitch": 0,
+       "knee": 0.5833,
+       "ankle": 0,
+       "hipRoll": 0,
+       "hipYaw": 0,
+       "neckPitch": 0,
+       "headPitch": 0
+      },
+      "vault": {
+       "hipPitch": 0,
+       "knee": 0,
+       "ankle": 0,
+       "hipRoll": 0,
+       "hipYaw": 0,
+       "neckPitch": 0,
+       "headPitch": 0
+      },
+      "tuck": {
+       "hipPitch": 0.2857,
+       "knee": 0.4762,
+       "ankle": 0,
+       "hipRoll": 0,
+       "hipYaw": 0,
+       "neckPitch": 0,
+       "headPitch": 0
+      },
+      "land": {
+       "hipPitch": 0.069,
+       "knee": 0.0345,
+       "ankle": 0,
+       "hipRoll": 0,
+       "hipYaw": 0,
+       "neckPitch": 0,
+       "headPitch": 0.2414
+      },
+      "return": {
+       "hipPitch": 0.4,
+       "knee": 0.0857,
+       "ankle": 0,
+       "hipRoll": 0,
+       "hipYaw": 0,
+       "neckPitch": 0,
+       "headPitch": 0.0571
+      }
+     }
+    }
+   ],
+   "summary": {
+    "meanPeakAboveTread_mm": 97.2111,
+    "ceilingCore": 5,
+    "meanPushOffTicks": 54.5556,
+    "meanTorqueCeilingFrac_pushOff": {
+     "hipPitch": 0.3446,
+     "knee": 0.2764,
+     "ankle": 0.0216,
+     "hipRoll": 0,
+     "hipYaw": 0,
+     "neckPitch": 0.1017,
+     "headPitch": 0.2044
+    },
+    "meanAnyActuatorAtCeiling_pushOff": 0.7275,
+    "meanCommandClipFrac_pushOff": 0.8281,
+    "neckLeverH_mm_min": 26,
+    "neckLeverH_mm_max": 87.3
+   }
+  }
+ ]
+}

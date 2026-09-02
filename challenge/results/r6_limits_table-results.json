@@ -1,0 +1,188 @@
+{
+ "generated": "2026-09-02T14:11:52.369Z",
+ "source": "climb/r6_limits-results.json",
+ "forcerange_Nm": 0.6405,
+ "neckStall_N": 7.66,
+ "bodyWeight_N": 7.23,
+ "window": "the PUSH-OFF: from the lowest trunk z during the keyframe track to the tick the trunk peaks",
+ "perFile": [
+  {
+   "file": "best_r3_vault_60mm.json",
+   "move": "4b9110c448ec",
+   "parity": "9/9 EXACT",
+   "over95": {
+    "n": 5,
+    "peakAboveTread_mm": 123,
+    "pushOffTicks": 81.6,
+    "pushOffMs": 1632,
+    "hipPitchAtForceCeiling": 0.5051,
+    "kneeAtForceCeiling": 0.4265,
+    "ankleAtForceCeiling": 0.0169,
+    "neckPitchAtForceCeiling": 0.0092,
+    "anyOf14AtForceCeiling": 0.7874,
+    "positionCommandClipped": 0.9728,
+    "peakDuringTrack": 1
+   },
+   "under95": {
+    "n": 4,
+    "peakAboveTread_mm": 59.775,
+    "pushOffTicks": 37.75,
+    "pushOffMs": 755,
+    "hipPitchAtForceCeiling": 0.3923,
+    "kneeAtForceCeiling": 0.4238,
+    "ankleAtForceCeiling": 0.0185,
+    "neckPitchAtForceCeiling": 0.0733,
+    "anyOf14AtForceCeiling": 0.6572,
+    "positionCommandClipped": 0.9521,
+    "peakDuringTrack": 1
+   },
+   "neckLeverH_mm": [
+    22.4,
+    89.3
+   ],
+   "neckMaxForceAtLongestLever_N": 7.172
+  },
+  {
+   "file": "best_r6_ceilvaultC_60mm.json",
+   "move": "a56d459fb649",
+   "parity": "9/9 EXACT",
+   "over95": {
+    "n": 5,
+    "peakAboveTread_mm": 119.36,
+    "pushOffTicks": 94.8,
+    "pushOffMs": 1896,
+    "hipPitchAtForceCeiling": 0.494,
+    "kneeAtForceCeiling": 0.3765,
+    "ankleAtForceCeiling": 0.0132,
+    "neckPitchAtForceCeiling": 0.0093,
+    "anyOf14AtForceCeiling": 0.746,
+    "positionCommandClipped": 0.9695,
+    "peakDuringTrack": 1
+   },
+   "under95": {
+    "n": 4,
+    "peakAboveTread_mm": 59.775,
+    "pushOffTicks": 42.25,
+    "pushOffMs": 845,
+    "hipPitchAtForceCeiling": 0.4025,
+    "kneeAtForceCeiling": 0.2268,
+    "ankleAtForceCeiling": 0.0034,
+    "neckPitchAtForceCeiling": 0.19,
+    "anyOf14AtForceCeiling": 0.5729,
+    "positionCommandClipped": 0.9582,
+    "peakDuringTrack": 1
+   },
+   "neckLeverH_mm": [
+    12.4,
+    89.3
+   ],
+   "neckMaxForceAtLongestLever_N": 7.172
+  },
+  {
+   "file": "best_r6_ceilvault_60mm.json",
+   "move": "8c57838ee9d0",
+   "parity": "9/9 EXACT",
+   "over95": {
+    "n": 5,
+    "peakAboveTread_mm": 129,
+    "pushOffTicks": 47.2,
+    "pushOffMs": 944,
+    "hipPitchAtForceCeiling": 0.3061,
+    "kneeAtForceCeiling": 0.1955,
+    "ankleAtForceCeiling": 0.0087,
+    "neckPitchAtForceCeiling": 0.2722,
+    "anyOf14AtForceCeiling": 0.6277,
+    "positionCommandClipped": 0.9437,
+    "peakDuringTrack": 1
+   },
+   "under95": {
+    "n": 4,
+    "peakAboveTread_mm": 66.825,
+    "pushOffTicks": 25.5,
+    "pushOffMs": 510,
+    "hipPitchAtForceCeiling": 0.2715,
+    "kneeAtForceCeiling": 0.1512,
+    "ankleAtForceCeiling": 0.0192,
+    "neckPitchAtForceCeiling": 0.2595,
+    "anyOf14AtForceCeiling": 0.6905,
+    "positionCommandClipped": 0.9643,
+    "peakDuringTrack": 1
+   },
+   "neckLeverH_mm": [
+    17.6,
+    89.5
+   ],
+   "neckMaxForceAtLongestLever_N": 7.156
+  },
+  {
+   "file": "best_r6_ceilvaultB_60mm.json",
+   "move": "29c97398fe13",
+   "parity": "9/9 EXACT",
+   "over95": {
+    "n": 5,
+    "peakAboveTread_mm": 119.8,
+    "pushOffTicks": 56.2,
+    "pushOffMs": 1124,
+    "hipPitchAtForceCeiling": 0.3833,
+    "kneeAtForceCeiling": 0.2655,
+    "ankleAtForceCeiling": 0.0202,
+    "neckPitchAtForceCeiling": 0.0701,
+    "anyOf14AtForceCeiling": 0.7819,
+    "positionCommandClipped": 0.7314,
+    "peakDuringTrack": 1
+   },
+   "under95": {
+    "n": 4,
+    "peakAboveTread_mm": 68.975,
+    "pushOffTicks": 52.5,
+    "pushOffMs": 1050,
+    "hipPitchAtForceCeiling": 0.2962,
+    "kneeAtForceCeiling": 0.29,
+    "ankleAtForceCeiling": 0.0234,
+    "neckPitchAtForceCeiling": 0.1411,
+    "anyOf14AtForceCeiling": 0.6595,
+    "positionCommandClipped": 0.9488,
+    "peakDuringTrack": 1
+   },
+   "neckLeverH_mm": [
+    26,
+    87.3
+   ],
+   "neckMaxForceAtLongestLever_N": 7.337
+  }
+ ],
+ "pooled": {
+  "over95": {
+   "n": 20,
+   "peakAboveTread_mm": 122.79,
+   "pushOffTicks": 69.95,
+   "pushOffMs": 1399,
+   "hipPitchAtForceCeiling": 0.4221,
+   "kneeAtForceCeiling": 0.316,
+   "ankleAtForceCeiling": 0.0147,
+   "neckPitchAtForceCeiling": 0.0902,
+   "anyOf14AtForceCeiling": 0.7358,
+   "positionCommandClipped": 0.9043,
+   "peakDuringTrack": 1
+  },
+  "under95": {
+   "n": 16,
+   "peakAboveTread_mm": 63.8375,
+   "pushOffTicks": 39.5,
+   "pushOffMs": 790,
+   "hipPitchAtForceCeiling": 0.3406,
+   "kneeAtForceCeiling": 0.273,
+   "ankleAtForceCeiling": 0.0161,
+   "neckPitchAtForceCeiling": 0.166,
+   "anyOf14AtForceCeiling": 0.645,
+   "positionCommandClipped": 0.9558,
+   "peakDuringTrack": 1
+  }
+ },
+ "correlationsOverAll36Cells": {
+  "pushOffTicks_vs_peakHeight": 0.355,
+  "hipPitchSaturation_vs_peakHeight": 0.254,
+  "kneeSaturation_vs_peakHeight": -0.005,
+  "neckSaturation_vs_peakHeight": -0.026
+ }
+}

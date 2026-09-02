@@ -1,0 +1,4726 @@
+{
+  "rule": "peak trunk z - rise > 95 mm at any tick; honest requires above > 95 mm at the scored instant",
+  "maxCeilingCore": 5,
+  "rows": [
+    {
+      "label": "climb/best_r3_vault_60mm.json",
+      "move": "4b9110c448ec",
+      "kCore": 4,
+      "kCoreStable": 4,
+      "objective": 25.60987358916115,
+      "coreCellsWhereTrunkEverReached95mm": 5,
+      "extCellsWhereTrunkEverReached95mm": 5,
+      "peakAbove_mm_core": [
+        71.1,
+        122.6,
+        120.2,
+        122.5,
+        130.4,
+        63.3,
+        53.8,
+        50.9,
+        119.3
+      ]
+    },
+    {
+      "label": "WARM START (round-3 vault, no servo)",
+      "move": "4b9110c448ec",
+      "kCore": 4,
+      "kCoreStable": 4,
+      "objective": 25.60987358916115,
+      "coreCellsWhereTrunkEverReached95mm": 5,
+      "extCellsWhereTrunkEverReached95mm": 5,
+      "peakAbove_mm_core": [
+        71.1,
+        122.6,
+        120.2,
+        122.5,
+        130.4,
+        63.3,
+        53.8,
+        50.9,
+        119.3
+      ]
+    },
+    {
+      "label": "g14n13",
+      "move": "880a120ef649",
+      "kCore": 3,
+      "kCoreStable": 0,
+      "objective": 8.168056148709402,
+      "coreCellsWhereTrunkEverReached95mm": 3,
+      "extCellsWhereTrunkEverReached95mm": 4,
+      "peakAbove_mm_core": [
+        82,
+        84,
+        83.1,
+        123.5,
+        122.1,
+        121.5,
+        60.9,
+        55.4,
+        61.5
+      ]
+    },
+    {
+      "label": "P10 late arming, ZERO gains: what the mechanism alone costs once the throw has already landed",
+      "move": "91f1f3ae4860",
+      "kCore": 1,
+      "kCoreStable": 0,
+      "objective": 7.426864538230044,
+      "coreCellsWhereTrunkEverReached95mm": 3,
+      "extCellsWhereTrunkEverReached95mm": 3,
+      "peakAbove_mm_core": [
+        70.8,
+        121,
+        120.2,
+        60.8,
+        60.9,
+        63.4,
+        53.8,
+        50.9,
+        115.5
+      ]
+    },
+    {
+      "label": "P11 late stabiliser with trunk-height and pitch feedback",
+      "move": "84851a78edb9",
+      "kCore": 2,
+      "kCoreStable": 0,
+      "objective": 6.891326129817978,
+      "coreCellsWhereTrunkEverReached95mm": 2,
+      "extCellsWhereTrunkEverReached95mm": 2,
+      "peakAbove_mm_core": [
+        70.8,
+        122,
+        117.3,
+        84.3,
+        60.9,
+        91.2,
+        53.8,
+        51.7,
+        87.7
+      ]
+    },
+    {
+      "label": "P2 no landing at all: base = the TUCK pose, ZERO gains, armed at the tuck",
+      "move": "5f72b2122cbd",
+      "kCore": 2,
+      "kCoreStable": 0,
+      "objective": 6.447525628441728,
+      "coreCellsWhereTrunkEverReached95mm": 2,
+      "extCellsWhereTrunkEverReached95mm": 2,
+      "peakAbove_mm_core": [
+        82.7,
+        120.1,
+        81.2,
+        62.6,
+        120.8,
+        72.5,
+        66.9,
+        62.8,
+        68.1
+      ]
+    },
+    {
+      "label": "g11n15",
+      "move": "79ee971add01",
+      "kCore": 0,
+      "kCoreStable": 0,
+      "objective": 7.08135698524131,
+      "coreCellsWhereTrunkEverReached95mm": 2,
+      "extCellsWhereTrunkEverReached95mm": 2,
+      "peakAbove_mm_core": [
+        80.4,
+        102.9,
+        100.6,
+        62,
+        61,
+        61.3,
+        53.1,
+        55.6,
+        52.9
+      ]
+    },
+    {
+      "label": "P9 the servo as a LATE STABILISER: the whole throw runs, the law arms just after the landing keyframe",
+      "move": "e6e9c362c090",
+      "kCore": 0,
+      "kCoreStable": 0,
+      "objective": 6.577870986052324,
+      "coreCellsWhereTrunkEverReached95mm": 2,
+      "extCellsWhereTrunkEverReached95mm": 2,
+      "peakAbove_mm_core": [
+        70.8,
+        122.2,
+        120.4,
+        63.2,
+        60.9,
+        68.8,
+        53.8,
+        54.5,
+        73.8
+      ]
+    },
+    {
+      "label": "g2n4",
+      "move": "6ac003470131",
+      "kCore": 0,
+      "kCoreStable": 0,
+      "objective": 6.33211238510652,
+      "coreCellsWhereTrunkEverReached95mm": 2,
+      "extCellsWhereTrunkEverReached95mm": 3,
+      "peakAbove_mm_core": [
+        83.9,
+        108,
+        86.7,
+        76,
+        97.9,
+        73.9,
+        57.3,
+        58.5,
+        61.1
+      ]
+    },
+    {
+      "label": "g11n8",
+      "move": "e4e23610ddac",
+      "kCore": 1,
+      "kCoreStable": 0,
+      "objective": 8.38758382845618,
+      "coreCellsWhereTrunkEverReached95mm": 1,
+      "extCellsWhereTrunkEverReached95mm": 1,
+      "peakAbove_mm_core": [
+        118.6,
+        82.8,
+        76,
+        66,
+        63.9,
+        81.1,
+        65.2,
+        64.2,
+        66.7
+      ]
+    },
+    {
+      "label": "g1n4",
+      "move": "d414b7741f72",
+      "kCore": 1,
+      "kCoreStable": 0,
+      "objective": 7.615495969195901,
+      "coreCellsWhereTrunkEverReached95mm": 1,
+      "extCellsWhereTrunkEverReached95mm": 1,
+      "peakAbove_mm_core": [
+        83.2,
+        73,
+        86.8,
+        120.1,
+        89.7,
+        59.8,
+        90.4,
+        65.5,
+        51.3
+      ]
+    },
+    {
+      "label": "g2n1",
+      "move": "bdf817e8b9ec",
+      "kCore": 1,
+      "kCoreStable": 0,
+      "objective": 7.162608386009583,
+      "coreCellsWhereTrunkEverReached95mm": 1,
+      "extCellsWhereTrunkEverReached95mm": 1,
+      "peakAbove_mm_core": [
+        119.2,
+        73,
+        70.1,
+        60.9,
+        62.2,
+        60.1,
+        52.4,
+        52.1,
+        67.6
+      ]
+    },
+    {
+      "label": "g12n2",
+      "move": "c1da37c0e2a0",
+      "kCore": 0,
+      "kCoreStable": 0,
+      "objective": 8.523691132575777,
+      "coreCellsWhereTrunkEverReached95mm": 1,
+      "extCellsWhereTrunkEverReached95mm": 1,
+      "peakAbove_mm_core": [
+        80.2,
+        70.8,
+        120.3,
+        74.1,
+        68.2,
+        70.5,
+        64.7,
+        64.8,
+        67.3
+      ]
+    },
+    {
+      "label": "g5n19",
+      "move": "f7c15adfeadd",
+      "kCore": 0,
+      "kCoreStable": 0,
+      "objective": 8.415338747266341,
+      "coreCellsWhereTrunkEverReached95mm": 1,
+      "extCellsWhereTrunkEverReached95mm": 1,
+      "peakAbove_mm_core": [
+        95.2,
+        70.7,
+        70.5,
+        63.5,
+        61,
+        60.5,
+        59.3,
+        59.6,
+        55.9
+      ]
+    },
+    {
+      "label": "g14n12",
+      "move": "fdd227b6652a",
+      "kCore": 0,
+      "kCoreStable": 0,
+      "objective": 8.374035451952153,
+      "coreCellsWhereTrunkEverReached95mm": 1,
+      "extCellsWhereTrunkEverReached95mm": 1,
+      "peakAbove_mm_core": [
+        79.1,
+        81.3,
+        97.3,
+        74.3,
+        72.3,
+        73.2,
+        68,
+        68.1,
+        64.3
+      ]
+    },
+    {
+      "label": "g14n16",
+      "move": "efac52ca848f",
+      "kCore": 0,
+      "kCoreStable": 0,
+      "objective": 7.917941268089253,
+      "coreCellsWhereTrunkEverReached95mm": 1,
+      "extCellsWhereTrunkEverReached95mm": 1,
+      "peakAbove_mm_core": [
+        71,
+        106,
+        70.7,
+        61.1,
+        60.9,
+        62.5,
+        61.5,
+        52.5,
+        57.1
+      ]
+    },
+    {
+      "label": "g1n15",
+      "move": "0c86898115e4",
+      "kCore": 0,
+      "kCoreStable": 0,
+      "objective": 7.601241881824228,
+      "coreCellsWhereTrunkEverReached95mm": 1,
+      "extCellsWhereTrunkEverReached95mm": 1,
+      "peakAbove_mm_core": [
+        97.6,
+        70.6,
+        85.3,
+        64.5,
+        60.6,
+        84.2,
+        55.4,
+        51.1,
+        58.7
+      ]
+    },
+    {
+      "label": "g1n19",
+      "move": "44a765476d3d",
+      "kCore": 0,
+      "kCoreStable": 0,
+      "objective": 7.349682532939628,
+      "coreCellsWhereTrunkEverReached95mm": 1,
+      "extCellsWhereTrunkEverReached95mm": 1,
+      "peakAbove_mm_core": [
+        101.5,
+        70.8,
+        70.6,
+        62,
+        60.8,
+        63.6,
+        53.8,
+        50.8,
+        50.6
+      ]
+    },
+    {
+      "label": "P3 the reasoned law around the landing pose (kHipX -2, kKneeFz -4, kAnkFz +1)",
+      "move": "4776bb4e09e4",
+      "kCore": 0,
+      "kCoreStable": 0,
+      "objective": 7.3417642802094,
+      "coreCellsWhereTrunkEverReached95mm": 1,
+      "extCellsWhereTrunkEverReached95mm": 1,
+      "peakAbove_mm_core": [
+        109.2,
+        71.5,
+        92.9,
+        65.9,
+        60.9,
+        65.9,
+        52.8,
+        50.9,
+        71.4
+      ]
+    },
+    {
+      "label": "g3n7",
+      "move": "4a35a1c500c6",
+      "kCore": 0,
+      "kCoreStable": 0,
+      "objective": 6.806426414495116,
+      "coreCellsWhereTrunkEverReached95mm": 1,
+      "extCellsWhereTrunkEverReached95mm": 1,
+      "peakAbove_mm_core": [
+        71.1,
+        71,
+        70.2,
+        61.1,
+        61,
+        125.6,
+        58.4,
+        57.9,
+        59.7
+      ]
+    },
+    {
+      "label": "g2n6",
+      "move": "30a0f45d1051",
+      "kCore": 0,
+      "kCoreStable": 0,
+      "objective": 6.567454090662997,
+      "coreCellsWhereTrunkEverReached95mm": 1,
+      "extCellsWhereTrunkEverReached95mm": 1,
+      "peakAbove_mm_core": [
+        80.3,
+        73.8,
+        82.9,
+        61,
+        61.3,
+        65.9,
+        53.8,
+        56.5,
+        116.5
+      ]
+    },
+    {
+      "label": "g1n1",
+      "move": "7033c1ac79f9",
+      "kCore": 0,
+      "kCoreStable": 0,
+      "objective": 6.555247431134807,
+      "coreCellsWhereTrunkEverReached95mm": 1,
+      "extCellsWhereTrunkEverReached95mm": 1,
+      "peakAbove_mm_core": [
+        88.2,
+        85.7,
+        69.2,
+        72.9,
+        103.6,
+        64,
+        70.1,
+        61.8,
+        55.1
+      ]
+    },
+    {
+      "label": "P6 trunk-height feedback only",
+      "move": "896b04b1df57",
+      "kCore": 0,
+      "kCoreStable": 0,
+      "objective": 6.223186940162714,
+      "coreCellsWhereTrunkEverReached95mm": 1,
+      "extCellsWhereTrunkEverReached95mm": 1,
+      "peakAbove_mm_core": [
+        96.7,
+        70.9,
+        81.7,
+        68.7,
+        60.9,
+        80.4,
+        59,
+        58.2,
+        60
+      ]
+    },
+    {
+      "label": "g3n3",
+      "move": "a184136982a6",
+      "kCore": 0,
+      "kCoreStable": 0,
+      "objective": 5.959310351387868,
+      "coreCellsWhereTrunkEverReached95mm": 1,
+      "extCellsWhereTrunkEverReached95mm": 2,
+      "peakAbove_mm_core": [
+        100.9,
+        71.1,
+        93.2,
+        62.6,
+        63.9,
+        69.9,
+        50.9,
+        52.4,
+        60.3
+      ]
+    },
+    {
+      "label": "g4n21",
+      "move": "4c31d0999a2a",
+      "kCore": 0,
+      "kCoreStable": 0,
+      "objective": 5.5695806983282745,
+      "coreCellsWhereTrunkEverReached95mm": 1,
+      "extCellsWhereTrunkEverReached95mm": 1,
+      "peakAbove_mm_core": [
+        81.9,
+        78.1,
+        86.5,
+        96.5,
+        84.4,
+        72.5,
+        66.9,
+        53.9,
+        65.1
+      ]
+    },
+    {
+      "label": "g2n21",
+      "move": "e6e8ff144695",
+      "kCore": 0,
+      "kCoreStable": 0,
+      "objective": 9.296953121906359,
+      "coreCellsWhereTrunkEverReached95mm": 0,
+      "extCellsWhereTrunkEverReached95mm": 0,
+      "peakAbove_mm_core": [
+        71,
+        76.1,
+        84,
+        66.9,
+        65.6,
+        72.2,
+        58.2,
+        57.4,
+        62.8
+      ]
+    },
+    {
+      "label": "g13n4",
+      "move": "877ed4d19363",
+      "kCore": 0,
+      "kCoreStable": 0,
+      "objective": 9.27586886171665,
+      "coreCellsWhereTrunkEverReached95mm": 0,
+      "extCellsWhereTrunkEverReached95mm": 0,
+      "peakAbove_mm_core": [
+        73.7,
+        73.3,
+        74.4,
+        67.8,
+        70.7,
+        66.1,
+        57.1,
+        59,
+        62.2
+      ]
+    },
+    {
+      "label": "g13n9",
+      "move": "ccde1106c223",
+      "kCore": 0,
+      "kCoreStable": 0,
+      "objective": 9.199234001724951,
+      "coreCellsWhereTrunkEverReached95mm": 0,
+      "extCellsWhereTrunkEverReached95mm": 0,
+      "peakAbove_mm_core": [
+        79.9,
+        78.7,
+        77.6,
+        74.4,
+        72.3,
+        70.2,
+        61.4,
+        62.9,
+        60.6
+      ]
+    },
+    {
+      "label": "g13n20",
+      "move": "c6e6ce7b1ba3",
+      "kCore": 0,
+      "kCoreStable": 0,
+      "objective": 9.193516188247063,
+      "coreCellsWhereTrunkEverReached95mm": 0,
+      "extCellsWhereTrunkEverReached95mm": 0,
+      "peakAbove_mm_core": [
+        75.9,
+        84.1,
+        81.4,
+        71.4,
+        69.5,
+        72.5,
+        67.1,
+        66.1,
+        65.3
+      ]
+    },
+    {
+      "label": "g6n13",
+      "move": "b91dc9a460b6",
+      "kCore": 0,
+      "kCoreStable": 0,
+      "objective": 9.170997693821686,
+      "coreCellsWhereTrunkEverReached95mm": 0,
+      "extCellsWhereTrunkEverReached95mm": 0,
+      "peakAbove_mm_core": [
+        80.3,
+        80,
+        80.9,
+        75,
+        73.7,
+        72.5,
+        67.1,
+        66.9,
+        62.7
+      ]
+    },
+    {
+      "label": "g12n1",
+      "move": "c590a9fe4063",
+      "kCore": 0,
+      "kCoreStable": 0,
+      "objective": 9.164100550399139,
+      "coreCellsWhereTrunkEverReached95mm": 0,
+      "extCellsWhereTrunkEverReached95mm": 0,
+      "peakAbove_mm_core": [
+        73.6,
+        73.1,
+        74.3,
+        67.5,
+        65.6,
+        67,
+        68.6,
+        68.6,
+        59.4
+      ]
+    },
+    {
+      "label": "g10n4",
+      "move": "083d14053d18",
+      "kCore": 0,
+      "kCoreStable": 0,
+      "objective": 9.162392207318758,
+      "coreCellsWhereTrunkEverReached95mm": 0,
+      "extCellsWhereTrunkEverReached95mm": 0,
+      "peakAbove_mm_core": [
+        78,
+        76.8,
+        77.1,
+        72.7,
+        72.1,
+        70.7,
+        66.5,
+        66,
+        62.6
+      ]
+    },
+    {
+      "label": "g14n18",
+      "move": "73900b1f0de6",
+      "kCore": 0,
+      "kCoreStable": 0,
+      "objective": 9.141190116845326,
+      "coreCellsWhereTrunkEverReached95mm": 0,
+      "extCellsWhereTrunkEverReached95mm": 0,
+      "peakAbove_mm_core": [
+        70.8,
+        70.8,
+        72.6,
+        67,
+        65.4,
+        62.6,
+        59.5,
+        56,
+        55.7
+      ]
+    },
+    {
+      "label": "g12n20",
+      "move": "02aa706c3941",
+      "kCore": 0,
+      "kCoreStable": 0,
+      "objective": 9.139064847700045,
+      "coreCellsWhereTrunkEverReached95mm": 0,
+      "extCellsWhereTrunkEverReached95mm": 0,
+      "peakAbove_mm_core": [
+        78.8,
+        77.2,
+        77.9,
+        73.3,
+        72.4,
+        70.9,
+        63.8,
+        63.8,
+        63.3
+      ]
+    },
+    {
+      "label": "g5n21",
+      "move": "88842f1e8153",
+      "kCore": 0,
+      "kCoreStable": 0,
+      "objective": 9.128488003996583,
+      "coreCellsWhereTrunkEverReached95mm": 0,
+      "extCellsWhereTrunkEverReached95mm": 0,
+      "peakAbove_mm_core": [
+        72.9,
+        72.3,
+        73.4,
+        67.9,
+        67.2,
+        65,
+        57,
+        55.9,
+        55.5
+      ]
+    },
+    {
+      "label": "g9n5",
+      "move": "04c372d1e336",
+      "kCore": 0,
+      "kCoreStable": 0,
+      "objective": 9.12695940110969,
+      "coreCellsWhereTrunkEverReached95mm": 0,
+      "extCellsWhereTrunkEverReached95mm": 0,
+      "peakAbove_mm_core": [
+        76,
+        75.6,
+        75.2,
+        71.9,
+        70.8,
+        72.9,
+        62.1,
+        62.3,
+        61.2
+      ]
+    },
+    {
+      "label": "g7n6",
+      "move": "5072750ea445",
+      "kCore": 0,
+      "kCoreStable": 0,
+      "objective": 9.099327831410738,
+      "coreCellsWhereTrunkEverReached95mm": 0,
+      "extCellsWhereTrunkEverReached95mm": 0,
+      "peakAbove_mm_core": [
+        75.7,
+        73.6,
+        77.1,
+        71.8,
+        73.5,
+        71.7,
+        62,
+        62.2,
+        64.4
+      ]
+    },
+    {
+      "label": "g12n11",
+      "move": "445faef9c00e",
+      "kCore": 0,
+      "kCoreStable": 0,
+      "objective": 9.090332921003537,
+      "coreCellsWhereTrunkEverReached95mm": 0,
+      "extCellsWhereTrunkEverReached95mm": 0,
+      "peakAbove_mm_core": [
+        76.4,
+        74.9,
+        75.4,
+        70.8,
+        68.2,
+        64.9,
+        60,
+        60.4,
+        55.3
+      ]
+    },
+    {
+      "label": "g5n20",
+      "move": "2ade626dc508",
+      "kCore": 0,
+      "kCoreStable": 0,
+      "objective": 9.07692269333026,
+      "coreCellsWhereTrunkEverReached95mm": 0,
+      "extCellsWhereTrunkEverReached95mm": 0,
+      "peakAbove_mm_core": [
+        79.7,
+        78,
+        81,
+        74.1,
+        73.8,
+        74.5,
+        63.5,
+        64.2,
+        65.2
+      ]
+    },
+    {
+      "label": "g10n5",
+      "move": "1eecec281294",
+      "kCore": 0,
+      "kCoreStable": 0,
+      "objective": 9.060034319941883,
+      "coreCellsWhereTrunkEverReached95mm": 0,
+      "extCellsWhereTrunkEverReached95mm": 0,
+      "peakAbove_mm_core": [
+        75.8,
+        75.1,
+        75.3,
+        71.1,
+        69,
+        67.9,
+        60.7,
+        60.2,
+        58.7
+      ]
+    },
+    {
+      "label": "g9n21",
+      "move": "b3ff10974c3b",
+      "kCore": 0,
+      "kCoreStable": 0,
+      "objective": 9.058380086763824,
+      "coreCellsWhereTrunkEverReached95mm": 0,
+      "extCellsWhereTrunkEverReached95mm": 0,
+      "peakAbove_mm_core": [
+        80.2,
+        78,
+        79.7,
+        77.3,
+        73.4,
+        73.7,
+        63.1,
+        62.9,
+        62.7
+      ]
+    },
+    {
+      "label": "g12n14",
+      "move": "934a0fa2238d",
+      "kCore": 0,
+      "kCoreStable": 0,
+      "objective": 9.058024114661105,
+      "coreCellsWhereTrunkEverReached95mm": 0,
+      "extCellsWhereTrunkEverReached95mm": 0,
+      "peakAbove_mm_core": [
+        76.5,
+        73.3,
+        77.4,
+        70.3,
+        65.6,
+        74,
+        61.1,
+        58.7,
+        63.4
+      ]
+    },
+    {
+      "label": "g8n21",
+      "move": "24fc6f6aa483",
+      "kCore": 0,
+      "kCoreStable": 0,
+      "objective": 9.052296184926817,
+      "coreCellsWhereTrunkEverReached95mm": 0,
+      "extCellsWhereTrunkEverReached95mm": 0,
+      "peakAbove_mm_core": [
+        80.3,
+        80.2,
+        80.4,
+        71.9,
+        74.5,
+        73.9,
+        66.1,
+        66.6,
+        67.7
+      ]
+    },
+    {
+      "label": "g3n16",
+      "move": "fff82595aaba",
+      "kCore": 0,
+      "kCoreStable": 0,
+      "objective": 9.044552119656041,
+      "coreCellsWhereTrunkEverReached95mm": 0,
+      "extCellsWhereTrunkEverReached95mm": 0,
+      "peakAbove_mm_core": [
+        83.6,
+        83.3,
+        84.6,
+        76.3,
+        76.4,
+        74.6,
+        66,
+        68.3,
+        64.1
+      ]
+    },
+    {
+      "label": "g14n8",
+      "move": "247be4c9ec04",
+      "kCore": 0,
+      "kCoreStable": 0,
+      "objective": 9.022254673951405,
+      "coreCellsWhereTrunkEverReached95mm": 0,
+      "extCellsWhereTrunkEverReached95mm": 0,
+      "peakAbove_mm_core": [
+        74.5,
+        73.8,
+        74.1,
+        67.4,
+        66.3,
+        63.6,
+        60,
+        59.5,
+        54.3
+      ]
+    },
+    {
+      "label": "g15n4",
+      "move": "d18e6cea3b85",
+      "kCore": 0,
+      "kCoreStable": 0,
+      "objective": 9.00641255677215,
+      "coreCellsWhereTrunkEverReached95mm": 0,
+      "extCellsWhereTrunkEverReached95mm": 0,
+      "peakAbove_mm_core": [
+        74.6,
+        84.7,
+        75.8,
+        71.6,
+        72.5,
+        69.3,
+        64.1,
+        64.8,
+        62.7
+      ]
+    },
+    {
+      "label": "g8n11",
+      "move": "62ac222be23c",
+      "kCore": 0,
+      "kCoreStable": 0,
+      "objective": 8.986217736799354,
+      "coreCellsWhereTrunkEverReached95mm": 0,
+      "extCellsWhereTrunkEverReached95mm": 0,
+      "peakAbove_mm_core": [
+        74.3,
+        72,
+        74.5,
+        77.8,
+        66.5,
+        70.9,
+        60.6,
+        59.9,
+        63.3
+      ]
+    },
+    {
+      "label": "g9n9",
+      "move": "4175e0e99d5a",
+      "kCore": 0,
+      "kCoreStable": 0,
+      "objective": 8.968431438186242,
+      "coreCellsWhereTrunkEverReached95mm": 0,
+      "extCellsWhereTrunkEverReached95mm": 0,
+      "peakAbove_mm_core": [
+        78.4,
+        77.3,
+        78.8,
+        71.1,
+        69.2,
+        70.5,
+        63.8,
+        63.3,
+        60.6
+      ]
+    },
+    {
+      "label": "g14n19",
+      "move": "24e02c81bd3a",
+      "kCore": 0,
+      "kCoreStable": 0,
+      "objective": 8.941330618240924,
+      "coreCellsWhereTrunkEverReached95mm": 0,
+      "extCellsWhereTrunkEverReached95mm": 0,
+      "peakAbove_mm_core": [
+        81.9,
+        73.5,
+        76.6,
+        69.9,
+        67.2,
+        72.6,
+        60.5,
+        60.4,
+        63.1
+      ]
+    },
+    {
+      "label": "g11n14",
+      "move": "78c6999d4e14",
+      "kCore": 0,
+      "kCoreStable": 0,
+      "objective": 8.939990129545675,
+      "coreCellsWhereTrunkEverReached95mm": 0,
+      "extCellsWhereTrunkEverReached95mm": 0,
+      "peakAbove_mm_core": [
+        80.9,
+        81,
+        78.7,
+        74.5,
+        74.5,
+        69.3,
+        67,
+        67.2,
+        61.6
+      ]
+    },
+    {
+      "label": "g10n3",
+      "move": "a243ee026cc8",
+      "kCore": 0,
+      "kCoreStable": 0,
+      "objective": 8.938591788153957,
+      "coreCellsWhereTrunkEverReached95mm": 0,
+      "extCellsWhereTrunkEverReached95mm": 0,
+      "peakAbove_mm_core": [
+        71,
+        73.4,
+        70.3,
+        64.4,
+        66.9,
+        62.5,
+        58.9,
+        58.1,
+        58.3
+      ]
+    },
+    {
+      "label": "g10n12",
+      "move": "1da92a0ee41a",
+      "kCore": 0,
+      "kCoreStable": 0,
+      "objective": 8.937443053914325,
+      "coreCellsWhereTrunkEverReached95mm": 0,
+      "extCellsWhereTrunkEverReached95mm": 0,
+      "peakAbove_mm_core": [
+        80.6,
+        80.6,
+        81.1,
+        77.9,
+        75.2,
+        75.8,
+        65.8,
+        65.9,
+        64.7
+      ]
+    },
+    {
+      "label": "g9n1",
+      "move": "9b9ec0a36dac",
+      "kCore": 0,
+      "kCoreStable": 0,
+      "objective": 8.91894699931598,
+      "coreCellsWhereTrunkEverReached95mm": 0,
+      "extCellsWhereTrunkEverReached95mm": 0,
+      "peakAbove_mm_core": [
+        80.1,
+        79.9,
+        80.1,
+        73.7,
+        73,
+        72.6,
+        69.2,
+        69.2,
+        68.8
+      ]
+    },
+    {
+      "label": "g12n10",
+      "move": "7ef351a78618",
+      "kCore": 0,
+      "kCoreStable": 0,
+      "objective": 8.909611009577402,
+      "coreCellsWhereTrunkEverReached95mm": 0,
+      "extCellsWhereTrunkEverReached95mm": 0,
+      "peakAbove_mm_core": [
+        78.8,
+        78.6,
+        78,
+        76.2,
+        75.9,
+        71.3,
+        64.3,
+        66.9,
+        62.2
+      ]
+    },
+    {
+      "label": "g9n3",
+      "move": "7d69950317f2",
+      "kCore": 0,
+      "kCoreStable": 0,
+      "objective": 8.906019388058805,
+      "coreCellsWhereTrunkEverReached95mm": 0,
+      "extCellsWhereTrunkEverReached95mm": 0,
+      "peakAbove_mm_core": [
+        77.4,
+        76.6,
+        77.2,
+        74.6,
+        74,
+        74,
+        64.6,
+        64.6,
+        63.4
+      ]
+    },
+    {
+      "label": "g12n19",
+      "move": "6fba19bef47a",
+      "kCore": 0,
+      "kCoreStable": 0,
+      "objective": 8.893669968175164,
+      "coreCellsWhereTrunkEverReached95mm": 0,
+      "extCellsWhereTrunkEverReached95mm": 0,
+      "peakAbove_mm_core": [
+        81.1,
+        80.5,
+        80.4,
+        76,
+        74.5,
+        74.6,
+        65,
+        64.6,
+        66.9
+      ]
+    },
+    {
+      "label": "g9n8",
+      "move": "d77f5f0bdb93",
+      "kCore": 0,
+      "kCoreStable": 0,
+      "objective": 8.887786905989742,
+      "coreCellsWhereTrunkEverReached95mm": 0,
+      "extCellsWhereTrunkEverReached95mm": 0,
+      "peakAbove_mm_core": [
+        77.1,
+        76.1,
+        77.3,
+        74.3,
+        72,
+        71.8,
+        64.6,
+        65.5,
+        67.8
+      ]
+    },
+    {
+      "label": "g12n3",
+      "move": "654ed09f6148",
+      "kCore": 0,
+      "kCoreStable": 0,
+      "objective": 8.882688909230954,
+      "coreCellsWhereTrunkEverReached95mm": 0,
+      "extCellsWhereTrunkEverReached95mm": 0,
+      "peakAbove_mm_core": [
+        79.3,
+        78.9,
+        79.8,
+        86.9,
+        73,
+        74.4,
+        63.4,
+        63.9,
+        67.6
+      ]
+    },
+    {
+      "label": "g4n5",
+      "move": "932211951c14",
+      "kCore": 0,
+      "kCoreStable": 0,
+      "objective": 8.875518246738402,
+      "coreCellsWhereTrunkEverReached95mm": 0,
+      "extCellsWhereTrunkEverReached95mm": 0,
+      "peakAbove_mm_core": [
+        84.5,
+        85.7,
+        82.3,
+        75.7,
+        76.2,
+        75.3,
+        66.4,
+        66.4,
+        64.7
+      ]
+    },
+    {
+      "label": "g10n14",
+      "move": "95f6b366e965",
+      "kCore": 0,
+      "kCoreStable": 0,
+      "objective": 8.874279309127685,
+      "coreCellsWhereTrunkEverReached95mm": 0,
+      "extCellsWhereTrunkEverReached95mm": 0,
+      "peakAbove_mm_core": [
+        79.7,
+        78.3,
+        78.4,
+        75.4,
+        75.6,
+        69.6,
+        63.4,
+        63.8,
+        64.9
+      ]
+    },
+    {
+      "label": "g7n4",
+      "move": "48beb3591a63",
+      "kCore": 0,
+      "kCoreStable": 0,
+      "objective": 8.870359891094559,
+      "coreCellsWhereTrunkEverReached95mm": 0,
+      "extCellsWhereTrunkEverReached95mm": 0,
+      "peakAbove_mm_core": [
+        70.9,
+        70.7,
+        74.8,
+        60.9,
+        60.7,
+        61.6,
+        56.8,
+        54.5,
+        59.7
+      ]
+    },
+    {
+      "label": "g14n5",
+      "move": "22380110a5f5",
+      "kCore": 0,
+      "kCoreStable": 0,
+      "objective": 8.861053776454384,
+      "coreCellsWhereTrunkEverReached95mm": 0,
+      "extCellsWhereTrunkEverReached95mm": 0,
+      "peakAbove_mm_core": [
+        72.4,
+        74.8,
+        71.8,
+        69.6,
+        70.5,
+        65.1,
+        56.5,
+        59.6,
+        61.7
+      ]
+    },
+    {
+      "label": "g12n12",
+      "move": "2b886af93e50",
+      "kCore": 0,
+      "kCoreStable": 0,
+      "objective": 8.860865975152457,
+      "coreCellsWhereTrunkEverReached95mm": 0,
+      "extCellsWhereTrunkEverReached95mm": 0,
+      "peakAbove_mm_core": [
+        74.1,
+        73.4,
+        73.9,
+        68.8,
+        70.5,
+        77.2,
+        61.4,
+        60.2,
+        54.8
+      ]
+    },
+    {
+      "label": "g13n21",
+      "move": "8db0fd21de5f",
+      "kCore": 0,
+      "kCoreStable": 0,
+      "objective": 8.844464530220144,
+      "coreCellsWhereTrunkEverReached95mm": 0,
+      "extCellsWhereTrunkEverReached95mm": 0,
+      "peakAbove_mm_core": [
+        74,
+        78.2,
+        75,
+        87.7,
+        69.8,
+        65.2,
+        59.3,
+        60.5,
+        59.6
+      ]
+    },
+    {
+      "label": "g9n19",
+      "move": "ddee2cc51175",
+      "kCore": 0,
+      "kCoreStable": 0,
+      "objective": 8.844464108658194,
+      "coreCellsWhereTrunkEverReached95mm": 0,
+      "extCellsWhereTrunkEverReached95mm": 0,
+      "peakAbove_mm_core": [
+        78.9,
+        78,
+        78.6,
+        73.6,
+        76.7,
+        72,
+        65.2,
+        66.3,
+        68.2
+      ]
+    },
+    {
+      "label": "g7n19",
+      "move": "811f498bb127",
+      "kCore": 0,
+      "kCoreStable": 0,
+      "objective": 8.824731278676687,
+      "coreCellsWhereTrunkEverReached95mm": 0,
+      "extCellsWhereTrunkEverReached95mm": 0,
+      "peakAbove_mm_core": [
+        72.2,
+        72.4,
+        73.2,
+        69.3,
+        70.7,
+        64,
+        65,
+        62.7,
+        64.3
+      ]
+    },
+    {
+      "label": "g11n2",
+      "move": "e278f5a9ea14",
+      "kCore": 0,
+      "kCoreStable": 0,
+      "objective": 8.818598499809816,
+      "coreCellsWhereTrunkEverReached95mm": 0,
+      "extCellsWhereTrunkEverReached95mm": 0,
+      "peakAbove_mm_core": [
+        77.2,
+        76.3,
+        77.9,
+        70.4,
+        72.4,
+        68.8,
+        64,
+        65.5,
+        62.9
+      ]
+    },
+    {
+      "label": "g5n3",
+      "move": "6bec11f596c8",
+      "kCore": 0,
+      "kCoreStable": 0,
+      "objective": 8.803009333932522,
+      "coreCellsWhereTrunkEverReached95mm": 0,
+      "extCellsWhereTrunkEverReached95mm": 0,
+      "peakAbove_mm_core": [
+        77.6,
+        77.9,
+        78.3,
+        76.9,
+        73.7,
+        71,
+        67.6,
+        67.8,
+        66.9
+      ]
+    },
+    {
+      "label": "g7n9",
+      "move": "d4ee807e4762",
+      "kCore": 0,
+      "kCoreStable": 0,
+      "objective": 8.802455275703682,
+      "coreCellsWhereTrunkEverReached95mm": 0,
+      "extCellsWhereTrunkEverReached95mm": 0,
+      "peakAbove_mm_core": [
+        78.1,
+        76.9,
+        77.7,
+        71.1,
+        68.7,
+        70.4,
+        65.6,
+        63.6,
+        63.8
+      ]
+    },
+    {
+      "label": "g2n14",
+      "move": "1350f072a101",
+      "kCore": 0,
+      "kCoreStable": 0,
+      "objective": 8.791828276582992,
+      "coreCellsWhereTrunkEverReached95mm": 0,
+      "extCellsWhereTrunkEverReached95mm": 0,
+      "peakAbove_mm_core": [
+        80.5,
+        79.5,
+        80.5,
+        78.3,
+        75.1,
+        74.8,
+        65.4,
+        66,
+        64.6
+      ]
+    },
+    {
+      "label": "g6n21",
+      "move": "b5de42ae8601",
+      "kCore": 0,
+      "kCoreStable": 0,
+      "objective": 8.775312119511367,
+      "coreCellsWhereTrunkEverReached95mm": 0,
+      "extCellsWhereTrunkEverReached95mm": 0,
+      "peakAbove_mm_core": [
+        78.3,
+        76.1,
+        76.9,
+        75,
+        68.7,
+        74.6,
+        64.2,
+        62.7,
+        65.4
+      ]
+    },
+    {
+      "label": "g8n5",
+      "move": "d0ea8121de07",
+      "kCore": 0,
+      "kCoreStable": 0,
+      "objective": 8.769600457771917,
+      "coreCellsWhereTrunkEverReached95mm": 0,
+      "extCellsWhereTrunkEverReached95mm": 0,
+      "peakAbove_mm_core": [
+        77.8,
+        76.9,
+        77.3,
+        69.4,
+        70.7,
+        72.3,
+        63.6,
+        66.6,
+        63
+      ]
+    },
+    {
+      "label": "g15n7",
+      "move": "e4ac0379a70d",
+      "kCore": 0,
+      "kCoreStable": 0,
+      "objective": 8.757959502667273,
+      "coreCellsWhereTrunkEverReached95mm": 0,
+      "extCellsWhereTrunkEverReached95mm": 0,
+      "peakAbove_mm_core": [
+        77.4,
+        78.4,
+        78.9,
+        77.9,
+        73.3,
+        71.4,
+        65.3,
+        65,
+        65.3
+      ]
+    },
+    {
+      "label": "g12n6",
+      "move": "914c8bb43144",
+      "kCore": 0,
+      "kCoreStable": 0,
+      "objective": 8.751029453246424,
+      "coreCellsWhereTrunkEverReached95mm": 0,
+      "extCellsWhereTrunkEverReached95mm": 0,
+      "peakAbove_mm_core": [
+        79.8,
+        79.8,
+        80.9,
+        72.9,
+        71,
+        74,
+        67.1,
+        66.4,
+        64.7
+      ]
+    },
+    {
+      "label": "g9n0",
+      "move": "bae75994685f",
+      "kCore": 0,
+      "kCoreStable": 0,
+      "objective": 8.746727745077802,
+      "coreCellsWhereTrunkEverReached95mm": 0,
+      "extCellsWhereTrunkEverReached95mm": 0,
+      "peakAbove_mm_core": [
+        78.3,
+        79.9,
+        80.2,
+        71.6,
+        77.9,
+        69.7,
+        67.4,
+        67.3,
+        64
+      ]
+    },
+    {
+      "label": "g11n5",
+      "move": "528ae8845827",
+      "kCore": 0,
+      "kCoreStable": 0,
+      "objective": 8.743817044064084,
+      "coreCellsWhereTrunkEverReached95mm": 0,
+      "extCellsWhereTrunkEverReached95mm": 0,
+      "peakAbove_mm_core": [
+        78.4,
+        78.3,
+        80.8,
+        75.4,
+        75.2,
+        74.2,
+        66.4,
+        67,
+        65.3
+      ]
+    },
+    {
+      "label": "g6n8",
+      "move": "cec1b6d0389f",
+      "kCore": 0,
+      "kCoreStable": 0,
+      "objective": 8.720445446792063,
+      "coreCellsWhereTrunkEverReached95mm": 0,
+      "extCellsWhereTrunkEverReached95mm": 0,
+      "peakAbove_mm_core": [
+        81.9,
+        81.6,
+        83.5,
+        75.5,
+        76.5,
+        74.5,
+        65.3,
+        66.7,
+        64.3
+      ]
+    },
+    {
+      "label": "g3n19",
+      "move": "ce482b6719f6",
+      "kCore": 0,
+      "kCoreStable": 0,
+      "objective": 8.720417352714996,
+      "coreCellsWhereTrunkEverReached95mm": 0,
+      "extCellsWhereTrunkEverReached95mm": 0,
+      "peakAbove_mm_core": [
+        82.4,
+        82.1,
+        83.4,
+        78,
+        75.5,
+        75.7,
+        66.2,
+        67.5,
+        65.1
+      ]
+    },
+    {
+      "label": "g6n7",
+      "move": "aca8b4cd2902",
+      "kCore": 0,
+      "kCoreStable": 0,
+      "objective": 8.70516250331417,
+      "coreCellsWhereTrunkEverReached95mm": 0,
+      "extCellsWhereTrunkEverReached95mm": 0,
+      "peakAbove_mm_core": [
+        74.7,
+        71.7,
+        72.4,
+        68.1,
+        62.7,
+        63.1,
+        63.6,
+        59,
+        57.2
+      ]
+    },
+    {
+      "label": "g3n11",
+      "move": "21dc8b932823",
+      "kCore": 0,
+      "kCoreStable": 0,
+      "objective": 8.684781339528689,
+      "coreCellsWhereTrunkEverReached95mm": 0,
+      "extCellsWhereTrunkEverReached95mm": 0,
+      "peakAbove_mm_core": [
+        78.6,
+        77.3,
+        72.4,
+        69.5,
+        74,
+        61.3,
+        51.9,
+        52,
+        51.5
+      ]
+    },
+    {
+      "label": "g14n17",
+      "move": "35550f4040f4",
+      "kCore": 0,
+      "kCoreStable": 0,
+      "objective": 8.67955431402166,
+      "coreCellsWhereTrunkEverReached95mm": 0,
+      "extCellsWhereTrunkEverReached95mm": 0,
+      "peakAbove_mm_core": [
+        80.2,
+        80.4,
+        79,
+        76,
+        75.9,
+        73.4,
+        68.7,
+        68.6,
+        66.5
+      ]
+    },
+    {
+      "label": "g6n10",
+      "move": "334e2d63f6da",
+      "kCore": 0,
+      "kCoreStable": 0,
+      "objective": 8.672065396338848,
+      "coreCellsWhereTrunkEverReached95mm": 0,
+      "extCellsWhereTrunkEverReached95mm": 0,
+      "peakAbove_mm_core": [
+        78.7,
+        78.7,
+        80.1,
+        74.5,
+        73.8,
+        76.6,
+        63.3,
+        64.7,
+        65.5
+      ]
+    },
+    {
+      "label": "g7n20",
+      "move": "63e2c0ec5a66",
+      "kCore": 0,
+      "kCoreStable": 0,
+      "objective": 8.668958027273039,
+      "coreCellsWhereTrunkEverReached95mm": 0,
+      "extCellsWhereTrunkEverReached95mm": 0,
+      "peakAbove_mm_core": [
+        70.7,
+        70.9,
+        71,
+        64.3,
+        68.3,
+        67,
+        64.5,
+        63.2,
+        62.9
+      ]
+    },
+    {
+      "label": "g3n9",
+      "move": "961e329fa004",
+      "kCore": 0,
+      "kCoreStable": 0,
+      "objective": 8.667989209027787,
+      "coreCellsWhereTrunkEverReached95mm": 0,
+      "extCellsWhereTrunkEverReached95mm": 0,
+      "peakAbove_mm_core": [
+        70.8,
+        70.8,
+        70.6,
+        61.9,
+        60.8,
+        64.2,
+        63.2,
+        58.9,
+        57
+      ]
+    },
+    {
+      "label": "g5n15",
+      "move": "e168ca8c6b00",
+      "kCore": 0,
+      "kCoreStable": 0,
+      "objective": 8.666389796478567,
+      "coreCellsWhereTrunkEverReached95mm": 0,
+      "extCellsWhereTrunkEverReached95mm": 0,
+      "peakAbove_mm_core": [
+        76.5,
+        77.1,
+        77.5,
+        72.8,
+        70.9,
+        69.8,
+        61.9,
+        61.6,
+        60.9
+      ]
+    },
+    {
+      "label": "g8n4",
+      "move": "282a3c6f37ac",
+      "kCore": 0,
+      "kCoreStable": 0,
+      "objective": 8.663614182239831,
+      "coreCellsWhereTrunkEverReached95mm": 0,
+      "extCellsWhereTrunkEverReached95mm": 0,
+      "peakAbove_mm_core": [
+        81.8,
+        81.8,
+        81.8,
+        70.9,
+        76.9,
+        71.3,
+        69.5,
+        66.8,
+        60.9
+      ]
+    },
+    {
+      "label": "g7n8",
+      "move": "f183f3429e6a",
+      "kCore": 0,
+      "kCoreStable": 0,
+      "objective": 8.660971751295964,
+      "coreCellsWhereTrunkEverReached95mm": 0,
+      "extCellsWhereTrunkEverReached95mm": 0,
+      "peakAbove_mm_core": [
+        81.9,
+        80.9,
+        81.9,
+        73.7,
+        73.8,
+        74.6,
+        68.2,
+        66.4,
+        65.5
+      ]
+    },
+    {
+      "label": "g15n0",
+      "move": "0864a6fd1e87",
+      "kCore": 0,
+      "kCoreStable": 0,
+      "objective": 8.657146758506864,
+      "coreCellsWhereTrunkEverReached95mm": 0,
+      "extCellsWhereTrunkEverReached95mm": 0,
+      "peakAbove_mm_core": [
+        70.7,
+        70.9,
+        71.4,
+        72.3,
+        66.3,
+        63.9,
+        52.7,
+        53.8,
+        53.1
+      ]
+    },
+    {
+      "label": "g12n16",
+      "move": "860b70cdca63",
+      "kCore": 0,
+      "kCoreStable": 0,
+      "objective": 8.655026704904774,
+      "coreCellsWhereTrunkEverReached95mm": 0,
+      "extCellsWhereTrunkEverReached95mm": 0,
+      "peakAbove_mm_core": [
+        73,
+        82.1,
+        72.1,
+        67.3,
+        65.2,
+        66.8,
+        60.5,
+        59.3,
+        58.9
+      ]
+    },
+    {
+      "label": "g11n3",
+      "move": "b2c256362808",
+      "kCore": 0,
+      "kCoreStable": 0,
+      "objective": 8.654838616622595,
+      "coreCellsWhereTrunkEverReached95mm": 0,
+      "extCellsWhereTrunkEverReached95mm": 0,
+      "peakAbove_mm_core": [
+        74.7,
+        74.6,
+        74.5,
+        71.5,
+        71.3,
+        66.6,
+        63.4,
+        60.3,
+        57.1
+      ]
+    },
+    {
+      "label": "g1n3",
+      "move": "78740e98dc81",
+      "kCore": 0,
+      "kCoreStable": 0,
+      "objective": 8.651169673705732,
+      "coreCellsWhereTrunkEverReached95mm": 0,
+      "extCellsWhereTrunkEverReached95mm": 0,
+      "peakAbove_mm_core": [
+        71.4,
+        73.5,
+        71.2,
+        61.4,
+        60.6,
+        61.4,
+        51.4,
+        60,
+        51.2
+      ]
+    },
+    {
+      "label": "g12n9",
+      "move": "b1c3ad155c3a",
+      "kCore": 0,
+      "kCoreStable": 0,
+      "objective": 8.648406459356401,
+      "coreCellsWhereTrunkEverReached95mm": 0,
+      "extCellsWhereTrunkEverReached95mm": 0,
+      "peakAbove_mm_core": [
+        77,
+        72.4,
+        75.5,
+        70.3,
+        69.5,
+        69.4,
+        63,
+        60.6,
+        65.5
+      ]
+    },
+    {
+      "label": "g7n2",
+      "move": "b86511babffa",
+      "kCore": 0,
+      "kCoreStable": 0,
+      "objective": 8.642888960068756,
+      "coreCellsWhereTrunkEverReached95mm": 0,
+      "extCellsWhereTrunkEverReached95mm": 0,
+      "peakAbove_mm_core": [
+        76.8,
+        73.8,
+        76.3,
+        71.6,
+        69.2,
+        71.2,
+        61.9,
+        63.8,
+        64.8
+      ]
+    },
+    {
+      "label": "g13n5",
+      "move": "75d3b3f8ca1e",
+      "kCore": 0,
+      "kCoreStable": 0,
+      "objective": 8.640819467198586,
+      "coreCellsWhereTrunkEverReached95mm": 0,
+      "extCellsWhereTrunkEverReached95mm": 0,
+      "peakAbove_mm_core": [
+        71.1,
+        71.5,
+        70.6,
+        65.3,
+        67.9,
+        64.4,
+        57.3,
+        59,
+        59.7
+      ]
+    },
+    {
+      "label": "g2n0",
+      "move": "58c118763683",
+      "kCore": 0,
+      "kCoreStable": 0,
+      "objective": 8.638209166874471,
+      "coreCellsWhereTrunkEverReached95mm": 0,
+      "extCellsWhereTrunkEverReached95mm": 0,
+      "peakAbove_mm_core": [
+        82.9,
+        82.7,
+        82.1,
+        77.7,
+        78.5,
+        73.8,
+        67.1,
+        68,
+        67.4
+      ]
+    },
+    {
+      "label": "g6n14",
+      "move": "f16731a63fc5",
+      "kCore": 0,
+      "kCoreStable": 0,
+      "objective": 8.621640636284509,
+      "coreCellsWhereTrunkEverReached95mm": 0,
+      "extCellsWhereTrunkEverReached95mm": 0,
+      "peakAbove_mm_core": [
+        70.6,
+        71.2,
+        81.6,
+        60.6,
+        63,
+        71.6,
+        54.3,
+        57.4,
+        59
+      ]
+    },
+    {
+      "label": "g11n9",
+      "move": "56947f7bb3f4",
+      "kCore": 0,
+      "kCoreStable": 0,
+      "objective": 8.613070480684561,
+      "coreCellsWhereTrunkEverReached95mm": 0,
+      "extCellsWhereTrunkEverReached95mm": 0,
+      "peakAbove_mm_core": [
+        70.7,
+        71,
+        70.9,
+        67.4,
+        65.8,
+        70.6,
+        57.6,
+        56.5,
+        62.1
+      ]
+    },
+    {
+      "label": "g11n13",
+      "move": "36a36d6469a3",
+      "kCore": 0,
+      "kCoreStable": 0,
+      "objective": 8.60768801055679,
+      "coreCellsWhereTrunkEverReached95mm": 0,
+      "extCellsWhereTrunkEverReached95mm": 0,
+      "peakAbove_mm_core": [
+        79.3,
+        78.9,
+        79,
+        74.4,
+        72.8,
+        74.4,
+        62.8,
+        63.7,
+        61.7
+      ]
+    },
+    {
+      "label": "g1n13",
+      "move": "78e8f30eec56",
+      "kCore": 0,
+      "kCoreStable": 0,
+      "objective": 8.607229504759292,
+      "coreCellsWhereTrunkEverReached95mm": 0,
+      "extCellsWhereTrunkEverReached95mm": 0,
+      "peakAbove_mm_core": [
+        83.6,
+        82.5,
+        71.5,
+        65.3,
+        65.1,
+        63.5,
+        53.1,
+        54.7,
+        53.3
+      ]
+    },
+    {
+      "label": "g10n18",
+      "move": "209e26a5a1b7",
+      "kCore": 0,
+      "kCoreStable": 0,
+      "objective": 8.60352084957826,
+      "coreCellsWhereTrunkEverReached95mm": 0,
+      "extCellsWhereTrunkEverReached95mm": 0,
+      "peakAbove_mm_core": [
+        77,
+        79.8,
+        78.7,
+        76,
+        75.4,
+        74.8,
+        67.2,
+        67.8,
+        66.4
+      ]
+    },
+    {
+      "label": "g7n10",
+      "move": "ecf8b1a0e361",
+      "kCore": 0,
+      "kCoreStable": 0,
+      "objective": 8.597080588854194,
+      "coreCellsWhereTrunkEverReached95mm": 0,
+      "extCellsWhereTrunkEverReached95mm": 0,
+      "peakAbove_mm_core": [
+        76.4,
+        78.1,
+        75.8,
+        71.6,
+        70.7,
+        72,
+        62.8,
+        62.3,
+        66.7
+      ]
+    },
+    {
+      "label": "g9n18",
+      "move": "e2cea69d25a5",
+      "kCore": 0,
+      "kCoreStable": 0,
+      "objective": 8.573566476031418,
+      "coreCellsWhereTrunkEverReached95mm": 0,
+      "extCellsWhereTrunkEverReached95mm": 0,
+      "peakAbove_mm_core": [
+        72,
+        72.9,
+        73,
+        69.4,
+        70.3,
+        66.5,
+        60.2,
+        63,
+        62.4
+      ]
+    },
+    {
+      "label": "g11n1",
+      "move": "4a47bb72f6d0",
+      "kCore": 0,
+      "kCoreStable": 0,
+      "objective": 8.571282180686064,
+      "coreCellsWhereTrunkEverReached95mm": 0,
+      "extCellsWhereTrunkEverReached95mm": 0,
+      "peakAbove_mm_core": [
+        78.8,
+        78.2,
+        77.7,
+        74.3,
+        74.9,
+        72.4,
+        63.9,
+        65.5,
+        62.1
+      ]
+    },
+    {
+      "label": "g13n19",
+      "move": "eba7dc1e7572",
+      "kCore": 0,
+      "kCoreStable": 0,
+      "objective": 8.552231584318912,
+      "coreCellsWhereTrunkEverReached95mm": 0,
+      "extCellsWhereTrunkEverReached95mm": 0,
+      "peakAbove_mm_core": [
+        70.8,
+        70.6,
+        70.6,
+        61.1,
+        62.2,
+        60.6,
+        57,
+        53.3,
+        50.6
+      ]
+    },
+    {
+      "label": "g4n17",
+      "move": "827fd66dc90b",
+      "kCore": 0,
+      "kCoreStable": 0,
+      "objective": 8.548708519614205,
+      "coreCellsWhereTrunkEverReached95mm": 0,
+      "extCellsWhereTrunkEverReached95mm": 1,
+      "peakAbove_mm_core": [
+        71.1,
+        70.5,
+        82,
+        64.9,
+        65.7,
+        61.5,
+        56.2,
+        59.1,
+        57.6
+      ]
+    },
+    {
+      "label": "g4n10",
+      "move": "c6c174f05996",
+      "kCore": 0,
+      "kCoreStable": 0,
+      "objective": 8.5415924221269,
+      "coreCellsWhereTrunkEverReached95mm": 0,
+      "extCellsWhereTrunkEverReached95mm": 0,
+      "peakAbove_mm_core": [
+        73.7,
+        75.1,
+        80.9,
+        71.2,
+        68.1,
+        75.7,
+        65.8,
+        61.5,
+        62.4
+      ]
+    },
+    {
+      "label": "g5n14",
+      "move": "c7b20070c96a",
+      "kCore": 0,
+      "kCoreStable": 0,
+      "objective": 8.52875298125891,
+      "coreCellsWhereTrunkEverReached95mm": 0,
+      "extCellsWhereTrunkEverReached95mm": 0,
+      "peakAbove_mm_core": [
+        70.6,
+        73.5,
+        70.1,
+        61.6,
+        60.6,
+        60.8,
+        58.8,
+        58.3,
+        59.2
+      ]
+    },
+    {
+      "label": "g10n0",
+      "move": "baa923d92525",
+      "kCore": 0,
+      "kCoreStable": 0,
+      "objective": 8.519692204560837,
+      "coreCellsWhereTrunkEverReached95mm": 0,
+      "extCellsWhereTrunkEverReached95mm": 0,
+      "peakAbove_mm_core": [
+        81.1,
+        74.5,
+        77.3,
+        67.1,
+        68.6,
+        67.8,
+        62.6,
+        63.3,
+        61.7
+      ]
+    },
+    {
+      "label": "g2n12",
+      "move": "db6dd3a1a485",
+      "kCore": 0,
+      "kCoreStable": 0,
+      "objective": 8.519657245131139,
+      "coreCellsWhereTrunkEverReached95mm": 0,
+      "extCellsWhereTrunkEverReached95mm": 0,
+      "peakAbove_mm_core": [
+        70.8,
+        70.8,
+        74.3,
+        60.8,
+        68.7,
+        74.5,
+        53.9,
+        64.7,
+        51.4
+      ]
+    },
+    {
+      "label": "g13n6",
+      "move": "011d03931746",
+      "kCore": 0,
+      "kCoreStable": 0,
+      "objective": 8.51496232062465,
+      "coreCellsWhereTrunkEverReached95mm": 0,
+      "extCellsWhereTrunkEverReached95mm": 0,
+      "peakAbove_mm_core": [
+        79.3,
+        76.7,
+        76.5,
+        69.4,
+        68,
+        67.2,
+        63.1,
+        62.5,
+        54
+      ]
+    },
+    {
+      "label": "g13n17",
+      "move": "04c1d75e64fb",
+      "kCore": 0,
+      "kCoreStable": 0,
+      "objective": 8.514082488797698,
+      "coreCellsWhereTrunkEverReached95mm": 0,
+      "extCellsWhereTrunkEverReached95mm": 0,
+      "peakAbove_mm_core": [
+        71.2,
+        70.9,
+        70.7,
+        65.9,
+        64.9,
+        62.4,
+        53.6,
+        53,
+        58.5
+      ]
+    },
+    {
+      "label": "g9n7",
+      "move": "50c6b625ec86",
+      "kCore": 0,
+      "kCoreStable": 0,
+      "objective": 8.504880129172578,
+      "coreCellsWhereTrunkEverReached95mm": 0,
+      "extCellsWhereTrunkEverReached95mm": 0,
+      "peakAbove_mm_core": [
+        73,
+        70.8,
+        72.8,
+        67.4,
+        67.9,
+        69.3,
+        55.2,
+        63.8,
+        61.4
+      ]
+    },
+    {
+      "label": "g11n7",
+      "move": "a5cc34af0440",
+      "kCore": 0,
+      "kCoreStable": 0,
+      "objective": 8.501011729930141,
+      "coreCellsWhereTrunkEverReached95mm": 0,
+      "extCellsWhereTrunkEverReached95mm": 0,
+      "peakAbove_mm_core": [
+        77.5,
+        77.1,
+        78.3,
+        73.7,
+        73.2,
+        72,
+        64.2,
+        64.7,
+        65.2
+      ]
+    },
+    {
+      "label": "g9n4",
+      "move": "de9e42b55488",
+      "kCore": 0,
+      "kCoreStable": 0,
+      "objective": 8.493999704257654,
+      "coreCellsWhereTrunkEverReached95mm": 0,
+      "extCellsWhereTrunkEverReached95mm": 0,
+      "peakAbove_mm_core": [
+        72.8,
+        71.1,
+        72.5,
+        65.2,
+        67.7,
+        63.8,
+        56.4,
+        59.2,
+        54.5
+      ]
+    },
+    {
+      "label": "g8n9",
+      "move": "472060d3cb0b",
+      "kCore": 0,
+      "kCoreStable": 0,
+      "objective": 8.493791607742233,
+      "coreCellsWhereTrunkEverReached95mm": 0,
+      "extCellsWhereTrunkEverReached95mm": 0,
+      "peakAbove_mm_core": [
+        76.6,
+        76,
+        83.6,
+        74.4,
+        71,
+        72.9,
+        63.9,
+        65.1,
+        65.1
+      ]
+    },
+    {
+      "label": "g1n7",
+      "move": "6eadc05bfee0",
+      "kCore": 0,
+      "kCoreStable": 0,
+      "objective": 8.491662623023156,
+      "coreCellsWhereTrunkEverReached95mm": 0,
+      "extCellsWhereTrunkEverReached95mm": 0,
+      "peakAbove_mm_core": [
+        70.7,
+        70.7,
+        71,
+        63.4,
+        60.7,
+        63.1,
+        54.7,
+        51.4,
+        51
+      ]
+    },
+    {
+      "label": "g5n18",
+      "move": "a33a3d007ab2",
+      "kCore": 0,
+      "kCoreStable": 0,
+      "objective": 8.491325594995088,
+      "coreCellsWhereTrunkEverReached95mm": 0,
+      "extCellsWhereTrunkEverReached95mm": 0,
+      "peakAbove_mm_core": [
+        76.8,
+        74.2,
+        75.7,
+        70.4,
+        70.5,
+        72.3,
+        65,
+        64.4,
+        67.8
+      ]
+    },
+    {
+      "label": "g14n7",
+      "move": "28be285a6a82",
+      "kCore": 0,
+      "kCoreStable": 0,
+      "objective": 8.48243077314425,
+      "coreCellsWhereTrunkEverReached95mm": 0,
+      "extCellsWhereTrunkEverReached95mm": 0,
+      "peakAbove_mm_core": [
+        71.2,
+        71.7,
+        70.9,
+        61.6,
+        61.2,
+        61.4,
+        59.9,
+        50.9,
+        57.1
+      ]
+    },
+    {
+      "label": "g15n3",
+      "move": "46210189b5ee",
+      "kCore": 0,
+      "kCoreStable": 0,
+      "objective": 8.481520144274052,
+      "coreCellsWhereTrunkEverReached95mm": 0,
+      "extCellsWhereTrunkEverReached95mm": 0,
+      "peakAbove_mm_core": [
+        76.5,
+        80.9,
+        75.4,
+        71.9,
+        69,
+        71.8,
+        62.5,
+        61.1,
+        66.2
+      ]
+    },
+    {
+      "label": "g3n5",
+      "move": "460e17ec32c2",
+      "kCore": 0,
+      "kCoreStable": 0,
+      "objective": 8.475750445703737,
+      "coreCellsWhereTrunkEverReached95mm": 0,
+      "extCellsWhereTrunkEverReached95mm": 0,
+      "peakAbove_mm_core": [
+        77.9,
+        76.1,
+        75,
+        72.2,
+        72,
+        66.5,
+        61.3,
+        60.3,
+        59
+      ]
+    },
+    {
+      "label": "g11n4",
+      "move": "a926d9a9c25d",
+      "kCore": 0,
+      "kCoreStable": 0,
+      "objective": 8.464032871886793,
+      "coreCellsWhereTrunkEverReached95mm": 0,
+      "extCellsWhereTrunkEverReached95mm": 0,
+      "peakAbove_mm_core": [
+        73,
+        72,
+        70.5,
+        71.1,
+        67.2,
+        74.7,
+        60.3,
+        63.7,
+        63.8
+      ]
+    },
+    {
+      "label": "g11n20",
+      "move": "ae3a72a620dd",
+      "kCore": 0,
+      "kCoreStable": 0,
+      "objective": 8.449899638951234,
+      "coreCellsWhereTrunkEverReached95mm": 0,
+      "extCellsWhereTrunkEverReached95mm": 0,
+      "peakAbove_mm_core": [
+        82.3,
+        82.4,
+        82.3,
+        78.1,
+        76.5,
+        74.7,
+        66.5,
+        65.8,
+        67.8
+      ]
+    },
+    {
+      "label": "P4 the reasoned law armed at the VAULT frame",
+      "move": "0a5662a8c34c",
+      "kCore": 0,
+      "kCoreStable": 0,
+      "objective": 8.44141073164558,
+      "coreCellsWhereTrunkEverReached95mm": 0,
+      "extCellsWhereTrunkEverReached95mm": 0,
+      "peakAbove_mm_core": [
+        74.6,
+        70.9,
+        70.1,
+        61.9,
+        63.4,
+        64.2,
+        57.8,
+        52.4,
+        50.1
+      ]
+    },
+    {
+      "label": "g13n10",
+      "move": "1fac045fb9f4",
+      "kCore": 0,
+      "kCoreStable": 0,
+      "objective": 8.410550659907418,
+      "coreCellsWhereTrunkEverReached95mm": 0,
+      "extCellsWhereTrunkEverReached95mm": 0,
+      "peakAbove_mm_core": [
+        81.8,
+        81.2,
+        81.1,
+        77.8,
+        74.4,
+        76.8,
+        66.1,
+        64.4,
+        63.7
+      ]
+    },
+    {
+      "label": "g5n12",
+      "move": "357859d5a9f0",
+      "kCore": 0,
+      "kCoreStable": 0,
+      "objective": 8.401784251934696,
+      "coreCellsWhereTrunkEverReached95mm": 0,
+      "extCellsWhereTrunkEverReached95mm": 0,
+      "peakAbove_mm_core": [
+        70.8,
+        70.8,
+        70.8,
+        60.8,
+        64.7,
+        60.8,
+        53.7,
+        57.4,
+        53.3
+      ]
+    },
+    {
+      "label": "g8n19",
+      "move": "7415624d00bf",
+      "kCore": 0,
+      "kCoreStable": 0,
+      "objective": 8.39703005913859,
+      "coreCellsWhereTrunkEverReached95mm": 0,
+      "extCellsWhereTrunkEverReached95mm": 0,
+      "peakAbove_mm_core": [
+        78.8,
+        78.1,
+        79.7,
+        75.9,
+        83.6,
+        74.7,
+        64.1,
+        67.3,
+        64.5
+      ]
+    },
+    {
+      "label": "g9n20",
+      "move": "0eb2bf77c00a",
+      "kCore": 0,
+      "kCoreStable": 0,
+      "objective": 8.39075286595013,
+      "coreCellsWhereTrunkEverReached95mm": 0,
+      "extCellsWhereTrunkEverReached95mm": 0,
+      "peakAbove_mm_core": [
+        73.9,
+        70.8,
+        71,
+        61.5,
+        60.8,
+        65.3,
+        55.1,
+        50.8,
+        55.6
+      ]
+    },
+    {
+      "label": "g4n20",
+      "move": "fc494dd7094f",
+      "kCore": 0,
+      "kCoreStable": 0,
+      "objective": 8.381671848961751,
+      "coreCellsWhereTrunkEverReached95mm": 0,
+      "extCellsWhereTrunkEverReached95mm": 0,
+      "peakAbove_mm_core": [
+        71.1,
+        84,
+        71.2,
+        61.9,
+        63.5,
+        66.2,
+        56.5,
+        58,
+        59.9
+      ]
+    },
+    {
+      "label": "g8n17",
+      "move": "47af985e2138",
+      "kCore": 0,
+      "kCoreStable": 0,
+      "objective": 8.356016568150723,
+      "coreCellsWhereTrunkEverReached95mm": 0,
+      "extCellsWhereTrunkEverReached95mm": 0,
+      "peakAbove_mm_core": [
+        78.7,
+        81,
+        79.9,
+        72.6,
+        70.1,
+        72.7,
+        66.8,
+        65.1,
+        62.1
+      ]
+    },
+    {
+      "label": "g5n10",
+      "move": "fe506c05d7cb",
+      "kCore": 0,
+      "kCoreStable": 0,
+      "objective": 8.352654096514616,
+      "coreCellsWhereTrunkEverReached95mm": 0,
+      "extCellsWhereTrunkEverReached95mm": 0,
+      "peakAbove_mm_core": [
+        77.6,
+        76.7,
+        80.4,
+        69.7,
+        69.4,
+        71,
+        63,
+        61.7,
+        64.7
+      ]
+    },
+    {
+      "label": "g13n0",
+      "move": "d451e4eacbb9",
+      "kCore": 0,
+      "kCoreStable": 0,
+      "objective": 8.344495946948346,
+      "coreCellsWhereTrunkEverReached95mm": 0,
+      "extCellsWhereTrunkEverReached95mm": 0,
+      "peakAbove_mm_core": [
+        71.1,
+        71,
+        71,
+        61.1,
+        61.6,
+        61,
+        56.9,
+        51,
+        53.7
+      ]
+    },
+    {
+      "label": "g13n7",
+      "move": "b733d6f1ccd3",
+      "kCore": 0,
+      "kCoreStable": 0,
+      "objective": 8.31724892042922,
+      "coreCellsWhereTrunkEverReached95mm": 0,
+      "extCellsWhereTrunkEverReached95mm": 0,
+      "peakAbove_mm_core": [
+        72.2,
+        81.1,
+        81,
+        69.4,
+        68.6,
+        64.7,
+        58.7,
+        59.7,
+        60.4
+      ]
+    },
+    {
+      "label": "g3n6",
+      "move": "9f3b9ae312b0",
+      "kCore": 0,
+      "kCoreStable": 0,
+      "objective": 8.276493456650321,
+      "coreCellsWhereTrunkEverReached95mm": 0,
+      "extCellsWhereTrunkEverReached95mm": 0,
+      "peakAbove_mm_core": [
+        75.5,
+        73.4,
+        80.4,
+        89.2,
+        71.1,
+        75,
+        66.9,
+        63.7,
+        70.4
+      ]
+    },
+    {
+      "label": "g6n18",
+      "move": "d3c350c1799a",
+      "kCore": 0,
+      "kCoreStable": 0,
+      "objective": 8.256118003627957,
+      "coreCellsWhereTrunkEverReached95mm": 0,
+      "extCellsWhereTrunkEverReached95mm": 0,
+      "peakAbove_mm_core": [
+        70.8,
+        72.5,
+        80.9,
+        66.3,
+        61.9,
+        71.7,
+        61.1,
+        54.3,
+        59.2
+      ]
+    },
+    {
+      "label": "g8n12",
+      "move": "a0d335900654",
+      "kCore": 0,
+      "kCoreStable": 0,
+      "objective": 8.24188819420532,
+      "coreCellsWhereTrunkEverReached95mm": 0,
+      "extCellsWhereTrunkEverReached95mm": 0,
+      "peakAbove_mm_core": [
+        70.6,
+        73,
+        75.2,
+        61.3,
+        70.1,
+        62.3,
+        55.4,
+        54.4,
+        53.8
+      ]
+    },
+    {
+      "label": "g2n3",
+      "move": "3365832cb466",
+      "kCore": 0,
+      "kCoreStable": 0,
+      "objective": 8.222003590865242,
+      "coreCellsWhereTrunkEverReached95mm": 0,
+      "extCellsWhereTrunkEverReached95mm": 0,
+      "peakAbove_mm_core": [
+        72.1,
+        73,
+        72.4,
+        63.9,
+        63.9,
+        62.9,
+        53.8,
+        58.1,
+        52.8
+      ]
+    },
+    {
+      "label": "g6n15",
+      "move": "53a1fbf7e35e",
+      "kCore": 0,
+      "kCoreStable": 0,
+      "objective": 8.214720917537331,
+      "coreCellsWhereTrunkEverReached95mm": 0,
+      "extCellsWhereTrunkEverReached95mm": 0,
+      "peakAbove_mm_core": [
+        70.8,
+        74.4,
+        70.4,
+        80.3,
+        61.6,
+        79.2,
+        59.2,
+        58.1,
+        55.1
+      ]
+    },
+    {
+      "label": "g6n12",
+      "move": "2d0ac7782397",
+      "kCore": 0,
+      "kCoreStable": 0,
+      "objective": 8.199016098631802,
+      "coreCellsWhereTrunkEverReached95mm": 0,
+      "extCellsWhereTrunkEverReached95mm": 0,
+      "peakAbove_mm_core": [
+        77.3,
+        77.5,
+        78.8,
+        75.5,
+        72.6,
+        73.7,
+        62.4,
+        64.5,
+        63.1
+      ]
+    },
+    {
+      "label": "g9n2",
+      "move": "7dc60b6760a6",
+      "kCore": 0,
+      "kCoreStable": 0,
+      "objective": 8.189592856265694,
+      "coreCellsWhereTrunkEverReached95mm": 0,
+      "extCellsWhereTrunkEverReached95mm": 0,
+      "peakAbove_mm_core": [
+        76,
+        74,
+        75.6,
+        73.1,
+        71.2,
+        70.5,
+        64.7,
+        62.9,
+        64.9
+      ]
+    },
+    {
+      "label": "g10n19",
+      "move": "a0d8717d50b3",
+      "kCore": 0,
+      "kCoreStable": 0,
+      "objective": 8.167037103064674,
+      "coreCellsWhereTrunkEverReached95mm": 0,
+      "extCellsWhereTrunkEverReached95mm": 0,
+      "peakAbove_mm_core": [
+        75.3,
+        74.8,
+        76.5,
+        70.6,
+        70.7,
+        79.9,
+        61.1,
+        62.4,
+        63.7
+      ]
+    },
+    {
+      "label": "g1n12",
+      "move": "e29ef37c8e0d",
+      "kCore": 0,
+      "kCoreStable": 0,
+      "objective": 8.141910940984115,
+      "coreCellsWhereTrunkEverReached95mm": 0,
+      "extCellsWhereTrunkEverReached95mm": 0,
+      "peakAbove_mm_core": [
+        70.3,
+        70.8,
+        68.1,
+        60.1,
+        60.8,
+        59.5,
+        64.8,
+        52.1,
+        58.8
+      ]
+    },
+    {
+      "label": "g3n13",
+      "move": "cf99cf8f40fa",
+      "kCore": 0,
+      "kCoreStable": 0,
+      "objective": 8.13524134816865,
+      "coreCellsWhereTrunkEverReached95mm": 0,
+      "extCellsWhereTrunkEverReached95mm": 0,
+      "peakAbove_mm_core": [
+        71.1,
+        70.7,
+        90.1,
+        68.2,
+        69.2,
+        60.8,
+        63.6,
+        50.7,
+        75.2
+      ]
+    },
+    {
+      "label": "g12n13",
+      "move": "8996b8164871",
+      "kCore": 0,
+      "kCoreStable": 0,
+      "objective": 8.130602737157657,
+      "coreCellsWhereTrunkEverReached95mm": 0,
+      "extCellsWhereTrunkEverReached95mm": 0,
+      "peakAbove_mm_core": [
+        76,
+        80.3,
+        77.4,
+        69.8,
+        69.5,
+        71,
+        64.1,
+        66.1,
+        63.4
+      ]
+    },
+    {
+      "label": "g15n6",
+      "move": "e0174a46f2c7",
+      "kCore": 0,
+      "kCoreStable": 0,
+      "objective": 8.118172744495261,
+      "coreCellsWhereTrunkEverReached95mm": 0,
+      "extCellsWhereTrunkEverReached95mm": 0,
+      "peakAbove_mm_core": [
+        81.7,
+        80.1,
+        77.1,
+        71.7,
+        71.6,
+        86.5,
+        62.3,
+        64.3,
+        66.8
+      ]
+    },
+    {
+      "label": "g14n11",
+      "move": "8ffb29e1498f",
+      "kCore": 0,
+      "kCoreStable": 0,
+      "objective": 8.10894277017426,
+      "coreCellsWhereTrunkEverReached95mm": 0,
+      "extCellsWhereTrunkEverReached95mm": 0,
+      "peakAbove_mm_core": [
+        82.7,
+        73.5,
+        71.5,
+        63.7,
+        64.2,
+        61.5,
+        53.6,
+        54,
+        58.6
+      ]
+    },
+    {
+      "label": "g9n17",
+      "move": "da8fbbef50fc",
+      "kCore": 0,
+      "kCoreStable": 0,
+      "objective": 8.096956045851492,
+      "coreCellsWhereTrunkEverReached95mm": 0,
+      "extCellsWhereTrunkEverReached95mm": 0,
+      "peakAbove_mm_core": [
+        70.7,
+        70.6,
+        78.5,
+        62.7,
+        63.3,
+        60.4,
+        55.5,
+        56,
+        51.8
+      ]
+    },
+    {
+      "label": "g11n18",
+      "move": "b4643b92a247",
+      "kCore": 0,
+      "kCoreStable": 0,
+      "objective": 8.092869555230683,
+      "coreCellsWhereTrunkEverReached95mm": 0,
+      "extCellsWhereTrunkEverReached95mm": 0,
+      "peakAbove_mm_core": [
+        70.8,
+        72.3,
+        80.7,
+        70.3,
+        62.7,
+        60.6,
+        56.6,
+        55,
+        53.5
+      ]
+    },
+    {
+      "label": "g13n3",
+      "move": "58f102d85e1f",
+      "kCore": 0,
+      "kCoreStable": 0,
+      "objective": 8.092166923406925,
+      "coreCellsWhereTrunkEverReached95mm": 0,
+      "extCellsWhereTrunkEverReached95mm": 0,
+      "peakAbove_mm_core": [
+        77.4,
+        82.8,
+        70.2,
+        65,
+        66.8,
+        59.9,
+        60.3,
+        57,
+        56.6
+      ]
+    },
+    {
+      "label": "g12n15",
+      "move": "4a890288b88b",
+      "kCore": 0,
+      "kCoreStable": 0,
+      "objective": 8.08500948148786,
+      "coreCellsWhereTrunkEverReached95mm": 0,
+      "extCellsWhereTrunkEverReached95mm": 0,
+      "peakAbove_mm_core": [
+        78.3,
+        78.1,
+        77.5,
+        75,
+        72.6,
+        68.1,
+        63.3,
+        63.8,
+        61.1
+      ]
+    },
+    {
+      "label": "g5n2",
+      "move": "dea12b109dcb",
+      "kCore": 0,
+      "kCoreStable": 0,
+      "objective": 8.07617020250194,
+      "coreCellsWhereTrunkEverReached95mm": 0,
+      "extCellsWhereTrunkEverReached95mm": 0,
+      "peakAbove_mm_core": [
+        73.2,
+        80.3,
+        73.8,
+        69.1,
+        67.4,
+        67.6,
+        65.2,
+        64.7,
+        59.1
+      ]
+    },
+    {
+      "label": "g2n5",
+      "move": "0640a1375ef7",
+      "kCore": 0,
+      "kCoreStable": 0,
+      "objective": 8.06819298247627,
+      "coreCellsWhereTrunkEverReached95mm": 0,
+      "extCellsWhereTrunkEverReached95mm": 0,
+      "peakAbove_mm_core": [
+        80.3,
+        79.9,
+        79.4,
+        68.7,
+        72.2,
+        66.5,
+        61.9,
+        61.4,
+        64.5
+      ]
+    },
+    {
+      "label": "g5n5",
+      "move": "e6047d3a8f12",
+      "kCore": 0,
+      "kCoreStable": 0,
+      "objective": 8.063441123951057,
+      "coreCellsWhereTrunkEverReached95mm": 0,
+      "extCellsWhereTrunkEverReached95mm": 0,
+      "peakAbove_mm_core": [
+        81.1,
+        81,
+        82.1,
+        75.6,
+        72.2,
+        74.3,
+        64.7,
+        66.1,
+        65
+      ]
+    },
+    {
+      "label": "g2n15",
+      "move": "26c6bd9b0804",
+      "kCore": 0,
+      "kCoreStable": 0,
+      "objective": 8.052050753901874,
+      "coreCellsWhereTrunkEverReached95mm": 0,
+      "extCellsWhereTrunkEverReached95mm": 0,
+      "peakAbove_mm_core": [
+        71.2,
+        70.6,
+        71.7,
+        60.5,
+        60.6,
+        61.4,
+        62.4,
+        65.2,
+        54.1
+      ]
+    },
+    {
+      "label": "g4n8",
+      "move": "7f1b0c80afc8",
+      "kCore": 0,
+      "kCoreStable": 0,
+      "objective": 8.046497866377152,
+      "coreCellsWhereTrunkEverReached95mm": 0,
+      "extCellsWhereTrunkEverReached95mm": 0,
+      "peakAbove_mm_core": [
+        70.8,
+        78.4,
+        71.2,
+        60.8,
+        65.9,
+        71.6,
+        52.1,
+        53,
+        56.4
+      ]
+    },
+    {
+      "label": "g7n17",
+      "move": "9b73ccbc0dd1",
+      "kCore": 0,
+      "kCoreStable": 0,
+      "objective": 8.042321519160375,
+      "coreCellsWhereTrunkEverReached95mm": 0,
+      "extCellsWhereTrunkEverReached95mm": 0,
+      "peakAbove_mm_core": [
+        71.3,
+        79.2,
+        72.8,
+        68.3,
+        67.4,
+        65.2,
+        60.2,
+        57.9,
+        59.3
+      ]
+    },
+    {
+      "label": "g8n18",
+      "move": "99599417e59e",
+      "kCore": 0,
+      "kCoreStable": 0,
+      "objective": 8.031751601051623,
+      "coreCellsWhereTrunkEverReached95mm": 0,
+      "extCellsWhereTrunkEverReached95mm": 0,
+      "peakAbove_mm_core": [
+        80.9,
+        80.6,
+        79.8,
+        72.6,
+        71.6,
+        72.8,
+        63.3,
+        65.5,
+        61.4
+      ]
+    },
+    {
+      "label": "g4n6",
+      "move": "6dfe07d3cffb",
+      "kCore": 0,
+      "kCoreStable": 0,
+      "objective": 8.028521675166921,
+      "coreCellsWhereTrunkEverReached95mm": 0,
+      "extCellsWhereTrunkEverReached95mm": 0,
+      "peakAbove_mm_core": [
+        81.3,
+        81.4,
+        82.1,
+        73,
+        76.4,
+        75.3,
+        68.3,
+        66.6,
+        65.7
+      ]
+    },
+    {
+      "label": "g13n13",
+      "move": "82569e6fe18f",
+      "kCore": 0,
+      "kCoreStable": 0,
+      "objective": 8.02536162626393,
+      "coreCellsWhereTrunkEverReached95mm": 0,
+      "extCellsWhereTrunkEverReached95mm": 0,
+      "peakAbove_mm_core": [
+        75.1,
+        75.4,
+        75.1,
+        67.7,
+        67.9,
+        68.9,
+        63.7,
+        58.2,
+        56
+      ]
+    },
+    {
+      "label": "g2n16",
+      "move": "23aecc1ad4c8",
+      "kCore": 0,
+      "kCoreStable": 0,
+      "objective": 7.996416003312859,
+      "coreCellsWhereTrunkEverReached95mm": 0,
+      "extCellsWhereTrunkEverReached95mm": 0,
+      "peakAbove_mm_core": [
+        78.6,
+        72,
+        70.1,
+        66.8,
+        64.9,
+        63,
+        62,
+        61,
+        50.1
+      ]
+    },
+    {
+      "label": "g8n7",
+      "move": "26a8b8481535",
+      "kCore": 0,
+      "kCoreStable": 0,
+      "objective": 7.991442811933638,
+      "coreCellsWhereTrunkEverReached95mm": 0,
+      "extCellsWhereTrunkEverReached95mm": 0,
+      "peakAbove_mm_core": [
+        86.9,
+        72.3,
+        71,
+        60.7,
+        61.6,
+        61,
+        50.7,
+        51,
+        51
+      ]
+    },
+    {
+      "label": "g12n4",
+      "move": "53171f6c2cde",
+      "kCore": 0,
+      "kCoreStable": 0,
+      "objective": 7.979446028328409,
+      "coreCellsWhereTrunkEverReached95mm": 0,
+      "extCellsWhereTrunkEverReached95mm": 0,
+      "peakAbove_mm_core": [
+        84.4,
+        78.6,
+        79.6,
+        75.8,
+        76.4,
+        75.6,
+        64.2,
+        66.6,
+        68
+      ]
+    },
+    {
+      "label": "g2n19",
+      "move": "76c18ebc012e",
+      "kCore": 0,
+      "kCoreStable": 0,
+      "objective": 7.958884432555109,
+      "coreCellsWhereTrunkEverReached95mm": 0,
+      "extCellsWhereTrunkEverReached95mm": 0,
+      "peakAbove_mm_core": [
+        71.3,
+        71,
+        70.6,
+        71.9,
+        67.3,
+        66.3,
+        58,
+        63.6,
+        64.2
+      ]
+    },
+    {
+      "label": "g4n7",
+      "move": "c857d94a4cd8",
+      "kCore": 0,
+      "kCoreStable": 0,
+      "objective": 7.957084922565683,
+      "coreCellsWhereTrunkEverReached95mm": 0,
+      "extCellsWhereTrunkEverReached95mm": 0,
+      "peakAbove_mm_core": [
+        70.8,
+        76.3,
+        72.1,
+        71.7,
+        61.9,
+        82.4,
+        64.4,
+        62.5,
+        66.1
+      ]
+    },
+    {
+      "label": "g12n17",
+      "move": "1bb32cba5a82",
+      "kCore": 0,
+      "kCoreStable": 0,
+      "objective": 7.951492685478645,
+      "coreCellsWhereTrunkEverReached95mm": 0,
+      "extCellsWhereTrunkEverReached95mm": 0,
+      "peakAbove_mm_core": [
+        79.2,
+        79.8,
+        81.2,
+        74.2,
+        73.3,
+        75.3,
+        65.1,
+        65,
+        65.6
+      ]
+    },
+    {
+      "label": "g9n13",
+      "move": "c22da5a01442",
+      "kCore": 0,
+      "kCoreStable": 0,
+      "objective": 7.917473007851015,
+      "coreCellsWhereTrunkEverReached95mm": 0,
+      "extCellsWhereTrunkEverReached95mm": 0,
+      "peakAbove_mm_core": [
+        73.8,
+        73.8,
+        72.4,
+        69.8,
+        66.5,
+        66.2,
+        84.5,
+        66.4,
+        58.3
+      ]
+    },
+    {
+      "label": "g15n1",
+      "move": "5b43abf991bc",
+      "kCore": 0,
+      "kCoreStable": 0,
+      "objective": 7.916358872048878,
+      "coreCellsWhereTrunkEverReached95mm": 0,
+      "extCellsWhereTrunkEverReached95mm": 0,
+      "peakAbove_mm_core": [
+        79.5,
+        78,
+        78.1,
+        72,
+        72.2,
+        71.8,
+        64.5,
+        64,
+        65.5
+      ]
+    },
+    {
+      "label": "g14n9",
+      "move": "de99d1f27c3a",
+      "kCore": 0,
+      "kCoreStable": 0,
+      "objective": 7.911740381327185,
+      "coreCellsWhereTrunkEverReached95mm": 0,
+      "extCellsWhereTrunkEverReached95mm": 0,
+      "peakAbove_mm_core": [
+        71,
+        82.7,
+        79.6,
+        61.2,
+        61.1,
+        63.5,
+        53.2,
+        55.3,
+        54.2
+      ]
+    },
+    {
+      "label": "g14n20",
+      "move": "a8ea2c381182",
+      "kCore": 0,
+      "kCoreStable": 0,
+      "objective": 7.910686535497806,
+      "coreCellsWhereTrunkEverReached95mm": 0,
+      "extCellsWhereTrunkEverReached95mm": 0,
+      "peakAbove_mm_core": [
+        83.9,
+        80.1,
+        78,
+        72.5,
+        72.5,
+        68.8,
+        63.3,
+        61.8,
+        62.1
+      ]
+    },
+    {
+      "label": "g7n1",
+      "move": "cd55df1bec9f",
+      "kCore": 0,
+      "kCoreStable": 0,
+      "objective": 7.902248147303475,
+      "coreCellsWhereTrunkEverReached95mm": 0,
+      "extCellsWhereTrunkEverReached95mm": 0,
+      "peakAbove_mm_core": [
+        70.8,
+        74.9,
+        70.5,
+        61.8,
+        61.1,
+        62.3,
+        60.7,
+        51.1,
+        50.4
+      ]
+    },
+    {
+      "label": "P7 the throw held, with the rate limit and span opened right up",
+      "move": "74a8ed154dbc",
+      "kCore": 0,
+      "kCoreStable": 0,
+      "objective": 7.8661098736507284,
+      "coreCellsWhereTrunkEverReached95mm": 0,
+      "extCellsWhereTrunkEverReached95mm": 0,
+      "peakAbove_mm_core": [
+        70.8,
+        70.9,
+        72.2,
+        80.6,
+        60.9,
+        62.5,
+        54.6,
+        50.9,
+        56.8
+      ]
+    },
+    {
+      "label": "g10n11",
+      "move": "ccca982fa5a7",
+      "kCore": 0,
+      "kCoreStable": 0,
+      "objective": 7.85821838201149,
+      "coreCellsWhereTrunkEverReached95mm": 0,
+      "extCellsWhereTrunkEverReached95mm": 0,
+      "peakAbove_mm_core": [
+        75.4,
+        81.4,
+        75.3,
+        72.5,
+        72.3,
+        72.3,
+        60.1,
+        64.2,
+        61.9
+      ]
+    },
+    {
+      "label": "g8n8",
+      "move": "bc09a3ddd7f4",
+      "kCore": 0,
+      "kCoreStable": 0,
+      "objective": 7.856916206153148,
+      "coreCellsWhereTrunkEverReached95mm": 0,
+      "extCellsWhereTrunkEverReached95mm": 0,
+      "peakAbove_mm_core": [
+        77.2,
+        75.6,
+        79.1,
+        70.1,
+        73.7,
+        68.7,
+        66.6,
+        63.7,
+        65.1
+      ]
+    },
+    {
+      "label": "g1n14",
+      "move": "d3dce8ff634e",
+      "kCore": 0,
+      "kCoreStable": 0,
+      "objective": 7.846704894725093,
+      "coreCellsWhereTrunkEverReached95mm": 0,
+      "extCellsWhereTrunkEverReached95mm": 0,
+      "peakAbove_mm_core": [
+        79.7,
+        75.5,
+        76.9,
+        70.7,
+        71.5,
+        71.5,
+        59.2,
+        63.5,
+        56.5
+      ]
+    },
+    {
+      "label": "g2n17",
+      "move": "f823817c43c5",
+      "kCore": 0,
+      "kCoreStable": 0,
+      "objective": 7.841587141235027,
+      "coreCellsWhereTrunkEverReached95mm": 0,
+      "extCellsWhereTrunkEverReached95mm": 0,
+      "peakAbove_mm_core": [
+        71,
+        69.9,
+        68.3,
+        63.5,
+        67.3,
+        58.4,
+        61.8,
+        52.3,
+        52
+      ]
+    },
+    {
+      "label": "g1n11",
+      "move": "d547ef7c7cf9",
+      "kCore": 0,
+      "kCoreStable": 0,
+      "objective": 7.827341769225116,
+      "coreCellsWhereTrunkEverReached95mm": 0,
+      "extCellsWhereTrunkEverReached95mm": 0,
+      "peakAbove_mm_core": [
+        71,
+        71.1,
+        74.9,
+        77,
+        61.1,
+        64,
+        59.8,
+        59.4,
+        53
+      ]
+    },
+    {
+      "label": "g11n16",
+      "move": "55e30976fba1",
+      "kCore": 0,
+      "kCoreStable": 0,
+      "objective": 7.824661889463996,
+      "coreCellsWhereTrunkEverReached95mm": 0,
+      "extCellsWhereTrunkEverReached95mm": 0,
+      "peakAbove_mm_core": [
+        77.8,
+        79.1,
+        78.4,
+        75.3,
+        75,
+        75,
+        65.3,
+        67.8,
+        64.1
+      ]
+    },
+    {
+      "label": "g11n21",
+      "move": "ee70a2c2b0a5",
+      "kCore": 0,
+      "kCoreStable": 0,
+      "objective": 7.783749700301599,
+      "coreCellsWhereTrunkEverReached95mm": 0,
+      "extCellsWhereTrunkEverReached95mm": 0,
+      "peakAbove_mm_core": [
+        76.7,
+        76.1,
+        77.7,
+        70.6,
+        70.8,
+        68.5,
+        59.1,
+        59.3,
+        58.5
+      ]
+    },
+    {
+      "label": "g9n16",
+      "move": "771710e65aef",
+      "kCore": 0,
+      "kCoreStable": 0,
+      "objective": 7.780519206501214,
+      "coreCellsWhereTrunkEverReached95mm": 0,
+      "extCellsWhereTrunkEverReached95mm": 0,
+      "peakAbove_mm_core": [
+        70.9,
+        72.7,
+        82.3,
+        67.1,
+        61,
+        75.7,
+        64.8,
+        66.7,
+        63.8
+      ]
+    },
+    {
+      "label": "g4n0",
+      "move": "e424b44a0861",
+      "kCore": 0,
+      "kCoreStable": 0,
+      "objective": 7.772810471780924,
+      "coreCellsWhereTrunkEverReached95mm": 0,
+      "extCellsWhereTrunkEverReached95mm": 0,
+      "peakAbove_mm_core": [
+        76.3,
+        77.8,
+        79.8,
+        75.8,
+        71.1,
+        62.2,
+        57.2,
+        63,
+        50.4
+      ]
+    },
+    {
+      "label": "g2n13",
+      "move": "808c6c76d621",
+      "kCore": 0,
+      "kCoreStable": 0,
+      "objective": 7.762460690733246,
+      "coreCellsWhereTrunkEverReached95mm": 0,
+      "extCellsWhereTrunkEverReached95mm": 0,
+      "peakAbove_mm_core": [
+        72.4,
+        71.2,
+        80.7,
+        75.1,
+        61.2,
+        64.9,
+        63.6,
+        55.5,
+        56.5
+      ]
+    },
+    {
+      "label": "g2n9",
+      "move": "502eca861a5f",
+      "kCore": 0,
+      "kCoreStable": 0,
+      "objective": 7.741265530367624,
+      "coreCellsWhereTrunkEverReached95mm": 0,
+      "extCellsWhereTrunkEverReached95mm": 0,
+      "peakAbove_mm_core": [
+        70.8,
+        71,
+        84.4,
+        60.8,
+        61,
+        61,
+        59.4,
+        51,
+        61.6
+      ]
+    },
+    {
+      "label": "g2n18",
+      "move": "cb98aed2d594",
+      "kCore": 0,
+      "kCoreStable": 0,
+      "objective": 7.723354758732274,
+      "coreCellsWhereTrunkEverReached95mm": 0,
+      "extCellsWhereTrunkEverReached95mm": 0,
+      "peakAbove_mm_core": [
+        83,
+        82.9,
+        84.3,
+        81.3,
+        78.3,
+        79.1,
+        66.1,
+        69.1,
+        66.2
+      ]
+    },
+    {
+      "label": "g4n9",
+      "move": "363a97f684e8",
+      "kCore": 0,
+      "kCoreStable": 0,
+      "objective": 7.639580642884772,
+      "coreCellsWhereTrunkEverReached95mm": 0,
+      "extCellsWhereTrunkEverReached95mm": 0,
+      "peakAbove_mm_core": [
+        80,
+        79.6,
+        79.6,
+        83.7,
+        76.7,
+        72.4,
+        65.9,
+        63.7,
+        64.8
+      ]
+    },
+    {
+      "label": "g5n7",
+      "move": "39a736f0c6bb",
+      "kCore": 0,
+      "kCoreStable": 0,
+      "objective": 7.634596130544827,
+      "coreCellsWhereTrunkEverReached95mm": 0,
+      "extCellsWhereTrunkEverReached95mm": 0,
+      "peakAbove_mm_core": [
+        71.3,
+        71.1,
+        74.5,
+        70.9,
+        65.2,
+        71.7,
+        65,
+        62.3,
+        63.3
+      ]
+    },
+    {
+      "label": "g11n6",
+      "move": "4f44497948b3",
+      "kCore": 0,
+      "kCoreStable": 0,
+      "objective": 7.612351839334485,
+      "coreCellsWhereTrunkEverReached95mm": 0,
+      "extCellsWhereTrunkEverReached95mm": 0,
+      "peakAbove_mm_core": [
+        70.6,
+        70.6,
+        70.1,
+        61.9,
+        66.7,
+        64.4,
+        58.9,
+        59.6,
+        59.1
+      ]
+    },
+    {
+      "label": "g4n14",
+      "move": "9384975e1e8a",
+      "kCore": 0,
+      "kCoreStable": 0,
+      "objective": 7.576685739266416,
+      "coreCellsWhereTrunkEverReached95mm": 0,
+      "extCellsWhereTrunkEverReached95mm": 0,
+      "peakAbove_mm_core": [
+        70.8,
+        71,
+        70.5,
+        61.9,
+        65.2,
+        60.9,
+        83.7,
+        62.3,
+        56.4
+      ]
+    },
+    {
+      "label": "P8 the reasoned law armed midway between the tuck and the landing keyframe",
+      "move": "f9e321a9f2dd",
+      "kCore": 0,
+      "kCoreStable": 0,
+      "objective": 7.55881061627996,
+      "coreCellsWhereTrunkEverReached95mm": 0,
+      "extCellsWhereTrunkEverReached95mm": 1,
+      "peakAbove_mm_core": [
+        85.3,
+        70.9,
+        70.1,
+        65.2,
+        63.3,
+        60.1,
+        53.8,
+        50.9,
+        59.6
+      ]
+    },
+    {
+      "label": "g14n4",
+      "move": "74aaca90ec4e",
+      "kCore": 0,
+      "kCoreStable": 0,
+      "objective": 7.550814225066819,
+      "coreCellsWhereTrunkEverReached95mm": 0,
+      "extCellsWhereTrunkEverReached95mm": 0,
+      "peakAbove_mm_core": [
+        71.1,
+        79.5,
+        80.4,
+        67.3,
+        62.6,
+        60.7,
+        51.8,
+        53.1,
+        57.4
+      ]
+    },
+    {
+      "label": "g6n5",
+      "move": "7abaa9ed820e",
+      "kCore": 0,
+      "kCoreStable": 0,
+      "objective": 7.4933993911076975,
+      "coreCellsWhereTrunkEverReached95mm": 0,
+      "extCellsWhereTrunkEverReached95mm": 0,
+      "peakAbove_mm_core": [
+        82.2,
+        80.5,
+        84,
+        76.8,
+        76.2,
+        78.7,
+        66.3,
+        66.3,
+        65.7
+      ]
+    },
+    {
+      "label": "g15n8",
+      "move": "166b1cf5194b",
+      "kCore": 0,
+      "kCoreStable": 0,
+      "objective": 7.483865688057072,
+      "coreCellsWhereTrunkEverReached95mm": 0,
+      "extCellsWhereTrunkEverReached95mm": 0,
+      "peakAbove_mm_core": [
+        82.1,
+        84.4,
+        82.9,
+        67.2,
+        66.5,
+        72.7,
+        58.5,
+        60.2,
+        59.5
+      ]
+    },
+    {
+      "label": "g4n4",
+      "move": "a982c42d3e67",
+      "kCore": 0,
+      "kCoreStable": 0,
+      "objective": 7.48134336414898,
+      "coreCellsWhereTrunkEverReached95mm": 0,
+      "extCellsWhereTrunkEverReached95mm": 0,
+      "peakAbove_mm_core": [
+        77.9,
+        77.5,
+        77.5,
+        68.7,
+        69.3,
+        80,
+        66,
+        61.4,
+        57.5
+      ]
+    },
+    {
+      "label": "g3n15",
+      "move": "9aa35dec8db5",
+      "kCore": 0,
+      "kCoreStable": 0,
+      "objective": 7.48042847116511,
+      "coreCellsWhereTrunkEverReached95mm": 0,
+      "extCellsWhereTrunkEverReached95mm": 0,
+      "peakAbove_mm_core": [
+        81.6,
+        81.1,
+        81.8,
+        74.9,
+        74.3,
+        75.7,
+        64.4,
+        64.9,
+        66
+      ]
+    },
+    {
+      "label": "g1n2",
+      "move": "929b2dd25366",
+      "kCore": 0,
+      "kCoreStable": 0,
+      "objective": 7.446380441477365,
+      "coreCellsWhereTrunkEverReached95mm": 0,
+      "extCellsWhereTrunkEverReached95mm": 0,
+      "peakAbove_mm_core": [
+        70.5,
+        74.9,
+        69.8,
+        62.4,
+        61.6,
+        59.8,
+        50.5,
+        51.6,
+        59.6
+      ]
+    },
+    {
+      "label": "g4n15",
+      "move": "1b74c9a5012d",
+      "kCore": 0,
+      "kCoreStable": 0,
+      "objective": 7.400283659838302,
+      "coreCellsWhereTrunkEverReached95mm": 0,
+      "extCellsWhereTrunkEverReached95mm": 0,
+      "peakAbove_mm_core": [
+        78.6,
+        79.9,
+        82.3,
+        74.7,
+        74.2,
+        76.2,
+        66.8,
+        66.4,
+        66.3
+      ]
+    },
+    {
+      "label": "g2n2",
+      "move": "49c2fa906caa",
+      "kCore": 0,
+      "kCoreStable": 0,
+      "objective": 7.366946374774226,
+      "coreCellsWhereTrunkEverReached95mm": 0,
+      "extCellsWhereTrunkEverReached95mm": 0,
+      "peakAbove_mm_core": [
+        72.5,
+        90.3,
+        73,
+        63.1,
+        79.2,
+        62.5,
+        60.8,
+        51.9,
+        63.1
+      ]
+    },
+    {
+      "label": "g8n0",
+      "move": "24305bd399fc",
+      "kCore": 0,
+      "kCoreStable": 0,
+      "objective": 7.336101715516474,
+      "coreCellsWhereTrunkEverReached95mm": 0,
+      "extCellsWhereTrunkEverReached95mm": 0,
+      "peakAbove_mm_core": [
+        70.7,
+        70.9,
+        69.9,
+        62.6,
+        62.2,
+        62.2,
+        65.7,
+        56.4,
+        74.8
+      ]
+    },
+    {
+      "label": "g1n6",
+      "move": "8bed62e06a18",
+      "kCore": 0,
+      "kCoreStable": 0,
+      "objective": 7.2668794557126155,
+      "coreCellsWhereTrunkEverReached95mm": 0,
+      "extCellsWhereTrunkEverReached95mm": 0,
+      "peakAbove_mm_core": [
+        76,
+        72.5,
+        78.1,
+        72.9,
+        73.9,
+        89.1,
+        68.5,
+        62.1,
+        66.9
+      ]
+    },
+    {
+      "label": "P5 the reasoned law, doubled",
+      "move": "2395eaeaacc8",
+      "kCore": 0,
+      "kCoreStable": 0,
+      "objective": 7.26184551615153,
+      "coreCellsWhereTrunkEverReached95mm": 0,
+      "extCellsWhereTrunkEverReached95mm": 0,
+      "peakAbove_mm_core": [
+        94.7,
+        70.9,
+        71.2,
+        63.6,
+        61.4,
+        81.6,
+        58.5,
+        55.3,
+        56.5
+      ]
+    },
+    {
+      "label": "g6n17",
+      "move": "535c49317b62",
+      "kCore": 0,
+      "kCoreStable": 0,
+      "objective": 7.094413749471299,
+      "coreCellsWhereTrunkEverReached95mm": 0,
+      "extCellsWhereTrunkEverReached95mm": 0,
+      "peakAbove_mm_core": [
+        70.8,
+        70.8,
+        86.1,
+        60.8,
+        60.8,
+        62.2,
+        70.6,
+        55.4,
+        51.8
+      ]
+    },
+    {
+      "label": "g14n6",
+      "move": "d868f3e6503f",
+      "kCore": 0,
+      "kCoreStable": 0,
+      "objective": 7.084311373363498,
+      "coreCellsWhereTrunkEverReached95mm": 0,
+      "extCellsWhereTrunkEverReached95mm": 0,
+      "peakAbove_mm_core": [
+        81.7,
+        81.1,
+        82.3,
+        80.8,
+        71.9,
+        75.9,
+        68.3,
+        66.9,
+        67.7
+      ]
+    },
+    {
+      "label": "g6n6",
+      "move": "31b658a312da",
+      "kCore": 0,
+      "kCoreStable": 0,
+      "objective": 7.00404264985225,
+      "coreCellsWhereTrunkEverReached95mm": 0,
+      "extCellsWhereTrunkEverReached95mm": 0,
+      "peakAbove_mm_core": [
+        76.1,
+        74.7,
+        82.4,
+        73.3,
+        71.4,
+        74.5,
+        69.7,
+        66.3,
+        67.1
+      ]
+    },
+    {
+      "label": "g12n0",
+      "move": "8b61d57a7d26",
+      "kCore": 0,
+      "kCoreStable": 0,
+      "objective": 6.971688035323011,
+      "coreCellsWhereTrunkEverReached95mm": 0,
+      "extCellsWhereTrunkEverReached95mm": 0,
+      "peakAbove_mm_core": [
+        89.3,
+        76.7,
+        75.6,
+        74.6,
+        70.1,
+        75.1,
+        66.2,
+        67,
+        66.3
+      ]
+    },
+    {
+      "label": "g1n0",
+      "move": "0cea18e0c4b8",
+      "kCore": 0,
+      "kCoreStable": 0,
+      "objective": 6.964994941629358,
+      "coreCellsWhereTrunkEverReached95mm": 0,
+      "extCellsWhereTrunkEverReached95mm": 0,
+      "peakAbove_mm_core": [
+        81.3,
+        82.9,
+        83.6,
+        72.3,
+        72.9,
+        63.9,
+        58.4,
+        56.2,
+        55.1
+      ]
+    },
+    {
+      "label": "g1n20",
+      "move": "63e5a50d3007",
+      "kCore": 0,
+      "kCoreStable": 0,
+      "objective": 6.813542804950336,
+      "coreCellsWhereTrunkEverReached95mm": 0,
+      "extCellsWhereTrunkEverReached95mm": 0,
+      "peakAbove_mm_core": [
+        73.8,
+        70.6,
+        71.6,
+        62.1,
+        66.2,
+        60.5,
+        53.1,
+        53.9,
+        50.2
+      ]
+    },
+    {
+      "label": "g3n14",
+      "move": "ad40cc4b6251",
+      "kCore": 0,
+      "kCoreStable": 0,
+      "objective": 6.795372648661331,
+      "coreCellsWhereTrunkEverReached95mm": 0,
+      "extCellsWhereTrunkEverReached95mm": 0,
+      "peakAbove_mm_core": [
+        77,
+        77.2,
+        78.3,
+        68.2,
+        69.7,
+        69.1,
+        59.7,
+        60.1,
+        63.4
+      ]
+    },
+    {
+      "label": "g4n19",
+      "move": "eacdcb982312",
+      "kCore": 0,
+      "kCoreStable": 0,
+      "objective": 6.785359605003989,
+      "coreCellsWhereTrunkEverReached95mm": 0,
+      "extCellsWhereTrunkEverReached95mm": 0,
+      "peakAbove_mm_core": [
+        84.9,
+        79.8,
+        82.7,
+        75.5,
+        72.8,
+        76.9,
+        69.6,
+        69.7,
+        70.7
+      ]
+    },
+    {
+      "label": "g14n15",
+      "move": "ed9a93f5ef06",
+      "kCore": 0,
+      "kCoreStable": 0,
+      "objective": 6.7583622551566425,
+      "coreCellsWhereTrunkEverReached95mm": 0,
+      "extCellsWhereTrunkEverReached95mm": 0,
+      "peakAbove_mm_core": [
+        71,
+        71,
+        72.4,
+        84,
+        83.7,
+        72.4,
+        56.7,
+        51.9,
+        55.9
+      ]
+    },
+    {
+      "label": "g2n8",
+      "move": "cc029b494619",
+      "kCore": 0,
+      "kCoreStable": 0,
+      "objective": 6.754450642618632,
+      "coreCellsWhereTrunkEverReached95mm": 0,
+      "extCellsWhereTrunkEverReached95mm": 0,
+      "peakAbove_mm_core": [
+        70.9,
+        72,
+        75.6,
+        60.9,
+        69.3,
+        65,
+        50.9,
+        60.6,
+        62.4
+      ]
+    },
+    {
+      "label": "g2n10",
+      "move": "536f6bf2b99e",
+      "kCore": 0,
+      "kCoreStable": 0,
+      "objective": 6.568812574059605,
+      "coreCellsWhereTrunkEverReached95mm": 0,
+      "extCellsWhereTrunkEverReached95mm": 0,
+      "peakAbove_mm_core": [
+        70.8,
+        81.8,
+        70.1,
+        70.8,
+        63.8,
+        65.6,
+        57.4,
+        54.7,
+        57.2
+      ]
+    },
+    {
+      "label": "g3n12",
+      "move": "8362f2fc4cd0",
+      "kCore": 0,
+      "kCoreStable": 0,
+      "objective": 6.563481844147287,
+      "coreCellsWhereTrunkEverReached95mm": 0,
+      "extCellsWhereTrunkEverReached95mm": 0,
+      "peakAbove_mm_core": [
+        73.4,
+        72.7,
+        71.3,
+        70,
+        73.7,
+        62.4,
+        56.5,
+        59.7,
+        61.1
+      ]
+    },
+    {
+      "label": "g3n1",
+      "move": "6c782793da43",
+      "kCore": 0,
+      "kCoreStable": 0,
+      "objective": 6.559699175940328,
+      "coreCellsWhereTrunkEverReached95mm": 0,
+      "extCellsWhereTrunkEverReached95mm": 0,
+      "peakAbove_mm_core": [
+        83.3,
+        82.6,
+        86.7,
+        76.2,
+        68,
+        73.9,
+        65.2,
+        52.2,
+        65.4
+      ]
+    },
+    {
+      "label": "g7n11",
+      "move": "40484aa8d858",
+      "kCore": 0,
+      "kCoreStable": 0,
+      "objective": 6.554736742993718,
+      "coreCellsWhereTrunkEverReached95mm": 0,
+      "extCellsWhereTrunkEverReached95mm": 0,
+      "peakAbove_mm_core": [
+        70.8,
+        71,
+        71.4,
+        62.4,
+        61,
+        64.3,
+        58.3,
+        59.4,
+        56.6
+      ]
+    },
+    {
+      "label": "g4n2",
+      "move": "93fcf1b35031",
+      "kCore": 0,
+      "kCoreStable": 0,
+      "objective": 6.541768050630953,
+      "coreCellsWhereTrunkEverReached95mm": 0,
+      "extCellsWhereTrunkEverReached95mm": 0,
+      "peakAbove_mm_core": [
+        87.1,
+        85.9,
+        85.1,
+        77,
+        77.8,
+        77.3,
+        66.3,
+        66.8,
+        66.1
+      ]
+    },
+    {
+      "label": "g13n18",
+      "move": "3cd970aadfe9",
+      "kCore": 0,
+      "kCoreStable": 0,
+      "objective": 6.490021407369936,
+      "coreCellsWhereTrunkEverReached95mm": 0,
+      "extCellsWhereTrunkEverReached95mm": 0,
+      "peakAbove_mm_core": [
+        77.3,
+        80.6,
+        80.5,
+        71.2,
+        70.3,
+        75,
+        60.1,
+        66.4,
+        59.4
+      ]
+    },
+    {
+      "label": "P1 the throw held: base = the round-3 landing pose through the same blend, ZERO gains, armed at the tuck",
+      "move": "2cb661d36f9f",
+      "kCore": 0,
+      "kCoreStable": 0,
+      "objective": 6.445702695089974,
+      "coreCellsWhereTrunkEverReached95mm": 0,
+      "extCellsWhereTrunkEverReached95mm": 0,
+      "peakAbove_mm_core": [
+        86.8,
+        70.9,
+        70.1,
+        68.6,
+        65,
+        77.5,
+        57.8,
+        58.5,
+        69.3
+      ]
+    },
+    {
+      "label": "g3n2",
+      "move": "d325277902f5",
+      "kCore": 0,
+      "kCoreStable": 0,
+      "objective": 6.417793388504339,
+      "coreCellsWhereTrunkEverReached95mm": 0,
+      "extCellsWhereTrunkEverReached95mm": 0,
+      "peakAbove_mm_core": [
+        83.1,
+        75.6,
+        76.8,
+        72.7,
+        71.7,
+        76.9,
+        58.1,
+        62.6,
+        50
+      ]
+    },
+    {
+      "label": "g3n20",
+      "move": "d2e470491c60",
+      "kCore": 0,
+      "kCoreStable": 0,
+      "objective": 6.4093146303026165,
+      "coreCellsWhereTrunkEverReached95mm": 0,
+      "extCellsWhereTrunkEverReached95mm": 0,
+      "peakAbove_mm_core": [
+        78,
+        77.6,
+        79.6,
+        71.1,
+        76.3,
+        71.1,
+        62.6,
+        61.4,
+        56.4
+      ]
+    },
+    {
+      "label": "g6n11",
+      "move": "a33c7aee1354",
+      "kCore": 0,
+      "kCoreStable": 0,
+      "objective": 6.3892331512496074,
+      "coreCellsWhereTrunkEverReached95mm": 0,
+      "extCellsWhereTrunkEverReached95mm": 0,
+      "peakAbove_mm_core": [
+        70.9,
+        72.2,
+        79.1,
+        65.6,
+        61.6,
+        64.7,
+        59.4,
+        89.3,
+        63.3
+      ]
+    },
+    {
+      "label": "g1n21",
+      "move": "00afbf375df4",
+      "kCore": 0,
+      "kCoreStable": 0,
+      "objective": 6.31585105044377,
+      "coreCellsWhereTrunkEverReached95mm": 0,
+      "extCellsWhereTrunkEverReached95mm": 0,
+      "peakAbove_mm_core": [
+        70.9,
+        71.3,
+        77.2,
+        93.8,
+        68.3,
+        60.1,
+        53.5,
+        52.7,
+        56.2
+      ]
+    },
+    {
+      "label": "g8n10",
+      "move": "b208a311f8de",
+      "kCore": 0,
+      "kCoreStable": 0,
+      "objective": 6.309650834897491,
+      "coreCellsWhereTrunkEverReached95mm": 0,
+      "extCellsWhereTrunkEverReached95mm": 0,
+      "peakAbove_mm_core": [
+        70.8,
+        76.3,
+        75.9,
+        62.2,
+        61.5,
+        80.4,
+        64.5,
+        55.1,
+        54.7
+      ]
+    },
+    {
+      "label": "g13n11",
+      "move": "5b5ab2cce08f",
+      "kCore": 0,
+      "kCoreStable": 0,
+      "objective": 6.259892496053751,
+      "coreCellsWhereTrunkEverReached95mm": 0,
+      "extCellsWhereTrunkEverReached95mm": 0,
+      "peakAbove_mm_core": [
+        78.1,
+        82.8,
+        79.2,
+        68,
+        74.2,
+        73.8,
+        60.1,
+        60.3,
+        62.7
+      ]
+    },
+    {
+      "label": "g4n11",
+      "move": "870c3ccb8465",
+      "kCore": 0,
+      "kCoreStable": 0,
+      "objective": 6.258755845022556,
+      "coreCellsWhereTrunkEverReached95mm": 0,
+      "extCellsWhereTrunkEverReached95mm": 0,
+      "peakAbove_mm_core": [
+        86.7,
+        85.6,
+        85.6,
+        75.7,
+        70.8,
+        73.6,
+        76.1,
+        65.2,
+        67.6
+      ]
+    },
+    {
+      "label": "g9n6",
+      "move": "52e20875dd53",
+      "kCore": 0,
+      "kCoreStable": 0,
+      "objective": 6.25293058721849,
+      "coreCellsWhereTrunkEverReached95mm": 0,
+      "extCellsWhereTrunkEverReached95mm": 0,
+      "peakAbove_mm_core": [
+        73.6,
+        73.9,
+        86.6,
+        73.9,
+        69.3,
+        70.5,
+        55.6,
+        66,
+        59.2
+      ]
+    },
+    {
+      "label": "g11n19",
+      "move": "8a39ad7bfc1a",
+      "kCore": 0,
+      "kCoreStable": 0,
+      "objective": 6.149483734913967,
+      "coreCellsWhereTrunkEverReached95mm": 0,
+      "extCellsWhereTrunkEverReached95mm": 0,
+      "peakAbove_mm_core": [
+        82,
+        81.8,
+        79.9,
+        73.7,
+        62.4,
+        61.2,
+        52.9,
+        65.5,
+        55.7
+      ]
+    },
+    {
+      "label": "g1n10",
+      "move": "5323eabe0aaf",
+      "kCore": 0,
+      "kCoreStable": 0,
+      "objective": 6.092476354589282,
+      "coreCellsWhereTrunkEverReached95mm": 0,
+      "extCellsWhereTrunkEverReached95mm": 0,
+      "peakAbove_mm_core": [
+        73.5,
+        71.1,
+        69.1,
+        69.5,
+        70.7,
+        62.7,
+        50.5,
+        55.7,
+        49.1
+      ]
+    },
+    {
+      "label": "g13n1",
+      "move": "d8caa8220720",
+      "kCore": 0,
+      "kCoreStable": 0,
+      "objective": 5.901670897255628,
+      "coreCellsWhereTrunkEverReached95mm": 0,
+      "extCellsWhereTrunkEverReached95mm": 0,
+      "peakAbove_mm_core": [
+        75.8,
+        74.1,
+        76.9,
+        66.6,
+        67,
+        75.7,
+        67.8,
+        64.1,
+        69.5
+      ]
+    },
+    {
+      "label": "g8n1",
+      "move": "dae62a03d6bf",
+      "kCore": 0,
+      "kCoreStable": 0,
+      "objective": 5.8164756260359685,
+      "coreCellsWhereTrunkEverReached95mm": 0,
+      "extCellsWhereTrunkEverReached95mm": 0,
+      "peakAbove_mm_core": [
+        74,
+        73.2,
+        77.1,
+        68.2,
+        67.1,
+        75.3,
+        63.3,
+        60.5,
+        71.2
+      ]
+    },
+    {
+      "label": "g4n12",
+      "move": "ec662c5f6bc1",
+      "kCore": 0,
+      "kCoreStable": 0,
+      "objective": 5.692455609760251,
+      "coreCellsWhereTrunkEverReached95mm": 0,
+      "extCellsWhereTrunkEverReached95mm": 0,
+      "peakAbove_mm_core": [
+        81.2,
+        85.1,
+        86,
+        73.1,
+        72,
+        73.4,
+        66,
+        66.9,
+        65.2
+      ]
+    },
+    {
+      "label": "g11n10",
+      "move": "ffbe1d2488a0",
+      "kCore": 0,
+      "kCoreStable": 0,
+      "objective": 5.680675803036049,
+      "coreCellsWhereTrunkEverReached95mm": 0,
+      "extCellsWhereTrunkEverReached95mm": 0,
+      "peakAbove_mm_core": [
+        71.2,
+        73.1,
+        87.2,
+        70.5,
+        67.6,
+        82.5,
+        59.8,
+        61.5,
+        63.6
+      ]
+    },
+    {
+      "label": "g10n8",
+      "move": "fcd733bf16de",
+      "kCore": 0,
+      "kCoreStable": 0,
+      "objective": 5.397666652227205,
+      "coreCellsWhereTrunkEverReached95mm": 0,
+      "extCellsWhereTrunkEverReached95mm": 1,
+      "peakAbove_mm_core": [
+        72.4,
+        72.5,
+        73.2,
+        64.7,
+        71.5,
+        64.7,
+        65.3,
+        58.3,
+        58.4
+      ]
+    },
+    {
+      "label": "g14n2",
+      "move": "25d7b77d521d",
+      "kCore": 0,
+      "kCoreStable": 0,
+      "objective": 5.373905112103789,
+      "coreCellsWhereTrunkEverReached95mm": 0,
+      "extCellsWhereTrunkEverReached95mm": 0,
+      "peakAbove_mm_core": [
+        77.6,
+        78.6,
+        79.4,
+        72.8,
+        70.4,
+        75,
+        63.5,
+        59.7,
+        66.2
+      ]
+    },
+    {
+      "label": "g3n8",
+      "move": "23f38bcf9557",
+      "kCore": 0,
+      "kCoreStable": 0,
+      "objective": 5.360221650451119,
+      "coreCellsWhereTrunkEverReached95mm": 0,
+      "extCellsWhereTrunkEverReached95mm": 0,
+      "peakAbove_mm_core": [
+        73.5,
+        74.5,
+        80,
+        73.3,
+        73.8,
+        70,
+        54.3,
+        55.7,
+        64.3
+      ]
+    },
+    {
+      "label": "g5n8",
+      "move": "15144a31afaa",
+      "kCore": 0,
+      "kCoreStable": 0,
+      "objective": 5.111988864457168,
+      "coreCellsWhereTrunkEverReached95mm": 0,
+      "extCellsWhereTrunkEverReached95mm": 0,
+      "peakAbove_mm_core": [
+        74.2,
+        82.3,
+        84.7,
+        70.3,
+        67.8,
+        78.2,
+        63.2,
+        63.7,
+        65
+      ]
+    },
+    {
+      "label": "g7n3",
+      "move": "2fe501ac5e9d",
+      "kCore": 0,
+      "kCoreStable": 0,
+      "objective": 5.089154666388741,
+      "coreCellsWhereTrunkEverReached95mm": 0,
+      "extCellsWhereTrunkEverReached95mm": 0,
+      "peakAbove_mm_core": [
+        77.4,
+        72.9,
+        82,
+        70.4,
+        69.6,
+        74,
+        54.6,
+        54.8,
+        58.8
+      ]
+    },
+    {
+      "label": "g3n0",
+      "move": "ad86d6647934",
+      "kCore": 0,
+      "kCoreStable": 0,
+      "objective": 4.9321588530597,
+      "coreCellsWhereTrunkEverReached95mm": 0,
+      "extCellsWhereTrunkEverReached95mm": 0,
+      "peakAbove_mm_core": [
+        79.5,
+        88.4,
+        77.4,
+        61,
+        66.1,
+        69.9,
+        54.6,
+        51.2,
+        60.1
+      ]
+    },
+    {
+      "label": "g10n17",
+      "move": "fe58d89dce5c",
+      "kCore": 0,
+      "kCoreStable": 0,
+      "objective": 4.173874553902156,
+      "coreCellsWhereTrunkEverReached95mm": 0,
+      "extCellsWhereTrunkEverReached95mm": 0,
+      "peakAbove_mm_core": [
+        79.1,
+        81.9,
+        77.2,
+        63.7,
+        74.8,
+        70.9,
+        50.7,
+        51,
+        51.5
+      ]
+    }
+  ]
+}

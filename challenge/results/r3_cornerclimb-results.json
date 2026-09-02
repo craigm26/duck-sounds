@@ -1,0 +1,1242 @@
+{
+  "family": "C_whole_body_corner_climb_r3",
+  "seedBase": 16838,
+  "budget_s": 2280,
+  "grid": {
+    "DHS": [
+      -0.01,
+      0,
+      0.01
+    ],
+    "PLANTS": [
+      {
+        "drop": 0.12,
+        "fmul": 1
+      },
+      {
+        "drop": 0.13,
+        "fmul": 0.7
+      },
+      {
+        "drop": 0.125,
+        "fmul": 1.3
+      }
+    ],
+    "CLEAR_BONUS": 4
+  },
+  "arms": [
+    {
+      "riseMM": 120,
+      "episodes": 2753,
+      "published": "../climb/best_r3_cornerclimb_120mm.json",
+      "k": 0,
+      "objective": 3.728390130206623,
+      "meanReward": 3.728390130206623,
+      "searchK": 0,
+      "searchObjective": 3.728390130206623,
+      "agg": {
+        "maxZ": 0.1600482475417502,
+        "meanMaxZ": 0.1379059166329093,
+        "meanPeakGain": 0.02165730858631717,
+        "headFrac": 0.025925925925925925,
+        "riserFrac": 0.32037037037037036,
+        "wallFrac": 0.019135802469135807,
+        "wallBearFrac": 0.017283950617283952,
+        "bothFrac": 0.025925925925925925,
+        "sustainFrac": 0.024691358024691357,
+        "liftIntegral": 0.1690973647079155,
+        "footNear_mm": 95.47726635828157,
+        "bothNear_mm": 157.1556136939075,
+        "feetOnTreadMax": 1,
+        "meanFeetOnTreadMax": 0.7777777777777778,
+        "meanFeetOnTreadFinal": 0.6666666666666666,
+        "meanAbove_mm": -0.6511035779976205,
+        "meanX_mm": 38.67945955610333,
+        "upFinal": 0,
+        "satFrac": 0.21137566137566136,
+        "maxTq": 0.6405,
+        "maxAbsDY_mm": 114.47951028779491,
+        "maxTreadDriftX_mm": 0.00023824983425013713
+      },
+      "verdicts": [
+        {
+          "rise_mm": 110,
+          "drop": 0.12,
+          "fmul": 1,
+          "honest": false,
+          "reward": 4.724,
+          "x_mm": 55.2,
+          "z_mm": 126.5,
+          "above_mm": 16.5,
+          "dy_mm": 98.4,
+          "up": false,
+          "feetOnTread": 1,
+          "feetOnTreadMax": 1,
+          "peakZ_mm": 155.3,
+          "headFrac": 0.056,
+          "riserFrac": 0.456,
+          "wallFrac": 0.05
+        },
+        {
+          "rise_mm": 110,
+          "drop": 0.13,
+          "fmul": 0.7,
+          "honest": false,
+          "reward": 5.786,
+          "x_mm": 43.1,
+          "z_mm": 156.1,
+          "above_mm": 46.1,
+          "dy_mm": 30.8,
+          "up": false,
+          "feetOnTread": 1,
+          "feetOnTreadMax": 1,
+          "peakZ_mm": 158.8,
+          "headFrac": 0.072,
+          "riserFrac": 0.361,
+          "wallFrac": 0.022
+        },
+        {
+          "rise_mm": 110,
+          "drop": 0.125,
+          "fmul": 1.3,
+          "honest": false,
+          "reward": 1.993,
+          "x_mm": 52.8,
+          "z_mm": 85.1,
+          "above_mm": -24.9,
+          "dy_mm": -82.5,
+          "up": false,
+          "feetOnTread": 0,
+          "feetOnTreadMax": 1,
+          "peakZ_mm": 116.2,
+          "headFrac": 0,
+          "riserFrac": 0.172,
+          "wallFrac": 0
+        },
+        {
+          "rise_mm": 120,
+          "drop": 0.12,
+          "fmul": 1,
+          "honest": false,
+          "reward": 4.607,
+          "x_mm": 47.2,
+          "z_mm": 136.6,
+          "above_mm": 16.6,
+          "dy_mm": 101.8,
+          "up": false,
+          "feetOnTread": 1,
+          "feetOnTreadMax": 1,
+          "peakZ_mm": 156.9,
+          "headFrac": 0.056,
+          "riserFrac": 0.478,
+          "wallFrac": 0.05
+        },
+        {
+          "rise_mm": 120,
+          "drop": 0.13,
+          "fmul": 0.7,
+          "honest": false,
+          "reward": 5.242,
+          "x_mm": 31.7,
+          "z_mm": 157.2,
+          "above_mm": 37.2,
+          "dy_mm": 35.1,
+          "up": false,
+          "feetOnTread": 1,
+          "feetOnTreadMax": 1,
+          "peakZ_mm": 160,
+          "headFrac": 0.05,
+          "riserFrac": 0.283,
+          "wallFrac": 0.044
+        },
+        {
+          "rise_mm": 120,
+          "drop": 0.125,
+          "fmul": 1.3,
+          "honest": false,
+          "reward": 3.948,
+          "x_mm": 49.9,
+          "z_mm": 87,
+          "above_mm": -33,
+          "dy_mm": -69.1,
+          "up": false,
+          "feetOnTread": 1,
+          "feetOnTreadMax": 1,
+          "peakZ_mm": 116.2,
+          "headFrac": 0,
+          "riserFrac": 0.178,
+          "wallFrac": 0
+        },
+        {
+          "rise_mm": 130,
+          "drop": 0.12,
+          "fmul": 1,
+          "honest": false,
+          "reward": 1.817,
+          "x_mm": -1,
+          "z_mm": 145,
+          "above_mm": 15,
+          "dy_mm": -18.4,
+          "up": false,
+          "feetOnTread": 0,
+          "feetOnTreadMax": 0,
+          "peakZ_mm": 145,
+          "headFrac": 0,
+          "riserFrac": 0.467,
+          "wallFrac": 0
+        },
+        {
+          "rise_mm": 130,
+          "drop": 0.13,
+          "fmul": 0.7,
+          "honest": false,
+          "reward": 1.524,
+          "x_mm": 21.6,
+          "z_mm": 92.1,
+          "above_mm": -37.9,
+          "dy_mm": -21,
+          "up": false,
+          "feetOnTread": 0,
+          "feetOnTreadMax": 0,
+          "peakZ_mm": 116.5,
+          "headFrac": 0,
+          "riserFrac": 0.306,
+          "wallFrac": 0.006
+        },
+        {
+          "rise_mm": 130,
+          "drop": 0.125,
+          "fmul": 1.3,
+          "honest": false,
+          "reward": 3.915,
+          "x_mm": 47.7,
+          "z_mm": 88.5,
+          "above_mm": -41.5,
+          "dy_mm": -68.7,
+          "up": false,
+          "feetOnTread": 1,
+          "feetOnTreadMax": 1,
+          "peakZ_mm": 116.2,
+          "headFrac": 0,
+          "riserFrac": 0.183,
+          "wallFrac": 0
+        }
+      ],
+      "sequence": "FHPRKSE",
+      "order": "WFH",
+      "lead": "L",
+      "useW": false,
+      "pr": "P_before_R",
+      "ladder": [
+        {
+          "rise_mm": 40,
+          "simultaneous": true,
+          "overEpisode": true,
+          "bestAbove_mm": 92.8,
+          "fot": 1,
+          "peakZ_mm": 136.3,
+          "honest": false
+        },
+        {
+          "rise_mm": 50,
+          "simultaneous": true,
+          "overEpisode": true,
+          "bestAbove_mm": 86.3,
+          "fot": 1,
+          "peakZ_mm": 141.4,
+          "honest": false
+        },
+        {
+          "rise_mm": 60,
+          "simultaneous": true,
+          "overEpisode": true,
+          "bestAbove_mm": 86.9,
+          "fot": 1,
+          "peakZ_mm": 147.6,
+          "honest": false
+        },
+        {
+          "rise_mm": 70,
+          "simultaneous": true,
+          "overEpisode": true,
+          "bestAbove_mm": 79.1,
+          "fot": 1,
+          "peakZ_mm": 150.2,
+          "honest": false
+        },
+        {
+          "rise_mm": 80,
+          "simultaneous": true,
+          "overEpisode": true,
+          "bestAbove_mm": 68.8,
+          "fot": 1,
+          "peakZ_mm": 149.7,
+          "honest": false
+        },
+        {
+          "rise_mm": 90,
+          "simultaneous": true,
+          "overEpisode": true,
+          "bestAbove_mm": 54.7,
+          "fot": 1,
+          "peakZ_mm": 153.6,
+          "honest": false
+        },
+        {
+          "rise_mm": 100,
+          "simultaneous": true,
+          "overEpisode": true,
+          "bestAbove_mm": 44.3,
+          "fot": 1,
+          "peakZ_mm": 157.1,
+          "honest": false
+        },
+        {
+          "rise_mm": 110,
+          "simultaneous": true,
+          "overEpisode": true,
+          "bestAbove_mm": 46.1,
+          "fot": 1,
+          "peakZ_mm": 158.8,
+          "honest": false
+        },
+        {
+          "rise_mm": 120,
+          "simultaneous": true,
+          "overEpisode": true,
+          "bestAbove_mm": 37.2,
+          "fot": 1,
+          "peakZ_mm": 160,
+          "honest": false
+        },
+        {
+          "rise_mm": 140,
+          "simultaneous": false,
+          "overEpisode": false,
+          "bestAbove_mm": -14.3,
+          "fot": 0,
+          "peakZ_mm": 128.4,
+          "honest": false
+        },
+        {
+          "rise_mm": 160,
+          "simultaneous": false,
+          "overEpisode": false,
+          "bestAbove_mm": -34.4,
+          "fot": 0,
+          "peakZ_mm": 127.9,
+          "honest": false
+        },
+        {
+          "rise_mm": 180,
+          "simultaneous": false,
+          "overEpisode": false,
+          "bestAbove_mm": -54.4,
+          "fot": 0,
+          "peakZ_mm": 127.9,
+          "honest": false
+        }
+      ],
+      "runnersUp": [
+        {
+          "k": 0,
+          "objective": 3.728,
+          "peakZ_mm": 160,
+          "sequence": "FHPRKSE",
+          "headFrac": 0.026,
+          "riserFrac": 0.32,
+          "wallFrac": 0.019,
+          "feetOnTreadMax": 1,
+          "bothNear_mm": 157
+        },
+        {
+          "k": 0,
+          "objective": 2.818,
+          "peakZ_mm": 159.2,
+          "sequence": "FHPRKSE",
+          "headFrac": 0.012,
+          "riserFrac": 0.304,
+          "wallFrac": 0.1,
+          "feetOnTreadMax": 1,
+          "bothNear_mm": 151
+        },
+        {
+          "k": 0,
+          "objective": 2.273,
+          "peakZ_mm": 158.5,
+          "sequence": "HFRPKSE",
+          "headFrac": 0.086,
+          "riserFrac": 0.121,
+          "wallFrac": 0.223,
+          "feetOnTreadMax": 1,
+          "bothNear_mm": 171
+        },
+        {
+          "k": 0,
+          "objective": 1.885,
+          "peakZ_mm": 147.1,
+          "sequence": "FHWRPKSE",
+          "headFrac": 0.031,
+          "riserFrac": 0.17,
+          "wallFrac": 0.255,
+          "feetOnTreadMax": 1,
+          "bothNear_mm": 150
+        },
+        {
+          "k": 0,
+          "objective": 1.857,
+          "peakZ_mm": 148.7,
+          "sequence": "FHWRPKSE",
+          "headFrac": 0.22,
+          "riserFrac": 0.207,
+          "wallFrac": 0.152,
+          "feetOnTreadMax": 2,
+          "bothNear_mm": 167
+        }
+      ]
+    },
+    {
+      "riseMM": 180,
+      "episodes": 2829,
+      "published": "../climb/best_r3_cornerclimb_180mm.json",
+      "k": 0,
+      "objective": 2.2375708993118213,
+      "meanReward": 2.2375708993118213,
+      "searchK": 0,
+      "searchObjective": 2.2375708993118213,
+      "agg": {
+        "maxZ": 0.14643753541165666,
+        "meanMaxZ": 0.1380279584096475,
+        "meanPeakGain": 0.021779350363055353,
+        "headFrac": 0.0326197757390418,
+        "riserFrac": 0.27522935779816515,
+        "wallFrac": 0.13200815494393478,
+        "wallBearFrac": 0.024464831804281346,
+        "bothFrac": 0.009683995922528034,
+        "sustainFrac": 0,
+        "liftIntegral": 0.0025905049286479914,
+        "footNear_mm": 129.97751844224464,
+        "bothNear_mm": 175.56761386455076,
+        "feetOnTreadMax": 0,
+        "meanFeetOnTreadMax": 0,
+        "meanFeetOnTreadFinal": 0,
+        "meanAbove_mm": -80.59799207212477,
+        "meanX_mm": 32.13435625041772,
+        "upFinal": 5,
+        "satFrac": 0.1720911606232707,
+        "maxTq": 0.6405,
+        "maxAbsDY_mm": 153.58929812032818,
+        "maxTreadDriftX_mm": 0.00016125280044576584
+      },
+      "verdicts": [
+        {
+          "rise_mm": 170,
+          "drop": 0.12,
+          "fmul": 1,
+          "honest": false,
+          "reward": 2.778,
+          "x_mm": 38.5,
+          "z_mm": 115.3,
+          "above_mm": -54.7,
+          "dy_mm": -41.4,
+          "up": true,
+          "feetOnTread": 0,
+          "feetOnTreadMax": 0,
+          "peakZ_mm": 146,
+          "headFrac": 0.028,
+          "riserFrac": 0.298,
+          "wallFrac": 0.041
+        },
+        {
+          "rise_mm": 170,
+          "drop": 0.13,
+          "fmul": 0.7,
+          "honest": false,
+          "reward": 1.103,
+          "x_mm": -6.5,
+          "z_mm": 79.7,
+          "above_mm": -90.3,
+          "dy_mm": -145.8,
+          "up": false,
+          "feetOnTread": 0,
+          "feetOnTreadMax": 0,
+          "peakZ_mm": 121.6,
+          "headFrac": 0.023,
+          "riserFrac": 0.243,
+          "wallFrac": 0.303
+        },
+        {
+          "rise_mm": 170,
+          "drop": 0.125,
+          "fmul": 1.3,
+          "honest": false,
+          "reward": 3.135,
+          "x_mm": 62.4,
+          "z_mm": 109.1,
+          "above_mm": -60.9,
+          "dy_mm": 63,
+          "up": true,
+          "feetOnTread": 0,
+          "feetOnTreadMax": 0,
+          "peakZ_mm": 146.4,
+          "headFrac": 0.014,
+          "riserFrac": 0.257,
+          "wallFrac": 0.06
+        },
+        {
+          "rise_mm": 180,
+          "drop": 0.12,
+          "fmul": 1,
+          "honest": false,
+          "reward": 1.868,
+          "x_mm": 44.5,
+          "z_mm": 97.4,
+          "above_mm": -82.6,
+          "dy_mm": 3.9,
+          "up": false,
+          "feetOnTread": 0,
+          "feetOnTreadMax": 0,
+          "peakZ_mm": 146.1,
+          "headFrac": 0.032,
+          "riserFrac": 0.339,
+          "wallFrac": 0.055
+        },
+        {
+          "rise_mm": 180,
+          "drop": 0.13,
+          "fmul": 0.7,
+          "honest": false,
+          "reward": 1.103,
+          "x_mm": -6.5,
+          "z_mm": 79.7,
+          "above_mm": -100.3,
+          "dy_mm": -145.8,
+          "up": false,
+          "feetOnTread": 0,
+          "feetOnTreadMax": 0,
+          "peakZ_mm": 121.6,
+          "headFrac": 0.055,
+          "riserFrac": 0.271,
+          "wallFrac": 0.294
+        },
+        {
+          "rise_mm": 180,
+          "drop": 0.125,
+          "fmul": 1.3,
+          "honest": false,
+          "reward": 3.135,
+          "x_mm": 62.4,
+          "z_mm": 109.1,
+          "above_mm": -70.9,
+          "dy_mm": 63,
+          "up": true,
+          "feetOnTread": 0,
+          "feetOnTreadMax": 0,
+          "peakZ_mm": 146.4,
+          "headFrac": 0.032,
+          "riserFrac": 0.28,
+          "wallFrac": 0.05
+        },
+        {
+          "rise_mm": 190,
+          "drop": 0.12,
+          "fmul": 1,
+          "honest": false,
+          "reward": 2.778,
+          "x_mm": 38.5,
+          "z_mm": 115.3,
+          "above_mm": -74.7,
+          "dy_mm": -41.4,
+          "up": true,
+          "feetOnTread": 0,
+          "feetOnTreadMax": 0,
+          "peakZ_mm": 146,
+          "headFrac": 0.041,
+          "riserFrac": 0.284,
+          "wallFrac": 0.055
+        },
+        {
+          "rise_mm": 190,
+          "drop": 0.13,
+          "fmul": 0.7,
+          "honest": false,
+          "reward": 1.103,
+          "x_mm": -6.5,
+          "z_mm": 79.7,
+          "above_mm": -110.3,
+          "dy_mm": -145.8,
+          "up": false,
+          "feetOnTread": 0,
+          "feetOnTreadMax": 0,
+          "peakZ_mm": 121.6,
+          "headFrac": 0.023,
+          "riserFrac": 0.252,
+          "wallFrac": 0.289
+        },
+        {
+          "rise_mm": 190,
+          "drop": 0.125,
+          "fmul": 1.3,
+          "honest": false,
+          "reward": 3.135,
+          "x_mm": 62.4,
+          "z_mm": 109.1,
+          "above_mm": -80.9,
+          "dy_mm": 63,
+          "up": true,
+          "feetOnTread": 0,
+          "feetOnTreadMax": 0,
+          "peakZ_mm": 146.4,
+          "headFrac": 0.046,
+          "riserFrac": 0.252,
+          "wallFrac": 0.041
+        }
+      ],
+      "sequence": "WHFRPKSE",
+      "order": "WHF",
+      "lead": "R",
+      "useW": true,
+      "pr": "R_before_P",
+      "ladder": [
+        {
+          "rise_mm": 40,
+          "simultaneous": true,
+          "overEpisode": true,
+          "bestAbove_mm": 84.3,
+          "fot": 1,
+          "peakZ_mm": 127.4,
+          "honest": false
+        },
+        {
+          "rise_mm": 50,
+          "simultaneous": true,
+          "overEpisode": true,
+          "bestAbove_mm": 80.5,
+          "fot": 1,
+          "peakZ_mm": 131.7,
+          "honest": false
+        },
+        {
+          "rise_mm": 60,
+          "simultaneous": true,
+          "overEpisode": true,
+          "bestAbove_mm": 75.3,
+          "fot": 1,
+          "peakZ_mm": 138.4,
+          "honest": false
+        },
+        {
+          "rise_mm": 70,
+          "simultaneous": true,
+          "overEpisode": true,
+          "bestAbove_mm": 74.6,
+          "fot": 1,
+          "peakZ_mm": 144.6,
+          "honest": false
+        },
+        {
+          "rise_mm": 80,
+          "simultaneous": true,
+          "overEpisode": true,
+          "bestAbove_mm": 66.7,
+          "fot": 1,
+          "peakZ_mm": 148.4,
+          "honest": false
+        },
+        {
+          "rise_mm": 90,
+          "simultaneous": true,
+          "overEpisode": true,
+          "bestAbove_mm": 59.5,
+          "fot": 1,
+          "peakZ_mm": 151.2,
+          "honest": false
+        },
+        {
+          "rise_mm": 100,
+          "simultaneous": true,
+          "overEpisode": true,
+          "bestAbove_mm": 54.3,
+          "fot": 1,
+          "peakZ_mm": 155.9,
+          "honest": false
+        },
+        {
+          "rise_mm": 110,
+          "simultaneous": true,
+          "overEpisode": true,
+          "bestAbove_mm": 46.1,
+          "fot": 1,
+          "peakZ_mm": 157.8,
+          "honest": false
+        },
+        {
+          "rise_mm": 120,
+          "simultaneous": false,
+          "overEpisode": true,
+          "bestAbove_mm": -5.6,
+          "fot": 0,
+          "peakZ_mm": 145,
+          "honest": false
+        },
+        {
+          "rise_mm": 140,
+          "simultaneous": false,
+          "overEpisode": false,
+          "bestAbove_mm": -30.8,
+          "fot": 0,
+          "peakZ_mm": 145.9,
+          "honest": false
+        },
+        {
+          "rise_mm": 160,
+          "simultaneous": false,
+          "overEpisode": false,
+          "bestAbove_mm": -44.7,
+          "fot": 0,
+          "peakZ_mm": 146,
+          "honest": false
+        },
+        {
+          "rise_mm": 180,
+          "simultaneous": false,
+          "overEpisode": false,
+          "bestAbove_mm": -70.9,
+          "fot": 0,
+          "peakZ_mm": 146.4,
+          "honest": false
+        }
+      ],
+      "runnersUp": [
+        {
+          "k": 0,
+          "objective": 2.238,
+          "peakZ_mm": 146.4,
+          "sequence": "WHFRPKSE",
+          "headFrac": 0.033,
+          "riserFrac": 0.275,
+          "wallFrac": 0.132,
+          "feetOnTreadMax": 0,
+          "bothNear_mm": 176
+        },
+        {
+          "k": 0,
+          "objective": 1.821,
+          "peakZ_mm": 138.3,
+          "sequence": "WFHPRKSE",
+          "headFrac": 0.299,
+          "riserFrac": 0.524,
+          "wallFrac": 0.073,
+          "feetOnTreadMax": 0,
+          "bothNear_mm": 157
+        },
+        {
+          "k": 0,
+          "objective": 1.747,
+          "peakZ_mm": 148.6,
+          "sequence": "FHPRKSE",
+          "headFrac": 0.293,
+          "riserFrac": 0.468,
+          "wallFrac": 0.118,
+          "feetOnTreadMax": 0,
+          "bothNear_mm": 164
+        },
+        {
+          "k": 0,
+          "objective": 1.368,
+          "peakZ_mm": 120,
+          "sequence": "FHPRKSE",
+          "headFrac": 0.252,
+          "riserFrac": 0.283,
+          "wallFrac": 0.033,
+          "feetOnTreadMax": 0,
+          "bothNear_mm": 184
+        },
+        {
+          "k": 0,
+          "objective": 1.172,
+          "peakZ_mm": 139.8,
+          "sequence": "HFWPRKSE",
+          "headFrac": 0.446,
+          "riserFrac": 0.336,
+          "wallFrac": 0.229,
+          "feetOnTreadMax": 0,
+          "bothNear_mm": 201
+        }
+      ]
+    }
+  ],
+  "round2Baseline": {
+    "120": {
+      "k": 0,
+      "objective": 2.774,
+      "peakZ_mm": 144.3,
+      "headFrac": 0.421,
+      "riserFrac": 0.377,
+      "wallFrac": 0.461,
+      "feetOnTreadMax": 0,
+      "bothNear_mm": 206
+    },
+    "180": {
+      "k": 0,
+      "objective": 1.133,
+      "peakZ_mm": 162.4,
+      "headFrac": 0.564,
+      "riserFrac": 0.245,
+      "wallFrac": 0.131,
+      "feetOnTreadMax": 0,
+      "bothNear_mm": 222
+    }
+  },
+  "reach": {
+    "simultaneous_mm": 120,
+    "overEpisode_mm": 130,
+    "where": {
+      "tunedMM": 120,
+      "cell": {
+        "rise_mm": 120,
+        "drop": 0.12,
+        "fmul": 1
+      },
+      "above_mm": 35,
+      "feetOnTread": 1,
+      "up": false,
+      "honest": false
+    }
+  },
+  "strictLadder": {
+    "note": "Per published file, over the three plant settings at each rise, at the SCORED instant. footOnTreadAndTrunkAbove = rig3 footResting>=1 AND trunk z > tread height (the brief's fallback measure). alsoTrunkPastRiser adds trunk x > 0.12 — without it the duck is standing on the FLOOR with one foot up on the step, which is not a climb posture. anyCellUpright = projected gravity z < -0.90 in any cell.",
+    "files": {
+      "best_r3_cornerclimb2_120mm.json": {
+        "tallest_footOnTread_trunkAbove_mm": 120,
+        "tallest_alsoTrunkPastRiser_mm": 0,
+        "rows": [
+          {
+            "rise_mm": 40,
+            "footOnTreadAndTrunkAbove": false,
+            "alsoTrunkPastRiser": false,
+            "anyCellUpright": false,
+            "bestX_mm": 108.7,
+            "bestAbove_mm": 70.3
+          },
+          {
+            "rise_mm": 60,
+            "footOnTreadAndTrunkAbove": true,
+            "alsoTrunkPastRiser": false,
+            "anyCellUpright": true,
+            "bestX_mm": 60.8,
+            "bestAbove_mm": 65.1
+          },
+          {
+            "rise_mm": 80,
+            "footOnTreadAndTrunkAbove": true,
+            "alsoTrunkPastRiser": false,
+            "anyCellUpright": false,
+            "bestX_mm": 85.7,
+            "bestAbove_mm": 67.7
+          },
+          {
+            "rise_mm": 100,
+            "footOnTreadAndTrunkAbove": true,
+            "alsoTrunkPastRiser": false,
+            "anyCellUpright": false,
+            "bestX_mm": 72.4,
+            "bestAbove_mm": 52.4
+          },
+          {
+            "rise_mm": 110,
+            "footOnTreadAndTrunkAbove": true,
+            "alsoTrunkPastRiser": false,
+            "anyCellUpright": false,
+            "bestX_mm": 47.7,
+            "bestAbove_mm": 33.6
+          },
+          {
+            "rise_mm": 120,
+            "footOnTreadAndTrunkAbove": true,
+            "alsoTrunkPastRiser": false,
+            "anyCellUpright": false,
+            "bestX_mm": 54.7,
+            "bestAbove_mm": 36.3
+          },
+          {
+            "rise_mm": 130,
+            "footOnTreadAndTrunkAbove": false,
+            "alsoTrunkPastRiser": false,
+            "anyCellUpright": false,
+            "bestX_mm": 78.8,
+            "bestAbove_mm": -10.8
+          },
+          {
+            "rise_mm": 140,
+            "footOnTreadAndTrunkAbove": false,
+            "alsoTrunkPastRiser": false,
+            "anyCellUpright": false,
+            "bestX_mm": 51,
+            "bestAbove_mm": -48.2
+          },
+          {
+            "rise_mm": 160,
+            "footOnTreadAndTrunkAbove": false,
+            "alsoTrunkPastRiser": false,
+            "anyCellUpright": false,
+            "bestX_mm": 8.2,
+            "bestAbove_mm": -76.1
+          },
+          {
+            "rise_mm": 180,
+            "footOnTreadAndTrunkAbove": false,
+            "alsoTrunkPastRiser": false,
+            "anyCellUpright": false,
+            "bestX_mm": 8.2,
+            "bestAbove_mm": -96.1
+          }
+        ]
+      },
+      "best_r3_cornerclimb_120mm.json": {
+        "tallest_footOnTread_trunkAbove_mm": 120,
+        "tallest_alsoTrunkPastRiser_mm": 0,
+        "rows": [
+          {
+            "rise_mm": 40,
+            "footOnTreadAndTrunkAbove": true,
+            "alsoTrunkPastRiser": false,
+            "anyCellUpright": false,
+            "bestX_mm": 86.2,
+            "bestAbove_mm": 92.8
+          },
+          {
+            "rise_mm": 60,
+            "footOnTreadAndTrunkAbove": true,
+            "alsoTrunkPastRiser": false,
+            "anyCellUpright": false,
+            "bestX_mm": 87.2,
+            "bestAbove_mm": 86.9
+          },
+          {
+            "rise_mm": 80,
+            "footOnTreadAndTrunkAbove": true,
+            "alsoTrunkPastRiser": false,
+            "anyCellUpright": false,
+            "bestX_mm": 62.5,
+            "bestAbove_mm": 68.8
+          },
+          {
+            "rise_mm": 100,
+            "footOnTreadAndTrunkAbove": true,
+            "alsoTrunkPastRiser": false,
+            "anyCellUpright": false,
+            "bestX_mm": 56.8,
+            "bestAbove_mm": 44.3
+          },
+          {
+            "rise_mm": 110,
+            "footOnTreadAndTrunkAbove": true,
+            "alsoTrunkPastRiser": false,
+            "anyCellUpright": false,
+            "bestX_mm": 55.2,
+            "bestAbove_mm": 46.1
+          },
+          {
+            "rise_mm": 120,
+            "footOnTreadAndTrunkAbove": true,
+            "alsoTrunkPastRiser": false,
+            "anyCellUpright": false,
+            "bestX_mm": 49.9,
+            "bestAbove_mm": 37.2
+          },
+          {
+            "rise_mm": 130,
+            "footOnTreadAndTrunkAbove": false,
+            "alsoTrunkPastRiser": false,
+            "anyCellUpright": false,
+            "bestX_mm": 47.7,
+            "bestAbove_mm": 15
+          },
+          {
+            "rise_mm": 140,
+            "footOnTreadAndTrunkAbove": false,
+            "alsoTrunkPastRiser": false,
+            "anyCellUpright": false,
+            "bestX_mm": 36.6,
+            "bestAbove_mm": -14.3
+          },
+          {
+            "rise_mm": 160,
+            "footOnTreadAndTrunkAbove": false,
+            "alsoTrunkPastRiser": false,
+            "anyCellUpright": false,
+            "bestX_mm": 21.7,
+            "bestAbove_mm": -34.4
+          },
+          {
+            "rise_mm": 180,
+            "footOnTreadAndTrunkAbove": false,
+            "alsoTrunkPastRiser": false,
+            "anyCellUpright": false,
+            "bestX_mm": 21.7,
+            "bestAbove_mm": -54.4
+          }
+        ]
+      },
+      "best_r3_cornerclimb_180mm.json": {
+        "tallest_footOnTread_trunkAbove_mm": 110,
+        "tallest_alsoTrunkPastRiser_mm": 60,
+        "rows": [
+          {
+            "rise_mm": 40,
+            "footOnTreadAndTrunkAbove": true,
+            "alsoTrunkPastRiser": true,
+            "anyCellUpright": false,
+            "bestX_mm": 140.3,
+            "bestAbove_mm": 84.3
+          },
+          {
+            "rise_mm": 60,
+            "footOnTreadAndTrunkAbove": true,
+            "alsoTrunkPastRiser": true,
+            "anyCellUpright": false,
+            "bestX_mm": 130.1,
+            "bestAbove_mm": 75.3
+          },
+          {
+            "rise_mm": 80,
+            "footOnTreadAndTrunkAbove": true,
+            "alsoTrunkPastRiser": false,
+            "anyCellUpright": false,
+            "bestX_mm": 67,
+            "bestAbove_mm": 66.7
+          },
+          {
+            "rise_mm": 100,
+            "footOnTreadAndTrunkAbove": true,
+            "alsoTrunkPastRiser": false,
+            "anyCellUpright": false,
+            "bestX_mm": 51.4,
+            "bestAbove_mm": 54.3
+          },
+          {
+            "rise_mm": 110,
+            "footOnTreadAndTrunkAbove": true,
+            "alsoTrunkPastRiser": false,
+            "anyCellUpright": false,
+            "bestX_mm": 34.3,
+            "bestAbove_mm": 46.1
+          },
+          {
+            "rise_mm": 120,
+            "footOnTreadAndTrunkAbove": false,
+            "alsoTrunkPastRiser": false,
+            "anyCellUpright": true,
+            "bestX_mm": 61.7,
+            "bestAbove_mm": -5.6
+          },
+          {
+            "rise_mm": 130,
+            "footOnTreadAndTrunkAbove": false,
+            "alsoTrunkPastRiser": false,
+            "anyCellUpright": true,
+            "bestX_mm": 58.9,
+            "bestAbove_mm": -18.9
+          },
+          {
+            "rise_mm": 140,
+            "footOnTreadAndTrunkAbove": false,
+            "alsoTrunkPastRiser": false,
+            "anyCellUpright": true,
+            "bestX_mm": 61.4,
+            "bestAbove_mm": -30.8
+          },
+          {
+            "rise_mm": 160,
+            "footOnTreadAndTrunkAbove": false,
+            "alsoTrunkPastRiser": false,
+            "anyCellUpright": true,
+            "bestX_mm": 62.4,
+            "bestAbove_mm": -44.7
+          },
+          {
+            "rise_mm": 180,
+            "footOnTreadAndTrunkAbove": false,
+            "alsoTrunkPastRiser": false,
+            "anyCellUpright": true,
+            "bestX_mm": 62.4,
+            "bestAbove_mm": -70.9
+          }
+        ]
+      },
+      "best_r2_cornerstem_120mm.json": {
+        "tallest_footOnTread_trunkAbove_mm": 0,
+        "tallest_alsoTrunkPastRiser_mm": 0,
+        "rows": [
+          {
+            "rise_mm": 40,
+            "footOnTreadAndTrunkAbove": false,
+            "alsoTrunkPastRiser": false,
+            "anyCellUpright": true,
+            "bestX_mm": 63.8,
+            "bestAbove_mm": 76.7
+          },
+          {
+            "rise_mm": 60,
+            "footOnTreadAndTrunkAbove": false,
+            "alsoTrunkPastRiser": false,
+            "anyCellUpright": true,
+            "bestX_mm": 138,
+            "bestAbove_mm": 56.7
+          },
+          {
+            "rise_mm": 80,
+            "footOnTreadAndTrunkAbove": false,
+            "alsoTrunkPastRiser": false,
+            "anyCellUpright": true,
+            "bestX_mm": 58.9,
+            "bestAbove_mm": 37.9
+          },
+          {
+            "rise_mm": 100,
+            "footOnTreadAndTrunkAbove": false,
+            "alsoTrunkPastRiser": false,
+            "anyCellUpright": true,
+            "bestX_mm": 85.4,
+            "bestAbove_mm": 16.7
+          },
+          {
+            "rise_mm": 110,
+            "footOnTreadAndTrunkAbove": false,
+            "alsoTrunkPastRiser": false,
+            "anyCellUpright": true,
+            "bestX_mm": 84.8,
+            "bestAbove_mm": 6.7
+          },
+          {
+            "rise_mm": 120,
+            "footOnTreadAndTrunkAbove": false,
+            "alsoTrunkPastRiser": false,
+            "anyCellUpright": true,
+            "bestX_mm": 85,
+            "bestAbove_mm": -3.3
+          },
+          {
+            "rise_mm": 130,
+            "footOnTreadAndTrunkAbove": false,
+            "alsoTrunkPastRiser": false,
+            "anyCellUpright": true,
+            "bestX_mm": 83.9,
+            "bestAbove_mm": -9.6
+          },
+          {
+            "rise_mm": 140,
+            "footOnTreadAndTrunkAbove": false,
+            "alsoTrunkPastRiser": false,
+            "anyCellUpright": true,
+            "bestX_mm": -51.3,
+            "bestAbove_mm": -23
+          },
+          {
+            "rise_mm": 160,
+            "footOnTreadAndTrunkAbove": false,
+            "alsoTrunkPastRiser": false,
+            "anyCellUpright": true,
+            "bestX_mm": 58,
+            "bestAbove_mm": -43.3
+          },
+          {
+            "rise_mm": 180,
+            "footOnTreadAndTrunkAbove": false,
+            "alsoTrunkPastRiser": false,
+            "anyCellUpright": true,
+            "bestX_mm": 16.5,
+            "bestAbove_mm": -64.1
+          }
+        ]
+      },
+      "best_r2_cornerstem_180mm.json": {
+        "tallest_footOnTread_trunkAbove_mm": 0,
+        "tallest_alsoTrunkPastRiser_mm": 0,
+        "rows": [
+          {
+            "rise_mm": 40,
+            "footOnTreadAndTrunkAbove": false,
+            "alsoTrunkPastRiser": false,
+            "anyCellUpright": true,
+            "bestX_mm": 60.7,
+            "bestAbove_mm": 76.4
+          },
+          {
+            "rise_mm": 60,
+            "footOnTreadAndTrunkAbove": false,
+            "alsoTrunkPastRiser": false,
+            "anyCellUpright": true,
+            "bestX_mm": 245.9,
+            "bestAbove_mm": 59.8
+          },
+          {
+            "rise_mm": 80,
+            "footOnTreadAndTrunkAbove": false,
+            "alsoTrunkPastRiser": false,
+            "anyCellUpright": false,
+            "bestX_mm": 165,
+            "bestAbove_mm": 44.3
+          },
+          {
+            "rise_mm": 100,
+            "footOnTreadAndTrunkAbove": false,
+            "alsoTrunkPastRiser": false,
+            "anyCellUpright": true,
+            "bestX_mm": 44.1,
+            "bestAbove_mm": 18.1
+          },
+          {
+            "rise_mm": 110,
+            "footOnTreadAndTrunkAbove": false,
+            "alsoTrunkPastRiser": false,
+            "anyCellUpright": false,
+            "bestX_mm": 0.6,
+            "bestAbove_mm": -48.4
+          },
+          {
+            "rise_mm": 120,
+            "footOnTreadAndTrunkAbove": false,
+            "alsoTrunkPastRiser": false,
+            "anyCellUpright": true,
+            "bestX_mm": 17.8,
+            "bestAbove_mm": -3.3
+          },
+          {
+            "rise_mm": 130,
+            "footOnTreadAndTrunkAbove": false,
+            "alsoTrunkPastRiser": false,
+            "anyCellUpright": true,
+            "bestX_mm": -103.2,
+            "bestAbove_mm": -7
+          },
+          {
+            "rise_mm": 140,
+            "footOnTreadAndTrunkAbove": false,
+            "alsoTrunkPastRiser": false,
+            "anyCellUpright": true,
+            "bestX_mm": 48.2,
+            "bestAbove_mm": -23.3
+          },
+          {
+            "rise_mm": 160,
+            "footOnTreadAndTrunkAbove": false,
+            "alsoTrunkPastRiser": false,
+            "anyCellUpright": true,
+            "bestX_mm": 60.2,
+            "bestAbove_mm": -43.4
+          },
+          {
+            "rise_mm": 180,
+            "footOnTreadAndTrunkAbove": false,
+            "alsoTrunkPastRiser": false,
+            "anyCellUpright": true,
+            "bestX_mm": 26.3,
+            "bestAbove_mm": -59.4
+          }
+        ]
+      }
+    }
+  }
+}
