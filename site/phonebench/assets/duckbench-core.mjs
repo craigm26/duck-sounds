@@ -24,6 +24,13 @@
 // two /health fields that were deliberately added. A refactor of a file whose
 // output is trajectories cannot be reviewed by reading it.
 import { makeLoop } from './duckloop.mjs';
+// THE ONE PIECE OF INFERENCE THE CORE OWNS, AND ONLY FOR /tune. Everything
+// else asks the shell for a session, because a shell may have onnxruntime and a
+// browser may not. A fold cannot be asked for that way: onnxruntime runs a
+// graph and will not let you change one, so scoring a per-joint gain and trim
+// means holding the parameters and multiplying them here. Both shells can reach
+// this file — it is 60 lines of arithmetic with no machine in it.
+import { loadParameters, foldParameters, forward, FLOAT_COUNT } from './policyforward.mjs';
 
 /**
  * A bench, over the machine `env` describes.
@@ -45,6 +52,215 @@ import { makeLoop } from './duckloop.mjs';
  *   host:        { kind: 'desk' | 'phone', device: string, engine: string }
  * }
  */
+// ── Pollen's reward, as this plant can answer it ─────────────────────────
+//
+// WHOSE ARITHMETIC THIS IS. Every formula below is a transcription of
+// `RunMetrics.swift` in StudioKit, which is itself read out of
+// `microduck_velocity_env_cfg.py` in pollen-robotics/microduck_rl. Not one of
+// them is invented here, and the two transcriptions are held together by a
+// shared fixture rather than by care: `sim/tune_parity.mjs` and
+// `TuneTraceParityTests.swift` compute the six terms from the SAME fifty-tick
+// trace and must agree to 1e-9. That gate is the only reason this file is
+// allowed to hold a second copy of the reward at all — two transcriptions of
+// one config is otherwise exactly how a search comes to optimise a hill the
+// rest of the app cannot see, with both numbers looking plausible.
+//
+// THE WEIGHTS ARE NOT HERE, ON PURPOSE. /tune answers per-tick MEANS and the
+// client weighs them (`DuckTuner.terms`). A bench that returned one weighted
+// number could change what a reward means without anything upstream noticing.
+
+/** `|projected gravity xy|²` — zero upright, 1 on its side. RunMetrics's own. */
+export function gravityXYSquared([w, x, y, z]) {
+  const gx = -2 * (x * z + w * y), gy = -2 * (y * z - w * x);
+  return gx * gx + gy * gy;
+}
+
+/** Rotate a body-frame vector into the world. RunMetrics's own. */
+export function rotate([w, x, y, z], v) {
+  const tx = 2 * (y * v[2] - z * v[1]);
+  const ty = 2 * (z * v[0] - x * v[2]);
+  const tz = 2 * (x * v[1] - y * v[0]);
+  return [v[0] + w * tx + (y * tz - z * ty),
+          v[1] + w * ty + (z * tx - x * tz),
+          v[2] + w * tz + (x * ty - y * tx)];
+}
+
+/** The inverse: a WORLD vector into the trunk's frame, by the conjugate. */
+export function unrotate(q, v) { return rotate([q[0], -q[1], -q[2], -q[3]], v); }
+
+/**
+ * `variable_posture`'s per-joint tolerance, radians — RunMetrics's `legStd`.
+ * `null` for the four joints the config's regex drops: the neck and head are
+ * driven by a pose command that rides in the observation, so pulling them
+ * home as well would teach the policy to ignore it.
+ */
+export function legStd(name, standing) {
+  if (name.includes('hip_yaw')) return standing ? 0.1 : 0.3;
+  if (name.includes('hip_roll')) return 0.05;
+  if (name.includes('hip_pitch')) return standing ? 0.15 : 0.4;
+  if (name.includes('knee')) return standing ? 0.15 : 0.4;
+  if (name.includes('ankle')) return standing ? 0.1 : 0.25;
+  return null;
+}
+
+/**
+ * THE TRUNK'S TWIST IN ITS OWN FRAME, which is the frame the clip format
+ * stores and the frame every tracking term is written against.
+ *
+ * MuJoCo keeps a free joint's LINEAR velocity in the world and its ANGULAR
+ * velocity in the body, so exactly one of the two has to be rotated, and
+ * rotating the wrong one produces a plausible number for a duck that is
+ * walking due north and a wrong one for every other heading. `body_ang_vel`
+ * then wants the WORLD-frame angular velocity, so it rotates back out — the
+ * two terms genuinely live in different frames and mjlab reads them that way.
+ */
+export function twistOf(root, qvel) {
+  const q = [root[3], root[4], root[5], root[6]];
+  const linear = unrotate(q, [qvel[0], qvel[1], qvel[2]]);
+  return [linear[0], linear[1], linear[2], qvel[3], qvel[4], qvel[5]];
+}
+
+/**
+ * The six terms of `microduck_velocity_env_cfg` this plant can answer, as
+ * per-tick SUMS plus the tick counts they are divided by.
+ *
+ * SUMS AND NOT MEANS, because /tune pools several episodes into one figure
+ * and a mean of means over episodes of unequal length is not the per-tick
+ * mean of anything. `action_rate_l2` has its own count: it differences
+ * consecutive decisions, so an episode of n ticks contributes n−1 of them.
+ */
+export function rewardSums(trace, jointNames, home) {
+  const s = { upright: 0, track_linear_velocity: 0, track_angular_velocity: 0,
+              pose: 0, body_ang_vel: 0, action_rate_l2: 0 };
+  for (let i = 0; i < trace.length; i++) {
+    const f = trace[i];
+    const q = [f.root[3], f.root[4], f.root[5], f.root[6]];
+    const t = twistOf(f.root, f.qvel);
+    const [cvx, cvy, cvyaw] = f.command;
+
+    // upright = exp(−|projected gravity xy|² / std²), std² = 0.05 in this config.
+    s.upright += Math.exp(-gravityXYSquared(q) / 0.05);
+
+    // The commanded twist against the actual one, in the trunk's frame.
+    const ex = cvx - t[0], ey = cvy - t[1];
+    s.track_linear_velocity += Math.exp(-(ex * ex + ey * ey + t[2] * t[2]) / 0.1);
+    const ez = cvyaw - t[5];
+    s.track_angular_velocity += Math.exp(-(ez * ez + t[3] * t[3] + t[4] * t[4]) / 0.5);
+
+    // body_ang_vel = ωx² + ωy² in the WORLD frame — yaw is deliberately free.
+    const world = rotate(q, [t[3], t[4], t[5]]);
+    s.body_ang_vel += world[0] * world[0] + world[1] * world[1];
+
+    // `variable_posture`: the tolerance loosens the moment a velocity is
+    // commanded, and the threshold is the config's own 0.01.
+    const speed = Math.hypot(cvx, cvy) + Math.abs(cvyaw);
+    const standing = speed < 0.01;
+    let sum = 0, count = 0;
+    for (let k = 0; k < 14; k++) {
+      const std = legStd(jointNames[k], standing);
+      if (std === null) continue;
+      const d = f.joints[k] - home[k];
+      sum += (d * d) / (std * std);
+      count++;
+    }
+    s.pose += count ? Math.exp(-sum / count) : 0;
+
+    // action_rate_l2 = Σ(aₜ − aₜ₋₁)² over the network's own fourteen outputs.
+    if (i > 0) {
+      const a = f.action, b = trace[i - 1].action;
+      for (let k = 0; k < 14; k++) { const d = a[k] - b[k]; s.action_rate_l2 += d * d; }
+    }
+  }
+  return { sums: s, ticks: trace.length, rateTicks: Math.max(trace.length - 1, 1) };
+}
+
+/** Start of the driven span to the end of it, in the plane. `readTravel`'s number. */
+export function netDisplacement(trace) {
+  if (trace.length < 2) return 0;
+  const a = trace[0].root, b = trace[trace.length - 1].root;
+  return Math.hypot(b[0] - a[0], b[1] - a[1]);
+}
+
+/**
+ * HOW FAR IT GOT IN THE DIRECTION IT WAS TOLD TO GO.
+ *
+ * WHY NOT JUST THE DISTANCE. A duck that falls over travels; a duck that
+ * turns in a circle travels; a duck driven backwards by a bad trim travels.
+ * The number a search needs beside a reward is the one that catches a
+ * candidate which has quietly stopped WALKING, and only a signed projection
+ * onto the commanded direction is that number — `hypot` calls a metre
+ * backwards a metre of progress.
+ *
+ * It is RunMetrics's "Forward — along the heading it started on", with the
+ * heading taken at the first DRIVEN tick (the settle is over by then) and the
+ * direction taken from the schedule rather than assumed to be +x: a schedule
+ * that commands vy is asking the duck to walk sideways, and a projection onto
+ * the wrong axis would score that as standing still.
+ *
+ * A schedule with no linear command at all has no direction to project onto,
+ * so the plain net displacement is reported and the answer says so.
+ */
+export function travelledAlongCommand(trace) {
+  if (trace.length < 2) return 0;
+  let sx = 0, sy = 0;
+  for (const f of trace) { sx += f.command[0]; sy += f.command[1]; }
+  const magnitude = Math.hypot(sx, sy);
+  if (!(magnitude > 1e-12)) return netDisplacement(trace);
+  const ux = sx / magnitude, uy = sy / magnitude;
+  const a = trace[0].root, b = trace[trace.length - 1].root;
+  // The heading the driven span started on, out of the quaternion.
+  const [w, x, y, z] = [a[3], a[4], a[5], a[6]];
+  const yaw = Math.atan2(2 * (w * z + x * y), 1 - 2 * (y * y + z * z));
+  const cos = Math.cos(yaw), sin = Math.sin(yaw);
+  const wx = ux * cos - uy * sin, wy = ux * sin + uy * cos;
+  return (b[0] - a[0]) * wx + (b[1] - a[1]) * wy;
+}
+
+/**
+ * Finite AND plausible. A diverged MuJoCo state yields enormous DOUBLES —
+ * measured at 6.8e37 — which `Number.isFinite` accepts happily. Past a
+ * thousand is not a duck in any pose. Shared by the training capture and the
+ * /tune trace, so the two cannot disagree about what a diverged tick is.
+ */
+export const sane = v => Number.isFinite(v) && Math.abs(v) < 1000;
+
+/**
+ * The residual a search may ask this bench to fold, transcribed from
+ * DuckTuner.TuningVector in Microduck Studio. Kept as numbers so nothing
+ * retypes them; a test on that side pins the same three.
+ */
+export const TUNE_ENVELOPE = { gainLower: 0.7, gainUpper: 1.3, offsetLimit: 0.05 };
+
+/** Every term this bench knows how to compute, in the config's own order. */
+export const TUNE_TERMS = ['upright', 'track_linear_velocity', 'track_angular_velocity',
+                    'pose', 'body_ang_vel', 'action_rate_l2'];
+
+/**
+ * The terms of the velocity config this PLANT cannot answer, by name and with
+ * the reason — asked for, and refused rather than dropped.
+ *
+ * A SHORTER LIST IS NOT A BETTER ONE. `RunMetrics.Task.unevaluable` says
+ * something similar about a RECORDING; this says it about `scene.mjb`, which
+ * is a different claim and in one case a different reason: the plant does
+ * carry `root_angmom`, so `angular_momentum` is refused not because the
+ * sensor is missing but because nothing in this family reads that term's
+ * weight out of the config, and picking one would be inventing a reward.
+ */
+export const TUNE_REFUSALS = new Map([
+  ['air_time', 'reads the foot-contact sensor, and this plant has none: its six sensors are '
+             + 'orientation, angular-velocity, imu_ang_vel, imu_lin_vel, imu_accel, root_angmom'],
+  ['foot_clearance', 'reads the foot sites against the contact sensor; the sensor is not there'],
+  ['foot_swing_height', 'the same sensor'],
+  ['foot_slip', 'the same sensor'],
+  ['self_collisions', 'no collision sensor in this plant'],
+  ['dof_pos_limits', 'scores against soft limits — a fraction of the model\'s travel that '
+                   + 'neither duckkit nor this bench ships, so the fraction would have to be '
+                   + 'invented'],
+  ['angular_momentum', 'the plant DOES carry root_angmom, so this one is refused for a '
+                     + 'different reason: nothing here reads its weight out of the config, and '
+                     + 'picking one would be inventing a reward rather than reading Pollen\'s'],
+]);
+
 export async function makeBench(env) {
   const C = JSON.parse(new TextDecoder().decode(await env.readAsset('duckkit-constants.json')));
   const { HOME, LO, HI, buildObs, projectedGravity, command, findDuckJoints } = makeLoop(C);
@@ -489,7 +705,6 @@ export async function makeBench(env) {
       // train on those and the normaliser's deviation becomes 1e36, every real
       // observation flattens to zero, and the loss is NaN by the second epoch.
       // The bound is generous: past a thousand is not a duck in any pose.
-      const sane = v => Number.isFinite(v) && Math.abs(v) < 1000;
       const row = Array.from(obs);
       if (row.every(sane) && effective.every(sane)) {
         capture.push({ obs: row, action: effective });
@@ -592,8 +807,14 @@ export async function makeBench(env) {
    */
   async function rollout({ name, seconds, schedule, settle = SETTLE_TICKS, drop = 0.1231,
                            track = null, blend = 1, capture = null, expertName = null,
-                           teacherShare = 0, jitter = 0, duck = DUCKS[0] }) {
-    const net = await policy(name);
+                           teacherShare = 0, jitter = 0, duck = DUCKS[0],
+                           loaded = null, trace = null }) {
+    // `loaded` IS FOR THE ONE CALLER THAT RUNS A NETWORK NO CATALOGUE HOLDS.
+    // /tune folds a per-joint gain and trim into the last layer at request
+    // time, so the network it scores exists for the length of one call and has
+    // no name to look up. Every other caller passes a name and gets the cached
+    // session, which is why this is an override and not a parameter.
+    const net = loaded ?? await policy(name);
     const settling = await policy(STAND);
     // The teacher, when one is asked for: the policy the authored motion rides on.
     const expert = expertName ? await policy(expertName) : null;
@@ -623,6 +844,48 @@ export async function makeBench(env) {
         roots.push([data.qpos[f], data.qpos[f + 1], data.qpos[f + 2],
                     data.qpos[f + 3], data.qpos[f + 4], data.qpos[f + 5], data.qpos[f + 6]].map(r4));
         commands.push(cmd.slice(0, 3).map(r4));
+        // THE UNROUNDED TRACK, FOR THE ONE CALLER THAT SCORES A REWARD FROM IT.
+        // `frames`, `roots` and `commands` above are rounded to 1e-4 because
+        // they are a CLIP — something a phone draws and a file stores — and
+        // four decimals is what a clip has always carried. A reward term is
+        // arithmetic, not a picture: `body_ang_vel` squares a rate and
+        // `action_rate_l2` differences two consecutive actions, and quantising
+        // either at 1e-4 first puts the quantum into the score. So /tune reads
+        // this instead, and it holds what the clip cannot hold at all — the
+        // trunk's twist and the network's own output.
+        if (trace && !trace.diverged) {
+          // A DIVERGED TICK ENDS THE TRACE AND IS NAMED, never summed. The
+          // capture path above refuses such a tick by count; here the whole
+          // episode is the unit — a term averaged over forty sane ticks and one
+          // at 6.8e37 is not a term, and an answer with a null in `terms` used
+          // to come back HTTP 200 and abort the caller's entire search.
+          const root = [data.qpos[f], data.qpos[f + 1], data.qpos[f + 2],
+                        data.qpos[f + 3], data.qpos[f + 4], data.qpos[f + 5], data.qpos[f + 6]];
+          const joints = Array.from({ length: 14 }, (_, k) => data.qpos[D.qpos[k]]);
+          const qv = [data.qvel[D.freeDof], data.qvel[D.freeDof + 1], data.qvel[D.freeDof + 2],
+                      data.qvel[D.freeDof + 3], data.qvel[D.freeDof + 4], data.qvel[D.freeDof + 5]];
+          if (!(root.every(sane) && joints.every(sane) && qv.every(sane)
+                && Array.from(last).every(sane))) {
+            trace.diverged = { tick: t, why: 'a non-finite or absurd state or action' };
+          }
+        }
+        if (trace && !trace.diverged) {
+          trace.push({
+            root: [data.qpos[f], data.qpos[f + 1], data.qpos[f + 2],
+                   data.qpos[f + 3], data.qpos[f + 4], data.qpos[f + 5], data.qpos[f + 6]],
+            // MuJoCo's own convention for a free joint, said out loud because
+            // getting it wrong is silent: the LINEAR half is in the world frame
+            // and the ANGULAR half is in the body's. Neither is used raw below.
+            qvel: [data.qvel[D.freeDof], data.qvel[D.freeDof + 1], data.qvel[D.freeDof + 2],
+                   data.qvel[D.freeDof + 3], data.qvel[D.freeDof + 4], data.qvel[D.freeDof + 5]],
+            joints: Array.from({ length: 14 }, (_, k) => data.qpos[D.qpos[k]]),
+            // The network's own fourteen outputs at this tick — `tick` hands
+            // them back as what the next observation will be told, and for a
+            // plain rollout that is exactly the action.
+            action: Array.from(last),
+            command: [cmd[0], cmd[1], cmd[2]],
+          });
+        }
       }
     }
     return { frames, roots, commands };
@@ -640,6 +903,7 @@ export async function makeBench(env) {
     const [, , , w, x, y] = root;
     return -(1 - 2 * (x * x + y * y)) < -0.5;
   };
+
 
   /**
    * ONE PHYSICS CALLER AT A TIME, PER WORLD.
@@ -1135,6 +1399,27 @@ export async function makeBench(env) {
       const name = `uploaded-${digest.slice(0, 12)}`;
       const file = `${name}.onnx`;
       if (!env.scratch.has(file)) env.scratch.set(file, bytes);
+      // THE PARAMETERS BESIDE THE FILE, WHEN THE CALLER HAS THEM. A desk bench
+      // runs an .onnx through onnxruntime and can score it, but /tune folds a
+      // gain into the LAST LAYER, which means holding the parameters — and
+      // nothing on a desk dumps them for an upload. The app has them (they
+      // are what the fingerprint is taken over), so it sends both: the file
+      // for the session and its declared neutral pose, the bytes for the fold.
+      // On a phone the `onnx` field already IS the canonical bytes and this
+      // field is simply absent.
+      let parametersNote = '';
+      if (typeof body.parameters === 'string') {
+        let params;
+        try { params = decodeBase64(body.parameters); }
+        catch { return { error: 'the `parameters` field is not base64' }; }
+        const seen = params.byteLength ?? params.length;
+        if (seen !== FLOAT_COUNT * 4) {
+          return { error: `the parameters are ${seen} bytes where this architecture's canonical `
+                        + `parameters are ${FLOAT_COUNT * 4}` };
+        }
+        env.scratch.set(`${name}.params`, params);
+        parametersNote = '; its canonical parameters are held too, so /tune can fold it';
+      }
       try {
         // Load it now rather than at first use, so a file that onnxruntime
         // cannot open is refused HERE with the reason, not three calls later in
@@ -1146,7 +1431,8 @@ export async function makeBench(env) {
         return { error: `that file did not load as a policy: ${e.message}` };
       }
       return { policy: name, sha256: digest, bytes: bytes.length,
-               note: 'loaded and ready — pass this name to /policy, /record, /measure or /perform' };
+               note: 'loaded and ready — pass this name to /policy, /record, /measure or /perform'
+                   + parametersNote };
     }
 
     if (url.pathname === '/policy') {
@@ -1378,6 +1664,314 @@ export async function makeBench(env) {
         rejected: pairs.rejected || 0,
         obs: pairs.map(p => p.obs.map(r4)),
         actions: pairs.map(p => p.action.map(r4)),
+      };
+    }
+
+    /*
+     * POST /tune — run ONE candidate residual and WEIGH IT, where the trace is.
+     *
+     * THE HOLE THIS FILLS, AND IT IS NOT A CONVENIENCE. Four of the six
+     * evaluable terms of `microduck_velocity_env_cfg` need something no other
+     * answer this bench gives carries. `track_linear_velocity`,
+     * `track_angular_velocity` and `body_ang_vel` all read the trunk's TWIST;
+     * `action_rate_l2` reads the NETWORK'S OWN OUTPUT. /state and /intent
+     * answer with a position, a quaternion and fourteen joint angles, /record
+     * adds the commands, and none of them carry a velocity or an action. A
+     * client scoring a search from those would be scoring `upright` and `pose`
+     * alone — and both of those are maximised by a duck that has stopped.
+     * Measured on this bench at six seconds and vx 0.5: the standing policy
+     * scores 2.9812 on those two where the walking policy scores 2.5287, having
+     * travelled 1 mm against 1231. A search scored that way climbs by stopping.
+     * The bench has the trace in front of it. Nothing else does.
+     *
+     * IT TAKES A RESIDUAL AND NOT A FILE. Twenty-eight numbers, against 791,584
+     * bytes of base64 per candidate for a folded .onnx, and the bench already
+     * holds the base network. It also keeps the fold in ONE implementation —
+     * `foldParameters` is a transcription of duckkit's `DuckPolicyWriter.folding`
+     * and is held to it by bytes, not by reading — so a gain that scores well
+     * here behaves the same way once the app writes it into a file.
+     *
+     * WHICH FORWARD PASS RUNS, SAID OUT LOUD. /tune ALWAYS runs
+     * `policyforward.mjs` over the canonical parameter bytes, on every shell,
+     * even where the shell's own sessions are onnxruntime — because a fold is
+     * arithmetic on parameters and onnxruntime has none to offer. The two agree
+     * to 3.5e-6 per action (policy_parity.mjs), which is not nothing over a
+     * closed loop, so a /tune number and a /record number about the same policy
+     * are close relatives and not the same measurement. The alternative —
+     * onnxruntime for the identity residual and this for everything else —
+     * would measure a search's baseline on a different network from its
+     * candidates, which is worse in the one place it would matter most.
+     *
+     * THE SETTLE IS THE SHELL'S, THOUGH, AND THAT IS SAID RATHER THAN HIDDEN.
+     * The half second before the command starts runs the STANDING policy
+     * through `rollout`, which loads it the way every other endpoint does — so
+     * on the desk that settle is onnxruntime and the driven span is
+     * policyforward. Within one bench that is consistent: /tune's settle is
+     * bit-for-bit /record's and /perform's. Across two benches it is not, and
+     * it is the reason a desk /tune and a phone /tune differ in the eighth
+     * decimal of every term — measured here on 2026-09-02, `upright` 0.97838314
+     * on the browser shell against 0.97838314 on the desk. A search is scored
+     * against its own baseline on its own bench, so the difference does not
+     * reach a verdict; a number copied from one bench to the other is a
+     * different measurement.
+     *
+     * A TERM THIS BENCH CANNOT COMPUTE GOES IN `refused`, BY NAME. Two of the
+     * six weights are negative, so a term silently left out of `terms` reads to
+     * a client as the best possible value of the thing it punishes.
+     */
+    if (url.pathname === '/tune') {
+      const name = body.policy;
+      if (typeof name !== 'string' || !name) return { error: 'tune needs a policy by name' };
+      const width = 14;
+      const asVector = (value, field) => {
+        if (!Array.isArray(value) || value.length !== width) {
+          return `the ${field} is ${Array.isArray(value) ? value.length : 'not an array'} wide, `
+               + `not ${width} — the mouth has no policy output, so a 15-joint array has to have `
+               + 'index 9 dropped before it gets here';
+        }
+        // `typeof v === 'number'` AND NOT `Number.isFinite(+v)`. JSON has a
+        // null, and `Number(null)` is 0 — so a trim array with a hole in it
+        // would have been folded as a zero on that joint and scored as though
+        // the caller had asked for one. A hole is a mistake, and a mistake in
+        // twenty-eight numbers that become a network is refused by name.
+        if (!value.every(v => typeof v === 'number' && Number.isFinite(v))) {
+          return `the ${field} holds something that is not a number: a fold is arithmetic on `
+               + 'every weight in the last layer, and one hole in it makes a network that loads '
+               + 'and drives nothing';
+        }
+        return null;
+      };
+      const gain = body.gain, offset = body.offset;
+      const badGain = asVector(gain, 'gain'), badOffset = asVector(offset, 'trim');
+      if (badGain) return { error: badGain };
+      if (badOffset) return { error: badOffset };
+      // THE ENVELOPE, TRANSCRIBED FROM THE CLIENT RATHER THAN TRUSTED TO IT.
+      // DuckTuner.TuningVector: a gain within 0.7–1.3 (the range the training
+      // config randomises foot friction over, the one multiplicative range
+      // anybody has evidence about) and a trim within ±0.05 rad or half the
+      // joint's room between home and its nearer stop, whichever is smaller.
+      // A bench whose only guard was a client's clamp was one caller away from
+      // folding gain 0 (a dead network) or 1e9 (a diverged one) and scoring it.
+      for (let k = 0; k < width; k++) {
+        const joint = C.jointNames[k < 9 ? k : k + 1];   // the mouth, slot 9, has no policy output
+        if (gain[k] < TUNE_ENVELOPE.gainLower || gain[k] > TUNE_ENVELOPE.gainUpper) {
+          return { error: `the gain for ${joint} is ${gain[k]}, outside the ${TUNE_ENVELOPE.gainLower}–`
+                        + `${TUNE_ENVELOPE.gainUpper} this search is allowed to try` };
+        }
+        const room = Math.max(0, Math.min(HI[k] - HOME[k], HOME[k] - LO[k]));
+        const limit = Math.min(TUNE_ENVELOPE.offsetLimit, room / 2);
+        if (Math.abs(offset[k]) > limit + 1e-12) {
+          return { error: `the trim for ${joint} is ${offset[k]} rad, outside the ±${limit.toFixed(4)} `
+                        + 'this search is allowed to try' };
+        }
+      }
+
+      // The drops are the caller's, because the whole point of asking for
+      // several is that the client wants a SPREAD it can read a noise floor
+      // out of. Absent, it is the one height every other endpoint drops from.
+      const drops = (Array.isArray(body.drops) && body.drops.length
+                       ? body.drops : [0.1231]).map(Number);
+      if (!drops.every(d => Number.isFinite(d) && d > 0 && d < 1)) {
+        return { error: 'every drop height must be a finite number of metres between 0 and 1' };
+      }
+      if (drops.length > 32) return { error: 'at most 32 drop heights in one call' };
+      // DUPLICATES ARE REFUSED, because the rollouts are deterministic: two
+      // identical drops are one episode counted twice, and a noise floor read
+      // off two identical rewards is a confident zero that waves anything through.
+      if (new Set(drops.map(d => d.toFixed(9))).size !== drops.length) {
+        return { error: 'the drop heights repeat; every drop is one deterministic episode, and '
+                      + 'the same height twice is the same episode counted twice' };
+      }
+      const seconds = Math.min(Math.max(+body.seconds || 6, 0.2), 30);
+      const duck = pickDuck(url, body);
+
+      // WHAT WAS ASKED FOR, ANSWERED OR REFUSED — never quietly narrowed.
+      const asked = Array.isArray(body.terms) && body.terms.length
+                      ? body.terms.map(String) : TUNE_TERMS.slice();
+      const wanted = [], refused = [];
+      for (const term of asked) {
+        if (TUNE_TERMS.includes(term)) { if (!wanted.includes(term)) wanted.push(term); continue; }
+        refused.push({ name: term, why: TUNE_REFUSALS.get(term)
+          ?? `this bench knows no reward term by that name; it computes ${TUNE_TERMS.join(', ')}` });
+      }
+
+      // THE PARAMETERS, WHICH ARE NOT THE SAME THING AS THE POLICY FILE. On a
+      // phone the two are one — the shell serves canonical bytes under the
+      // policy's own name — and on the desk the .onnx is what `readAsset`
+      // hands back and the canonical bytes sit beside it. The shell is the half
+      // that knows, so it is asked; where it does not say, a file that is
+      // exactly the canonical length IS the canonical bytes.
+      let params;
+      try {
+        // AN UPLOAD FIRST, under the name /upload handed back — which carries
+        // no extension and is in no catalogue. Its parameters are either the
+        // `.params` a desk client sent beside the file, or the `.onnx` itself
+        // where a phone client sent canonical bytes under that name.
+        let bytes = null;
+        if (env.scratch.has(`${name}.params`)) bytes = env.scratch.get(`${name}.params`);
+        else if (env.scratch.has(`${name}.onnx`)) {
+          const held = env.scratch.get(`${name}.onnx`);
+          if ((held.byteLength ?? held.length) === FLOAT_COUNT * 4) bytes = held;
+          else {
+            throw new Error(`${name} was uploaded as a file without its canonical parameters, `
+                          + 'and /tune folds a gain into the last layer, which means holding '
+                          + 'them: send `parameters` beside `onnx` to /upload');
+          }
+        }
+        if (!bytes) {
+          const known = catalogue();
+          if (!known.has(name)) throw new Error(`unknown policy: ${name}`);
+          bytes = env.readParameters
+            ? await env.readParameters(known.get(name), name)
+            : await env.readAsset(known.get(name));
+        }
+        const seen = bytes.byteLength ?? bytes.length;
+        if (seen !== FLOAT_COUNT * 4) {
+          throw new Error(`${name} is ${seen} bytes where this architecture's canonical `
+                        + `parameters are ${FLOAT_COUNT * 4}: /tune folds a gain into the last `
+                        + 'layer, which means holding the parameters, and this bench cannot '
+                        + 'produce them for that file');
+        }
+        params = loadParameters(bytes);
+      } catch (error) {
+        return { error: String(error?.message || error) };
+      }
+
+      // The neutral pose the base policy declares, taken from the session the
+      // rest of the bench already loaded — a fold changes the last layer and
+      // changes nothing about what the observation is a deviation from.
+      let reference = HOME;
+      try { reference = (await policy(name)).reference; }
+      catch { /* a shell that cannot make a session still folds: HOME by identity */ }
+
+      let folded;
+      try { folded = foldParameters(params, gain, offset); }
+      catch (error) { return { error: String(error?.message || error) }; }
+      const loaded = { name, reference, net: { name, run: obs => forward(folded, obs) } };
+
+      const perDrop = [];
+      const pooled = Object.fromEntries(TUNE_TERMS.map(t => [t, 0]));
+      let pooledTicks = 0, pooledRateTicks = 0, standing = 0, diverged = 0;
+      // THE TRACE ITSELF, WHEN A CALLER ASKS FOR IT, AND IT IS NOT A DEBUG
+      // FLAG. The claim /tune makes is that this bench computes the SAME six
+      // terms StudioKit's `RunMetrics` computes, and the only way to check a
+      // claim like that is to hand both sides the same ticks and compare.
+      // Without this the fixture behind that gate would have to be produced by
+      // a private code path, and the gate would prove that the private path
+      // agrees with Swift while saying nothing about the endpoint anybody
+      // calls. It is off unless asked for, it is the FIRST drop only, and it
+      // is capped — 300 ticks of 47 numbers is a quarter of a megabyte.
+      const wantsTrace = body.trace === true || body.trace === 'true';
+      const TRACE_CAP = 500;
+      let shown = null;
+      for (const drop of drops) {
+        const trace = [];
+        const run = await batchLane(() => rollout({
+          name, seconds, schedule: body.schedule, drop, duck, loaded, trace }));
+        if (wantsTrace && !shown) {
+          shown = trace.slice(0, TRACE_CAP).map(f => ({
+            root: f.root, qvel: f.qvel, twist: twistOf(f.root, f.qvel),
+            joints: f.joints, action: f.action, command: f.command,
+          }));
+        }
+        if (trace.diverged) {
+          // NOT SCORED, NOT STANDING, AND SAID BY NAME: the candidate is the
+          // failure, and the caller's search goes on without it.
+          diverged++;
+          perDrop.push({ drop, diverged: true, tick: trace.diverged.tick, why: trace.diverged.why,
+                         travelled: 0, standing: false, terms: {}, netDisplacement: 0 });
+          continue;
+        }
+        const last = run.roots[run.roots.length - 1];
+        const stood = upright(last) && last[2] >= 0.100;
+        if (stood) standing++;
+        const { sums, ticks, rateTicks } = rewardSums(trace, DUCK_JOINTS, HOME);
+        for (const term of TUNE_TERMS) pooled[term] += sums[term];
+        pooledTicks += ticks; pooledRateTicks += rateTicks;
+        const each = {};
+        for (const term of wanted) {
+          each[term] = sums[term] / (term === 'action_rate_l2' ? rateTicks : ticks);
+        }
+        perDrop.push({
+          drop, travelled: travelledAlongCommand(trace), standing: stood, terms: each,
+          // The other half of the pair, for a reader who wants to tell a duck
+          // that walked in a circle from one that walked in a line.
+          netDisplacement: netDisplacement(trace),
+          endHeight: r4(last[2]),
+        });
+      }
+      const terms = {};
+      const scored = drops.length - diverged;
+      if (scored > 0) {
+        for (const term of wanted) {
+          terms[term] = pooled[term] / (term === 'action_rate_l2' ? pooledRateTicks : pooledTicks);
+        }
+      } else {
+        for (const term of wanted) {
+          refused.push({ name: term, why: 'every episode diverged before it could be scored' });
+        }
+      }
+      const travels = perDrop.map(d => d.travelled).sort((a, b) => a - b);
+      return {
+        policy: name,
+        duck: duck.name,
+        episodes: drops.length,
+        scored,
+        diverged,
+        divergedWhy: diverged
+          ? 'an episode whose state or action stopped being a duck — non-finite, or past a '
+            + 'thousand in any coordinate — is named in perDrop with the tick it happened at, '
+            + 'counted here, and left OUT of the pooled terms and the standing count. Score it '
+            + 'as a failed candidate; do not score the numbers beside it.'
+          : undefined,
+        config: 'microduck_velocity_env_cfg',
+        configWhy: 'the variances and the pose tolerances are the velocity config\'s, whatever '
+                 + 'policy was named — a policy trained under another task is scored under this '
+                 + 'one and a client that cares should refuse the mismatch',
+        standing,
+        criterion: 'ends standing: at the last tick the trunk\'s own up is still up — gravity '
+                 + 'projects past −0.5 into the body\'s −z, the same test /measure and /perform '
+                 + 'use — and the trunk is at least 100 mm above the floor. A duck that stood '
+                 + 'still passes it perfectly, which is why `travelled` is beside it.',
+        travelled: travels.length % 2
+          ? travels[travels.length >> 1]
+          : (travels[travels.length / 2 - 1] + travels[travels.length / 2]) / 2,
+        travelledWhy: 'metres, the MEDIAN over the drops: the signed projection of the driven '
+                    + 'span\'s net displacement (first driven tick to last) onto the direction '
+                    + 'the schedule commanded, expressed in the frame the duck started the driven '
+                    + 'span in. RunMetrics\'s "Forward" is the special case of this where that '
+                    + 'starting yaw is zero and the command is +x. A schedule that commands no '
+                    + 'linear velocity has no such direction, and the plain net displacement is '
+                    + 'reported instead. `minTravelled` is the least of the drops, for a guard '
+                    + 'that must not let one dead episode hide behind two live ones.',
+        minTravelled: travels.length ? travels[0] : 0,
+        terms,
+        termsWhy: 'per-tick means, pooled over every episode — the sums divided by the total '
+                + 'ticks, not a mean of per-episode means, which over episodes of unequal '
+                + 'length is the mean of nothing. `action_rate_l2` differences consecutive '
+                + 'decisions, so its denominator is one less per episode. The WEIGHTS are the '
+                + 'client\'s: this bench does not say what a reward is worth.',
+        perDrop,
+        refused,
+        engine: 'policyforward.mjs over duckkit\'s canonical parameter bytes, always — a fold '
+              + 'is arithmetic on parameters, and onnxruntime runs a graph rather than offering '
+              + 'one. Agrees with onnxruntime to 3.5e-6 per action, which is why a /tune number '
+              + 'and a /record number about one policy are close relatives and not the same '
+              + 'measurement.',
+        seconds,
+        plantName: PLANT,
+        plantDigest: PLANT_DIGEST,
+        ...(shown ? {
+          trace: shown,
+          traceWhy: `the first drop's ${shown.length} control ticks, unrounded, asked for with `
+                  + '`"trace": true`: per tick the trunk\'s pose, MuJoCo\'s own free-joint '
+                  + 'velocity (linear in the world, angular in the body), that velocity as the '
+                  + 'trunk\'s own twist, the fourteen joint angles, the network\'s own fourteen '
+                  + 'outputs and the command. It is here so that the claim "this bench scores '
+                  + 'the terms StudioKit\'s RunMetrics scores" can be CHECKED against the '
+                  + `endpoint rather than against a private code path. Capped at ${TRACE_CAP} `
+                  + 'ticks.',
+        } : {}),
       };
     }
 

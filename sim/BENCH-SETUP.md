@@ -132,9 +132,41 @@ node sim/bench_parity.mjs --mode core --against parity/core-v5-performfix.json \
                           --allow /host/tickMillis   # 60 requests, 5,751 leaves
 node sim/policy_parity.mjs                            # onnxruntime vs policyforward
 node sim/physics_parity.mjs --engine policyforward    # the number the phone must match
+node sim/tune_parity.mjs                              # /tune's reward and fold, vs Swift
 node sim/webcheck.mjs                                 # the browser shell, over real HTTP
 node sim/pagecheck.mjs                                # the probe page, in Chromium
 ```
+
+`tune_parity.mjs` is the gate for `/tune`, and it is the only one here that
+compares this repository against **another language**. `/tune` took two
+definitions out of duck-studio and rewrote them in JavaScript — what a per-joint
+gain and trim mean (`DuckPolicyWriter.folding`) and what each of Pollen's six
+reward terms is (`RunMetrics`) — and a second transcription of either is how a
+search comes to optimise a hill the app cannot see, with both numbers looking
+plausible. So:
+
+* **the reward** is checked on a shared fixture. `POST /tune` with
+  `"trace": true` answers with the first drop's control ticks; fifty of them
+  live in duck-studio at `StudioKit/Tests/StudioKitTests/Fixtures/tune/trace.json`
+  with the six values the bench computed. `BenchTuneParityTests` scores those
+  ticks through `RunMetrics` and this script scores them through
+  `duckbench-core.mjs`'s own `rewardSums`. Measured 2026-09-02, the two agree
+  **exactly** — every one of the six doubles is bit-identical, and the Swift
+  assertion still passes with the tolerance set to 0. It is asserted at 1e-9
+  rather than 0 because five of the six terms end in `exp` and no libm is
+  obliged to round it the way glibc does.
+* **the fold** is checked as bytes. `swift test` writes
+  `StudioKit/.build/fold-fixture/{base,folded}.bin` — a real policy folded by
+  duckkit's own writer at a fixed gain and trim — and this script folds the same
+  base with `policyforward.mjs`'s `foldParameters`. All 791,584 bytes match.
+  It has been watched to fail: dropping the `Math.fround` that rounds the gain
+  to binary32 before multiplying, which is what Swift's `Float(gain[j])` does,
+  moves 381 bytes and 1.49e-8 of one weight — invisible to any comparison that
+  settles for 1e-6.
+
+`swift test` has to run before this script, because the fold half of it is
+consuming what that test writes. With the fixture missing, the script says so
+and **fails** rather than reporting a pass it did not earn.
 
 `bench_parity.mjs` is the one that licensed splitting `duckbench.mjs` into a
 core and a shell: it replays a fixed script and compares every leaf of every

@@ -101,3 +101,88 @@ export function makeForwardSession(bytes, name) {
   const params = loadParameters(bytes);
   return { name, run: observation => forward(params, observation) };
 }
+
+/**
+ * `gain ⊙ action + offset`, ABSORBED INTO THE LAST LAYER — a transcription of
+ * duckkit's `DuckPolicyWriter.folding`, which is the definition of what a gain
+ * and a trim mean on a Microduck policy.
+ *
+ * WHY IT IS HERE AND NOT WHERE THE SEARCH IS. `/tune` scores a candidate the
+ * app will later fold into a file with the Swift writer, and the only way those
+ * two can be the same network is for the bench to apply the identical
+ * arithmetic. The last Gemm is the last op in the graph — no ELU after it — so
+ * its output IS the action, and
+ *
+ *     a' = gain ⊙ (W·h + b) + offset = (diag(gain)·W)·h + (gain ⊙ b + offset)
+ *
+ * is another Gemm of the same shape. Row `j` of `W` scaled by `gain[j]`, bias
+ * `j` scaled and shifted. Fold anywhere else and an ELU sits in the way, and
+ * ELU does not commute with a scale.
+ *
+ * EVERY ROUNDING IS float32, IN THE SAME ORDER SWIFT DOES THEM, and this is
+ * the whole reason `Math.fround` appears three times in six lines. Swift's
+ * `weights[i] *= Float(gain[j])` rounds the gain to binary32 FIRST and then
+ * multiplies two binary32s; JavaScript would multiply the binary32 weight by a
+ * full binary64 gain and round once at the store, which is a different number
+ * in the last bit for a gain like 1.07 that binary32 cannot hold. The bias is
+ * two operations in Swift — a multiply, then an add — so it is two roundings
+ * here as well, rather than one rounding of a fused expression.
+ *
+ * THE FIRST THREE LAYERS ARE SHARED, NOT COPIED. A search that reallocated
+ * 197,774 floats per candidate would spend most of its time in the allocator,
+ * and nothing here writes to them.
+ *
+ * `gain` and `offset` are indexed by POLICY SLOT — fourteen wide, mouth
+ * excluded, because there is no row of `W` that belongs to the mouth.
+ */
+export function foldParameters(params, gain, offset) {
+  const last = params.layers[params.layers.length - 1];
+  if (gain.length !== last.outputs || offset.length !== last.outputs) {
+    throw new Error(`the gain and the trim must be ${last.outputs} wide, mouth excluded`);
+  }
+  for (let j = 0; j < last.outputs; j++) {
+    if (!Number.isFinite(gain[j]) || !Number.isFinite(offset[j])) {
+      throw new Error('the gain or the trim holds something that is not a number: a fold is '
+                    + 'arithmetic on every weight in the last layer, and one NaN in it makes a '
+                    + 'network that loads and drives nothing');
+    }
+  }
+  const weights = new Float32Array(last.weights);
+  const biases = new Float32Array(last.outputs);
+  for (let j = 0; j < last.outputs; j++) {
+    const g = Math.fround(gain[j]), o = Math.fround(offset[j]);
+    const row = j * last.inputs;
+    for (let i = 0; i < last.inputs; i++) weights[row + i] = Math.fround(weights[row + i] * g);
+    biases[j] = Math.fround(Math.fround(last.biases[j] * g) + o);
+  }
+  return {
+    mean: params.mean, std: params.std,
+    layers: [...params.layers.slice(0, -1),
+             { inputs: last.inputs, outputs: last.outputs, weights, biases }],
+  };
+}
+
+/**
+ * The canonical bytes back out, in duckkit's own layout: mean, std, then each
+ * layer's weights and biases, outermost first, little-endian binary32.
+ *
+ * IT EXISTS TO BE COMPARED, NOT TO BE SHIPPED. The fold above claims to be the
+ * same arithmetic as the Swift writer's, and the only way to check a claim like
+ * that is to put both results side by side as bytes — which means this side has
+ * to be able to produce bytes. Nothing in the bench writes a policy file.
+ */
+export function canonicalBytes(params) {
+  const all = new Float32Array(FLOAT_COUNT);
+  let at = 0;
+  const put = a => { all.set(a, at); at += a.length; };
+  put(params.mean); put(params.std);
+  for (const layer of params.layers) { put(layer.weights); put(layer.biases); }
+  if (at !== FLOAT_COUNT) throw new Error(`wrote ${at} floats, not ${FLOAT_COUNT}`);
+  return new Uint8Array(all.buffer);
+}
+
+/** A folded policy, ready to run — the same session shape as `makeForwardSession`. */
+export function makeFoldedSession(bytes, gain, offset, name) {
+  const params = foldParameters(loadParameters(bytes), gain, offset);
+  return { name, run: observation => forward(params, observation) };
+}

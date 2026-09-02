@@ -103,6 +103,29 @@ export async function nodeBench({ engine = 'onnxruntime' } = {}) {
       catalogue = scan();
       return [...catalogue.keys()];
     },
+    /**
+     * THE CANONICAL PARAMETER BYTES, WHICH ON THIS MACHINE ARE A DIFFERENT FILE
+     * FROM THE POLICY.
+     *
+     * A browser is served duckkit's canonical bytes UNDER THE POLICY'S OWN
+     * NAME, so there the two are one file and the core needs no help. Here
+     * `readAsset` hands back an .onnx and the canonical dump sits beside it in
+     * `params/`, produced by the `dumpparams` tool from duckkit's own writer.
+     * /tune folds a gain into the last layer, which means holding parameters —
+     * and where they are is exactly the kind of fact the core is not allowed to
+     * know.
+     *
+     * A MISSING DUMP IS AN ERROR AND NOT A FALLBACK. Quietly scoring through
+     * onnxruntime instead would score the BASE network and call it the folded
+     * one, which is a search that cannot fail and cannot succeed.
+     */
+    readParameters(file, name) {
+      const dump = `params/${name.replace('/policy.onnx', '-policy').replace(/\.onnx$/, '')}.bin`;
+      if (!fs.existsSync(at(dump))) {
+        throw new Error(`${name} has no canonical parameter bytes at ${dump}: run dumpparams`);
+      }
+      return fs.readFileSync(at(dump));
+    },
     sha256: bytes => createHash('sha256').update(bytes).digest('hex'),
     cores: os.cpus().length,
     async makeSession(bytes, name) {
