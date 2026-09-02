@@ -5,7 +5,7 @@
  "source": "github.com/craigm26/duck-sounds at tag stairs-challenge-v1",
  "note": "sha256 and byte size of every file in this package except MANIFEST.json itself.",
  "fileCount": 166,
- "totalBytes": 12255843,
+ "totalBytes": 12261412,
  "files": {
   "README.md": {
    "sha256": "2d55f72c30d7042fb21040914e4f283be73f20f14bbdae26e22558117f0e9ba0",
