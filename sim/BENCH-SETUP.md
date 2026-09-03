@@ -128,8 +128,11 @@ once.
 Nothing in this directory is believed because it reads correctly.
 
 ```
-node sim/bench_parity.mjs --mode core --against parity/core-v5-performfix.json \
-                          --allow /host/tickMillis   # 60 requests, 5,751 leaves
+node sim/bench_parity.mjs --mode core --against parity/core-v6-performworld.json \
+                          --prefix parity/core-v5-performfix.json \
+                          --allow /host/tickMillis,/seconds   # 69 requests; v5 = first 60, leaf for leaf
+# `/host/tickMillis` (boot timing) and /climb's `/seconds` (wall clock) are the only
+# two leaves no fixture can pin; everything else is exact and `--allow` names nothing more.
 node sim/policy_parity.mjs                            # onnxruntime vs policyforward
 node sim/physics_parity.mjs --engine policyforward    # the number the phone must match
 

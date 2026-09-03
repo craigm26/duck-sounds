@@ -47,6 +47,7 @@ import { makeClimbRig, criteria as climbCriteria, checkBounds as climbCheckBound
          reachedFlight as climbReachedFlight,
          CRITERION_SENTENCE, UPRIGHT_TAIL_MIN, CLEAR_BONUS, CEILING_ABOVE,
          RISER_X as CLIMB_RISER_X, LATERAL as CLIMB_LATERAL,
+         STAIR_RUN as CLIMB_STAIR_RUN, STAIR_START as CLIMB_STAIR_START,
          DECLARED_BOUNDS as CLIMB_BOUNDS } from './climb_score.mjs';
 // THE BALL, AND THE ONE EPISODE THAT SCORES A CHASE WITH IT.
 //
@@ -72,7 +73,7 @@ import { makeChaseRig, gridCells as chaseGridCells, checkEntrant as chaseCheckEn
 // climb episode reaches them through — the shim in sim/, the flat copy in the
 // phone bundles — because two spellings of STEP_HALF_HEIGHT are two different
 // tread heights and the one that goes stale is the one nobody reads.
-import { findStairJoints, placeSteps, clearStairs, STAIR_COUNT, STAIR_Y,
+import { findStairJoints, placeSteps, clearStairs, readStairs, STAIR_COUNT, STAIR_Y,
          STAIR_HALF_WIDTH, STEP_HALF_DEPTH, STEP_HALF_HEIGHT } from './stairs.js';
 
 /**
@@ -914,10 +915,34 @@ export async function makeBench(env) {
     // A plant without a full bank has nothing to lay and nothing to isolate;
     // a world set on it (a bare-floor request, say) must not break driving.
     if (!WORLD.set || !STAIR_ADDR) return stepWorld(d);
+    stepIsolated(d, WORLD.steps);
+  }
+
+  /**
+   * ONE TICK INSIDE THE LOAN — the four statements above, once, for both lanes.
+   *
+   * THERE IS NO `await` IN HERE AND THERE MUST NEVER BE ONE, for the reason
+   * `stepLive` gives above: `model.geom_conaffinity` is a MODEL field shared by
+   * every lane, and the isolation is atomic only because this block is
+   * synchronous. Both callbacks are synchronous qpos reads and neither may grow
+   * an `await` either.
+   *
+   * `onLaid` IS THE ONLY MOMENT A LAID WORLD CAN BE READ EXACTLY. `placeSteps`
+   * writes qpos and zeroes qvel, so between it and `stepWorld` the blocks are
+   * precisely what was laid; four substeps later a 200 kg block on a
+   * frictionless, undamped slide has fallen about two millimetres, which is
+   * visible at the readback's 1e-4 rounding and cannot be compared with a POST
+   * /world readback leaf for leaf. `onStepped` is the other end of that same
+   * tick and is how far it fell — the number that says the pin is per tick and
+   * not per run.
+   */
+  function stepIsolated(d, steps, onLaid = null, onStepped = null) {
     STEPG.forEach(g => { model.geom_conaffinity[g] = 0; });
     try {
-      placeSteps(d, STAIR_ADDR, WORLD.steps);
+      placeSteps(d, STAIR_ADDR, steps);
+      if (onLaid) onLaid(d);          // the readback, exact: post-write, pre-step
       stepWorld(d);
+      if (onStepped) onStepped(d);    // sag only
     } finally {
       STEPG.forEach((g, i) => { model.geom_conaffinity[g] = STEP_CONAFF0[i]; });
     }
@@ -931,12 +956,21 @@ export async function makeBench(env) {
    * behaves identically wherever it is run. The live world does NOT use this one:
    * it actuates every duck first and calls `stepWorld` once, which is the same
    * sequence with the loop in the right place.
+   *
+   * HOW TIME MOVES IS THE LAST PARAMETER AND DEFAULTS TO WHAT IT ALWAYS WAS.
+   * `stepIn` is `stepWorld` for every caller that does not pass one, so
+   * /record, /measure and /capture reach the same statement they always did
+   * through a parameter with a default rather than through a name. A /perform
+   * that was given a world passes a closure instead, which takes the step
+   * geoms' conaffinity, re-lays the blocks, steps, and hands it back — the same
+   * loan `stepLive` takes on the live lane, per tick, synchronously. The
+   * `await` above it has already returned by then: the loan never spans one.
    */
   async function tick(d, duck, loaded, last, cmd, offsets = null, blend = 1, capture = null,
-                      expert = null, teacherShare = 0, jitter = 0) {
+                      expert = null, teacherShare = 0, jitter = 0, stepIn = stepWorld) {
     const fedBack = await actuate(d, duck, loaded, last, cmd, offsets, blend, capture,
                                   expert, teacherShare, jitter);
-    stepWorld(d);
+    stepIn(d);
     return fedBack;
   }
 
@@ -981,7 +1015,8 @@ export async function makeBench(env) {
   async function rollout({ name, seconds, schedule, settle = SETTLE_TICKS, drop = 0.1231,
                            track = null, blend = 1, capture = null, expertName = null,
                            teacherShare = 0, jitter = 0, duck = DUCKS[0],
-                           loaded = null, trace = null }) {
+                           loaded = null, trace = null,
+                           world = null, spawn = null, stood = null, lanes = null }) {
     // `loaded` IS FOR THE ONE CALLER THAT RUNS A NETWORK NO CATALOGUE HOLDS.
     // /tune folds a per-joint gain and trim into the last layer at request
     // time, so the network it scores exists for the length of one call and has
@@ -997,7 +1032,63 @@ export async function makeBench(env) {
     const ticks = Math.round(seconds * C.tickHz);
     const D = duck.joints;
     const f = D.freeQpos;
+    // ─────────────────────────────────────────────────────────────────────────
+    // THE DUCK MOVES TO THE BANK, BECAUSE THE BANK CANNOT MOVE TO THE DUCK.
+    //
+    // The fourteen step blocks are COMPILED at y = 1.3050000000000002 with an x
+    // slide and a z slide and no y joint, so a flight can only ever stand on
+    // that one row. A world laid without a spawn is a room the duck stands
+    // BESIDE — a true picture of a useless run — so a caller that lays one can
+    // say where the duck goes, and this is climb_score.mjs:450-458's rule
+    // copied exactly: x and y written straight, and this rollout's drop added
+    // to z as an offset from 0.120. With `spawn.z` defaulting to 0.120 that
+    // reproduces /perform's existing 0.120 → 0.130 sweep byte for byte, so the
+    // same motion starts at the same height on both routes.
+    if (spawn) {
+      data.qpos[f]     = spawn.x;
+      data.qpos[f + 1] = spawn.y;
+      data.qpos[f + 2] = (spawn.z === undefined ? 0.120 : spawn.z) + (drop - 0.120);
+      data.qpos[f + 3] = 1; data.qpos[f + 4] = 0; data.qpos[f + 5] = 0; data.qpos[f + 6] = 0;
+    }
+    // ONCE PER ROLLOUT, NOT PER TICK. A prop and a ball are things the duck
+    // MOVES; re-seating them every tick would make them walls. The blocks are
+    // the other kind and are re-laid inside the loan at the top of every
+    // stepped tick below.
+    if (world) layWorld(data, world);
+    if (world || spawn) mj.mj_forward(model, data);
+    // READ OUT OF qpos, AT THE WRITE, NEVER ECHOED FROM THE REQUEST. This is
+    // the one moment the duck is where it was put; by the last tick it has
+    // walked somewhere else, which is the whole point of the run.
+    if (stood) stood.placed(data, f);
+
+    // THE TICK THIS ROLLOUT STEPS WITH, made ONCE. `tNow` mirrors the loop's
+    // own `t` because the closure is built before the loop and the readback
+    // fires on exactly one tick of it — rollout 0's last recorded one.
+    let tNow = -settle;
+    const lastRecorded = ticks - 1;
+    const layAt = d => { if (stood && tNow === lastRecorded) stood.lay(d, tNow); };
+    const sagAt = d => { if (stood && tNow === lastRecorded) stood.sag(d); };
+    const bump = () => {
+      if (!lanes) return;
+      lanes.performTicks++;
+      // `batchInflight > 1`: this rollout's own batch job is one of them.
+      if (lanes.liveInflight || lanes.climbInflight || lanes.batchInflight > 1) {
+        lanes.performTicksWithAnotherRequestInFlight++;
+      }
+    };
+    // A rollout nobody asked anything new of — /record, /measure and
+    // /capture, which pass no world, no spawn and no lanes — steps through
+    // the identical statement it always did: `stepIn` IS `stepWorld`, not a
+    // wrapper around it, so those routes cannot move by a floating-point
+    // hair. Every /perform passes `lanes` and takes the counted path, whose
+    // no-world case is pinned leaf for leaf by bench_parity instead.
+    const stepIn = (world === null && stood === null && lanes === null)
+      ? stepWorld
+      : ((world && STAIR_ADDR)
+          ? (d => { bump(); stepIsolated(d, world.steps, layAt, sagAt); })
+          : (d => { bump(); layAt(d); stepWorld(d); sagAt(d); }));
     for (let t = -settle; t < ticks; t++) {
+      tNow = t;
       const cmd = command(t >= 0 ? commandAt(schedule, t / C.tickHz) : {});
       // NEUTRAL THROUGH THE SETTLE. The settle exists to let the drop-bounce die;
       // feeding the track through it starts the motion before recording does.
@@ -1007,7 +1098,7 @@ export async function makeBench(env) {
       // to recover from a fall it will never be dropped into.
       last = await tick(data, duck, t < 0 ? settling : net, last, cmd, offsets, blend,
                         t >= 0 ? capture : null, t >= 0 ? expert : null, teacherShare,
-                        t >= 0 ? jitter : 0);
+                        t >= 0 ? jitter : 0, stepIn);
       if (t >= 0) {
         const after = [];
         for (let k = 0; k < 14; k++) {
@@ -1096,7 +1187,42 @@ export async function makeBench(env) {
       return run;
     };
   }
-  const liveLane = lane(), batchLane = lane(), climbLane = lane();
+  const liveLane0 = lane(), batchLane0 = lane(), climbLane = lane();
+
+  /**
+   * WHO ELSE IS IN THE BUILDING — a diagnostic, and never part of a scored
+   * answer.
+   *
+   * world_parity phase 4 awaits every call before it issues the next one, so a
+   * loan held across an `await` would pass it: sequential is not a proof of
+   * atomicity. Phase 5g issues an overlapping pair on purpose — but a race that
+   * did not actually race proves nothing either, and a green phase that never
+   * overlapped is worse than a red one. So the bench counts: every /perform
+   * control tick, and how many of those ticks were stepped while some OTHER
+   * request had been accepted and not yet answered. Phase 5g fails itself if
+   * that second number does not move.
+   *
+   * IN FLIGHT MEANS ACCEPTED AND NOT YET ANSWERED — queued as much as running.
+   * Node is single-threaded and each lane is serial, so a request that arrives
+   * mid-/perform is queued rather than interleaved; "queued behind a /perform
+   * that is holding the step geoms' conaffinity" is exactly the situation the
+   * loan has to survive, and it is the one a counter can see.
+   */
+  const LANES = { performTicks: 0, performTicksWithAnotherRequestInFlight: 0,
+                  liveInflight: 0, climbInflight: 0, batchInflight: 0 };
+  /** A lane, with a gauge of how many jobs are on it. Ordering is untouched. */
+  const gauged = (key, submit) => job => {
+    LANES[key]++;
+    const run = submit(job);
+    const done = () => { LANES[key]--; };
+    run.then(done, done);
+    return run;
+  };
+  const liveLane = gauged('liveInflight', liveLane0);
+  // THE BATCH LANE IS GAUGED TOO. /record, /measure, /capture and /tune share
+  // /perform's mjData through it, and an overlap counter blind to them would
+  // report a /perform that raced a /measure as a /perform that ran alone.
+  const batchLane = gauged('batchInflight', batchLane0);
 
   /**
    * A /climb cell TAKES BOTH OTHER LANES, and this is the one place in the file
@@ -1113,7 +1239,11 @@ export async function makeBench(env) {
    * that happens to overlap a scoring run, and the alternative is a number
    * nobody can explain.
    */
-  const climbJob = job => climbLane(() => liveLane(() => batchLane(job)));
+  // The gauge is taken on the OUTSIDE only: a climb job passes through the live
+  // lane, and counting it there too would report one request as two and make
+  // `liveInflight` mean something other than its name.
+  const climbJob = gauged('climbInflight',
+    job => climbLane(() => liveLane0(() => batchLane0(job))));
   /**
    * A /chase cell borrows the model too, for the same reason and on the same
    * lane. Its plant axis multiplies the foot geoms' friction exactly as a climb
@@ -1147,6 +1277,17 @@ export async function makeBench(env) {
    * checked, and a scene where it does not hold is refused by name.
    */
   let CLIMB, CLIMB_WHY = null, CLIMB_BUILD;
+  /**
+   * The climb rig's own mjData, kept by name.
+   *
+   * The rig owns it and resets it at the top of every episode; this reference
+   * exists so that the /climb route can read the ball and the graspables out of
+   * the world the episode ran in when a caller asks for a clip. THE STEP BLOCKS
+   * ARE NOT READ THROUGH IT — `runEpisode`'s `finally` parks all fourteen at
+   * (i·1.5, −5), so a post-hoc read of the bank would report a parked flight as
+   * the one the duck climbed. Those come out of the episode itself.
+   */
+  let CLIMB_DATA = null;
   /** ONE construction, however many callers arrive during it: the sentinel is
    *  the promise, not a null written before the first await — two concurrent
    *  first calls used to make the second answer "no /climb here: null". */
@@ -1165,9 +1306,10 @@ export async function makeBench(env) {
         + 'would drive the wrong joints'; return CLIMB;
     }
     const loaded = await policy(STAND);
+    CLIMB_DATA = new mj.MjData(model);
     const rig = makeClimbRig({
       geomFriction0: GEOM_FRICTION0,
-      mj, model, data: new mj.MjData(model),
+      mj, model, data: CLIMB_DATA,
       D: duck.joints, HOME, LO, HI, buildObs, projectedGravity, command,
       tickHz: C.tickHz, reference: loaded.reference,
       // THE FORWARD PASS IS THE SHELL'S, exactly as it is for every other
@@ -1432,6 +1574,30 @@ export async function makeBench(env) {
   }
 
   /**
+   * A PER-REQUEST WORLD, LAID INTO SOMEBODY ELSE'S mjData.
+   *
+   * `relayWorld` above is the LIVE lane's and is left exactly as it is: it puts
+   * the standing world back after `mj_resetData` wiped it, it takes the module
+   * global as its subject, and its caller — not it — places the ball, after the
+   * relay. That order is what world_parity phase 3 pins, so it is not folded
+   * into anything.
+   *
+   * This one is /perform's: a plan, and the mjData a rollout is about to run
+   * in. It writes nothing to the module global and reads nothing from it, so a
+   * world sent with a run cannot become the world the live lane is standing in
+   * — the bug that would make the next /intent step through a room nobody
+   * asked for.
+   *
+   * NO `mj_forward` HERE. The caller does it once, after the spawn, so a
+   * rollout pays for one forward and not three.
+   */
+  function layWorld(d, plan) {
+    if (STAIR_ADDR) placeSteps(d, STAIR_ADDR, plan.steps);
+    for (const p of plan.props) seatProp(d, p);
+    if (plan.ball && BALL) placeBall(d, plan.ball.x, plan.ball.y, BALL_RADIUS);
+  }
+
+  /**
    * THE WORLD AS IT ACTUALLY STANDS, read out of the live mjData.
    *
    * READ, NOT ECHOED. The request is not the answer: a bank with no y joint
@@ -1441,14 +1607,19 @@ export async function makeBench(env) {
    * physics, and it is what the app draws — so what is on screen is the world
    * the bench built rather than the world the app asked for.
    */
-  function worldReadback() {
-    const d = live.world;
+  function worldReadback(d = live.world, plan = (WORLD.set ? WORLD : null), atSteps = null) {
     const steps = [];
     let parked = 0;
-    if (STAIR_ADDR) {
+    // THE BANK, AS IT READ AT THE MOMENT THAT MATTERS. `atSteps` is a list of
+    // `{x, z}` already read somewhere this function cannot reach — inside a
+    // scoring episode, at the pin, before the episode's `finally` parked all
+    // fourteen. With none it reads `d` here and now, which is what GET /world
+    // has always done.
+    const bank = atSteps ?? (STAIR_ADDR
+      ? STAIR_ADDR.map(a => ({ x: d.qpos[a.x], z: d.qpos[a.z] })) : null);
+    if (bank) {
       for (let i = 0; i < STAIR_COUNT; i++) {
-        const a = STAIR_ADDR[i];
-        const z = d.qpos[a.z];
+        const z = bank[i].z;
         // PARKED IS A MARK SOMEBODY WROTE, NOT A DEPTH SOMETHING FELL TO.
         // `placeSteps` puts an unused block at (i·1.5, −5) and re-writes it
         // every tick, so its x is EXACTLY i·1.5 (nothing pushes along x and the
@@ -1466,9 +1637,9 @@ export async function makeBench(env) {
         // reads after a tick — that is the contract placeSteps implements — and
         // only the ones after them are tested against the park mark. Inferring
         // "laid" from the mark alone could drop a laid block out of the readback.
-        if (WORLD.set && i >= WORLD.steps.length && d.qpos[a.x] === i * 1.5 && z <= -5) { parked++; continue; }
+        if (plan && i >= plan.steps.length && bank[i].x === i * 1.5 && z <= -5) { parked++; continue; }
         steps.push({
-          x: r4(d.qpos[a.x]), y: r4(STAIR_Y), top: r4(z + STEP_HALF_HEIGHT),
+          x: r4(bank[i].x), y: r4(STAIR_Y), top: r4(z + STEP_HALF_HEIGHT),
           halfDepth: STEP_HALF_DEPTH, halfWidth: STAIR_HALF_WIDTH,
           halfHeight: STEP_HALF_HEIGHT,
         });
@@ -1476,7 +1647,7 @@ export async function makeBench(env) {
     }
     const b = ballOf(d);
     return {
-      world: { set: WORLD.set, name: WORLD.name },
+      world: { set: !!plan, name: plan ? plan.name : null },
       steps,
       ball: b ? { x: b[0], y: b[1], z: b[2] } : null,
       ballRadius: BALL ? BALL_RADIUS : null,
@@ -1510,7 +1681,7 @@ export async function makeBench(env) {
             + '`steps`, wherever they actually are. Nothing is parked until a world parks it.',
       },
       arena: ARENA,
-      unexpressed: WORLD.unexpressed,
+      unexpressed: plan ? plan.unexpressed : [],
       plantName: PLANT,
       plantDigest: PLANT_DIGEST,
     };
@@ -1523,15 +1694,39 @@ export async function makeBench(env) {
    * ORDER MATTERS: everything is checked before anything is written, so a
    * refused request leaves the world it found. A half-applied world would be a
    * world nobody asked for standing under a duck somebody is steering.
+   *
+   * NOTHING IS WRITTEN HERE AT ALL. This is the whole of that checking, and it
+   * ends by handing back a plan. `setWorld` commits it to the live lane;
+   * /perform lays the same plan into its own rollout and never touches the
+   * module global. ONE function, so the two routes accept byte-identical bodies
+   * and refuse them in the same words in the same order — a /perform-only
+   * refusal, or a /perform-only silence, would be a second world route wearing
+   * the first one's name.
+   *
+   * `against` IS THE STANDING WORLD OR NOTHING, AND IT IS LOAD-BEARING. With a
+   * world to merge against, a post that mentions only the ball keeps the steps
+   * standing (and keeps the steps' notes). With `null` there is nothing to
+   * inherit: a request that says nothing about the bank hits the same refusal a
+   * FIRST /world gets, which is exactly what a /perform world must do — it can
+   * never silently inherit the live lane's flight.
+   *
+   * `ballAt` READS THE BALL FOR THE ONE NOTE THAT NEEDS IT, out of whichever
+   * mjData the caller is talking about, so `"ball": null` produces the same
+   * `remove the ball` row on both routes instead of a refusal on one of them.
+   *
+   * `spawn` HAS THREE STATES AND ONLY /perform PASSES IT. Undefined is "not a
+   * route that can move the duck", so no spawn row is ever emitted (the /world
+   * route). `null` is "a route that could and was not asked to" — the §2.5 row.
+   * A point is "it was asked", and nothing is said.
    */
-  function setWorld(body) {
+  function planWorld(body, { against = null, ballAt = null, spawn } = {}) {
     const notes = [];
     const inX = ARENA.innerX_m, inY = ARENA.innerY_m;
 
     // --- steps -------------------------------------------------------------
     // A STANDING FLIGHT STAYS STANDING when a post says nothing about the
     // bank: moving the ball is not a request to park the stairs.
-    let steps = WORLD.set ? WORLD.steps.slice() : [];
+    let steps = against ? against.steps.slice() : [];
     const asked = body.steps !== undefined && body.steps !== null;
     if (body.clear === true && asked) {
       throw new Error('say one or the other: `clear: true` for a bare floor, or `steps` to lay them');
@@ -1593,8 +1788,8 @@ export async function makeBench(env) {
                + 'that lands in the gap falls to the floor' }));
         }
       }
-    } else if (WORLD.set) {
-      steps = WORLD.steps;                      // not mentioned: leave them where they are
+    } else if (against) {
+      steps = against.steps;                    // not mentioned: leave them where they are
     } else {
       // THE ONE REFUSAL THAT IS ABOUT A DEFAULT AND NOT ABOUT A NUMBER. Nothing
       // parks this bank in the live world: it boots with fourteen 200 kg blocks
@@ -1612,9 +1807,9 @@ export async function makeBench(env) {
     }
 
     // --- the ball ----------------------------------------------------------
-    let ball = WORLD.ball;
+    let ball = against ? against.ball : null;
     if (body.ball === null) {
-      const at = ballOf(live.world);
+      const at = ballAt ? ballAt() : null;
       notes.push(unexpressed('remove the ball', { field: 'ball', asked: null,
         got: at ? { x: at[0], y: at[1], z: at[2] } : null,
         why: 'the ball is a permanent body in this plant, not something a world adds; '
@@ -1634,7 +1829,7 @@ export async function makeBench(env) {
     }
 
     // --- props -------------------------------------------------------------
-    let props = WORLD.props;
+    let props = against ? against.props : [];
     if (body.props !== undefined && body.props !== null) {
       if (!Array.isArray(body.props)) throw new Error('props must be an array of {name, x, y}');
       props = [];
@@ -1671,28 +1866,80 @@ export async function makeBench(env) {
       });
     }
 
-    // --- nothing has been written until here -------------------------------
-    // MERGE BY SECTION, NEVER REPLACE. A post that restates one part of a
-    // standing world carries that part's honesty; the parts it did not mention
-    // keep theirs, or a ball move would silently erase what the stairs could
-    // not express.
-    const restated = new Set();
-    if (asked || body.clear === true) restated.add('steps');
-    if (body.ball !== undefined) restated.add('ball');
-    if (body.props !== undefined && body.props !== null) restated.add('props');
-    if (Array.isArray(body.walls)) restated.add('walls');
-    const sectionOf = n => ({ 'step y': 'steps', 'step size': 'steps', 'gap between steps': 'steps',
-                              'remove the ball': 'ball', prop: 'props', wall: 'walls' })[n.what] ?? 'other';
+    // --- the spawn ---------------------------------------------------------
+    // THE ROW THAT EXISTS BECAUSE THE BANK CANNOT MOVE. A flight can only ever
+    // stand on the one compiled row, so a world laid without a spawn puts the
+    // steps 1.305 m to the duck's left: a TRUE picture of a USELESS run, which
+    // is the original bug wearing a different hat. It is not a refusal — a
+    // caller may legitimately want the room and not the walk — so it is said.
+    if (spawn === null) {
+      // AND THE ROW SAYS WHAT STOOD. A cleared world lays no flight, so "the
+      // step bank is to its left" would name a flight that is parked below
+      // the floor; the row still exists (nothing said where to stand) but its
+      // reason is the true one.
+      const why = steps.length
+        ? 'nothing asked where the duck should stand, so it is on its compiled mark at '
+          + `(0, 0) and the step bank is ${r4(STAIR_Y)} m to its left. A world laid without `
+          + 'a spawn is a room the duck is beside, not one it is in.'
+        : 'nothing asked where the duck should stand, so it is on its compiled mark at '
+          + '(0, 0). No flight was laid for this run: the bank is parked below the floor, '
+          + 'so there is nothing beside the duck to stand in.';
+      notes.push(unexpressed('spawn', { field: 'spawn', asked: null, got: { x: 0, y: 0 }, why }));
+    }
+
+    // --- nothing has been written, here or above ---------------------------
+    return {
+      name: body.name === undefined ? (against ? against.name : null)
+          : (body.name === null ? null : String(body.name)),
+      steps, ball, props, notes,
+      // Which sections this body actually restated, so the caller that MERGES
+      // does not have to re-derive it from the body a second time and get a
+      // different answer.
+      restated: [
+        ...((asked || body.clear === true) ? ['steps'] : []),
+        ...(body.ball !== undefined ? ['ball'] : []),
+        ...((body.props !== undefined && body.props !== null) ? ['props'] : []),
+        ...(Array.isArray(body.walls) ? ['walls'] : []),
+      ],
+    };
+  }
+
+  /**
+   * WHICH SECTION A NOTE BELONGS TO, so a restated clause drops its own old
+   * notes and nobody else's.
+   *
+   * `spawn` is a STEPS note: it exists only because a flight was laid where the
+   * duck is not, so a post that restates the bank restates it.
+   */
+  const sectionOf = n => ({ 'step y': 'steps', 'step size': 'steps', 'gap between steps': 'steps',
+                            'remove the ball': 'ball', prop: 'props', wall: 'walls',
+                            spawn: 'steps' })[n.what] ?? 'other';
+
+  /**
+   * THE LIVE LANE'S WORLD, COMMITTED.
+   *
+   * `planWorld` above did every check and every refusal; this adds the two
+   * things that are only true of the live lane — the merge against what is
+   * already standing, and the write.
+   *
+   * MERGE BY SECTION, NEVER REPLACE. A post that restates one part of a
+   * standing world carries that part's honesty; the parts it did not mention
+   * keep theirs, or a ball move would silently erase what the stairs could not
+   * express.
+   */
+  function setWorld(body) {
+    const plan = planWorld(body, { against: WORLD.set ? WORLD : null,
+                                   ballAt: () => ballOf(live.world) });
+    const restated = new Set(plan.restated);
     const kept = (WORLD.unexpressed || []).filter(n => !restated.has(sectionOf(n)));
-    WORLD.steps = steps;
-    WORLD.ball = ball;
-    WORLD.props = props;
-    WORLD.name = body.name === undefined ? WORLD.name
-               : (body.name === null ? null : String(body.name));
-    WORLD.unexpressed = kept.concat(notes);
+    WORLD.steps = plan.steps;
+    WORLD.ball = plan.ball;
+    WORLD.props = plan.props;
+    WORLD.name = plan.name;
+    WORLD.unexpressed = kept.concat(plan.notes);
     WORLD.set = true;
     relayWorld();
-    if (ball && BALL) placeBall(live.world, ball.x, ball.y, BALL_RADIUS);
+    if (plan.ball && BALL) placeBall(live.world, plan.ball.x, plan.ball.y, BALL_RADIUS);
     else mj.mj_forward(model, live.world);
   }
 
@@ -1943,6 +2190,32 @@ export async function makeBench(env) {
         if (body && FIELDS.some(k => k in body)) setWorld(body);
         return worldReadback();
       });
+    }
+    /*
+     * GET /lanes — WHO ELSE WAS IN THE BUILDING. DIAGNOSTIC ONLY.
+     *
+     * Nothing scored is in here and nothing in here is scored: these are four
+     * cumulative counters about the SHAPE of the traffic, not about a duck.
+     *
+     * IT EXISTS SO A CONCURRENCY GATE CAN FAIL ITSELF. `world_parity` phase 4
+     * awaits every call before issuing the next, so a collision loan held
+     * across an `await` would pass it; phase 5g issues an overlapping pair on
+     * purpose, and a race that did not actually race would pass just as
+     * quietly. `performTicksWithAnotherRequestInFlight` is how 5g proves the
+     * overlap happened: if it did not move, the phase reports that it proved
+     * nothing and goes red.
+     */
+    if (url.pathname === '/lanes') {
+      return {
+        performTicks: LANES.performTicks,
+        performTicksWithAnotherRequestInFlight: LANES.performTicksWithAnotherRequestInFlight,
+        liveInflight: LANES.liveInflight,
+        climbInflight: LANES.climbInflight,
+        why: 'in flight means accepted and not yet answered — queued as much as running. Node '
+           + 'is single-threaded and each lane is serial, so a request that arrives during a '
+           + '/perform waits behind it; "waited while /perform held the step geoms\' '
+           + 'conaffinity" is exactly the situation the loan has to survive.',
+      };
     }
     // POST /reset — put the live world back to a known start.
     //
@@ -2213,6 +2486,114 @@ export async function makeBench(env) {
       const name = body.policy || STAND;
       const duck = pickDuck(url, body);
 
+      // ── THE ROOM THE MOTION RUNS IN, AND WHERE THE DUCK STANDS IN IT ──────
+      //
+      // Both are OPTIONAL and both are ABSENT by default, and that absence is
+      // a contract: a request that carries neither gets the answer it has
+      // always got, leaf for leaf, with no `stood` key on it. `bench_parity`'s
+      // entry #53 is that request.
+      //
+      // THE SPAWN IS CHECKED FIRST, because a world's spawn row depends on
+      // whether one arrived. `spawn.z` is honoured rather than refused: with it
+      // defaulting to 0.120 the write below reproduces this endpoint's existing
+      // 0.120 → 0.130 sweep byte for byte, so honouring it costs nothing and
+      // makes the same motion start at the same height here and on /climb.
+      let spawnPoint = null;
+      if (body.spawn !== undefined && body.spawn !== null) {
+        const s = body.spawn;
+        const bad = { error: 'spawn: give x and y as finite numbers, and z as a finite '
+                           + 'number if you give one' };
+        if (typeof s !== 'object' || Array.isArray(s)) return bad;
+        const x = Number(s.x), y = Number(s.y);
+        const hasZ = s.z !== undefined && s.z !== null;
+        const z = hasZ ? Number(s.z) : 0.120;
+        if (!Number.isFinite(x) || !Number.isFinite(y) || !Number.isFinite(z)) return bad;
+        // THE POINT, NOT A FOOTPRINT. A step block is 340 mm deep and 200 kg and
+        // is refused for reaching into a wall; a duck is 250 mm and walks, and
+        // the only thing worth saying is that it was put down inside the room.
+        if ((ARENA.innerX_m !== null && Math.abs(x) > ARENA.innerX_m + 1e-12)
+         || (ARENA.innerY_m !== null && Math.abs(y) > ARENA.innerY_m + 1e-12)) {
+          return { error: `a spawn at (${x}, ${y}) is outside this arena: the inner faces `
+                        + `are at x = ±${ARENA.innerX_m} and y = ±${ARENA.innerY_m}` };
+        }
+        spawnPoint = { x, y, z };
+      }
+      // THE SAME VALIDATOR POST /world RUNS, WITH `against: null`. Nothing is
+      // inherited: a /perform world that says nothing about the bank hits the
+      // same refusal a first /world gets rather than silently borrowing the
+      // live lane's flight. `ballAt` is the batch mjData, so `"ball": null`
+      // produces the same `remove the ball` note it produces on /world and
+      // there is no /perform-only ball refusal.
+      let plan = null;
+      if (body.world !== undefined && body.world !== null) {
+        if (typeof body.world !== 'object' || Array.isArray(body.world)) {
+          return { error: 'world must be an object of {name, steps, clear, ball, props, walls}'
+                        + ' — the same shape POST /world takes' };
+        }
+        try {
+          plan = planWorld(body.world, { against: null, ballAt: () => ballOf(data),
+                                         spawn: spawnPoint });
+        } catch (e) { return { error: String(e.message || e) }; }
+      }
+      // The plan, in the shape `layWorld` and `worldReadback` take. THE MODULE
+      // GLOBAL `WORLD` IS NOT WRITTEN, READ OR CONSULTED anywhere on this
+      // route: a room sent with a run is that run's room and nobody else's.
+      const laid = plan ? { set: true, name: plan.name, steps: plan.steps, ball: plan.ball,
+                            props: plan.props, unexpressed: plan.notes } : null;
+
+      const wantStood = !!(laid || spawnPoint);
+      let stoodBlock;
+      const stood = wantStood ? {
+        at: null,
+        /** Where the duck was actually put, read out of qpos at the write. */
+        placed(d, f) {
+          this.at = { x: r4(d.qpos[f]), y: r4(d.qpos[f + 1]), z: r4(d.qpos[f + 2]) };
+        },
+        /** THE READ POINT: post-placeSteps, pre-stepWorld, inside the loan. */
+        lay(d, t) {
+          stoodBlock = {
+            ...worldReadback(d, laid),
+            spawn: this.at,
+            spawnWhy: spawnPoint
+              ? `the duck's free joint was written to (${spawnPoint.x.toFixed(3)}, `
+                + `${spawnPoint.y.toFixed(3)}, ${spawnPoint.z.toFixed(3)}) before the settle, `
+                + 'and this rollout\'s drop was added to z as an offset from 0.120 — the same '
+                + 'rule climb_score.mjs uses, so the same motion starts at the same height on '
+                + 'both routes.'
+              : 'nothing moved the duck: it spawned at its compiled qpos0, (0, 0), and the '
+                + `step bank is compiled at y = ${r4(STAIR_Y)}, so anything laid on that bank `
+                + `stood ${r4(STAIR_Y)} m to the duck's left.`,
+            ofRollout: 0,
+            atTick: t,
+            pinnedEveryTick: !!(laid && STAIR_ADDR),
+            sag_mm: null,
+            pinnedWhy: (laid && STAIR_ADDR)
+              ? 'each step block is a 200 kg body on two frictionless, undamped slides with no '
+                + 'gravity compensation, so it is re-written and re-pinned at the top of every '
+                + 'control tick, inside the same synchronous collision loan the live lane '
+                + 'takes. `steps` is read immediately after that write and before the step, so '
+                + 'it is exactly what was laid; `sag_mm` is how far the lowest-sitting block '
+                + 'had fallen by the end of that same tick.'
+              : 'no world was laid for this run, so nothing was pinned and nothing sagged: '
+                + 'the bank is wherever this plant left it, which on the batch lane is '
+                + 'fourteen blocks that booted stacked and have been falling since. `steps` '
+                + 'is still read before the step of the tick it names.',
+          };
+        },
+        /** The other end of that same tick, and the only thing read after it. */
+        sag(d) {
+          if (!stoodBlock) return;
+          if (!laid || !STAIR_ADDR || !laid.steps.length) return;
+          let worst = -Infinity;
+          for (let i = 0; i < laid.steps.length && i < STAIR_COUNT; i++) {
+            const fell = (laid.steps[i].top
+                        - (d.qpos[STAIR_ADDR[i].z] + STEP_HALF_HEIGHT)) * 1000;
+            if (fell > worst) worst = fell;
+          }
+          stoodBlock.sag_mm = Number.isFinite(worst) ? r4(worst) : null;
+        },
+      } : null;
+
       let first = null, ok = 0;
       const heights = [];
       for (let i = 0; i < rollouts; i++) {
@@ -2220,7 +2601,11 @@ export async function makeBench(env) {
         // height is what a bench can vary without touching the model.
         const drop = 0.12 + (0.01 * i) / Math.max(rollouts - 1, 1);
         const run = await batchLane(() =>
-          rollout({ name, seconds, schedule: body.schedule, track: ordered, blend, drop, duck }));
+          rollout({ name, seconds, schedule: body.schedule, track: ordered, blend, drop, duck,
+                    // EVERY rollout runs in the world; only rollout 0 is read
+                    // back, because `frames`, `roots` and `commands` are its.
+                    world: laid, spawn: spawnPoint, stood: i === 0 ? stood : null,
+                    lanes: LANES }));
         const last = run.roots[run.roots.length - 1];
         if (upright(last)) ok++;
         heights.push(last[2]);
@@ -2255,10 +2640,23 @@ export async function makeBench(env) {
         blend,
         frames: first.frames, roots: first.roots, commands: first.commands,
         rollouts, achieves: ok,
-        criterion: 'stayed upright to the end, over drop heights 0.120-0.130 m',
+        // WHAT WAS ACTUALLY SAMPLED. `drop = 0.12 + (0.01·i)/max(rollouts−1, 1)`,
+        // so a single rollout only ever sees 0.120 — and this sentence claimed a
+        // sweep across it. It is printed to a person on the challenge screen's
+        // quick run, which is exactly where it was false. Nothing about `stood`
+        // is appended here: a backtick-quoted JSON key is not English, and this
+        // string is read out loud.
+        criterion: rollouts === 1
+          ? 'stayed upright to the end, dropped from 0.120 m'
+          : 'stayed upright to the end, over drop heights 0.120-0.130 m',
         medianHeight: r4(heights[Math.floor(heights.length / 2)]),
         endsUpright: upright(last), endHeight: r4(last[2]),
         peakJointRate: r4(peak),
+        // THE ONE NEW KEY, AND IT IS ABSENT UNLESS SOMETHING ASKED. A request
+        // that carries neither a world nor a spawn answers exactly what it
+        // always answered — which is what keeps parity/core-v5-performfix.json
+        // frozen with no --allow.
+        ...(wantStood ? { stood: stoodBlock } : {}),
       };
     }
     /*
@@ -2785,9 +3183,16 @@ export async function makeBench(env) {
              + '. A search that left its own declared box is not a result, so this cell is not scored.',
           seconds: ((typeof performance === 'object' ? performance.now() : Date.now()) - started) / 1000 };
       }
+      // THE PICTURE IS A REQUEST FIELD, NEVER PART OF THE INTENT. `intent` is
+      // the object `intentHashPayload` is taken over, so a render flag inside
+      // it would change the identity of every move that asked to be watched.
+      // It rides in `runEpisode`'s FIFTH argument — the per-cell plant bag,
+      // beside `isolate` and `stepCount` — and never through `optsOf`.
+      const wantClip = body.clip === true;
       const E = await climbJob(() => rig.runEpisode(
         intent.keyframes, climbOptsOf(intent), rise + dh, 'policy',
-        { drop, fmul, isolate: intentIsolate(intent), stepCount: intentStepCount(intent) }));
+        { drop, fmul, isolate: intentIsolate(intent), stepCount: intentStepCount(intent),
+          clip: wantClip }));
       const s = E.afterTail;                        // the grid scores after the 50-tick policy tail
       const crit = climbCriteria(rise + dh, s);
       const honest = crit.honest;
@@ -2797,6 +3202,54 @@ export async function makeBench(env) {
       // toFixed here would make that gate unable to tell a moved trajectory
       // from a rounded one.
       const mm = v => v * 1000;
+      // ── THE CLIP AND THE FLIGHT IT RAN ON, both absent unless asked for ────
+      //
+      // NESTED, NOT MERGED FLAT: the twenty-six scored keys keep their names,
+      // omitting a clip is trivial, and world_parity phase 4's /climb diff
+      // stays at 28 readable leaves. `undefined` is dropped by JSON.stringify,
+      // so a no-clip answer's key set is exactly today's.
+      //
+      // `stood.steps` COMES OUT OF THE EPISODE and not out of a later read:
+      // `runEpisode`'s `finally` parks all fourteen blocks at (i·1.5, −5), so a
+      // post-hoc readback would report a parked bank as the flight the duck
+      // climbed. `E.stairsInEpisode` was read at the last pin, before that
+      // tick's substeps — the same instant /perform's `stood` is read at, which
+      // is what makes the two comparable leaf for leaf (world_parity 5d).
+      let clipBlock, stoodBlock;
+      if (wantClip && E.clip) {
+        const lastRoot = E.clip.roots[E.clip.roots.length - 1];
+        clipBlock = {
+          format: 'duck-intent-clips/3',
+          hz: C.tickHz,
+          joints: C.jointNames.filter(n => n !== 'mouth'),
+          policy: STAND,
+          plantName: PLANT, plantDigest: PLANT_DIGEST,
+          frames: E.clip.frames, roots: E.clip.roots, commands: E.clip.commands,
+          ticks: E.clip.frames.length,
+          endsUpright: lastRoot ? upright(lastRoot) : false,
+          settleExcluded: true,
+          settleWhy: 'the recorded ticks are the track\'s plus the fifty-tick policy tail; the '
+                   + 'twenty-five settle ticks are a drop bounce dying under a different policy '
+                   + 'and are not in here, which is /perform\'s own convention.',
+        };
+      }
+      if (wantClip && E.stairsInEpisode) {
+        const count = intentStepCount(intent);
+        // The blocks the episode laid, said the way a world describes one. This
+        // is `layoutStairs`' own arithmetic and world_parity phase 1 is the
+        // gate that says `placeSteps` writes the identical slots — so the count
+        // here is what decides which blocks the readback calls parked.
+        const laidHere = Array.from({ length: Math.min(count, STAIR_COUNT) }, (_, i) => ({
+          x: CLIMB_STAIR_START + i * CLIMB_STAIR_RUN + STEP_HALF_DEPTH,
+          top: (i + 1) * (rise + dh),
+        }));
+        // NO NAME. Nothing named this room: the climb route lays the harness's
+        // own flight from a rise and a cell, and inventing a sentence for it
+        // here would be this bench composing prose about a world.
+        stoodBlock = worldReadback(CLIMB_DATA,
+          { set: true, name: null, steps: laidHere, unexpressed: [] },
+          E.stairsInEpisode);
+      }
       return {
         ...answered, invalid: false, why: null,
         honest, stable,
@@ -2812,6 +3265,8 @@ export async function makeBench(env) {
         // somewhere in it. Do-nothing never crosses x = 120 mm and so earns 0.
         reachedFlight: climbReachedFlight({ maxX: E.maxX, feetOnTreadMax: E.feetOnTreadMax }),
         seconds: ((typeof performance === 'object' ? performance.now() : Date.now()) - started) / 1000,
+        clip: clipBlock,
+        stood: stoodBlock,
       };
     }
 

@@ -52,7 +52,8 @@
 // THE PATHS BELOW ARE THE BUNDLE'S PATHS. `./stairs.js`, `./climb_event.mjs`
 // and `./climb_servo.mjs` are re-export shims in sim/ and are the real files in
 // the phone bundle's flat assets/ directory, exactly as `./duckloop.mjs` is.
-import { findStairJoints, layoutStairs, clearStairs, STAIR_Y, STAIR_HALF_WIDTH } from './stairs.js';
+import { findStairJoints, layoutStairs, clearStairs, readStairs,
+         STAIR_Y, STAIR_HALF_WIDTH } from './stairs.js';
 import { normEvent, eventFires, eventError, buildDynTrack } from './climb_event.mjs';
 import { normServo, servoBase, servoTick } from './climb_servo.mjs';
 
@@ -426,14 +427,27 @@ export function makeClimbRig(ctx) {
   /**
    * ONE EPISODE. This is rig3.mjs runEpisodeRaw() and robust.mjs go(), which
    * were already proved equal on cell 0 (robust.mjs PHASE P), as one function.
+   *
+   * `clip` RIDES IN THE FIFTH ARGUMENT AND NOWHERE ELSE. That bag is the
+   * per-cell PLANT — drop, friction, isolation, how many blocks — and it is the
+   * one place a caller's flag cannot reach `intentHashPayload`: `optsOf` is the
+   * intent-derived bag, and a render flag in it would change the identity of
+   * every move that asked for a picture. It also keeps `clip` away from
+   * `opts.pinEverySubstep`, the one inert-looking opt on this episode that
+   * actually moves numbers.
+   *
+   * IT IS READ-ONLY AND IT IS PROVED TO BE. `sim/climb_parity.mjs` scores the
+   * fourteen cells of five published files against climb/robust.mjs at full
+   * float digits, with and without it.
    */
   async function runEpisode(track, opts, h, tail = 'policy',
-                            { drop = 0.120, fmul = 1.0, isolate = true, stepCount } = {}) {
+                            { drop = 0.120, fmul = 1.0, isolate = true, stepCount,
+                              clip = false } = {}) {
     const cfg = { count: stepCount || opts.stepCount || DEFAULT_STEP_COUNT, rise: h, run: STAIR_RUN, start: STAIR_START };
     STEPG.forEach((g, i) => { model.geom_conaffinity[g] = isolate ? 0 : STEP_CONAFF0[i]; });
     FEET.forEach((g, i) => { model.geom_friction[g * 3] = FRICT0[i] * fmul; });
     try {
-      return await episode(track, opts, h, tail, cfg, drop);
+      return await episode(track, opts, h, tail, cfg, drop, clip);
     } finally {
       // THE WORLD IS HANDED BACK EXACTLY AS IT WAS LENT. The bench answers
       // /perform out of the same model; a friction multiplier or a zeroed
@@ -444,7 +458,7 @@ export function makeClimbRig(ctx) {
     }
   }
 
-  async function episode(track, opts, h, tail, cfg, drop) {
+  async function episode(track, opts, h, tail, cfg, drop, clip = false) {
     mj.mj_resetData(model, data);
     layoutStairs(data, ADDR, cfg);
     if (opts.spawn) {
@@ -586,6 +600,43 @@ export function makeClimbRig(ctx) {
       for (let a = 0; a < model.nu; a++) { const f = Math.abs(data.actuator_force[a]); if (f > R.maxTq) R.maxTq = f; }
     };
 
+    /**
+     * THE CELL'S PICTURE — a clip, in duck-intent-clips/3's own shape.
+     *
+     * A /climb answer has always been twenty-six numbers and no trajectory, so
+     * a person who ran a cell could read that it cleared and could not watch it
+     * do so. This is the trajectory, and it is opt-in because a clip is five
+     * thousand leaves and a score is fourteen cells.
+     *
+     * READ IT AND BE SURE OF ONE THING, WHICH IS THE WHOLE REVIEW: it reads
+     * `data.qpos` and pushes. It touches no `R.*`, it calls no `treadDrift` —
+     * the trap `traceSample` sits one line away from, because treadDrift
+     * updates the running maxima this rig PUBLISHES as `maxTreadSag_mm` — and
+     * it runs after every instrument has already read the state. That is round
+     * 6's `tailTrace` precedent, and it is why climb_parity is 70/70 with this
+     * on and with it off.
+     *
+     * `stairs` IS READ AT A DIFFERENT MOMENT AND HAS TO BE. The blocks are
+     * 200 kg bodies on frictionless, undamped slides and fall about two
+     * millimetres between pins, so the only instant they are exactly what was
+     * laid is immediately after `layoutStairs` and before the four substeps —
+     * which is where it is taken, overwritten every tick so the last one wins.
+     * A read after the episode would be worse still: `runEpisode`'s `finally`
+     * parks all fourteen.
+     */
+    const CLIP = clip ? { frames: [], roots: [], commands: [], stairs: null } : null;
+    const r4 = v => Math.round(v * 10000) / 10000;
+    const clipSample = () => {
+      if (!CLIP) return;
+      const after = [];
+      for (let k = 0; k < 14; k++) after.push(Math.min(Math.max(data.qpos[D.qpos[k]], LO[k]), HI[k]));
+      CLIP.frames.push(after.map(r4));
+      const f = D.freeQpos;
+      CLIP.roots.push([data.qpos[f], data.qpos[f + 1], data.qpos[f + 2],
+                       data.qpos[f + 3], data.qpos[f + 4], data.qpos[f + 5], data.qpos[f + 6]].map(r4));
+      CLIP.commands.push([cmd[0], cmd[1], cmd[2]].map(r4));
+    };
+
     // climb_lib.mjs:121-133, verbatim.
     // ROUND 5: `sv` is the servoed-landing target vector for this tick — a
     // number for every LEG slot the law owns, null everywhere else. It is
@@ -593,6 +644,7 @@ export function makeClimbRig(ctx) {
     // then the added condition is `undefined && ...` and not one number moves.
     const step = async (off, rec, sv) => {
       layoutStairs(data, ADDR, cfg);
+      if (CLIP) CLIP.stairs = readStairs(data, ADDR);   // at the pin, before the substeps
       const q = quat(); const jp = [], jv = [];
       for (let k = 0; k < 14; k++) { jp.push(data.qpos[D.qpos[k]]); jv.push(data.qvel[D.dof[k]]); }
       const obs = buildObs([data.sensordata[GYRO], data.sensordata[GYRO + 1], data.sensordata[GYRO + 2]],
@@ -607,16 +659,17 @@ export function makeClimbRig(ctx) {
       }
       for (let s = 0; s < 4; s++) { if (opts.pinEverySubstep) layoutStairs(data, ADDR, cfg); mj.mj_step(model, data); }
       treadDrift(rec); traceSample(rec ? 'track' : 'settle'); PEN.scan(gtick); gtick++;
-      if (rec) record();
+      if (rec) { record(); clipSample(); }
     };
 
     /** No policy at all: the servos hold the targets they are given. */
     const holdStep = (targets) => {
       layoutStairs(data, ADDR, cfg);
+      if (CLIP) CLIP.stairs = readStairs(data, ADDR);   // at the pin, before the substeps
       for (let k = 0; k < 14; k++) data.ctrl[k] = targets[k];
       for (let s = 0; s < 4; s++) { if (opts.pinEverySubstep) layoutStairs(data, ADDR, cfg); mj.mj_step(model, data); }
       treadDrift(true); traceSample('tail'); PEN.scan(gtick); gtick++;
-      record();
+      record(); clipSample();
     };
 
     const SETTLE = (opts.settleTicks === undefined || opts.settleTicks === null) ? 25 : opts.settleTicks;
@@ -774,6 +827,12 @@ export function makeClimbRig(ctx) {
       bothTicks: R.bothTicks, sustainTicks: R.sustainTicks, liftIntegral: R.liftIntegral,
       maxGainBoth: R.maxGainBoth, wallGain: R.wallGain,
       sat: R.sat, ctrls: R.ctrls,
+      // BOTH `undefined` UNLESS ASKED FOR, and therefore structurally invisible:
+      // climb/rig3.mjs and climb/robust.mjs each assemble their own record by
+      // picking named fields off this object and never by spreading it, and
+      // climb_parity compares a fixed list of fourteen named fields.
+      clip: CLIP ? { frames: CLIP.frames, roots: CLIP.roots, commands: CLIP.commands } : undefined,
+      stairsInEpisode: CLIP ? CLIP.stairs : undefined,
       footNear: R.footNear, bothNear: R.bothNear,
       // rig3's tread drift (every tick) and robust's (recorded ticks only)
       allSag_mm: R.allSag_mm, allDriftX_mm: R.allDriftX_mm, allGap_mm: R.allGap_mm,

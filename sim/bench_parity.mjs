@@ -41,6 +41,15 @@ const POLICIES = [
 const HOME14 = [0.0, -0.0873, -0.4579, -0.0049, 0.453, 0.3491, 0.3491, 0.0, 0.0,
                 0.0, 0.0873, 0.4579, 0.0049, -0.453];
 const NOD = HOME14.map((v, i) => (i === 5 || i === 6 ? v - 0.25 : v));
+/** The track the existing /perform entry uses, by name, for the new ones. */
+const T = [{ at: 0.4, pose: NOD }, { at: 0.8, pose: HOME14 }];
+/** The stairs challenge's own four-step 60 mm flight, in the room's frame. */
+const FLIGHT4 = Array.from({ length: 4 },
+  (_, i) => ({ x: 0.12 + i * 0.28 + 0.17, top: (i + 1) * 0.060 }));
+/** The nominal cell — dh 0, drop 0.120, fmul 1.0 — the one rig3 itself runs. */
+const CELL0 = { dh: 0.000, drop: 0.120, fmul: 1.0 };
+const CLIMB_INTENT = JSON.parse(fs.readFileSync(
+  path.resolve(HERE, '../climb/best_r6_ceilvaultC_60mm.json'), 'utf8'));
 
 function script() {
   const r = [];
@@ -83,6 +92,29 @@ function script() {
   add('POST', '/intent', { vx: 'banana' });
   add('GET', '/nowhere');
   add('GET', '/health');
+  // ── APPEND-ONLY, PAST THE LAST EXISTING ENTRY ─────────────────────────────
+  //
+  // Every index above is stable, which is what lets `--prefix` assert that the
+  // first sixty entries of the v6 capture are leaf-identical to ALL of v5. A
+  // recapture that inserted an entry anywhere else would renumber the fixture
+  // and the prefix check would be comparing two different requests.
+  //
+  // The three /perform entries below are ordered so the middle one — the same
+  // body as entry #53 — sits BETWEEN a world-bearing request and a bare-floor
+  // one. If a per-request world ever leaked into the module global or into the
+  // shared batch mjData, that entry is where it would show.
+  add('POST', '/perform', { track: T, rollouts: 1, seconds: 1 });               // the criterion fix
+  add('POST', '/world', { name: 'parity flight', steps: FLIGHT4 });
+  add('POST', '/perform', { track: T, rollouts: 2, seconds: 1 });               // must equal #53
+  add('POST', '/perform', { track: T, rollouts: 2, seconds: 1,
+                            world: { steps: FLIGHT4 }, spawn: { x: 0.05, y: 1.305 } });
+  add('POST', '/perform', { track: T, rollouts: 2, seconds: 1, world: { clear: true } });
+  add('POST', '/perform', { track: T, rollouts: 1, seconds: 1, world: {} });    // refusal, pinned
+  add('POST', '/perform', { track: T, rollouts: 1, seconds: 1,
+                            spawn: { x: 9, y: 0 } });                           // refusal, pinned
+  add('POST', '/climb', { intent: CLIMB_INTENT, rise: 0.06, cell: CELL0,
+                          tail: 'policy', clip: true });
+  add('POST', '/world', { name: 'parity floor', clear: true });
   return r;
 }
 
@@ -181,6 +213,18 @@ const opt = (name, fallback) => {
 const mode = opt('--mode', 'server');
 const outFile = opt('--out', null);
 const against = opt('--against', null);
+/**
+ * THE OLD FIXTURE, AS A PREFIX OF THE NEW ONE.
+ *
+ * A recapture is the one act in this repo that can make a gate green by
+ * agreeing with itself. `--against` says "the answers are what they were";
+ * `--prefix` says "and the fixture I am now holding them to still contains,
+ * entry for entry and leaf for leaf, everything the OLD one pinned". The new
+ * entries are appended past the end, so the old file is exactly the first N
+ * entries of the new one — and if it is not, the recapture moved something it
+ * was not supposed to move and the reviewer is told which leaf.
+ */
+const prefix = opt('--prefix', null);
 const entry = opt('--entry', 'duckbench.mjs');
 const port = +opt('--port', 8791);
 const allow = (opt('--allow', '') || '').split(',').filter(Boolean);
@@ -192,6 +236,36 @@ console.log(`${run.length} requests, ${mode} mode${mode === 'server' ? ` (${entr
 if (outFile) {
   fs.writeFileSync(path.resolve(HERE, outFile), JSON.stringify(run, null, 1) + '\n');
   console.log(`wrote ${outFile}`);
+}
+if (prefix) {
+  const older = JSON.parse(fs.readFileSync(path.resolve(HERE, prefix), 'utf8'));
+  if (older.length > run.length) {
+    console.log(`PREFIX FAILED against ${prefix}: it has ${older.length} entries and this run `
+              + `made ${run.length}`);
+    process.exitCode = 1;
+  } else {
+    const head = run.slice(0, older.length);
+    // THE REQUESTS FIRST, THEN THE ANSWERS. `compare` diffs answers and uses
+    // the method and url only to label a line, so an entry inserted in the
+    // middle would produce a wall of leaf diffs under the wrong names instead
+    // of the one sentence that explains them.
+    const moved = [];
+    for (let i = 0; i < older.length; i++) {
+      if (older[i].method !== head[i].method || older[i].url !== head[i].url
+       || JSON.stringify(older[i].body) !== JSON.stringify(head[i].body)) {
+        moved.push(`#${i} ${older[i].method} ${older[i].url} -> ${head[i].method} ${head[i].url}`);
+      }
+    }
+    const diffs = moved.length ? moved : compare(older, head, allow);
+    if (!diffs.length) {
+      console.log(`PREFIX OK: the first ${older.length} entries are ${prefix}, leaf for leaf`);
+    } else {
+      console.log(`PREFIX FAILED against ${prefix}: ${diffs.length} difference(s)`);
+      for (const d of diffs.slice(0, 40)) console.log('  ' + d);
+      if (diffs.length > 40) console.log(`  ... and ${diffs.length - 40} more`);
+      process.exitCode = 1;
+    }
+  }
 }
 if (against) {
   const before = JSON.parse(fs.readFileSync(path.resolve(HERE, against), 'utf8'));

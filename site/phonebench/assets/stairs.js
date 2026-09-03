@@ -173,6 +173,25 @@ export function placeSteps(data, addr, blocks) {
   return n;
 }
 
+/**
+ * The bank, READ. Read-only: no write, no pin, no forward.
+ *
+ * Every other function in this file moves blocks. This one is the other
+ * direction, and it exists because a readback taken from OUTSIDE a scoring
+ * episode is taken after that episode's `finally` has parked all fourteen at
+ * (i·1.5, −5) — so it reports a parked bank and calls it the flight the duck
+ * climbed. Handing the caller the raw [{x, z}] pairs lets the read happen at
+ * the one moment it is exact: immediately after `layoutStairs` or
+ * `placeSteps` has written qpos and zeroed qvel, before any substep.
+ *
+ * It returns qpos, not tread heights, because the +STEP_HALF_HEIGHT that turns
+ * a block centre into a tread lives in one place already (the bench's
+ * worldReadback) and two spellings of it are two different staircases.
+ */
+export function readStairs(data, addr) {
+  return addr.map(a => ({ x: data.qpos[a.x], z: data.qpos[a.z] }));
+}
+
 /** Height of the tread the duck is standing over, for the HUD. */
 export function groundUnder(x, { count, rise, run, start }) {
   if (x < start) return 0;
